@@ -1,12 +1,23 @@
+"use client";
+
 import { Button } from "@heroui/react";
+import { useAuth } from "@/hooks/useAuth";
+import { loginWithGoogle, logout } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
+    const { user, loading } = useAuth();
+    const router = useRouter();
+
+    const handlePrimaryCTA = async () => {
+        if (user) {
+            router.push("/dashboard");
+        } else {
+            await loginWithGoogle();
+        }
+    };
+
     return (
-        /*
-         * HeroUI 3 toggles the `dark` class on <html>.
-         * All theme-sensitive values use CSS custom properties that flip
-         * between :root (light) and .dark (dark) — no JS required.
-         */
         <main className="
             min-h-screen overflow-hidden relative
             bg-[--bg] text-[--fg]
@@ -58,15 +69,9 @@ export default function LandingPage() {
                     --orb5-opacity:    0.30;
                 }
 
-                .ambient-bg {
-                    display: none;
-                }
+                .ambient-bg { display: none; }
+                .dark .ambient-bg { display: block; }
 
-                .dark .ambient-bg {
-                    display: block;
-                }
-
-                /* ── Orb animations ── */
                 @keyframes drift1 {
                     0%   { transform: translate(0px,   0px)  scale(1);    }
                     100% { transform: translate(60px,  80px) scale(1.12); }
@@ -88,7 +93,6 @@ export default function LandingPage() {
                     100% { transform: translate(-30px,40px) scale(0.88); }
                 }
 
-                /* ── Entrance animation ── */
                 @keyframes fadeUp {
                     from { opacity: 0; transform: translateY(24px); }
                     to   { opacity: 1; transform: translateY(0);    }
@@ -103,49 +107,51 @@ export default function LandingPage() {
                     circle, .fade-up { animation: none !important; }
                 }
 
-                /* ── Glass cards ── */
                 .glass-card {
-                    background:          var(--glass-bg);
-                    border:              1px solid var(--glass-border);
-                    backdrop-filter:     blur(16px);
+                    background:              var(--glass-bg);
+                    border:                  1px solid var(--glass-border);
+                    backdrop-filter:         blur(16px);
                     -webkit-backdrop-filter: blur(16px);
-                    border-radius:       20px;
-                    transition:          border-color .25s, background .25s, transform .25s;
+                    border-radius:           20px;
+                    transition:              border-color .25s, background .25s, transform .25s;
                 }
                 .glass-card:hover {
-                    background:    var(--glass-bg-hover);
-                    border-color:  var(--glass-border-hv);
-                    transform:     translateY(-3px);
+                    background:   var(--glass-bg-hover);
+                    border-color: var(--glass-border-hv);
+                    transform:    translateY(-3px);
                 }
 
-                /* ── Pill badge ── */
                 .pill {
-                    display:         inline-flex;
-                    align-items:     center;
-                    gap:             6px;
-                    padding:         4px 14px;
-                    border-radius:   999px;
-                    background:      var(--pill-bg);
-                    border:          1px solid var(--pill-border);
-                    font-size:       0.78rem;
-                    font-weight:     600;
-                    letter-spacing:  0.08em;
-                    text-transform:  uppercase;
-                    color:           var(--pill-fg);
+                    display:        inline-flex;
+                    align-items:    center;
+                    gap:            6px;
+                    padding:        4px 14px;
+                    border-radius:  999px;
+                    background:     var(--pill-bg);
+                    border:         1px solid var(--pill-border);
+                    font-size:      0.78rem;
+                    font-weight:    600;
+                    letter-spacing: 0.08em;
+                    text-transform: uppercase;
+                    color:          var(--pill-fg);
                 }
 
-                /* ── Buttons ── */
                 .btn-primary {
-                    background:    linear-gradient(135deg, #7c3aed, #4f46e5);
-                    border-radius: 12px;
-                    font-weight:   700;
-                    letter-spacing:0.02em;
-                    box-shadow:    0 0 0 0 rgba(124,58,237,.5);
-                    transition:    box-shadow .25s, transform .2s;
+                    background:     linear-gradient(135deg, #7c3aed, #4f46e5);
+                    border-radius:  12px;
+                    font-weight:    700;
+                    letter-spacing: 0.02em;
+                    box-shadow:     0 0 0 0 rgba(124,58,237,.5);
+                    transition:     box-shadow .25s, transform .2s;
                 }
                 .btn-primary:hover {
                     box-shadow: 0 0 28px 4px rgba(124,58,237,.45);
                     transform:  translateY(-1px);
+                }
+                .btn-primary:disabled {
+                    opacity: 0.6;
+                    cursor:  not-allowed;
+                    transform: none;
                 }
                 .btn-ghost {
                     background:    var(--glass-bg);
@@ -160,7 +166,6 @@ export default function LandingPage() {
                     border-color: var(--glass-border-hv);
                 }
 
-                /* ── Stat bar ── */
                 .stat-bar {
                     height:       3px;
                     border-radius:99px;
@@ -169,9 +174,8 @@ export default function LandingPage() {
                     opacity:      0.5;
                 }
 
-                /* ── Divider ── */
                 .gradient-divider {
-                    height: 1px;
+                    height:     1px;
                     background: linear-gradient(
                         90deg,
                         transparent,
@@ -179,6 +183,61 @@ export default function LandingPage() {
                         rgba(8,145,178,.4)   70%,
                         transparent
                     );
+                }
+
+                /* ── Auth bar ── */
+                .auth-bar {
+                    display:         flex;
+                    align-items:     center;
+                    gap:             10px;
+                    padding:         6px 14px;
+                    border-radius:   999px;
+                    background:      var(--glass-bg);
+                    border:          1px solid var(--glass-border);
+                    backdrop-filter: blur(12px);
+                    font-size:       0.82rem;
+                    color:           var(--fg-muted);
+                }
+                .auth-avatar {
+                    width:         28px;
+                    height:        28px;
+                    border-radius: 50%;
+                    object-fit:    cover;
+                    border:        1px solid var(--glass-border-hv);
+                }
+                .auth-avatar-placeholder {
+                    width:           28px;
+                    height:          28px;
+                    border-radius:   50%;
+                    background:      linear-gradient(135deg, #7c3aed, #4f46e5);
+                    display:         flex;
+                    align-items:     center;
+                    justify-content: center;
+                    font-size:       0.7rem;
+                    font-weight:     700;
+                    color:           white;
+                }
+                .btn-logout {
+                    background:    none;
+                    border:        none;
+                    cursor:        pointer;
+                    color:         var(--fg-faint);
+                    font-size:     0.78rem;
+                    padding:       2px 6px;
+                    border-radius: 6px;
+                    transition:    color .2s;
+                }
+                .btn-logout:hover { color: var(--fg); }
+
+                /* ── Loading skeleton pulse ── */
+                @keyframes pulse {
+                    0%, 100% { opacity: 0.4; }
+                    50%       { opacity: 0.8; }
+                }
+                .skeleton {
+                    border-radius: 12px;
+                    background:    var(--glass-bg);
+                    animation:     pulse 1.4s ease-in-out infinite;
                 }
             `}</style>
 
@@ -200,18 +259,12 @@ export default function LandingPage() {
                             <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay" result="blended" />
                             <feComposite in="blended" in2="SourceGraphic" operator="in" />
                         </filter>
-                        {/*
-                          * The vignette stop color references the CSS variable.
-                          * SVG `currentColor` can't do this directly, but `fill`
-                          * can reference a var() string set on the element itself.
-                          */}
                         <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
                             <stop offset="0%" stopColor="transparent" />
                             <stop offset="100%" stopColor="var(--vignette)" />
                         </radialGradient>
                     </defs>
 
-                    {/* Orb opacities driven by CSS vars so they dim in light mode */}
                     <circle cx="15%" cy="20%" r="380" fill="#7c3aed" filter="url(#blob-blur)"
                         style={{ opacity: "var(--orb1-opacity)", animation: "drift1 18s ease-in-out infinite alternate" }} />
                     <circle cx="80%" cy="10%" r="320" fill="#4f46e5" filter="url(#blob-blur)"
@@ -228,7 +281,6 @@ export default function LandingPage() {
                     <rect x="0" y="0" width="100%" height="100%" fill="url(#vignette)" />
                 </svg>
 
-                {/* Dot grid — color via CSS var */}
                 <div
                     className="absolute inset-0"
                     style={{
@@ -240,8 +292,9 @@ export default function LandingPage() {
                 />
             </div>
 
+           
             {/* ── Hero ── */}
-            <section className="relative z-10 container mx-auto flex flex-col items-center justify-center px-6 py-28 text-center">
+            <section className="relative z-10 container mx-auto flex flex-col items-center justify-center px-6 py-24 text-center">
                 <div className="pill fade-up fade-up-1 mb-6">
                     <svg width="7" height="7" viewBox="0 0 7 7" fill="none">
                         <circle cx="3.5" cy="3.5" r="3.5" fill="var(--pill-fg)" />
@@ -276,12 +329,27 @@ export default function LandingPage() {
                 </p>
 
                 <div className="fade-up fade-up-4 mt-10 flex flex-wrap gap-3 justify-center">
-                    <Button size="lg" className="btn-primary px-8 text-white">
-                        Get Started Free
-                    </Button>
-                    <Button size="lg" className="btn-ghost px-8">
-                        See Demo
-                    </Button>
+                    {loading ? (
+                        <>
+                            <div className="skeleton w-44 h-12" />
+                            <div className="skeleton w-32 h-12" />
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                size="lg"
+                                className="btn-primary px-8 text-white"
+                                onClick={handlePrimaryCTA}
+                            >
+                                {user ? "Go to Dashboard →" : "Get Started Free"}
+                            </Button>
+                            {!user && (
+                                <Button size="lg" className="btn-ghost px-8">
+                                    See Demo
+                                </Button>
+                            )}
+                        </>
+                    )}
                 </div>
 
                 <p className="mt-8 text-sm fade-up fade-up-4" style={{ color: "var(--fg-faint)" }}>
@@ -342,24 +410,48 @@ export default function LandingPage() {
 
             {/* ── CTA Footer ── */}
             <div className="gradient-divider relative z-10 mx-6" />
-            <section className="relative z-10 py-20">
+            <section className="relative z-20 py-20">
                 <div className="container mx-auto px-6 text-center">
-                    <p className="pill mx-auto mb-5">No credit card required</p>
+                    {!user && <p className="pill mx-auto mb-5">No credit card required</p>}
 
                     <h2
                         className="text-4xl md:text-5xl font-black tracking-tight"
                         style={{ letterSpacing: "-0.02em", color: "var(--fg)" }}
                     >
-                        Ready to start tracking?
+                        {user ? "Welcome back 👋" : "Ready to start tracking?"}
                     </h2>
 
                     <p className="mt-4 text-base" style={{ color: "var(--fg-muted)" }}>
-                        Join thousands of engineers managing their time with precision.
+                        {user
+                            ? `Logged in as ${user.email}. Head to your dashboard to pick up where you left off.`
+                            : "Join thousands of engineers managing their time with precision."
+                        }
                     </p>
 
-                    <Button size="lg" className="btn-primary mt-8 px-10 text-white">
-                        Create Free Account
-                    </Button>
+                    <div className="mt-8 flex flex-wrap gap-3 justify-center">
+                        {loading ? (
+                            <div className="skeleton w-52 h-12" />
+                        ) : (
+                            <>
+                                <Button
+                                    size="lg"
+                                    className="btn-primary px-8 text-white"
+                                    onClick={handlePrimaryCTA}
+                                >
+                                    {user ? "Go to Dashboard →" : "Continue with Google"}
+                                </Button>
+                                {user && (
+                                    <Button
+                                        size="lg"
+                                        className="btn-ghost px-8"
+                                        onClick={logout}
+                                    >
+                                        Sign out
+                                    </Button>
+                                )}
+                            </>
+                        )}
+                    </div>
                 </div>
             </section>
         </main>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card } from '@heroui/react';
-import ListBoxComponent from './Utilities/ListBoxComponent';
-function HomePage() {
+import ListBoxComponent from '../Utilities/ListBoxComponent';
+function DashboardCardLayout() {
   return (
     <div className='flex flex-grid items-center justify-center h-screen'>
 
@@ -31,4 +31,4 @@ function HomePage() {
   )
 }
 
-export default HomePage
+export default DashboardCardLayout
