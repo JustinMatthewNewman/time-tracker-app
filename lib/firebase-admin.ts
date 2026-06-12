@@ -8,22 +8,26 @@ if (!apps.length) {
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
   const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
-  // 1. Explicitly check for missing environment variables
+  // Change the hard crash to a soft warning for the Next.js build-pass
   if (!projectId || !clientEmail || !privateKey) {
-    throw new Error(
-      "❌ Critical Firebase Admin environment variables are missing. " +
-      "Check your .env.local file."
+    console.warn(
+      "⚠️ Firebase Admin environment variables are missing during compilation. " +
+      "Skipping initialization pass."
     );
+  } else {
+    // This block runs perfectly when the keys are present at runtime!
+    initializeApp({
+      credential: cert({
+        projectId,
+        clientEmail,
+        privateKey: privateKey.replace(/\\n/g, "\n"),
+      }),
+    });
   }
-
-  initializeApp({
-    credential: cert({
-      projectId,
-      clientEmail,
-      // 2. Safe to replace now because we know it's a string
-      privateKey: privateKey.replace(/\\n/g, "\n"),
-    }),
-  });
 }
 
-export const adminAuth = getAuth();
+// Safely export auth. If initialization was skipped during the build pass,
+// this won't crash the compiler.
+export const adminAuth = apps.length || (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) 
+  ? getAuth() 
+  : null!;
