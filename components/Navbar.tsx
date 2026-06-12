@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import AuthSection  from "./AuthSection";
+import AuthSection from "./AuthSection";
+import { useSidebar } from "@/context/SideBarContext";
 
 import { useAuth } from "@/hooks/useAuth";
 import { loginWithGoogle, logout } from "@/lib/auth";
+import { Label, SearchField } from "@heroui/react";
 
 // ─────────────────────────────────────────────
 // Nav Links
@@ -50,6 +52,7 @@ export default function AppNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, loading } = useAuth();
   const router = useRouter();
+  const { toggle } = useSidebar();
 
   const handleAction = async (key: string) => {
     if (key === "logout") return logout();
@@ -74,20 +77,41 @@ export default function AppNavbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex gap-2">
-            {filteredLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="rounded-md px-3 py-1.5 text-sm text-foreground/70 hover:bg-default-100 hover:text-foreground transition"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
+          {/* Left Side: Sidebar Toggle & Desktop Navigation */}
+          <div className="flex items-center gap-3">
 
-          {/* Right Side */}
+            <button
+              onClick={toggle}
+              className="rounded-md p-2 hover:bg-default-100 transition"
+              aria-label="Toggle Sidebar"
+            >
+              ☰
+            </button>
+
+            <nav className="hidden md:flex gap-7 items-center">
+              {filteredLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="rounded-md px-3 py-1.5 text-sm text-foreground/70 hover:bg-default-100 hover:text-foreground transition"
+                >
+                  {link.label}
+                </a>
+              ))}
+
+              <SearchField name="search">
+                <SearchField.Group>
+                  <SearchField.SearchIcon />
+                  <SearchField.Input className="w-[280px]" placeholder="Search..." />
+                  <SearchField.ClearButton />
+                </SearchField.Group>
+              </SearchField>
+
+
+            </nav>
+          </div>
+
+          {/* Right Side: Theme, Auth, and Mobile Toggle */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
 
@@ -100,8 +124,9 @@ export default function AppNavbar() {
 
             {/* Mobile menu toggle */}
             <button
-              className="md:hidden text-foreground/70"
+              className="md:hidden text-foreground/70 rounded-md p-2 hover:bg-default-100"
               onClick={() => setMenuOpen((p) => !p)}
+              aria-label="Toggle Menu"
             >
               {menuOpen ? "✕" : "☰"}
             </button>
@@ -127,8 +152,6 @@ export default function AppNavbar() {
   );
 }
 
-
-
 // ─────────────────────────────────────────────
 // Theme Toggle
 // ─────────────────────────────────────────────
@@ -145,7 +168,8 @@ function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="text-foreground/70 hover:text-foreground transition"
+      className="text-foreground/70 hover:text-foreground transition p-2 rounded-md hover:bg-default-100"
+      aria-label="Toggle Theme"
     >
       {isDark ? <SunIcon /> : <MoonIcon />}
     </button>
