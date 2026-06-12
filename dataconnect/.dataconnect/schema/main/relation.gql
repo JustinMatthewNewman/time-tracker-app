@@ -1,0 +1,372 @@
+extend type TimeEntry {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "TimeEntry", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table.
+  """
+  _count: Int! @fdc_generated(from: "TimeEntry.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `date` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  date_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.date", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `endTime` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  endTime_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.endTime", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `officeNumber` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  officeNumber_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.officeNumber", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `startTime` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  startTime_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.startTime", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `ticketNumber` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  ticketNumber_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.ticketNumber", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TimeEntry` table where the `workLogId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  workLogId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TimeEntry.workLogId", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `TimeEntry` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "TimeEntry.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `date` field in the `TimeEntry` table.
+  """
+  date_min: Date @fdc_generated(from: "TimeEntry.date", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `endTime` field in the `TimeEntry` table.
+  """
+  endTime_min: Timestamp @fdc_generated(from: "TimeEntry.endTime", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `startTime` field in the `TimeEntry` table.
+  """
+  startTime_min: Timestamp @fdc_generated(from: "TimeEntry.startTime", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `TimeEntry` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "TimeEntry.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `date` field in the `TimeEntry` table.
+  """
+  date_max: Date @fdc_generated(from: "TimeEntry.date", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `endTime` field in the `TimeEntry` table.
+  """
+  endTime_max: Timestamp @fdc_generated(from: "TimeEntry.endTime", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `startTime` field in the `TimeEntry` table.
+  """
+  startTime_max: Timestamp @fdc_generated(from: "TimeEntry.startTime", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "TimeEntry.id", purpose: ENTITY_ID)
+}
+extend type User {
+  """
+  ✨ List `TimeEntry` objects in a one-to-many relationship (where `TimeEntry`.`user` is this object).
+  """
+  timeEntries_on_user(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: TimeEntry_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [TimeEntry_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: TimeEntry_Having
+  ): [TimeEntry!]! @fdc_generated(from: "TimeEntry.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `WorkLog` objects in a one-to-many relationship (where `WorkLog`.`user` is this object).
+  """
+  workLogs_on_user(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: WorkLog_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [WorkLog_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: WorkLog_Having
+  ): [WorkLog!]! @fdc_generated(from: "WorkLog.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "User", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `User` table.
+  """
+  _count: Int! @fdc_generated(from: "User.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `googleUid` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  googleUid_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.googleUid", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `username` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  username_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.username", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `User` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "User.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `User` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "User.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "User.id", purpose: ENTITY_ID)
+}
+extend type WorkLog {
+  """
+  ✨ List `TimeEntry` objects in a one-to-many relationship (where `TimeEntry`.`workLog` is this object).
+  """
+  timeEntries_on_workLog(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: TimeEntry_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [TimeEntry_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: TimeEntry_Having
+  ): [TimeEntry!]! @fdc_generated(from: "TimeEntry.workLog", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "WorkLog", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `WorkLog` table.
+  """
+  _count: Int! @fdc_generated(from: "WorkLog.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `WorkLog` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "WorkLog.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `WorkLog` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "WorkLog.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `WorkLog` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "WorkLog.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `WorkLog` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "WorkLog.name", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `WorkLog` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "WorkLog.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `WorkLog` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "WorkLog.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `WorkLog` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "WorkLog.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "WorkLog.id", purpose: ENTITY_ID)
+}

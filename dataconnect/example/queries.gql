@@ -1,0 +1,10 @@
+# dataconnect/example/queries.gql
+
+query ListUsers @auth(level: NO_ACCESS) {
+  users {
+    id
+    username
+    email
+    createdAt
+  }
+}

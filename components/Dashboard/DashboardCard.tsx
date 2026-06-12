@@ -4,9 +4,9 @@ import DashboardCardLayout from './DashboardCardLayout';
 function DashboardCard() {
   return (
     <div>
-      <Card className='h-full w-screen text-foreground p-4 m-4'>
+      <div className='h-full w-screen text-foreground p-4 m-4'>
         <DashboardCardLayout />
-      </Card>
+      </div>
     </div>
   )
 }
