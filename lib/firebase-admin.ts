@@ -1,21 +1,28 @@
-import { cert, getApps, initializeApp } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
+// Remove the static top-level imports! They are what trigger the build/runtime crash.
 
-const apps = getApps();
+/**
+ * Dynamically initializes Firebase Admin and returns the Auth instance.
+ * This completely bypasses the Next.js/Turbopack compilation phase error.
+ */
+export async function getAdminAuth() {
+  // 1. Dynamically import the modules only when this function is actually executed
+  const { getApps, initializeApp, cert } = await import("firebase-admin/app");
+  const { getAuth } = await import("firebase-admin/auth");
 
-if (!apps.length) {
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+  const apps = getApps();
 
-  // Change the hard crash to a soft warning for the Next.js build-pass
-  if (!projectId || !clientEmail || !privateKey) {
-    console.warn(
-      "⚠️ Firebase Admin environment variables are missing during compilation. " +
-      "Skipping initialization pass."
-    );
-  } else {
-    // This block runs perfectly when the keys are present at runtime!
+  if (!apps.length) {
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+    if (!projectId || !clientEmail || !privateKey) {
+      throw new Error(
+        "❌ Firebase Admin environment variables are missing at runtime. " +
+        "Please check your Vercel project settings."
+      );
+    }
+
     initializeApp({
       credential: cert({
         projectId,
@@ -24,10 +31,6 @@ if (!apps.length) {
       }),
     });
   }
-}
 
-// Safely export auth. If initialization was skipped during the build pass,
-// this won't crash the compiler.
-export const adminAuth = apps.length || (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) 
-  ? getAuth() 
-  : null!;
+  return getAuth();
+}

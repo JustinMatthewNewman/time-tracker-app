@@ -12,12 +12,12 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useListUsers, useCreateUserFromGoogle } from '@dataconnect/generated/react';
+import { useCreateUserFromGoogle, useListUsers } from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
 
-const { data, isPending, isSuccess, isError, error } = useListUsers();
-
 const { data, isPending, isSuccess, isError, error } = useCreateUserFromGoogle(createUserFromGoogleVars);
+
+const { data, isPending, isSuccess, isError, error } = useListUsers();
 
 ```
 
@@ -56,14 +56,14 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { listUsers, createUserFromGoogle } from '@dataconnect/generated';
+import { createUserFromGoogle, listUsers } from '@dataconnect/generated';
 
-
-// Operation ListUsers: 
-const { data } = await ListUsers(dataConnect);
 
 // Operation CreateUserFromGoogle:  For variables, look at type CreateUserFromGoogleVars in ../index.d.ts
 const { data } = await CreateUserFromGoogle(dataConnect, createUserFromGoogleVars);
+
+// Operation ListUsers: 
+const { data } = await ListUsers(dataConnect);
 
 
 ```

@@ -1,11 +1,17 @@
 // app/api/auth/sync-user/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebase-admin";
+// Import the dynamic function instead of the static adminAuth constant
+import { getAdminAuth } from "@/lib/firebase-admin";
 import { createUserFromGoogle } from "@/src/dataconnect-admin-generated"; 
 
 export async function POST(req: NextRequest) {
   try {
     const { idToken } = await req.json();
+    
+    // 1. Initialize Firebase Admin dynamically at runtime
+    const adminAuth = await getAdminAuth();
+    
+    // 2. Safely verify the token now that adminAuth is initialized
     const decoded = await adminAuth.verifyIdToken(idToken);
     
     const firebaseUid = decoded.uid;
