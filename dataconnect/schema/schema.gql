@@ -1,0 +1,26 @@
+type User @table {
+  id: UUID! @default(expr: "uuidV4()")  
+  googleUid: String! @unique                      
+  username: String!
+  email: String
+  createdAt: Timestamp!
+}
+
+type WorkLog @table {
+  user: User!
+  name: String!
+  description: String
+  createdAt: Timestamp!
+}
+
+type TimeEntry @table {
+  user: User!
+  workLog: WorkLog
+  startTime: Timestamp!
+  endTime: Timestamp!
+  date: Date!
+  description: String
+  ticketNumber: String
+  officeNumber: String
+  createdAt: Timestamp!
+}

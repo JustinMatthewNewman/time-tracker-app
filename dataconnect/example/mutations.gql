@@ -1,0 +1,10 @@
+# dataconnect/example/mutations.gql
+
+mutation CreateUserFromGoogle($googleUid: String!, $username: String!, $email: String!, $createdAt: Timestamp!) {
+  user_insert(data: {
+    googleUid: $googleUid
+    username: $username
+    email: $email
+    createdAt: $createdAt
+  })
+}

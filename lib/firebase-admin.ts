@@ -1,20 +1,29 @@
-// lib/firebase-admin.ts
+import { cert, getApps, initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 
-import admin from "firebase-admin";
+const apps = getApps();
 
-//@ts-ignore
-if (!admin.apps.length) {
-  admin.initializeApp({
-    //@ts-ignore
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(
-        /\\n/g,
-        "\n"
-      ),
+if (!apps.length) {
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+
+  // 1. Explicitly check for missing environment variables
+  if (!projectId || !clientEmail || !privateKey) {
+    throw new Error(
+      "❌ Critical Firebase Admin environment variables are missing. " +
+      "Check your .env.local file."
+    );
+  }
+
+  initializeApp({
+    credential: cert({
+      projectId,
+      clientEmail,
+      // 2. Safe to replace now because we know it's a string
+      privateKey: privateKey.replace(/\\n/g, "\n"),
     }),
   });
 }
 
-export default admin;
+export const adminAuth = getAuth();

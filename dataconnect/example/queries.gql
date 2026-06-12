@@ -1,0 +1,9 @@
+# A simple query to satisfy the Data Connect compiler requirements
+query ListUsers {
+  users {
+    id
+    username
+    email
+  }
+}
+
