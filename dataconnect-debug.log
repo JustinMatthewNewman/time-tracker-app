@@ -307,3 +307,27 @@ Variables Set: [createdAt email googleUid username]
 Errors: [message:"violates SQL unique constraint: user_googleUid_uidx" path:{values:{string_value:"user_insert"}} extensions:{code:ALREADY_EXISTS debug_details:"PostgreSQL runtime error (err_code: 23505): pq: duplicate key value violates unique constraint \"user_googleUid_uidx\"\nWITH \"user_insert_temp\" AS (INSERT INTO \"public\".\"user\" (\"created_at\",\"email\",\"google_uid\",\"username\",\"id\") VALUES ( $1 ::timestamptz, $2 ::text, $3 ::text, $4 ::text,uuid_generate_v4()) RETURNING jsonb_build_object('id', REPLACE(CAST((\"id\") AS text), '-', ''), '#', encode(sha256(('User'|| ':' ||(\"id\")::TEXT)::BYTEA), 'hex')) AS j) SELECT * FROM \"user_insert_temp\"\nParams: [2026-06-12T22:04:05.506000Z sageclawprobot@gmail.com 3KF7Tpw6vpOAnY6cLsfpYLMkyBk1 Sage Claw]"}]
 Data Fields: [user_insert]
 sources: example/mutations.gql [297B] example/queries.gql [136B] 
+I0612 18:05:10.596769   30680 execute.go:57] Database ping is quick (likely cached), took 442.667µs
+W0612 18:05:10.599094   30680 engine.go:213] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ImpersonateMutation mutation CreateUserFromGoogle: failed. Connector: example
+Auth: admin
+
+Variables Set: [createdAt email googleUid username]
+Errors: [message:"violates SQL unique constraint: user_googleUid_uidx" path:{values:{string_value:"user_insert"}} extensions:{code:ALREADY_EXISTS debug_details:"PostgreSQL runtime error (err_code: 23505): pq: duplicate key value violates unique constraint \"user_googleUid_uidx\"\nWITH \"user_insert_temp\" AS (INSERT INTO \"public\".\"user\" (\"created_at\",\"email\",\"google_uid\",\"username\",\"id\") VALUES ( $1 ::timestamptz, $2 ::text, $3 ::text, $4 ::text,uuid_generate_v4()) RETURNING jsonb_build_object('id', REPLACE(CAST((\"id\") AS text), '-', ''), '#', encode(sha256(('User'|| ':' ||(\"id\")::TEXT)::BYTEA), 'hex')) AS j) SELECT * FROM \"user_insert_temp\"\nParams: [2026-06-12T22:05:10.593000Z sageclawprobot@gmail.com 3KF7Tpw6vpOAnY6cLsfpYLMkyBk1 Sage Claw]"}]
+Data Fields: [user_insert]
+sources: example/mutations.gql [297B] example/queries.gql [136B] 
+I0612 18:05:11.327963   30680 execute.go:57] Database ping is quick (likely cached), took 387.5µs
+I0612 18:05:11.328733   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:05:12.033834   30680 execute.go:57] Database ping is quick (likely cached), took 385.125µs
+I0612 18:05:12.034541   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:11:27.385411   30680 execute.go:57] Database ping is quick (likely cached), took 913.333µs
+I0612 18:11:27.386635   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:11:27.848351   30680 execute.go:57] Database ping is quick (likely cached), took 496.959µs
+I0612 18:11:27.849176   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:11:28.033571   30680 execute.go:57] Database ping is quick (likely cached), took 368.166µs
+I0612 18:11:28.034190   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:11:28.216709   30680 execute.go:57] Database ping is quick (likely cached), took 380.167µs
+I0612 18:11:28.217373   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:11:28.375565   30680 execute.go:57] Database ping is quick (likely cached), took 381.833µs
+I0612 18:11:28.376398   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:11:28.539953   30680 execute.go:57] Database ping is quick (likely cached), took 398.292µs
+I0612 18:11:28.540631   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ExecuteGraphql query ListUsers: succeeded. 
