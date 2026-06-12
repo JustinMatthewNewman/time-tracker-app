@@ -1,9 +1,10 @@
-# A simple query to satisfy the Data Connect compiler requirements
-query ListUsers {
+# dataconnect/example/queries.gql
+
+query ListUsers @auth(level: NO_ACCESS) {
   users {
     id
     username
     email
+    createdAt
   }
 }
-

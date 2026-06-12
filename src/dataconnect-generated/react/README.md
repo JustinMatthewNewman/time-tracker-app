@@ -136,6 +136,7 @@ export interface ListUsersData {
     id: UUIDString;
     username: string;
     email?: string | null;
+    createdAt: TimestampString;
   } & User_Key)[];
 }
 ```

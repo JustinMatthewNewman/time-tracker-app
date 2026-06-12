@@ -209,3 +209,101 @@ Variables Set: [createdAt email googleUid username]
 Errors: [message:"violates SQL unique constraint: user_googleUid_uidx" path:{values:{string_value:"user_insert"}} extensions:{code:ALREADY_EXISTS debug_details:"PostgreSQL runtime error (err_code: 23505): pq: duplicate key value violates unique constraint \"user_googleUid_uidx\"\nWITH \"user_insert_temp\" AS (INSERT INTO \"public\".\"user\" (\"created_at\",\"email\",\"google_uid\",\"username\",\"id\") VALUES ( $1 ::timestamptz, $2 ::text, $3 ::text, $4 ::text,uuid_generate_v4()) RETURNING jsonb_build_object('id', REPLACE(CAST((\"id\") AS text), '-', ''), '#', encode(sha256(('User'|| ':' ||(\"id\")::TEXT)::BYTEA), 'hex')) AS j) SELECT * FROM \"user_insert_temp\"\nParams: [2026-06-12T21:52:31.981000Z sageclawprobot@gmail.com 3KF7Tpw6vpOAnY6cLsfpYLMkyBk1 Sage Claw]"}]
 Data Fields: [user_insert]
 sources: example/mutations.gql [273B] example/queries.gql [132B] 
+I0612 17:56:49.283062   30680 load.go:31] Reloading schema and connectors...
+W0612 17:56:49.347465   30680 control.go:74] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service 8f78] connector "example" has errors: example/mutations.gql:4:3: user_upsert (data: User_Data): key id is required in upsert but is not set in data
+
+sources: example/mutations.gql [269B] example/queries.gql [132B] 
+I0612 17:56:49.347489   30680 control.go:100] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service 8f78] UpdateResources(): done
+Main schema: sources: schema/schema.gql [486B] 
+Connector "example": sources: example/mutations.gql [269B] example/queries.gql [132B] 
+E0612 17:56:49.347862   30680 load.go:73] Could not load sources: 
+Errors: example/mutations.gql:4:3: user_upsert (data: User_Data): key id is required in upsert but is not set in data
+I0612 17:56:49.348667   30680 collector.go:107] schema extensions wrote into "/Users/justinnewman/time_tracker_app/dataconnect/.dataconnect/schema"
+Generated sources: main/mutation.gql [10135B] main/implicit.gql [1235B] main/input.gql [29844B] main/relation.gql [13386B] prelude.gql [84995B] main/query.gql [3775B] 
+I0612 17:56:49.348676   30680 load.go:74] Finished reloading
+I0612 17:57:29.283222   30680 load.go:31] Reloading schema and connectors...
+I0612 17:57:29.346492   30680 control.go:100] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service 9aae] UpdateResources(): done
+Main schema: sources: schema/schema.gql [486B] 
+Connector "example": sources: example/mutations.gql [309B] example/queries.gql [132B] 
+I0612 17:57:29.352070   30680 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "/Users/justinnewman/time_tracker_app/src/dataconnect-generated"
+I0612 17:57:29.356117   30680 codegen.go:101] [connector "example" adminSdk] Generating sources into "/Users/justinnewman/time_tracker_app/src/dataconnect-admin-generated"
+I0612 17:57:29.357426   30680 collector.go:107] schema extensions wrote into "/Users/justinnewman/time_tracker_app/dataconnect/.dataconnect/schema"
+Generated sources: main/query.gql [3775B] prelude.gql [84995B] main/mutation.gql [10135B] main/implicit.gql [1235B] main/input.gql [29844B] main/relation.gql [13386B] 
+I0612 17:57:29.358560   30680 collector.go:107] connector "example" javascriptSdk wrote into "/Users/justinnewman/time_tracker_app/src/dataconnect-generated"
+Generated sources: index.d.ts [2345B] react/esm/index.esm.js [923B] .guides/usage.md [1829B] .guides/setup.md [1682B] .guides/config.json [236B] esm/index.esm.js [1509B] package.json [853B] react/index.d.ts [1235B] index.cjs.js [1717B] react/package.json [460B] react/README.md [19394B] esm/package.json [17B] README.md [13198B] react/esm/package.json [17B] react/index.cjs.js [974B] 
+I0612 17:57:29.359665   30680 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0612 17:57:29.360097   30680 collector.go:107] connector "example" adminSdk wrote into "/Users/justinnewman/time_tracker_app/src/dataconnect-admin-generated"
+Generated sources: index.d.ts [2059B] esm/index.esm.js [812B] esm/package.json [17B] index.cjs.js [923B] package.json [632B] 
+I0612 17:57:29.360401   30680 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I0612 17:57:29.360407   30680 load.go:109] Finished reloading
+I0612 17:58:35.287009   30680 execute.go:57] Database ping is quick (likely cached), took 406.5µs
+W0612 17:58:35.288613   30680 engine.go:213] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service 9aae] ImpersonateMutation mutation CreateUserFromGoogle: failed. Connector: example
+Auth: admin
+
+Variables Set: [createdAt email googleUid username]
+Errors: [message:"violates SQL unique constraint: user_googleUid_uidx" path:{values:{string_value:"user_insert"}} extensions:{code:ALREADY_EXISTS debug_details:"PostgreSQL runtime error (err_code: 23505): pq: duplicate key value violates unique constraint \"user_googleUid_uidx\"\nWITH \"user_insert_temp\" AS (INSERT INTO \"public\".\"user\" (\"created_at\",\"email\",\"google_uid\",\"username\",\"id\") VALUES ( $1 ::timestamptz, $2 ::text, $3 ::text, $4 ::text,uuid_generate_v4()) RETURNING jsonb_build_object('id', REPLACE(CAST((\"id\") AS text), '-', ''), '#', encode(sha256(('User'|| ':' ||(\"id\")::TEXT)::BYTEA), 'hex')) AS j) SELECT * FROM \"user_insert_temp\"\nParams: [2026-06-12T21:58:35.284000Z sageclawprobot@gmail.com 3KF7Tpw6vpOAnY6cLsfpYLMkyBk1 Sage Claw]"}]
+Data Fields: [user_insert]
+sources: example/queries.gql [132B] example/mutations.gql [309B] 
+I0612 17:59:59.282959   30680 load.go:31] Reloading schema and connectors...
+I0612 17:59:59.340088   30680 control.go:100] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service f8b5] UpdateResources(): done
+Main schema: sources: schema/schema.gql [486B] 
+Connector "example": sources: example/mutations.gql [297B] example/queries.gql [132B] 
+I0612 17:59:59.345432   30680 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "/Users/justinnewman/time_tracker_app/src/dataconnect-generated"
+I0612 17:59:59.349188   30680 codegen.go:101] [connector "example" adminSdk] Generating sources into "/Users/justinnewman/time_tracker_app/src/dataconnect-admin-generated"
+I0612 17:59:59.350525   30680 collector.go:107] schema extensions wrote into "/Users/justinnewman/time_tracker_app/dataconnect/.dataconnect/schema"
+Generated sources: main/relation.gql [13386B] main/query.gql [3775B] prelude.gql [84995B] main/mutation.gql [10135B] main/implicit.gql [1235B] main/input.gql [29844B] 
+I0612 17:59:59.351744   30680 collector.go:107] connector "example" javascriptSdk wrote into "/Users/justinnewman/time_tracker_app/src/dataconnect-generated"
+Generated sources: index.d.ts [2345B] index.cjs.js [1717B] package.json [853B] react/index.cjs.js [974B] react/esm/index.esm.js [923B] .guides/usage.md [1829B] .guides/config.json [236B] esm/package.json [17B] react/index.d.ts [1235B] react/esm/package.json [17B] react/README.md [19394B] .guides/setup.md [1682B] README.md [13198B] react/package.json [460B] esm/index.esm.js [1509B] 
+I0612 17:59:59.352836   30680 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0612 17:59:59.353313   30680 collector.go:107] connector "example" adminSdk wrote into "/Users/justinnewman/time_tracker_app/src/dataconnect-admin-generated"
+Generated sources: index.d.ts [2059B] esm/index.esm.js [812B] esm/package.json [17B] index.cjs.js [923B] package.json [632B] 
+I0612 17:59:59.353621   30680 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I0612 17:59:59.353627   30680 load.go:109] Finished reloading
+I0612 18:00:18.330893   30680 load.go:31] Reloading schema and connectors...
+I0612 18:00:18.378006   30680 control.go:100] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service 6e4f] UpdateResources(): done
+Main schema: sources: schema/schema.gql [486B] 
+Connector "example": sources: example/mutations.gql [297B] example/queries.gql [112B] 
+I0612 18:00:18.383226   30680 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "/Users/justinnewman/time_tracker_app/src/dataconnect-generated"
+I0612 18:00:18.387536   30680 codegen.go:101] [connector "example" adminSdk] Generating sources into "/Users/justinnewman/time_tracker_app/src/dataconnect-admin-generated"
+I0612 18:00:18.388922   30680 collector.go:107] schema extensions wrote into "/Users/justinnewman/time_tracker_app/dataconnect/.dataconnect/schema"
+Generated sources: main/implicit.gql [1235B] main/input.gql [29844B] main/relation.gql [13386B] main/query.gql [3775B] main/mutation.gql [10135B] prelude.gql [84995B] 
+I0612 18:00:18.390034   30680 collector.go:107] connector "example" javascriptSdk wrote into "/Users/justinnewman/time_tracker_app/src/dataconnect-generated"
+Generated sources: index.cjs.js [1717B] react/index.cjs.js [974B] .guides/usage.md [1829B] esm/package.json [17B] README.md [13171B] .guides/setup.md [1682B] react/esm/package.json [17B] react/README.md [19367B] .guides/config.json [236B] index.d.ts [2318B] esm/index.esm.js [1509B] package.json [853B] react/index.d.ts [1235B] react/package.json [460B] react/esm/index.esm.js [923B] 
+I0612 18:00:18.390387   30680 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0612 18:00:18.390927   30680 collector.go:107] connector "example" adminSdk wrote into "/Users/justinnewman/time_tracker_app/src/dataconnect-admin-generated"
+Generated sources: index.d.ts [2032B] esm/index.esm.js [812B] esm/package.json [17B] index.cjs.js [923B] package.json [632B] 
+I0612 18:00:18.391275   30680 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I0612 18:00:18.391286   30680 load.go:109] Finished reloading
+I0612 18:00:18.392743   30680 execute.go:57] Database ping is quick (likely cached), took 309.916µs
+I0612 18:00:18.393633   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service 6e4f] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:00:24.555048   30680 execute.go:57] Database ping is quick (likely cached), took 427.458µs
+I0612 18:00:24.555707   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service 6e4f] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:00:25.165926   30680 execute.go:57] Database ping is quick (likely cached), took 373.958µs
+I0612 18:00:25.166824   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service 6e4f] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:00:25.705305   30680 execute.go:57] Database ping is quick (likely cached), took 415.042µs
+I0612 18:00:25.705978   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service 6e4f] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:00:39.284003   30680 load.go:31] Reloading schema and connectors...
+I0612 18:00:39.339596   30680 control.go:100] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] UpdateResources(): done
+Main schema: sources: schema/schema.gql [486B] 
+Connector "example": sources: example/mutations.gql [297B] example/queries.gql [136B] 
+I0612 18:00:39.344632   30680 codegen.go:101] [connector "example" javascriptSdk] Generating sources into "/Users/justinnewman/time_tracker_app/src/dataconnect-generated"
+I0612 18:00:39.349143   30680 codegen.go:101] [connector "example" adminSdk] Generating sources into "/Users/justinnewman/time_tracker_app/src/dataconnect-admin-generated"
+I0612 18:00:39.351161   30680 collector.go:107] schema extensions wrote into "/Users/justinnewman/time_tracker_app/dataconnect/.dataconnect/schema"
+Generated sources: prelude.gql [84995B] main/relation.gql [13386B] main/query.gql [3775B] main/mutation.gql [10135B] main/implicit.gql [1235B] main/input.gql [29844B] 
+I0612 18:00:39.352319   30680 collector.go:107] connector "example" javascriptSdk wrote into "/Users/justinnewman/time_tracker_app/src/dataconnect-generated"
+Generated sources: package.json [853B] esm/package.json [17B] react/esm/index.esm.js [923B] .guides/usage.md [1829B] .guides/setup.md [1682B] esm/index.esm.js [1509B] index.cjs.js [1717B] README.md [13230B] react/index.d.ts [1235B] react/package.json [460B] react/esm/package.json [17B] react/index.cjs.js [974B] index.d.ts [2377B] react/README.md [19426B] .guides/config.json [236B] 
+I0612 18:00:39.352721   30680 installsdk.go:55] Package @dataconnect/generated is already installed. Skipping installation
+I0612 18:00:39.353082   30680 collector.go:107] connector "example" adminSdk wrote into "/Users/justinnewman/time_tracker_app/src/dataconnect-admin-generated"
+Generated sources: index.d.ts [2091B] esm/index.esm.js [812B] esm/package.json [17B] index.cjs.js [923B] package.json [632B] 
+I0612 18:00:39.353391   30680 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
+I0612 18:00:39.353398   30680 load.go:109] Finished reloading
+I0612 18:00:40.053643   30680 execute.go:57] Database ping is quick (likely cached), took 450.25µs
+I0612 18:00:40.055586   30680 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ExecuteGraphql query ListUsers: succeeded. 
+I0612 18:04:05.508318   30680 execute.go:57] Database ping is quick (likely cached), took 430.958µs
+W0612 18:04:05.510373   30680 engine.go:213] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service bd9b] ImpersonateMutation mutation CreateUserFromGoogle: failed. Connector: example
+Auth: admin
+
+Variables Set: [createdAt email googleUid username]
+Errors: [message:"violates SQL unique constraint: user_googleUid_uidx" path:{values:{string_value:"user_insert"}} extensions:{code:ALREADY_EXISTS debug_details:"PostgreSQL runtime error (err_code: 23505): pq: duplicate key value violates unique constraint \"user_googleUid_uidx\"\nWITH \"user_insert_temp\" AS (INSERT INTO \"public\".\"user\" (\"created_at\",\"email\",\"google_uid\",\"username\",\"id\") VALUES ( $1 ::timestamptz, $2 ::text, $3 ::text, $4 ::text,uuid_generate_v4()) RETURNING jsonb_build_object('id', REPLACE(CAST((\"id\") AS text), '-', ''), '#', encode(sha256(('User'|| ':' ||(\"id\")::TEXT)::BYTEA), 'hex')) AS j) SELECT * FROM \"user_insert_temp\"\nParams: [2026-06-12T22:04:05.506000Z sageclawprobot@gmail.com 3KF7Tpw6vpOAnY6cLsfpYLMkyBk1 Sage Claw]"}]
+Data Fields: [user_insert]
+sources: example/mutations.gql [297B] example/queries.gql [136B] 

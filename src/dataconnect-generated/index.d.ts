@@ -27,6 +27,7 @@ export interface ListUsersData {
     id: UUIDString;
     username: string;
     email?: string | null;
+    createdAt: TimestampString;
   } & User_Key)[];
 }
 
@@ -45,18 +46,6 @@ export interface WorkLog_Key {
   __typename?: 'WorkLog_Key';
 }
 
-interface CreateUserFromGoogleRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: CreateUserFromGoogleVariables): MutationRef<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: CreateUserFromGoogleVariables): MutationRef<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
-  operationName: string;
-}
-export const createUserFromGoogleRef: CreateUserFromGoogleRef;
-
-export function createUserFromGoogle(vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
-export function createUserFromGoogle(dc: DataConnect, vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
-
 interface ListUsersRef {
   /* Allow users to create refs without passing in DataConnect */
   (): QueryRef<ListUsersData, undefined>;
@@ -68,4 +57,16 @@ export const listUsersRef: ListUsersRef;
 
 export function listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
 export function listUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
+
+interface CreateUserFromGoogleRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateUserFromGoogleVariables): MutationRef<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateUserFromGoogleVariables): MutationRef<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
+  operationName: string;
+}
+export const createUserFromGoogleRef: CreateUserFromGoogleRef;
+
+export function createUserFromGoogle(vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
+export function createUserFromGoogle(dc: DataConnect, vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
 
