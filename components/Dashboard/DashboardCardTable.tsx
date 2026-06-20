@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useTimeEntries } from "@/hooks/useTimeEntries";
+import { useFirebaseDataConnect } from "@/hooks/useFirebaseDataConnect";
 import { useTimeRange } from "@/context/TimeRangeContext";
+import { useAuth } from "@/hooks/useAuth";
 
 interface TimeSlotRow {
     id: string;
@@ -13,44 +14,37 @@ interface TimeSlotRow {
     workLog: string;
     syncing?: boolean;
     error?: string;
+    dbId?: string;
 }
 
 export function DashboardCardTable() {
-    const { entries, fetchEntries, createEntry, updateEntry, loading, error } = useTimeEntries();
+    const { entries, fetchEntries, createEntry, updateEntry, loading, error } = useFirebaseDataConnect();
     const { timeSlots } = useTimeRange();
+    const { user } = useAuth();
     const [rows, setRows] = useState<TimeSlotRow[]>([]);
     const updateTimers = useRef<Record<string, NodeJS.Timeout>>({});
 
-    // Initialize rows from API data
-    useEffect(() => {
-        const initializeRows = async () => {
-            await fetchEntries();
-        };
-        initializeRows();
-    }, [fetchEntries]);
-
-    // Map entries to table rows and create empty slots for unmapped times
+    // Map entries to table rows
     useEffect(() => {
         const newRows: TimeSlotRow[] = [];
 
         timeSlots.forEach((hour) => {
-            const startTime = new Date();
-            startTime.setHours(hour, 0, 0, 0);
-            const endTime = new Date(startTime);
-            endTime.setHours(hour + 1, 0, 0, 0);
-
+            const todayDate = new Date().toISOString().split("T")[0];
+            
             const entry = entries.find((e) => {
-                const entryStart = new Date(e.startTime);
-                return entryStart.getHours() === hour;
+                const entryDate = e.date;
+                const entryHour = new Date(e.startTime).getHours();
+                return entryDate === todayDate && entryHour === hour;
             });
 
             newRows.push({
                 id: entry?.id || `slot-${hour}`,
-                time: `${hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? "PM" : "AM"} - ${hour + 1 > 12 ? hour + 1 - 12 : hour + 1}:00 ${hour + 1 >= 12 ? "PM" : "AM"}`,
+                time: `${hour > 12 ? hour - 12 : hour === 0 ? 12 : hour}:00 ${hour >= 12 ? "PM" : "AM"} - ${hour + 1 > 12 ? hour + 1 - 12 : hour + 1 === 12 ? 12 : hour + 1}:00 ${hour + 1 >= 12 ? "PM" : "AM"}`,
                 startHour: hour,
-                ticketNo: entry?.id?.split("-")[0] || "",
-                officeNo: entry?.category || "",
+                ticketNo: entry?.ticketNumber || "",
+                officeNo: entry?.officeNumber || "",
                 workLog: entry?.description || "",
+                dbId: entry?.id,
             });
         });
 
@@ -58,7 +52,7 @@ export function DashboardCardTable() {
     }, [entries, timeSlots]);
 
     const updateRow = useCallback(
-        (id: string, field: keyof Omit<TimeSlotRow, "id" | "time" | "startHour" | "syncing" | "error">, value: string) => {
+        (id: string, field: keyof Omit<TimeSlotRow, "id" | "time" | "startHour" | "syncing" | "error" | "dbId">, value: string) => {
             setRows((prev) =>
                 prev.map((row) =>
                     row.id === id ? { ...row, [field]: value, syncing: true, error: undefined } : row
@@ -73,30 +67,31 @@ export function DashboardCardTable() {
             // Debounce sync to DB (500ms after last change)
             updateTimers.current[id] = setTimeout(async () => {
                 const row = rows.find((r) => r.id === id);
-                if (!row) return;
+                if (!row || !user?.uid) return;
 
                 try {
                     const startTime = new Date();
                     startTime.setHours(row.startHour, 0, 0, 0);
                     const endTime = new Date(startTime);
                     endTime.setHours(row.startHour + 1, 0, 0, 0);
+                    const todayDate = new Date().toISOString().split("T")[0];
 
                     if (row.id.startsWith("slot-")) {
                         // Create new entry
                         await createEntry({
-                            title: row.ticketNo || "Untitled",
-                            description: row.workLog,
-                            category: row.officeNo || "Work",
                             startTime: startTime.toISOString(),
                             endTime: endTime.toISOString(),
-                            tags: [],
-                        });
-                    } else {
-                        // Update existing entry
-                        await updateEntry(row.id, {
-                            title: row.ticketNo || "Untitled",
+                            date: todayDate,
                             description: row.workLog,
-                            category: row.officeNo || "Work",
+                            ticketNumber: row.ticketNo,
+                            officeNumber: row.officeNo,
+                        });
+                    } else if (row.dbId) {
+                        // Update existing entry
+                        await updateEntry(row.dbId, {
+                            description: row.workLog,
+                            ticketNumber: row.ticketNo,
+                            officeNumber: row.officeNo,
                         });
                     }
 
@@ -111,11 +106,11 @@ export function DashboardCardTable() {
                 }
             }, 500);
         },
-        [rows, createEntry, updateEntry]
+        [rows, user?.uid, createEntry, updateEntry]
     );
 
     if (loading) {
-        return <div className="p-4 text-center text-gray-500">Loading worklog...</div>;
+        return <div className="p-4 text-center text-gray-500">Loading worklog from database...</div>;
     }
 
     return (
@@ -180,7 +175,7 @@ export function DashboardCardTable() {
                             </td>
                             <td className="border border-gray-300 px-4 py-2 text-center text-xs">
                                 {row.error ? (
-                                    <span className="text-red-600" title={row.error}>❌</span>
+                                    <span className="text-red-600 cursor-help" title={row.error}>❌</span>
                                 ) : row.syncing ? (
                                     <span className="text-yellow-600 animate-spin">⟳</span>
                                 ) : row.id.startsWith("slot-") ? (
@@ -194,7 +189,7 @@ export function DashboardCardTable() {
                 </tbody>
             </table>
             <div className="mt-2 text-xs text-gray-500 px-4">
-                ⚡ Changes sync automatically. Green ✓ = saved, ⟳ = syncing, ❌ = error, ◯ = unsaved
+                🗄️ <strong>Live Database Sync:</strong> Green ✓ = saved, ⟳ = syncing, ❌ = error, ◯ = unsaved. Changes auto-save to PostgreSQL.
             </div>
         </div>
     );
