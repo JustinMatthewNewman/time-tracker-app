@@ -1,6 +1,5 @@
 "use client";
 
-import { Input, Table } from "@heroui/react";
 import { useState } from "react";
 
 interface TimeSlotRow {
@@ -30,64 +29,62 @@ export function DashboardCardTable() {
     };
 
     return (
-        <Table className="w-full">
-            <Table.ScrollContainer>
-                <Table.Content aria-label="Work Log">
-                    <Table.Header>
-                        <Table.Column id="time" isRowHeader className="w-38">
+        <div className="w-full overflow-x-auto">
+            <table className="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr className="bg-gray-100">
+                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold w-38">
                             Time
-                        </Table.Column>
-
-                        <Table.Column id="ticket" className="w-12">
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold w-32">
                             Ticket
-                        </Table.Column>
-
-                        <Table.Column id="office" className="w-28">
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold w-40">
                             Office
-                        </Table.Column>
-
-                        <Table.Column id="worklog" className="min-w-[400px]">
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold min-w-96">
                             Work Log
-                        </Table.Column>
-                    </Table.Header>
-
-                    <Table.Body>
-                        {rows.map((row) => (
-                            <Table.Row key={row.id}>
-                                <Table.Cell className="py-2">{row.time}</Table.Cell>
-
-                                <Table.Cell className="py-2">
-                                    <Input
-                                        value={row.ticketNo}
-                                        onChange={(e) => updateRow(row.id, "ticketNo", e.target.value)}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell className="py-2">
-                                    <textarea
-                                        value={row.officeNo}
-                                        onChange={(e) => updateRow(row.id, "officeNo", e.target.value)}
-                                        onKeyDown={(e) => e.stopPropagation()}
-                                        className="w-full px-2 py-1 border border-default-200 rounded text-sm"
-                                        rows={2}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell className="py-2">
-                                    <textarea
-                                        className="w-full px-2 py-1 border border-default-200 rounded text-sm"
-                                        value={row.workLog}
-                                        onChange={(e) => updateRow(row.id, "workLog", e.target.value)}
-                                        onKeyDown={(e) => e.stopPropagation()}
-                                        rows={2}
-                                    />
-                                </Table.Cell>
-                            </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table.Content>
-            </Table.ScrollContainer>
-        </Table>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows.map((row) => (
+                        <tr key={row.id} className="hover:bg-gray-50">
+                            <td className="border border-gray-300 px-4 py-2 text-sm">
+                                {row.time}
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                                <input
+                                    type="text"
+                                    value={row.ticketNo}
+                                    onChange={(e) => updateRow(row.id, "ticketNo", e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                                    placeholder="Ticket #"
+                                />
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                                <textarea
+                                    value={row.officeNo}
+                                    onChange={(e) => updateRow(row.id, "officeNo", e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm resize-none"
+                                    rows={2}
+                                    placeholder="Office info"
+                                />
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                                <textarea
+                                    value={row.workLog}
+                                    onChange={(e) => updateRow(row.id, "workLog", e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm resize-none"
+                                    rows={2}
+                                    placeholder="Work log details..."
+                                />
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
     );
 }
 
