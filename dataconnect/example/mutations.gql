@@ -8,3 +8,59 @@ mutation CreateUserFromGoogle($googleUid: String!, $username: String!, $email: S
     createdAt: $createdAt
   })
 }
+
+mutation CreateTimeEntry(
+  $userId: UUID!
+  $startTime: Timestamp!
+  $endTime: Timestamp!
+  $date: Date!
+  $createdAt: Timestamp!
+  $description: String
+  $ticketNumber: String
+  $officeNumber: String
+) @auth(level: USER) {
+  timeEntry_insert(data: {
+    user: { id: $userId }
+    startTime: $startTime
+    endTime: $endTime
+    date: $date
+    description: $description
+    ticketNumber: $ticketNumber
+    officeNumber: $officeNumber
+    createdAt: $createdAt
+  })
+}
+
+mutation UpdateTimeEntry(
+  $entryId: UUID!
+  $description: String
+  $ticketNumber: String
+  $officeNumber: String
+) @auth(level: USER) {
+  timeEntry_update(
+    id: $entryId
+    data: {
+      description: $description
+      ticketNumber: $ticketNumber
+      officeNumber: $officeNumber
+    }
+  )
+}
+
+mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) {
+  timeEntry_delete(id: $entryId)
+}
+
+mutation CreateWorkLog(
+  $userId: UUID!
+  $name: String!
+  $createdAt: Timestamp!
+  $description: String
+) @auth(level: USER) {
+  workLog_insert(data: {
+    user: { id: $userId }
+    name: $name
+    description: $description
+    createdAt: $createdAt
+  })
+}
