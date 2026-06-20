@@ -4,21 +4,39 @@ import { z } from "zod";
  * Zod schemas for time entry validation
  */
 
-export const TimeEntryCreateSchema = z.object({
+const TimeEntryBaseSchema = z.object({
   title: z.string().min(1, "Title is required").max(255, "Title must be 255 characters or less"),
   description: z.string().optional().default(""),
   startTime: z.string().datetime("Invalid start time format"),
   endTime: z.string().datetime("Invalid end time format"),
   category: z.string().min(1, "Category is required").max(100, "Category must be 100 characters or less"),
   tags: z.array(z.string()).optional().default([]),
-}).refine((data) => new Date(data.endTime) > new Date(data.startTime), {
-  message: "End time must be after start time",
-  path: ["endTime"],
 });
 
-export const TimeEntryUpdateSchema = TimeEntryCreateSchema.partial().extend({
-  id: z.string().uuid("Invalid entry ID"),
-});
+export const TimeEntryCreateSchema = TimeEntryBaseSchema.refine(
+  (data) => new Date(data.endTime) > new Date(data.startTime),
+  {
+    message: "End time must be after start time",
+    path: ["endTime"],
+  }
+);
+
+export const TimeEntryUpdateSchema = TimeEntryBaseSchema.partial()
+  .refine(
+    (data) => {
+      if (data.startTime && data.endTime) {
+        return new Date(data.endTime) > new Date(data.startTime);
+      }
+      return true;
+    },
+    {
+      message: "End time must be after start time",
+      path: ["endTime"],
+    }
+  )
+  .extend({
+    id: z.string().uuid("Invalid entry ID"),
+  });
 
 export const TimeEntryIdSchema = z.object({
   id: z.string().uuid("Invalid entry ID"),
