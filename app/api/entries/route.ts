@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(entry, { status: 201 });
   } catch (error) {
     if (error instanceof ZodError) {
-      return badRequest(`Validation error: ${error.errors.map((e) => e.message).join(", ")}`);
+      const messages = (error as any).issues?.map((e: any) => e.message).join(", ") || "Validation failed";
+      return badRequest(`Validation error: ${messages}`);
     }
 
     console.error("Error creating time entry:", error);
@@ -70,7 +71,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(entries);
   } catch (error) {
     if (error instanceof ZodError) {
-      return badRequest(`Validation error: ${error.errors.map((e) => e.message).join(", ")}`);
+      const messages = (error as any).issues?.map((e: any) => e.message).join(", ") || "Validation failed";
+      return badRequest(`Validation error: ${messages}`);
     }
 
     console.error("Error listing time entries:", error);

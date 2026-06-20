@@ -9,7 +9,7 @@ import { ZodError } from "zod";
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Verify authentication
@@ -21,8 +21,11 @@ export async function GET(
       );
     }
 
+    // Resolve params for Next.js 16 async params
+    const { id } = await params;
+
     // Validate ID
-    const { id } = TimeEntryIdSchema.parse({ id: params.id });
+    TimeEntryIdSchema.parse({ id });
 
     // Get entry from database
     const entry = await getTimeEntryById(auth.userId!, id);
@@ -34,7 +37,8 @@ export async function GET(
     return NextResponse.json(entry);
   } catch (error) {
     if (error instanceof ZodError) {
-      return badRequest(`Validation error: ${error.errors.map((e) => e.message).join(", ")}`);
+      const messages = (error as any).issues?.map((e: any) => e.message).join(", ") || "Validation failed";
+      return badRequest(`Validation error: ${messages}`);
     }
 
     console.error("Error getting time entry:", error);
@@ -47,7 +51,7 @@ export async function GET(
  */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Verify authentication
@@ -59,8 +63,11 @@ export async function PUT(
       );
     }
 
+    // Resolve params for Next.js 16 async params
+    const { id } = await params;
+
     // Validate ID
-    const { id } = TimeEntryIdSchema.parse({ id: params.id });
+    TimeEntryIdSchema.parse({ id });
 
     // Parse request body
     const body = await req.json();
@@ -78,7 +85,8 @@ export async function PUT(
     return NextResponse.json(updatedEntry);
   } catch (error) {
     if (error instanceof ZodError) {
-      return badRequest(`Validation error: ${error.errors.map((e) => e.message).join(", ")}`);
+      const messages = (error as any).issues?.map((e: any) => e.message).join(", ") || "Validation failed";
+      return badRequest(`Validation error: ${messages}`);
     }
 
     console.error("Error updating time entry:", error);
@@ -91,7 +99,7 @@ export async function PUT(
  */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Verify authentication
@@ -103,8 +111,11 @@ export async function DELETE(
       );
     }
 
+    // Resolve params for Next.js 16 async params
+    const { id } = await params;
+
     // Validate ID
-    const { id } = TimeEntryIdSchema.parse({ id: params.id });
+    TimeEntryIdSchema.parse({ id });
 
     // Delete entry from database
     const deleted = await deleteTimeEntry(auth.userId!, id);
@@ -116,7 +127,8 @@ export async function DELETE(
     return NextResponse.json({ success: true, message: "Time entry deleted" });
   } catch (error) {
     if (error instanceof ZodError) {
-      return badRequest(`Validation error: ${error.errors.map((e) => e.message).join(", ")}`);
+      const messages = (error as any).issues?.map((e: any) => e.message).join(", ") || "Validation failed";
+      return badRequest(`Validation error: ${messages}`);
     }
 
     console.error("Error deleting time entry:", error);

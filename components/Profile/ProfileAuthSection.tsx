@@ -3,7 +3,6 @@
 import {
     Card,
     Skeleton,
-    Divider,
     Button,
 } from "@heroui/react";
 import { logout } from "@/lib/auth";
@@ -69,7 +68,7 @@ function ProfileAuthSection({
                     </div>
                 </div>
 
-                <Divider className="my-4" />
+                <div className="border-t border-default-200 my-4"></div>
 
                 {/* Profile Details Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -104,15 +103,13 @@ function ProfileAuthSection({
                     </div>
                 </div>
 
-                <Divider className="my-4" />
+                <div className="border-t border-default-200 my-4"></div>
 
                 {/* Actions */}
                 <div className="flex gap-2">
                     <Button
-                        color="danger"
-                        variant="bordered"
+                        className="flex-1 bg-red-600 text-white border border-red-600"
                         onPress={logout}
-                        className="flex-1"
                     >
                         Logout
                     </Button>
