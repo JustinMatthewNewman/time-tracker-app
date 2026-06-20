@@ -94,6 +94,7 @@ export function DashboardCardTable() {
                                     <textarea
                                         value={row.officeNo}
                                         onChange={(e) => updateRow(row.id, "officeNo", e.target.value)}
+                                        onKeyDown={(e) => e.stopPropagation()}
                                         className="w-full px-2 py-1 border border-default-200 rounded text-sm"
                                         rows={2}
                                     />
@@ -104,6 +105,7 @@ export function DashboardCardTable() {
                                         className="w-full px-2 py-1 border border-default-200 rounded text-sm"
                                         value={row.workLog}
                                         onChange={(e) => updateRow(row.id, "workLog", e.target.value)}
+                                        onKeyDown={(e) => e.stopPropagation()}
                                         rows={2}
                                     />
                                 </Table.Cell>
