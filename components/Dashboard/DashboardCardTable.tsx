@@ -1,7 +1,7 @@
 "use client";
 
 import type { Selection } from "@heroui/react";
-import { Checkbox, Input, Table, TextArea } from "@heroui/react";
+import { Checkbox, Input, Table } from "@heroui/react";
 import { useState } from "react";
 
 interface TimeSlotRow {
@@ -91,17 +91,20 @@ export function DashboardCardTable() {
                                 </Table.Cell>
 
                                 <Table.Cell className="py-2">
-                                    <TextArea
+                                    <textarea
                                         value={row.officeNo}
                                         onChange={(e) => updateRow(row.id, "officeNo", e.target.value)}
+                                        className="w-full px-2 py-1 border border-default-200 rounded text-sm"
+                                        rows={2}
                                     />
                                 </Table.Cell>
 
                                 <Table.Cell className="py-2">
-                                    <TextArea
-                                        className="w-full"
+                                    <textarea
+                                        className="w-full px-2 py-1 border border-default-200 rounded text-sm"
                                         value={row.workLog}
                                         onChange={(e) => updateRow(row.id, "workLog", e.target.value)}
+                                        rows={2}
                                     />
                                 </Table.Cell>
                             </Table.Row>
