@@ -358,13 +358,30 @@ extend type WorkLog {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "WorkLog.userId", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `WorkLog` table where the `workLogDate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  workLogDate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "WorkLog.workLogDate", purpose: QUERY_COUNT)
+  """
   ✨ Minimum of the `createdAt` field in the `WorkLog` table.
   """
   createdAt_min: Timestamp @fdc_generated(from: "WorkLog.createdAt", purpose: QUERY_MIN)
   """
+  ✨ Minimum of the `workLogDate` field in the `WorkLog` table.
+  """
+  workLogDate_min: Timestamp @fdc_generated(from: "WorkLog.workLogDate", purpose: QUERY_MIN)
+  """
   ✨ Maximum of the `createdAt` field in the `WorkLog` table.
   """
   createdAt_max: Timestamp @fdc_generated(from: "WorkLog.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `workLogDate` field in the `WorkLog` table.
+  """
+  workLogDate_max: Timestamp @fdc_generated(from: "WorkLog.workLogDate", purpose: QUERY_MAX)
   """
   A generated field that is used for caching results in SDKs.
   """

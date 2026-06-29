@@ -10,6 +10,7 @@ type WorkLog @table {
   user: User!
   name: String!
   description: String
+  workLogDate: Timestamp!
   createdAt: Timestamp!
 }
 

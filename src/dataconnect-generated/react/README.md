@@ -226,13 +226,13 @@ export interface ListTimeEntriesData {
       username: string;
       email?: string | null;
     } & User_Key;
-      startTime: TimestampString;
-      endTime: TimestampString;
-      date: DateString;
-      description?: string | null;
-      ticketNumber?: string | null;
-      officeNumber?: string | null;
-      createdAt: TimestampString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
   } & TimeEntry_Key)[];
 }
 ```
@@ -322,13 +322,13 @@ export interface GetTimeEntryData {
       username: string;
       email?: string | null;
     } & User_Key;
-      startTime: TimestampString;
-      endTime: TimestampString;
-      date: DateString;
-      description?: string | null;
-      ticketNumber?: string | null;
-      officeNumber?: string | null;
-      createdAt: TimestampString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
   } & TimeEntry_Key;
 }
 ```
@@ -418,13 +418,13 @@ export interface ListTimeEntriesByDateRangeData {
     user: {
       id: UUIDString;
     } & User_Key;
-      startTime: TimestampString;
-      endTime: TimestampString;
-      date: DateString;
-      description?: string | null;
-      ticketNumber?: string | null;
-      officeNumber?: string | null;
-      createdAt: TimestampString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
   } & TimeEntry_Key)[];
 }
 ```
@@ -926,6 +926,7 @@ The `CreateWorkLog` Mutation requires an argument of type `CreateWorkLogVariable
 export interface CreateWorkLogVariables {
   userId: UUIDString;
   name: string;
+  workLogDate: TimestampString;
   createdAt: TimestampString;
   description?: string | null;
 }
@@ -979,12 +980,13 @@ export default function CreateWorkLogComponent() {
   const createWorkLogVars: CreateWorkLogVariables = {
     userId: ..., 
     name: ..., 
+    workLogDate: ..., 
     createdAt: ..., 
     description: ..., // optional
   };
   mutation.mutate(createWorkLogVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ userId: ..., name: ..., createdAt: ..., description: ..., });
+  mutation.mutate({ userId: ..., name: ..., workLogDate: ..., createdAt: ..., description: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {

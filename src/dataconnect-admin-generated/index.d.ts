@@ -8,6 +8,21 @@ export type Int64String = string;
 export type DateString = string;
 
 
+export interface CreateTimeEntryData {
+  timeEntry_insert: TimeEntry_Key;
+}
+
+export interface CreateTimeEntryVariables {
+  userId: UUIDString;
+  startTime: TimestampString;
+  endTime: TimestampString;
+  date: DateString;
+  createdAt: TimestampString;
+  description?: string | null;
+  ticketNumber?: string | null;
+  officeNumber?: string | null;
+}
+
 export interface CreateUserFromGoogleData {
   user_insert: User_Key;
 }
@@ -17,6 +32,92 @@ export interface CreateUserFromGoogleVariables {
   username: string;
   email: string;
   createdAt: TimestampString;
+}
+
+export interface CreateWorkLogData {
+  workLog_insert: WorkLog_Key;
+}
+
+export interface CreateWorkLogVariables {
+  userId: UUIDString;
+  name: string;
+  workLogDate: TimestampString;
+  createdAt: TimestampString;
+  description?: string | null;
+}
+
+export interface DeleteTimeEntryData {
+  timeEntry_delete?: TimeEntry_Key | null;
+}
+
+export interface DeleteTimeEntryVariables {
+  entryId: UUIDString;
+}
+
+export interface GetTimeEntryData {
+  timeEntry?: {
+    id: UUIDString;
+    user: {
+      id: UUIDString;
+      username: string;
+      email?: string | null;
+    } & User_Key;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key;
+}
+
+export interface GetTimeEntryVariables {
+  entryId: UUIDString;
+}
+
+export interface ListTimeEntriesByDateRangeData {
+  timeEntries: ({
+    id: UUIDString;
+    user: {
+      id: UUIDString;
+    } & User_Key;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+
+export interface ListTimeEntriesByDateRangeVariables {
+  userId: UUIDString;
+  startDate: DateString;
+  endDate: DateString;
+}
+
+export interface ListTimeEntriesData {
+  timeEntries: ({
+    id: UUIDString;
+    user: {
+      id: UUIDString;
+      username: string;
+      email?: string | null;
+    } & User_Key;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+
+export interface ListTimeEntriesVariables {
+  userId: UUIDString;
 }
 
 export interface ListUsersData {
@@ -31,6 +132,17 @@ export interface ListUsersData {
 export interface TimeEntry_Key {
   id: UUIDString;
   __typename?: 'TimeEntry_Key';
+}
+
+export interface UpdateTimeEntryData {
+  timeEntry_update?: TimeEntry_Key | null;
+}
+
+export interface UpdateTimeEntryVariables {
+  entryId: UUIDString;
+  description?: string | null;
+  ticketNumber?: string | null;
+  officeNumber?: string | null;
 }
 
 export interface User_Key {
@@ -48,8 +160,43 @@ export function createUserFromGoogle(dc: DataConnect, vars: CreateUserFromGoogle
 /** Generated Node Admin SDK operation action function for the 'CreateUserFromGoogle' Mutation. Allow users to pass in custom DataConnect instances. */
 export function createUserFromGoogle(vars: CreateUserFromGoogleVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateUserFromGoogleData>>;
 
+/** Generated Node Admin SDK operation action function for the 'CreateTimeEntry' Mutation. Allow users to execute without passing in DataConnect. */
+export function createTimeEntry(dc: DataConnect, vars: CreateTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateTimeEntryData>>;
+/** Generated Node Admin SDK operation action function for the 'CreateTimeEntry' Mutation. Allow users to pass in custom DataConnect instances. */
+export function createTimeEntry(vars: CreateTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateTimeEntryData>>;
+
+/** Generated Node Admin SDK operation action function for the 'UpdateTimeEntry' Mutation. Allow users to execute without passing in DataConnect. */
+export function updateTimeEntry(dc: DataConnect, vars: UpdateTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateTimeEntryData>>;
+/** Generated Node Admin SDK operation action function for the 'UpdateTimeEntry' Mutation. Allow users to pass in custom DataConnect instances. */
+export function updateTimeEntry(vars: UpdateTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateTimeEntryData>>;
+
+/** Generated Node Admin SDK operation action function for the 'DeleteTimeEntry' Mutation. Allow users to execute without passing in DataConnect. */
+export function deleteTimeEntry(dc: DataConnect, vars: DeleteTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteTimeEntryData>>;
+/** Generated Node Admin SDK operation action function for the 'DeleteTimeEntry' Mutation. Allow users to pass in custom DataConnect instances. */
+export function deleteTimeEntry(vars: DeleteTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteTimeEntryData>>;
+
+/** Generated Node Admin SDK operation action function for the 'CreateWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
+export function createWorkLog(dc: DataConnect, vars: CreateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateWorkLogData>>;
+/** Generated Node Admin SDK operation action function for the 'CreateWorkLog' Mutation. Allow users to pass in custom DataConnect instances. */
+export function createWorkLog(vars: CreateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateWorkLogData>>;
+
 /** Generated Node Admin SDK operation action function for the 'ListUsers' Query. Allow users to execute without passing in DataConnect. */
 export function listUsers(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListUsersData>>;
 /** Generated Node Admin SDK operation action function for the 'ListUsers' Query. Allow users to pass in custom DataConnect instances. */
 export function listUsers(options?: OperationOptions): Promise<ExecuteOperationResponse<ListUsersData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntries' Query. Allow users to execute without passing in DataConnect. */
+export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntries' Query. Allow users to pass in custom DataConnect instances. */
+export function listTimeEntries(vars: ListTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesData>>;
+
+/** Generated Node Admin SDK operation action function for the 'GetTimeEntry' Query. Allow users to execute without passing in DataConnect. */
+export function getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetTimeEntryData>>;
+/** Generated Node Admin SDK operation action function for the 'GetTimeEntry' Query. Allow users to pass in custom DataConnect instances. */
+export function getTimeEntry(vars: GetTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetTimeEntryData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByDateRange' Query. Allow users to execute without passing in DataConnect. */
+export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByDateRange' Query. Allow users to pass in custom DataConnect instances. */
+export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;
 
