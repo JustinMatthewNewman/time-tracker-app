@@ -69,7 +69,7 @@ Below are examples of how to use the `example` connector's generated functions t
 ## ListUsers
 You can execute the `ListUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listUsers(): QueryPromise<ListUsersData, undefined>;
+listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
 
 interface ListUsersRef {
   ...
@@ -80,7 +80,7 @@ export const listUsersRef: ListUsersRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listUsers(dc: DataConnect): QueryPromise<ListUsersData, undefined>;
+listUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
 
 interface ListUsersRef {
   ...
@@ -165,7 +165,7 @@ executeQuery(ref).then((response) => {
 ## ListTimeEntries
 You can execute the `ListTimeEntries` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listTimeEntries(vars: ListTimeEntriesVariables): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
+listTimeEntries(vars: ListTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
 
 interface ListTimeEntriesRef {
   ...
@@ -176,7 +176,7 @@ export const listTimeEntriesRef: ListTimeEntriesRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
+listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
 
 interface ListTimeEntriesRef {
   ...
@@ -212,13 +212,13 @@ export interface ListTimeEntriesData {
       username: string;
       email?: string | null;
     } & User_Key;
-      startTime: TimestampString;
-      endTime: TimestampString;
-      date: DateString;
-      description?: string | null;
-      ticketNumber?: string | null;
-      officeNumber?: string | null;
-      createdAt: TimestampString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
   } & TimeEntry_Key)[];
 }
 ```
@@ -288,7 +288,7 @@ executeQuery(ref).then((response) => {
 ## GetTimeEntry
 You can execute the `GetTimeEntry` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-getTimeEntry(vars: GetTimeEntryVariables): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
+getTimeEntry(vars: GetTimeEntryVariables, options?: ExecuteQueryOptions): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
 
 interface GetTimeEntryRef {
   ...
@@ -299,7 +299,7 @@ export const getTimeEntryRef: GetTimeEntryRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
+getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: ExecuteQueryOptions): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
 
 interface GetTimeEntryRef {
   ...
@@ -335,13 +335,13 @@ export interface GetTimeEntryData {
       username: string;
       email?: string | null;
     } & User_Key;
-      startTime: TimestampString;
-      endTime: TimestampString;
-      date: DateString;
-      description?: string | null;
-      ticketNumber?: string | null;
-      officeNumber?: string | null;
-      createdAt: TimestampString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
   } & TimeEntry_Key;
 }
 ```
@@ -411,7 +411,7 @@ executeQuery(ref).then((response) => {
 ## ListTimeEntriesByDateRange
 You can execute the `ListTimeEntriesByDateRange` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
+listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
 
 interface ListTimeEntriesByDateRangeRef {
   ...
@@ -422,7 +422,7 @@ export const listTimeEntriesByDateRangeRef: ListTimeEntriesByDateRangeRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
+listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
 
 interface ListTimeEntriesByDateRangeRef {
   ...
@@ -458,13 +458,13 @@ export interface ListTimeEntriesByDateRangeData {
     user: {
       id: UUIDString;
     } & User_Key;
-      startTime: TimestampString;
-      endTime: TimestampString;
-      date: DateString;
-      description?: string | null;
-      ticketNumber?: string | null;
-      officeNumber?: string | null;
-      createdAt: TimestampString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
   } & TimeEntry_Key)[];
 }
 ```
@@ -1061,6 +1061,7 @@ The `CreateWorkLog` mutation requires an argument of type `CreateWorkLogVariable
 export interface CreateWorkLogVariables {
   userId: UUIDString;
   name: string;
+  workLogDate: TimestampString;
   createdAt: TimestampString;
   description?: string | null;
 }
@@ -1084,6 +1085,7 @@ import { connectorConfig, createWorkLog, CreateWorkLogVariables } from '@datacon
 const createWorkLogVars: CreateWorkLogVariables = {
   userId: ..., 
   name: ..., 
+  workLogDate: ..., 
   createdAt: ..., 
   description: ..., // optional
 };
@@ -1092,7 +1094,7 @@ const createWorkLogVars: CreateWorkLogVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createWorkLog(createWorkLogVars);
 // Variables can be defined inline as well.
-const { data } = await createWorkLog({ userId: ..., name: ..., createdAt: ..., description: ..., });
+const { data } = await createWorkLog({ userId: ..., name: ..., workLogDate: ..., createdAt: ..., description: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1117,6 +1119,7 @@ import { connectorConfig, createWorkLogRef, CreateWorkLogVariables } from '@data
 const createWorkLogVars: CreateWorkLogVariables = {
   userId: ..., 
   name: ..., 
+  workLogDate: ..., 
   createdAt: ..., 
   description: ..., // optional
 };
@@ -1124,7 +1127,7 @@ const createWorkLogVars: CreateWorkLogVariables = {
 // Call the `createWorkLogRef()` function to get a reference to the mutation.
 const ref = createWorkLogRef(createWorkLogVars);
 // Variables can be defined inline as well.
-const ref = createWorkLogRef({ userId: ..., name: ..., createdAt: ..., description: ..., });
+const ref = createWorkLogRef({ userId: ..., name: ..., workLogDate: ..., createdAt: ..., description: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

@@ -1,4 +1,4 @@
-const { queryRef, executeQuery, mutationRef, executeMutation, validateArgs } = require('firebase/data-connect');
+const { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs, makeMemoryCacheProvider } = require('firebase/data-connect');
 
 const connectorConfig = {
   connector: 'example',
@@ -6,6 +6,12 @@ const connectorConfig = {
   location: 'us-east4'
 };
 exports.connectorConfig = connectorConfig;
+const dataConnectSettings = {
+  cacheSettings: {
+    cacheProvider: makeMemoryCacheProvider()
+  }
+};
+exports.dataConnectSettings = dataConnectSettings;
 
 const createUserFromGoogleRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -16,8 +22,10 @@ createUserFromGoogleRef.operationName = 'CreateUserFromGoogle';
 exports.createUserFromGoogleRef = createUserFromGoogleRef;
 
 exports.createUserFromGoogle = function createUserFromGoogle(dcOrVars, vars) {
-  return executeMutation(createUserFromGoogleRef(dcOrVars, vars));
-};
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createUserFromGoogleRef(dcInstance, inputVars));
+}
+;
 
 const createTimeEntryRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -28,8 +36,10 @@ createTimeEntryRef.operationName = 'CreateTimeEntry';
 exports.createTimeEntryRef = createTimeEntryRef;
 
 exports.createTimeEntry = function createTimeEntry(dcOrVars, vars) {
-  return executeMutation(createTimeEntryRef(dcOrVars, vars));
-};
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createTimeEntryRef(dcInstance, inputVars));
+}
+;
 
 const updateTimeEntryRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -40,8 +50,10 @@ updateTimeEntryRef.operationName = 'UpdateTimeEntry';
 exports.updateTimeEntryRef = updateTimeEntryRef;
 
 exports.updateTimeEntry = function updateTimeEntry(dcOrVars, vars) {
-  return executeMutation(updateTimeEntryRef(dcOrVars, vars));
-};
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateTimeEntryRef(dcInstance, inputVars));
+}
+;
 
 const deleteTimeEntryRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -52,8 +64,10 @@ deleteTimeEntryRef.operationName = 'DeleteTimeEntry';
 exports.deleteTimeEntryRef = deleteTimeEntryRef;
 
 exports.deleteTimeEntry = function deleteTimeEntry(dcOrVars, vars) {
-  return executeMutation(deleteTimeEntryRef(dcOrVars, vars));
-};
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteTimeEntryRef(dcInstance, inputVars));
+}
+;
 
 const createWorkLogRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -64,8 +78,10 @@ createWorkLogRef.operationName = 'CreateWorkLog';
 exports.createWorkLogRef = createWorkLogRef;
 
 exports.createWorkLog = function createWorkLog(dcOrVars, vars) {
-  return executeMutation(createWorkLogRef(dcOrVars, vars));
-};
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createWorkLogRef(dcInstance, inputVars));
+}
+;
 
 const listUsersRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
@@ -75,9 +91,12 @@ const listUsersRef = (dc) => {
 listUsersRef.operationName = 'ListUsers';
 exports.listUsersRef = listUsersRef;
 
-exports.listUsers = function listUsers(dc) {
-  return executeQuery(listUsersRef(dc));
-};
+exports.listUsers = function listUsers(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listUsersRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
 
 const listTimeEntriesRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -87,9 +106,12 @@ const listTimeEntriesRef = (dcOrVars, vars) => {
 listTimeEntriesRef.operationName = 'ListTimeEntries';
 exports.listTimeEntriesRef = listTimeEntriesRef;
 
-exports.listTimeEntries = function listTimeEntries(dcOrVars, vars) {
-  return executeQuery(listTimeEntriesRef(dcOrVars, vars));
-};
+exports.listTimeEntries = function listTimeEntries(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(listTimeEntriesRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
 
 const getTimeEntryRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -99,9 +121,12 @@ const getTimeEntryRef = (dcOrVars, vars) => {
 getTimeEntryRef.operationName = 'GetTimeEntry';
 exports.getTimeEntryRef = getTimeEntryRef;
 
-exports.getTimeEntry = function getTimeEntry(dcOrVars, vars) {
-  return executeQuery(getTimeEntryRef(dcOrVars, vars));
-};
+exports.getTimeEntry = function getTimeEntry(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getTimeEntryRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
 
 const listTimeEntriesByDateRangeRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -111,6 +136,9 @@ const listTimeEntriesByDateRangeRef = (dcOrVars, vars) => {
 listTimeEntriesByDateRangeRef.operationName = 'ListTimeEntriesByDateRange';
 exports.listTimeEntriesByDateRangeRef = listTimeEntriesByDateRangeRef;
 
-exports.listTimeEntriesByDateRange = function listTimeEntriesByDateRange(dcOrVars, vars) {
-  return executeQuery(listTimeEntriesByDateRangeRef(dcOrVars, vars));
-};
+exports.listTimeEntriesByDateRange = function listTimeEntriesByDateRange(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(listTimeEntriesByDateRangeRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;

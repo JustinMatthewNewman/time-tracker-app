@@ -1,11 +1,15 @@
-import { queryRef, executeQuery, mutationRef, executeMutation, validateArgs } from 'firebase/data-connect';
+import { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs, makeMemoryCacheProvider } from 'firebase/data-connect';
 
 export const connectorConfig = {
   connector: 'example',
   service: 'ecs-time-tracker-app-service',
   location: 'us-east4'
 };
-
+export const dataConnectSettings = {
+  cacheSettings: {
+    cacheProvider: makeMemoryCacheProvider()
+  }
+};
 export const createUserFromGoogleRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -14,7 +18,8 @@ export const createUserFromGoogleRef = (dcOrVars, vars) => {
 createUserFromGoogleRef.operationName = 'CreateUserFromGoogle';
 
 export function createUserFromGoogle(dcOrVars, vars) {
-  return executeMutation(createUserFromGoogleRef(dcOrVars, vars));
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createUserFromGoogleRef(dcInstance, inputVars));
 }
 
 export const createTimeEntryRef = (dcOrVars, vars) => {
@@ -25,7 +30,8 @@ export const createTimeEntryRef = (dcOrVars, vars) => {
 createTimeEntryRef.operationName = 'CreateTimeEntry';
 
 export function createTimeEntry(dcOrVars, vars) {
-  return executeMutation(createTimeEntryRef(dcOrVars, vars));
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createTimeEntryRef(dcInstance, inputVars));
 }
 
 export const updateTimeEntryRef = (dcOrVars, vars) => {
@@ -36,7 +42,8 @@ export const updateTimeEntryRef = (dcOrVars, vars) => {
 updateTimeEntryRef.operationName = 'UpdateTimeEntry';
 
 export function updateTimeEntry(dcOrVars, vars) {
-  return executeMutation(updateTimeEntryRef(dcOrVars, vars));
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateTimeEntryRef(dcInstance, inputVars));
 }
 
 export const deleteTimeEntryRef = (dcOrVars, vars) => {
@@ -47,7 +54,8 @@ export const deleteTimeEntryRef = (dcOrVars, vars) => {
 deleteTimeEntryRef.operationName = 'DeleteTimeEntry';
 
 export function deleteTimeEntry(dcOrVars, vars) {
-  return executeMutation(deleteTimeEntryRef(dcOrVars, vars));
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteTimeEntryRef(dcInstance, inputVars));
 }
 
 export const createWorkLogRef = (dcOrVars, vars) => {
@@ -58,7 +66,8 @@ export const createWorkLogRef = (dcOrVars, vars) => {
 createWorkLogRef.operationName = 'CreateWorkLog';
 
 export function createWorkLog(dcOrVars, vars) {
-  return executeMutation(createWorkLogRef(dcOrVars, vars));
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createWorkLogRef(dcInstance, inputVars));
 }
 
 export const listUsersRef = (dc) => {
@@ -68,8 +77,10 @@ export const listUsersRef = (dc) => {
 }
 listUsersRef.operationName = 'ListUsers';
 
-export function listUsers(dc) {
-  return executeQuery(listUsersRef(dc));
+export function listUsers(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listUsersRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 
 export const listTimeEntriesRef = (dcOrVars, vars) => {
@@ -79,8 +90,10 @@ export const listTimeEntriesRef = (dcOrVars, vars) => {
 }
 listTimeEntriesRef.operationName = 'ListTimeEntries';
 
-export function listTimeEntries(dcOrVars, vars) {
-  return executeQuery(listTimeEntriesRef(dcOrVars, vars));
+export function listTimeEntries(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(listTimeEntriesRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 
 export const getTimeEntryRef = (dcOrVars, vars) => {
@@ -90,8 +103,10 @@ export const getTimeEntryRef = (dcOrVars, vars) => {
 }
 getTimeEntryRef.operationName = 'GetTimeEntry';
 
-export function getTimeEntry(dcOrVars, vars) {
-  return executeQuery(getTimeEntryRef(dcOrVars, vars));
+export function getTimeEntry(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getTimeEntryRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 
 export const listTimeEntriesByDateRangeRef = (dcOrVars, vars) => {
@@ -101,7 +116,9 @@ export const listTimeEntriesByDateRangeRef = (dcOrVars, vars) => {
 }
 listTimeEntriesByDateRangeRef.operationName = 'ListTimeEntriesByDateRange';
 
-export function listTimeEntriesByDateRange(dcOrVars, vars) {
-  return executeQuery(listTimeEntriesByDateRangeRef(dcOrVars, vars));
+export function listTimeEntriesByDateRange(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(listTimeEntriesByDateRangeRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 

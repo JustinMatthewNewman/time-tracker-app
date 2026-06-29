@@ -1,136 +1,142 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useTimeRange } from "@/context/TimeRangeContext";
-import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
 
 interface TimeSlotRow {
-    id: string;
+    id: number;
     time: string;
-    startHour: number;
     ticketNo: string;
     officeNo: string;
     workLog: string;
-    syncing?: boolean;
-    error?: string;
-    dbId?: string;
 }
 
 export function DashboardCardTable() {
-    const { timeSlots } = useTimeRange();
-    const { user } = useAuth();
-    const [rows, setRows] = useState<TimeSlotRow[]>([]);
-    const updateTimers = useRef<Record<string, NodeJS.Timeout>>({});
+    const [rows, setRows] = useState<TimeSlotRow[]>([
+        { id: 1, time: "8:00 AM - 8:15 AM", ticketNo: "", officeNo: "", workLog: "" },
+        { id: 2, time: "8:15 AM - 8:30 AM", ticketNo: "", officeNo: "", workLog: "" },
+        { id: 3, time: "8:30 AM - 8:45 AM", ticketNo: "", officeNo: "", workLog: "" },
+        { id: 4, time: "8:45 AM - 9:00 AM", ticketNo: "", officeNo: "", workLog: "" },
+    ]);
 
-    // Initialize rows on mount
-    useEffect(() => {
-        const newRows: TimeSlotRow[] = timeSlots.map((hour) => ({
-            id: `slot-${hour}`,
-            time: `${hour > 12 ? hour - 12 : hour === 0 ? 12 : hour}:00 ${hour >= 12 ? "PM" : "AM"} - ${hour + 1 > 12 ? hour + 1 - 12 : hour + 1 === 12 ? 12 : hour + 1}:00 ${hour + 1 >= 12 ? "PM" : "AM"}`,
-            startHour: hour,
-            ticketNo: "",
-            officeNo: "",
-            workLog: "",
-        }));
+    const [selectionStart, setSelectionStart] = useState<number | null>(null);
+
+    const updateRow = (
+        id: number,
+        field: keyof Omit<TimeSlotRow, "id" | "time">,
+        value: string
+    ) => {
+        setRows((prev) =>
+            prev.map((row) =>
+                row.id === id ? { ...row, [field]: value } : row
+            )
+        );
+    };
+
+    const isRowEmpty = (row: TimeSlotRow) => {
+        return !row.ticketNo && !row.officeNo && !row.workLog;
+    };
+
+    const canMergeRange = (start: number, end: number) => {
+        for (let i = start; i <= end; i++) {
+            if (!isRowEmpty(rows[i])) return false;
+        }
+        return true;
+    };
+
+    const mergeRange = (start: number, end: number) => {
+        const newRows = [...rows];
+
+        const startRow = newRows[start];
+        const endRow = newRows[end];
+
+        const startTime = startRow.time.split(" - ")[0];
+        const endTime = endRow.time.split(" - ")[1];
+
+        newRows[start] = {
+            ...startRow,
+            time: `${startTime} - ${endTime}`,
+        };
+
+        newRows.splice(start + 1, end - start);
+
         setRows(newRows);
-    }, [timeSlots]);
+    };
 
-    const updateRow = useCallback(
-        (id: string, field: keyof Omit<TimeSlotRow, "id" | "time" | "startHour" | "syncing" | "error" | "dbId">, value: string) => {
-            setRows((prev) =>
-                prev.map((row) =>
-                    row.id === id ? { ...row, [field]: value, syncing: true, error: undefined } : row
-                )
-            );
+    const handleRowClick = (index: number, e: React.MouseEvent) => {
+        // First click sets start
+        if (selectionStart === null || !e.shiftKey) {
+            setSelectionStart(index);
+            return;
+        }
 
-            // Clear existing timer
-            if (updateTimers.current[id]) {
-                clearTimeout(updateTimers.current[id]);
-            }
+        // Shift + click attempts merge
+        const start = Math.min(selectionStart, index);
+        const end = Math.max(selectionStart, index);
 
-            // Simulate sync (500ms debounce)
-            updateTimers.current[id] = setTimeout(() => {
-                setRows((prev) =>
-                    prev.map((r) => (r.id === id ? { ...r, syncing: false } : r))
-                );
-            }, 500);
-        },
-        []
-    );
+        if (canMergeRange(start, end)) {
+            mergeRange(start, end);
+        }
 
-    if (!user) {
-        return <div className="p-4 text-center text-gray-500">Please log in to use the worklog.</div>;
-    }
+        setSelectionStart(null);
+    };
 
     return (
-        <div className="w-full overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300">
+        <div className="overflow-x-auto">
+            <table className="w-full border-collapse border">
                 <thead>
-                    <tr className="bg-gray-100">
-                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold w-38">
-                            Time
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold w-32">
-                            Ticket
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold w-40">
-                            Office/Category
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold min-w-96">
-                            Work Log
-                        </th>
-                        <th className="border border-gray-300 px-4 py-2 text-center text-sm font-semibold w-16">
-                            Status
-                        </th>
+                    <tr>
+                        <th className="border p-2 text-left w-38">Time</th>
+                        <th className="border p-2 text-left w-24">Ticket</th>
+                        <th className="border p-2 text-left w-16">Office</th>
+                        <th className="border p-2 text-left">Work Log</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    {rows.map((row) => (
-                        <tr key={row.id} className="hover:bg-gray-50">
-                            <td className="border border-gray-300 px-4 py-2 text-sm">
-                                {row.time}
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2">
+                    {rows.map((row, index) => (
+                        <tr
+                            key={row.id}
+                            onClick={(e) => handleRowClick(index, e)}
+                            className="cursor-pointer hover:bg-gray-100"
+                        >
+                            <td className="border p-2">{row.time}</td>
+
+                            <td className="border p-2">
                                 <input
                                     type="text"
+                                    className="w-full rounded border p-2"
                                     value={row.ticketNo}
-                                    onChange={(e) => updateRow(row.id, "ticketNo", e.target.value)}
-                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                                    placeholder="Ticket #"
+                                    onChange={(e) =>
+                                        updateRow(row.id, "ticketNo", e.target.value)
+                                    }
                                 />
                             </td>
-                            <td className="border border-gray-300 px-4 py-2">
-                                <textarea
+
+                            <td className="border p-2">
+                                <input
+                                    type="text"
+                                    className="w-full rounded border p-2"
                                     value={row.officeNo}
-                                    onChange={(e) => updateRow(row.id, "officeNo", e.target.value)}
-                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm resize-none"
-                                    rows={2}
-                                    placeholder="Office/Category"
+                                    onChange={(e) =>
+                                        updateRow(row.id, "officeNo", e.target.value)
+                                    }
                                 />
                             </td>
-                            <td className="border border-gray-300 px-4 py-2">
+
+                            <td className="border p-2">
                                 <textarea
+                                    className="w-full rounded border p-2"
+                                    rows={3}
                                     value={row.workLog}
-                                    onChange={(e) => updateRow(row.id, "workLog", e.target.value)}
-                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm resize-none"
-                                    rows={2}
-                                    placeholder="Work log details..."
+                                    onChange={(e) =>
+                                        updateRow(row.id, "workLog", e.target.value)
+                                    }
                                 />
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2 text-center text-xs">
-                                {row.syncing ? (
-                                    <span className="text-yellow-600 animate-spin">⟳</span>
-                                ) : (
-                                    <span className="text-green-600">✓</span>
-                                )}
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <div className="mt-2 text-xs text-gray-500 px-4">
-                ✓ Local state working. Firebase SQL Connect integration coming next.
-            </div>
         </div>
     );
 }

@@ -783,6 +783,22 @@ input WorkLog_Data {
   """
   name_expr: String_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `WorkLog`.`workLogDate` of type `Timestamp!`
+  """
+  workLogDate: Timestamp
+  """
+  ✨ `_expr` server value variant of `workLogDate` (✨ Generated from Field `WorkLog`.`workLogDate` of type `Timestamp!`)
+  """
+  workLogDate_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `workLogDate` (✨ Generated from Field `WorkLog`.`workLogDate` of type `Timestamp!`)
+  """
+  workLogDate_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `workLogDate` (✨ Generated from Field `WorkLog`.`workLogDate` of type `Timestamp!`)
+  """
+  workLogDate_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `WorkLog`.`timeEntries_on_workLog` of type `[TimeEntry!]!`
   """
   timeEntries_on_workLog: [TimeEntry_Data!]
@@ -827,6 +843,10 @@ input WorkLog_Filter {
   ✨ Generated from Field `WorkLog`.`name` of type `String!`
   """
   name: String_Filter
+  """
+  ✨ Generated from Field `WorkLog`.`workLogDate` of type `Timestamp!`
+  """
+  workLogDate: Timestamp_Filter
   """
   ✨ Generated from Field `WorkLog`.`timeEntries_on_workLog` of type `[TimeEntry!]!`
   """
@@ -890,13 +910,25 @@ input WorkLog_Having {
   """
   userId_count: Int_Filter
   """
+  ✨ Generated from Field `WorkLog`.`workLogDate_count` of type `Int!`
+  """
+  workLogDate_count: Int_Filter
+  """
   ✨ Generated from Field `WorkLog`.`createdAt_min` of type `Timestamp`
   """
   createdAt_min: Timestamp_Filter
   """
+  ✨ Generated from Field `WorkLog`.`workLogDate_min` of type `Timestamp`
+  """
+  workLogDate_min: Timestamp_Filter
+  """
   ✨ Generated from Field `WorkLog`.`createdAt_max` of type `Timestamp`
   """
   createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `WorkLog`.`workLogDate_max` of type `Timestamp`
+  """
+  workLogDate_max: Timestamp_Filter
 }
 """
 ✨ Generated key input type for table 'WorkLog'. It represents the primary key fields used to uniquely identify a row in the table.
@@ -953,6 +985,10 @@ input WorkLog_Order {
   """
   name: OrderDirection
   """
+  ✨ Generated from Field `WorkLog`.`workLogDate` of type `Timestamp!`
+  """
+  workLogDate: OrderDirection
+  """
   ✨ Generated from Field `WorkLog`.`_count` of type `Int!`
   """
   _count: OrderDirection
@@ -977,11 +1013,23 @@ input WorkLog_Order {
   """
   userId_count: OrderDirection
   """
+  ✨ Generated from Field `WorkLog`.`workLogDate_count` of type `Int!`
+  """
+  workLogDate_count: OrderDirection
+  """
   ✨ Generated from Field `WorkLog`.`createdAt_min` of type `Timestamp`
   """
   createdAt_min: OrderDirection
   """
+  ✨ Generated from Field `WorkLog`.`workLogDate_min` of type `Timestamp`
+  """
+  workLogDate_min: OrderDirection
+  """
   ✨ Generated from Field `WorkLog`.`createdAt_max` of type `Timestamp`
   """
   createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `WorkLog`.`workLogDate_max` of type `Timestamp`
+  """
+  workLogDate_max: OrderDirection
 }

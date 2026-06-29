@@ -22,6 +22,28 @@ function DashboardPage() {
         }
     }, [user, loading, router]);
 
+    const savePageState = () => {
+        const inputs = Array.from(
+            document.querySelectorAll<
+                HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+            >("input, textarea, select")
+        );
+
+        const pageState: Record<string, unknown> = {};
+
+        inputs.forEach((input, index) => {
+            const key = input.name || input.id || `field_${index}`;
+
+            pageState[key] =
+                input instanceof HTMLInputElement &&
+                (input.type === "checkbox" || input.type === "radio")
+                    ? input.checked
+                    : input.value;
+        });
+
+        console.log(pageState);
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -36,11 +58,12 @@ function DashboardPage() {
         <div className="flex flex-col gap-4 p-4">
             <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold">📊 Dashboard</h1>
+ 
                 <Button
                     className="bg-blue-600 text-white"
-                    onPress={() => setIsFormOpen(true)}
+                    onPress={() => savePageState()}
                 >
-                    + New Entry
+                    Save
                 </Button>
             </div>
 

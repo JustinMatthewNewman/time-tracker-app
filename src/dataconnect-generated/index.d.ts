@@ -1,6 +1,7 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise, DataConnectSettings } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
+export const dataConnectSettings: DataConnectSettings;
 
 export type TimestampString = string;
 export type UUIDString = string;
@@ -43,6 +44,7 @@ export interface CreateWorkLogData {
 export interface CreateWorkLogVariables {
   userId: UUIDString;
   name: string;
+  workLogDate: TimestampString;
   createdAt: TimestampString;
   description?: string | null;
 }
@@ -63,13 +65,13 @@ export interface GetTimeEntryData {
       username: string;
       email?: string | null;
     } & User_Key;
-      startTime: TimestampString;
-      endTime: TimestampString;
-      date: DateString;
-      description?: string | null;
-      ticketNumber?: string | null;
-      officeNumber?: string | null;
-      createdAt: TimestampString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
   } & TimeEntry_Key;
 }
 
@@ -83,13 +85,13 @@ export interface ListTimeEntriesByDateRangeData {
     user: {
       id: UUIDString;
     } & User_Key;
-      startTime: TimestampString;
-      endTime: TimestampString;
-      date: DateString;
-      description?: string | null;
-      ticketNumber?: string | null;
-      officeNumber?: string | null;
-      createdAt: TimestampString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
   } & TimeEntry_Key)[];
 }
 
@@ -107,13 +109,13 @@ export interface ListTimeEntriesData {
       username: string;
       email?: string | null;
     } & User_Key;
-      startTime: TimestampString;
-      endTime: TimestampString;
-      date: DateString;
-      description?: string | null;
-      ticketNumber?: string | null;
-      officeNumber?: string | null;
-      createdAt: TimestampString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
   } & TimeEntry_Key)[];
 }
 
@@ -225,8 +227,8 @@ interface ListUsersRef {
 }
 export const listUsersRef: ListUsersRef;
 
-export function listUsers(): QueryPromise<ListUsersData, undefined>;
-export function listUsers(dc: DataConnect): QueryPromise<ListUsersData, undefined>;
+export function listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
+export function listUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
 
 interface ListTimeEntriesRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -237,8 +239,8 @@ interface ListTimeEntriesRef {
 }
 export const listTimeEntriesRef: ListTimeEntriesRef;
 
-export function listTimeEntries(vars: ListTimeEntriesVariables): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
-export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
+export function listTimeEntries(vars: ListTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
+export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
 
 interface GetTimeEntryRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -249,8 +251,8 @@ interface GetTimeEntryRef {
 }
 export const getTimeEntryRef: GetTimeEntryRef;
 
-export function getTimeEntry(vars: GetTimeEntryVariables): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
-export function getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
+export function getTimeEntry(vars: GetTimeEntryVariables, options?: ExecuteQueryOptions): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
+export function getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: ExecuteQueryOptions): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
 
 interface ListTimeEntriesByDateRangeRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -261,6 +263,6 @@ interface ListTimeEntriesByDateRangeRef {
 }
 export const listTimeEntriesByDateRangeRef: ListTimeEntriesByDateRangeRef;
 
-export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
-export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
+export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
+export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
 
