@@ -8,3 +8,65 @@ query ListUsers @auth(level: NO_ACCESS) {
     createdAt
   }
 }
+
+query ListTimeEntries($userId: UUID!) @auth(level: USER) {
+  timeEntries(
+    where: { user: { id: { eq: $userId } } }
+    orderBy: [{ startTime: DESC }]
+  ) {
+    id
+    user {
+      id
+      username
+      email
+    }
+    startTime
+    endTime
+    date
+    description
+    ticketNumber
+    officeNumber
+    createdAt
+  }
+}
+
+query GetTimeEntry($entryId: UUID!) @auth(level: USER) {
+  timeEntry(id: $entryId) {
+    id
+    user {
+      id
+      username
+      email
+    }
+    startTime
+    endTime
+    date
+    description
+    ticketNumber
+    officeNumber
+    createdAt
+  }
+}
+
+query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Date!) @auth(level: USER) {
+  timeEntries(
+    where: { 
+      _and: [
+        { user: { id: { eq: $userId } } }
+        { date: { ge: $startDate } }
+        { date: { le: $endDate } }
+      ]
+    }
+    orderBy: [{ startTime: DESC }]
+  ) {
+    id
+    user { id }
+    startTime
+    endTime
+    date
+    description
+    ticketNumber
+    officeNumber
+    createdAt
+  }
+}

@@ -1,115 +1,137 @@
 "use client";
 
-import type { Selection } from "@heroui/react";
-import { Checkbox, Input, Table, TextArea } from "@heroui/react";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useTimeRange } from "@/context/TimeRangeContext";
+import { useAuth } from "@/hooks/useAuth";
 
 interface TimeSlotRow {
-    id: number;
+    id: string;
     time: string;
+    startHour: number;
     ticketNo: string;
     officeNo: string;
     workLog: string;
+    syncing?: boolean;
+    error?: string;
+    dbId?: string;
 }
 
 export function DashboardCardTable() {
-    const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-    const [rows, setRows] = useState<TimeSlotRow[]>([
-        { id: 1, time: "8:00 AM - 8:15 AM", ticketNo: "", officeNo: "", workLog: "" },
-        { id: 2, time: "8:15 AM - 8:30 AM", ticketNo: "", officeNo: "", workLog: "" },
-        { id: 3, time: "8:30 AM - 8:45 AM", ticketNo: "", officeNo: "", workLog: "" },
-        { id: 4, time: "8:45 AM - 9:00 AM", ticketNo: "", officeNo: "", workLog: "" },
-    ]);
+    const { timeSlots } = useTimeRange();
+    const { user } = useAuth();
+    const [rows, setRows] = useState<TimeSlotRow[]>([]);
+    const updateTimers = useRef<Record<string, NodeJS.Timeout>>({});
 
-    const updateRow = (
-        id: number,
-        field: keyof Omit<TimeSlotRow, "id" | "time">,
-        value: string,
-    ) => {
-        setRows((prev) =>
-            prev.map((row) => (row.id === id ? { ...row, [field]: value } : row)),
-        );
-    };
+    // Initialize rows on mount
+    useEffect(() => {
+        const newRows: TimeSlotRow[] = timeSlots.map((hour) => ({
+            id: `slot-${hour}`,
+            time: `${hour > 12 ? hour - 12 : hour === 0 ? 12 : hour}:00 ${hour >= 12 ? "PM" : "AM"} - ${hour + 1 > 12 ? hour + 1 - 12 : hour + 1 === 12 ? 12 : hour + 1}:00 ${hour + 1 >= 12 ? "PM" : "AM"}`,
+            startHour: hour,
+            ticketNo: "",
+            officeNo: "",
+            workLog: "",
+        }));
+        setRows(newRows);
+    }, [timeSlots]);
+
+    const updateRow = useCallback(
+        (id: string, field: keyof Omit<TimeSlotRow, "id" | "time" | "startHour" | "syncing" | "error" | "dbId">, value: string) => {
+            setRows((prev) =>
+                prev.map((row) =>
+                    row.id === id ? { ...row, [field]: value, syncing: true, error: undefined } : row
+                )
+            );
+
+            // Clear existing timer
+            if (updateTimers.current[id]) {
+                clearTimeout(updateTimers.current[id]);
+            }
+
+            // Simulate sync (500ms debounce)
+            updateTimers.current[id] = setTimeout(() => {
+                setRows((prev) =>
+                    prev.map((r) => (r.id === id ? { ...r, syncing: false } : r))
+                );
+            }, 500);
+        },
+        []
+    );
+
+    if (!user) {
+        return <div className="p-4 text-center text-gray-500">Please log in to use the worklog.</div>;
+    }
 
     return (
-        <Table className="w-full">
-            <Table.ScrollContainer>
-                <Table.Content
-                    aria-label="Work Log"
-                    selectedKeys={selectedKeys}
-                    selectionMode="multiple"
-                    onSelectionChange={setSelectedKeys}
-                >
-                    <Table.Header>
-                        <Table.Column className="pr-0">
-                            <Checkbox aria-label="Select all" slot="selection">
-                                <Checkbox.Control>
-                                    <Checkbox.Indicator />
-                                </Checkbox.Control>
-                            </Checkbox>
-                        </Table.Column>
-
-                        <Table.Column id="time" isRowHeader className="w-38">
+        <div className="w-full overflow-x-auto">
+            <table className="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr className="bg-gray-100">
+                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold w-38">
                             Time
-                        </Table.Column>
-
-                        <Table.Column id="ticket" className="w-12">
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold w-32">
                             Ticket
-                        </Table.Column>
-
-                        <Table.Column id="office" className="w-28">
-                            Office
-                        </Table.Column>
-
-                        <Table.Column id="worklog" className="min-w-[400px]">
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold w-40">
+                            Office/Category
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-left text-sm font-semibold min-w-96">
                             Work Log
-                        </Table.Column>
-                    </Table.Header>
-
-                    <Table.Body>
-                        {rows.map((row) => (
-                            <Table.Row key={row.id} id={row.id}>
-                                <Table.Cell className="pr-0">
-                                    <Checkbox
-                                        aria-label={`Select row ${row.id}`}
-                                        slot="selection"
-                                        variant="secondary"
-                                    >
-                                        <Checkbox.Control>
-                                            <Checkbox.Indicator />
-                                        </Checkbox.Control>
-                                    </Checkbox>
-                                </Table.Cell>
-
-                                <Table.Cell className="py-2">{row.time}</Table.Cell>
-
-                                <Table.Cell className="py-2">
-                                    <Input
-                                        value={row.ticketNo}
-                                        onChange={(e) => updateRow(row.id, "ticketNo", e.target.value)}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell className="py-2">
-                                    <TextArea
-                                        value={row.officeNo}
-                                        onChange={(e) => updateRow(row.id, "officeNo", e.target.value)}
-                                    />
-                                </Table.Cell>
-
-                                <Table.Cell className="py-2">
-                                    <TextArea
-                                        className="w-full"
-                                        value={row.workLog}
-                                        onChange={(e) => updateRow(row.id, "workLog", e.target.value)}
-                                    />
-                                </Table.Cell>
-                            </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table.Content>
-            </Table.ScrollContainer>
-        </Table>
+                        </th>
+                        <th className="border border-gray-300 px-4 py-2 text-center text-sm font-semibold w-16">
+                            Status
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {rows.map((row) => (
+                        <tr key={row.id} className="hover:bg-gray-50">
+                            <td className="border border-gray-300 px-4 py-2 text-sm">
+                                {row.time}
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                                <input
+                                    type="text"
+                                    value={row.ticketNo}
+                                    onChange={(e) => updateRow(row.id, "ticketNo", e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                                    placeholder="Ticket #"
+                                />
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                                <textarea
+                                    value={row.officeNo}
+                                    onChange={(e) => updateRow(row.id, "officeNo", e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm resize-none"
+                                    rows={2}
+                                    placeholder="Office/Category"
+                                />
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2">
+                                <textarea
+                                    value={row.workLog}
+                                    onChange={(e) => updateRow(row.id, "workLog", e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm resize-none"
+                                    rows={2}
+                                    placeholder="Work log details..."
+                                />
+                            </td>
+                            <td className="border border-gray-300 px-4 py-2 text-center text-xs">
+                                {row.syncing ? (
+                                    <span className="text-yellow-600 animate-spin">⟳</span>
+                                ) : (
+                                    <span className="text-green-600">✓</span>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            <div className="mt-2 text-xs text-gray-500 px-4">
+                ✓ Local state working. Firebase SQL Connect integration coming next.
+            </div>
+        </div>
     );
 }
 
