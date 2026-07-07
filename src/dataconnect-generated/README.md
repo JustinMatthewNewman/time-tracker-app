@@ -1061,9 +1061,9 @@ The `CreateWorkLog` mutation requires an argument of type `CreateWorkLogVariable
 export interface CreateWorkLogVariables {
   userId: UUIDString;
   name: string;
-  workLogDate: TimestampString;
-  createdAt: TimestampString;
   description?: string | null;
+  createdAt: TimestampString;
+  workLogDate: TimestampString;
 }
 ```
 ### Return Type
@@ -1085,16 +1085,16 @@ import { connectorConfig, createWorkLog, CreateWorkLogVariables } from '@datacon
 const createWorkLogVars: CreateWorkLogVariables = {
   userId: ..., 
   name: ..., 
-  workLogDate: ..., 
-  createdAt: ..., 
   description: ..., // optional
+  createdAt: ..., 
+  workLogDate: ..., 
 };
 
 // Call the `createWorkLog()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createWorkLog(createWorkLogVars);
 // Variables can be defined inline as well.
-const { data } = await createWorkLog({ userId: ..., name: ..., workLogDate: ..., createdAt: ..., description: ..., });
+const { data } = await createWorkLog({ userId: ..., name: ..., description: ..., createdAt: ..., workLogDate: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1119,15 +1119,15 @@ import { connectorConfig, createWorkLogRef, CreateWorkLogVariables } from '@data
 const createWorkLogVars: CreateWorkLogVariables = {
   userId: ..., 
   name: ..., 
-  workLogDate: ..., 
-  createdAt: ..., 
   description: ..., // optional
+  createdAt: ..., 
+  workLogDate: ..., 
 };
 
 // Call the `createWorkLogRef()` function to get a reference to the mutation.
 const ref = createWorkLogRef(createWorkLogVars);
 // Variables can be defined inline as well.
-const ref = createWorkLogRef({ userId: ..., name: ..., workLogDate: ..., createdAt: ..., description: ..., });
+const ref = createWorkLogRef({ userId: ..., name: ..., description: ..., createdAt: ..., workLogDate: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

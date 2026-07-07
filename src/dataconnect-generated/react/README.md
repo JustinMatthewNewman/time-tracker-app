@@ -926,9 +926,9 @@ The `CreateWorkLog` Mutation requires an argument of type `CreateWorkLogVariable
 export interface CreateWorkLogVariables {
   userId: UUIDString;
   name: string;
-  workLogDate: TimestampString;
-  createdAt: TimestampString;
   description?: string | null;
+  createdAt: TimestampString;
+  workLogDate: TimestampString;
 }
 ```
 ### Return Type
@@ -980,13 +980,13 @@ export default function CreateWorkLogComponent() {
   const createWorkLogVars: CreateWorkLogVariables = {
     userId: ..., 
     name: ..., 
-    workLogDate: ..., 
-    createdAt: ..., 
     description: ..., // optional
+    createdAt: ..., 
+    workLogDate: ..., 
   };
   mutation.mutate(createWorkLogVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ userId: ..., name: ..., workLogDate: ..., createdAt: ..., description: ..., });
+  mutation.mutate({ userId: ..., name: ..., description: ..., createdAt: ..., workLogDate: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {

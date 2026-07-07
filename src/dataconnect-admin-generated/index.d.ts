@@ -41,9 +41,9 @@ export interface CreateWorkLogData {
 export interface CreateWorkLogVariables {
   userId: UUIDString;
   name: string;
-  workLogDate: TimestampString;
-  createdAt: TimestampString;
   description?: string | null;
+  createdAt: TimestampString;
+  workLogDate: TimestampString;
 }
 
 export interface DeleteTimeEntryData {

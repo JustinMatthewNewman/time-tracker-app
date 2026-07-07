@@ -10,13 +10,51 @@ interface TimeSlotRow {
     workLog: string;
 }
 
+function formatTime(date: Date) {
+    return date.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+    });
+}
+
+function generateTimeSlots(
+    startHour: number,
+    startMinute: number,
+    endHour: number,
+    endMinute: number,
+    intervalMinutes = 15
+): TimeSlotRow[] {
+    const rows: TimeSlotRow[] = [];
+
+    const current = new Date();
+    current.setHours(startHour, startMinute, 0, 0);
+
+    const end = new Date();
+    end.setHours(endHour, endMinute, 0, 0);
+
+    let id = 1;
+
+    while (current < end) {
+        const slotStart = new Date(current);
+
+        current.setMinutes(current.getMinutes() + intervalMinutes);
+
+        rows.push({
+            id: id++,
+            time: `${formatTime(slotStart)} - ${formatTime(current)}`,
+            ticketNo: "",
+            officeNo: "",
+            workLog: "",
+        });
+    }
+
+    return rows;
+}
+
 export function DashboardCardTable() {
-    const [rows, setRows] = useState<TimeSlotRow[]>([
-        { id: 1, time: "8:00 AM - 8:15 AM", ticketNo: "", officeNo: "", workLog: "" },
-        { id: 2, time: "8:15 AM - 8:30 AM", ticketNo: "", officeNo: "", workLog: "" },
-        { id: 3, time: "8:30 AM - 8:45 AM", ticketNo: "", officeNo: "", workLog: "" },
-        { id: 4, time: "8:45 AM - 9:00 AM", ticketNo: "", officeNo: "", workLog: "" },
-    ]);
+    const [rows, setRows] = useState<TimeSlotRow[]>(
+        generateTimeSlots(8, 0, 17, 0) // 8:00 AM - 5:00 PM
+    );
 
     const [selectionStart, setSelectionStart] = useState<number | null>(null);
 
@@ -38,7 +76,9 @@ export function DashboardCardTable() {
 
     const canMergeRange = (start: number, end: number) => {
         for (let i = start; i <= end; i++) {
-            if (!isRowEmpty(rows[i])) return false;
+            if (!isRowEmpty(rows[i])) {
+                return false;
+            }
         }
         return true;
     };
@@ -62,14 +102,25 @@ export function DashboardCardTable() {
         setRows(newRows);
     };
 
-    const handleRowClick = (index: number, e: React.MouseEvent) => {
-        // First click sets start
+    const handleRowClick = (
+        index: number,
+        e: React.MouseEvent<HTMLTableRowElement>
+    ) => {
+        // Ignore clicks originating from inputs/textareas
+        if (
+            e.target instanceof HTMLInputElement ||
+            e.target instanceof HTMLTextAreaElement
+        ) {
+            return;
+        }
+
+        // First click selects a row
         if (selectionStart === null || !e.shiftKey) {
             setSelectionStart(index);
             return;
         }
 
-        // Shift + click attempts merge
+        // Shift + click merges a range
         const start = Math.min(selectionStart, index);
         const end = Math.max(selectionStart, index);
 
@@ -85,9 +136,9 @@ export function DashboardCardTable() {
             <table className="w-full border-collapse border">
                 <thead>
                     <tr>
-                        <th className="border p-2 text-left w-38">Time</th>
-                        <th className="border p-2 text-left w-24">Ticket</th>
-                        <th className="border p-2 text-left w-16">Office</th>
+                        <th className="w-40 border p-2 text-left">Time</th>
+                        <th className="w-24 border p-2 text-left">Ticket</th>
+                        <th className="w-20 border p-2 text-left">Office</th>
                         <th className="border p-2 text-left">Work Log</th>
                     </tr>
                 </thead>
@@ -97,7 +148,11 @@ export function DashboardCardTable() {
                         <tr
                             key={row.id}
                             onClick={(e) => handleRowClick(index, e)}
-                            className="cursor-pointer hover:bg-gray-100"
+                            className={`cursor-pointer hover:bg-gray-100 ${
+                                selectionStart === index
+                                    ? "bg-blue-100"
+                                    : ""
+                            }`}
                         >
                             <td className="border p-2">{row.time}</td>
 
@@ -107,7 +162,11 @@ export function DashboardCardTable() {
                                     className="w-full rounded border p-2"
                                     value={row.ticketNo}
                                     onChange={(e) =>
-                                        updateRow(row.id, "ticketNo", e.target.value)
+                                        updateRow(
+                                            row.id,
+                                            "ticketNo",
+                                            e.target.value
+                                        )
                                     }
                                 />
                             </td>
@@ -118,7 +177,11 @@ export function DashboardCardTable() {
                                     className="w-full rounded border p-2"
                                     value={row.officeNo}
                                     onChange={(e) =>
-                                        updateRow(row.id, "officeNo", e.target.value)
+                                        updateRow(
+                                            row.id,
+                                            "officeNo",
+                                            e.target.value
+                                        )
                                     }
                                 />
                             </td>
@@ -129,7 +192,11 @@ export function DashboardCardTable() {
                                     rows={3}
                                     value={row.workLog}
                                     onChange={(e) =>
-                                        updateRow(row.id, "workLog", e.target.value)
+                                        updateRow(
+                                            row.id,
+                                            "workLog",
+                                            e.target.value
+                                        )
                                     }
                                 />
                             </td>
