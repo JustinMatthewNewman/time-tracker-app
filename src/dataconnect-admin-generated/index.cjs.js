@@ -63,6 +63,20 @@ function getTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
 }
 exports.getTimeEntry = getTimeEntry;
 
+function listWorkLogs(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListWorkLogs', undefined, inputOpts);
+}
+exports.listWorkLogs = listWorkLogs;
+
+function listTimeEntriesByWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTimeEntriesByWorkLog', inputVars, inputOpts);
+}
+exports.listTimeEntriesByWorkLog = listTimeEntriesByWorkLog;
+
 function listTimeEntriesByDateRange(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);

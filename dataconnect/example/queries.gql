@@ -48,6 +48,40 @@ query GetTimeEntry($entryId: UUID!) @auth(level: USER) {
   }
 }
 
+query ListWorkLogs @auth(level: USER) {
+  workLogs(
+    where: { user: { googleUid: { eq_expr: "auth.uid" } } }
+    orderBy: [{ workLogDate: DESC }]
+  ) {
+    id
+    name
+    description
+    workLogDate
+    createdAt
+  }
+}
+
+query ListTimeEntriesByWorkLog($workLogId: UUID!) @auth(level: USER) {
+  timeEntries(
+    where: {
+      _and: [
+        { workLog: { id: { eq: $workLogId } } }
+        { user: { googleUid: { eq_expr: "auth.uid" } } }
+      ]
+    }
+    orderBy: [{ startTime: ASC }]
+  ) {
+    id
+    startTime
+    endTime
+    date
+    description
+    ticketNumber
+    officeNumber
+    createdAt
+  }
+}
+
 query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Date!) @auth(level: USER) {
   timeEntries(
     where: { 
