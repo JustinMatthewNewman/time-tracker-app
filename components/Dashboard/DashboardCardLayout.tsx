@@ -10,18 +10,8 @@ import { useSidebar } from "../../context/SideBarContext";
 import { useSelectedWorkLog } from "../../context/SelectedWorkLogContext";
 import { useTimeEntriesByWorkLog } from "@/hooks/useTimeEntriesByWorkLog";
 import { DashboardCardTable } from './DashboardCardTable';
-
-function formatQuarterHour(hour: number, quarter: number): string {
-  const totalMinutes = hour * 60 + quarter * 15
-  const h = Math.floor(totalMinutes / 60)
-  const m = totalMinutes % 60
-  const period = h >= 12 ? 'PM' : 'AM'
-  const displayHour = h % 12 === 0 ? 12 : h % 12
-  return `${displayHour}:${m.toString().padStart(2, '0')} ${period}`
-}
-
-const QUARTERS = [0, 1, 2, 3]
-
+ 
+ 
 function DashboardCardLayout() {
   const { timeSlots } = useTimeRange()
   const { isOpen } = useSidebar();
@@ -34,15 +24,18 @@ function DashboardCardLayout() {
       <aside
         className={`
           transition-all duration-300 overflow-hidden
-          ${isOpen ? "w-72" : "w-0"}
+          ${isOpen ? "w-88" : "w-0"}
         `}
       >
-        <div className="w-72 h-screen bg-default-50 p-4">
+        <div className="w-88 h-screen bg-default-50 p-4">
           <ListBoxComponent />
         </div>
       </aside>
 
-      <div className='h-full w-screen text-foreground p-4 m-4'>
+      <div
+        className={`h-full w-screen text-foreground p-4 m-4 border-l transition-colors duration-300 
+          ${isOpen ? "border-default-200" : "border-transparent"}`}
+      >
         {!selectedWorkLogId && (
           <div className="text-sm text-gray-500 p-4">
             Select a work log from the sidebar to view its time entries.

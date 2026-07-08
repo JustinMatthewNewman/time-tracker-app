@@ -53,14 +53,14 @@ function DashboardPage() {
 
     return (
         <div className="flex flex-col gap-4 p-4">
-            <div className="flex items-center justify-end">
+            {/* <div className="flex items-center justify-end">
                 <Button
                     className="bg-blue-600 text-white"
                     onPress={() => savePageState()}
                 >
                     Save
                 </Button>
-            </div>
+            </div> */}
 
             <DashboardCard />
 

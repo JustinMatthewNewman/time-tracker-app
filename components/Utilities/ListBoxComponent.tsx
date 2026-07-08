@@ -70,7 +70,7 @@ export function WorkLogListBox() {
         </Button>
 
         {/* Export Button */}
-        <Button
+        {/* <Button
           className="flex-1"
           onPress={() => {
             const exportData = items.map((i) => ({ id: i.id, date: i.date }));
@@ -80,7 +80,7 @@ export function WorkLogListBox() {
           }}
         >
           Export
-        </Button>
+        </Button> */}
       </div>
 
       <NewWorkLogDialog
