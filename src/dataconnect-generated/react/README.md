@@ -20,6 +20,8 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*ListUsers*](#listusers)
   - [*ListTimeEntries*](#listtimeentries)
   - [*GetTimeEntry*](#gettimeentry)
+  - [*ListWorkLogs*](#listworklogs)
+  - [*ListTimeEntriesByWorkLog*](#listtimeentriesbyworklog)
   - [*ListTimeEntriesByDateRange*](#listtimeentriesbydaterange)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
@@ -379,6 +381,172 @@ export default function GetTimeEntryComponent() {
   // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
   if (query.isSuccess) {
     console.log(query.data.timeEntry);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## ListWorkLogs
+You can execute the `ListWorkLogs` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useListWorkLogs(dc: DataConnect, options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useListWorkLogs(options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, undefined>;
+```
+
+### Variables
+The `ListWorkLogs` Query has no variables.
+### Return Type
+Recall that calling the `ListWorkLogs` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListWorkLogs` Query is of type `ListWorkLogsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListWorkLogsData {
+  workLogs: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    workLogDate: TimestampString;
+    createdAt: TimestampString;
+  } & WorkLog_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `ListWorkLogs`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useListWorkLogs } from '@dataconnect/generated/react'
+
+export default function ListWorkLogsComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListWorkLogs();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useListWorkLogs(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useListWorkLogs(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useListWorkLogs(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.workLogs);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## ListTimeEntriesByWorkLog
+You can execute the `ListTimeEntriesByWorkLog` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useListTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByWorkLogData>): UseDataConnectQueryResult<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useListTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByWorkLogData>): UseDataConnectQueryResult<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+```
+
+### Variables
+The `ListTimeEntriesByWorkLog` Query requires an argument of type `ListTimeEntriesByWorkLogVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface ListTimeEntriesByWorkLogVariables {
+  workLogId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `ListTimeEntriesByWorkLog` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListTimeEntriesByWorkLog` Query is of type `ListTimeEntriesByWorkLogData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListTimeEntriesByWorkLogData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `ListTimeEntriesByWorkLog`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, ListTimeEntriesByWorkLogVariables } from '@dataconnect/generated';
+import { useListTimeEntriesByWorkLog } from '@dataconnect/generated/react'
+
+export default function ListTimeEntriesByWorkLogComponent() {
+  // The `useListTimeEntriesByWorkLog` Query hook requires an argument of type `ListTimeEntriesByWorkLogVariables`:
+  const listTimeEntriesByWorkLogVars: ListTimeEntriesByWorkLogVariables = {
+    workLogId: ..., 
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListTimeEntriesByWorkLog(listTimeEntriesByWorkLogVars);
+  // Variables can be defined inline as well.
+  const query = useListTimeEntriesByWorkLog({ workLogId: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useListTimeEntriesByWorkLog(dataConnect, listTimeEntriesByWorkLogVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useListTimeEntriesByWorkLog(listTimeEntriesByWorkLogVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useListTimeEntriesByWorkLog(dataConnect, listTimeEntriesByWorkLogVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.timeEntries);
   }
   return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
 }
@@ -926,9 +1094,9 @@ The `CreateWorkLog` Mutation requires an argument of type `CreateWorkLogVariable
 export interface CreateWorkLogVariables {
   userId: UUIDString;
   name: string;
-  workLogDate: TimestampString;
-  createdAt: TimestampString;
   description?: string | null;
+  createdAt: TimestampString;
+  workLogDate: TimestampString;
 }
 ```
 ### Return Type
@@ -980,13 +1148,13 @@ export default function CreateWorkLogComponent() {
   const createWorkLogVars: CreateWorkLogVariables = {
     userId: ..., 
     name: ..., 
-    workLogDate: ..., 
-    createdAt: ..., 
     description: ..., // optional
+    createdAt: ..., 
+    workLogDate: ..., 
   };
   mutation.mutate(createWorkLogVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ userId: ..., name: ..., workLogDate: ..., createdAt: ..., description: ..., });
+  mutation.mutate({ userId: ..., name: ..., description: ..., createdAt: ..., workLogDate: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {

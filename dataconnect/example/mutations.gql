@@ -54,9 +54,9 @@ mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) {
 mutation CreateWorkLog(
   $userId: UUID!
   $name: String!
-  $workLogDate: Timestamp!
-  $createdAt: Timestamp!
   $description: String
+  $createdAt: Timestamp!
+  $workLogDate: Timestamp!
 ) @auth(level: USER) {
   workLog_insert(data: {
     user: { id: $userId }

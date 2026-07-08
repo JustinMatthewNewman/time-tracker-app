@@ -13,6 +13,8 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListUsers*](#listusers)
   - [*ListTimeEntries*](#listtimeentries)
   - [*GetTimeEntry*](#gettimeentry)
+  - [*ListWorkLogs*](#listworklogs)
+  - [*ListTimeEntriesByWorkLog*](#listtimeentriesbyworklog)
   - [*ListTimeEntriesByDateRange*](#listtimeentriesbydaterange)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
@@ -405,6 +407,221 @@ console.log(data.timeEntry);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.timeEntry);
+});
+```
+
+## ListWorkLogs
+You can execute the `ListWorkLogs` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listWorkLogs(options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, undefined>;
+
+interface ListWorkLogsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListWorkLogsData, undefined>;
+}
+export const listWorkLogsRef: ListWorkLogsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listWorkLogs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, undefined>;
+
+interface ListWorkLogsRef {
+  ...
+  (dc: DataConnect): QueryRef<ListWorkLogsData, undefined>;
+}
+export const listWorkLogsRef: ListWorkLogsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listWorkLogsRef:
+```typescript
+const name = listWorkLogsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListWorkLogs` query has no variables.
+### Return Type
+Recall that executing the `ListWorkLogs` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListWorkLogsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListWorkLogsData {
+  workLogs: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    workLogDate: TimestampString;
+    createdAt: TimestampString;
+  } & WorkLog_Key)[];
+}
+```
+### Using `ListWorkLogs`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listWorkLogs } from '@dataconnect/generated';
+
+
+// Call the `listWorkLogs()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listWorkLogs();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listWorkLogs(dataConnect);
+
+console.log(data.workLogs);
+
+// Or, you can use the `Promise` API.
+listWorkLogs().then((response) => {
+  const data = response.data;
+  console.log(data.workLogs);
+});
+```
+
+### Using `ListWorkLogs`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listWorkLogsRef } from '@dataconnect/generated';
+
+
+// Call the `listWorkLogsRef()` function to get a reference to the query.
+const ref = listWorkLogsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listWorkLogsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.workLogs);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.workLogs);
+});
+```
+
+## ListTimeEntriesByWorkLog
+You can execute the `ListTimeEntriesByWorkLog` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+
+interface ListTimeEntriesByWorkLogRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListTimeEntriesByWorkLogVariables): QueryRef<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+}
+export const listTimeEntriesByWorkLogRef: ListTimeEntriesByWorkLogRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+
+interface ListTimeEntriesByWorkLogRef {
+  ...
+  (dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables): QueryRef<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+}
+export const listTimeEntriesByWorkLogRef: ListTimeEntriesByWorkLogRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listTimeEntriesByWorkLogRef:
+```typescript
+const name = listTimeEntriesByWorkLogRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListTimeEntriesByWorkLog` query requires an argument of type `ListTimeEntriesByWorkLogVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ListTimeEntriesByWorkLogVariables {
+  workLogId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `ListTimeEntriesByWorkLog` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListTimeEntriesByWorkLogData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListTimeEntriesByWorkLogData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+```
+### Using `ListTimeEntriesByWorkLog`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listTimeEntriesByWorkLog, ListTimeEntriesByWorkLogVariables } from '@dataconnect/generated';
+
+// The `ListTimeEntriesByWorkLog` query requires an argument of type `ListTimeEntriesByWorkLogVariables`:
+const listTimeEntriesByWorkLogVars: ListTimeEntriesByWorkLogVariables = {
+  workLogId: ..., 
+};
+
+// Call the `listTimeEntriesByWorkLog()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listTimeEntriesByWorkLog(listTimeEntriesByWorkLogVars);
+// Variables can be defined inline as well.
+const { data } = await listTimeEntriesByWorkLog({ workLogId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listTimeEntriesByWorkLog(dataConnect, listTimeEntriesByWorkLogVars);
+
+console.log(data.timeEntries);
+
+// Or, you can use the `Promise` API.
+listTimeEntriesByWorkLog(listTimeEntriesByWorkLogVars).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntries);
+});
+```
+
+### Using `ListTimeEntriesByWorkLog`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listTimeEntriesByWorkLogRef, ListTimeEntriesByWorkLogVariables } from '@dataconnect/generated';
+
+// The `ListTimeEntriesByWorkLog` query requires an argument of type `ListTimeEntriesByWorkLogVariables`:
+const listTimeEntriesByWorkLogVars: ListTimeEntriesByWorkLogVariables = {
+  workLogId: ..., 
+};
+
+// Call the `listTimeEntriesByWorkLogRef()` function to get a reference to the query.
+const ref = listTimeEntriesByWorkLogRef(listTimeEntriesByWorkLogVars);
+// Variables can be defined inline as well.
+const ref = listTimeEntriesByWorkLogRef({ workLogId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listTimeEntriesByWorkLogRef(dataConnect, listTimeEntriesByWorkLogVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.timeEntries);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntries);
 });
 ```
 
@@ -1061,9 +1278,9 @@ The `CreateWorkLog` mutation requires an argument of type `CreateWorkLogVariable
 export interface CreateWorkLogVariables {
   userId: UUIDString;
   name: string;
-  workLogDate: TimestampString;
-  createdAt: TimestampString;
   description?: string | null;
+  createdAt: TimestampString;
+  workLogDate: TimestampString;
 }
 ```
 ### Return Type
@@ -1085,16 +1302,16 @@ import { connectorConfig, createWorkLog, CreateWorkLogVariables } from '@datacon
 const createWorkLogVars: CreateWorkLogVariables = {
   userId: ..., 
   name: ..., 
-  workLogDate: ..., 
-  createdAt: ..., 
   description: ..., // optional
+  createdAt: ..., 
+  workLogDate: ..., 
 };
 
 // Call the `createWorkLog()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createWorkLog(createWorkLogVars);
 // Variables can be defined inline as well.
-const { data } = await createWorkLog({ userId: ..., name: ..., workLogDate: ..., createdAt: ..., description: ..., });
+const { data } = await createWorkLog({ userId: ..., name: ..., description: ..., createdAt: ..., workLogDate: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1119,15 +1336,15 @@ import { connectorConfig, createWorkLogRef, CreateWorkLogVariables } from '@data
 const createWorkLogVars: CreateWorkLogVariables = {
   userId: ..., 
   name: ..., 
-  workLogDate: ..., 
-  createdAt: ..., 
   description: ..., // optional
+  createdAt: ..., 
+  workLogDate: ..., 
 };
 
 // Call the `createWorkLogRef()` function to get a reference to the mutation.
 const ref = createWorkLogRef(createWorkLogVars);
 // Variables can be defined inline as well.
-const ref = createWorkLogRef({ userId: ..., name: ..., workLogDate: ..., createdAt: ..., description: ..., });
+const ref = createWorkLogRef({ userId: ..., name: ..., description: ..., createdAt: ..., workLogDate: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

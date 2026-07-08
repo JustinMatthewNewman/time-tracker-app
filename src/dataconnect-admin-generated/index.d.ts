@@ -41,9 +41,9 @@ export interface CreateWorkLogData {
 export interface CreateWorkLogVariables {
   userId: UUIDString;
   name: string;
-  workLogDate: TimestampString;
-  createdAt: TimestampString;
   description?: string | null;
+  createdAt: TimestampString;
+  workLogDate: TimestampString;
 }
 
 export interface DeleteTimeEntryData {
@@ -98,6 +98,23 @@ export interface ListTimeEntriesByDateRangeVariables {
   endDate: DateString;
 }
 
+export interface ListTimeEntriesByWorkLogData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+
+export interface ListTimeEntriesByWorkLogVariables {
+  workLogId: UUIDString;
+}
+
 export interface ListTimeEntriesData {
   timeEntries: ({
     id: UUIDString;
@@ -127,6 +144,16 @@ export interface ListUsersData {
     email?: string | null;
     createdAt: TimestampString;
   } & User_Key)[];
+}
+
+export interface ListWorkLogsData {
+  workLogs: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    workLogDate: TimestampString;
+    createdAt: TimestampString;
+  } & WorkLog_Key)[];
 }
 
 export interface TimeEntry_Key {
@@ -194,6 +221,16 @@ export function listTimeEntries(vars: ListTimeEntriesVariables, options?: Operat
 export function getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetTimeEntryData>>;
 /** Generated Node Admin SDK operation action function for the 'GetTimeEntry' Query. Allow users to pass in custom DataConnect instances. */
 export function getTimeEntry(vars: GetTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetTimeEntryData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListWorkLogs' Query. Allow users to execute without passing in DataConnect. */
+export function listWorkLogs(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListWorkLogsData>>;
+/** Generated Node Admin SDK operation action function for the 'ListWorkLogs' Query. Allow users to pass in custom DataConnect instances. */
+export function listWorkLogs(options?: OperationOptions): Promise<ExecuteOperationResponse<ListWorkLogsData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByWorkLog' Query. Allow users to execute without passing in DataConnect. */
+export function listTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByWorkLog' Query. Allow users to pass in custom DataConnect instances. */
+export function listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
 
 /** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByDateRange' Query. Allow users to execute without passing in DataConnect. */
 export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;
