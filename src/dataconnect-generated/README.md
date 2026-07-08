@@ -11,6 +11,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*Connecting to the local Emulator*](#connecting-to-the-local-emulator)
 - [**Queries**](#queries)
   - [*ListUsers*](#listusers)
+  - [*GetMyUser*](#getmyuser)
   - [*ListTimeEntries*](#listtimeentries)
   - [*GetTimeEntry*](#gettimeentry)
   - [*ListWorkLogs*](#listworklogs)
@@ -161,6 +162,99 @@ console.log(data.users);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.users);
+});
+```
+
+## GetMyUser
+You can execute the `GetMyUser` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getMyUser(options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
+
+interface GetMyUserRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetMyUserData, undefined>;
+}
+export const getMyUserRef: GetMyUserRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getMyUser(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
+
+interface GetMyUserRef {
+  ...
+  (dc: DataConnect): QueryRef<GetMyUserData, undefined>;
+}
+export const getMyUserRef: GetMyUserRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getMyUserRef:
+```typescript
+const name = getMyUserRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetMyUser` query has no variables.
+### Return Type
+Recall that executing the `GetMyUser` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetMyUserData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetMyUserData {
+  user?: {
+    id: UUIDString;
+  } & User_Key;
+}
+```
+### Using `GetMyUser`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getMyUser } from '@dataconnect/generated';
+
+
+// Call the `getMyUser()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getMyUser();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getMyUser(dataConnect);
+
+console.log(data.user);
+
+// Or, you can use the `Promise` API.
+getMyUser().then((response) => {
+  const data = response.data;
+  console.log(data.user);
+});
+```
+
+### Using `GetMyUser`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getMyUserRef } from '@dataconnect/generated';
+
+
+// Call the `getMyUserRef()` function to get a reference to the query.
+const ref = getMyUserRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getMyUserRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.user);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user);
 });
 ```
 
@@ -1277,9 +1371,9 @@ The `CreateWorkLog` mutation requires an argument of type `CreateWorkLogVariable
 ```typescript
 export interface CreateWorkLogVariables {
   userId: UUIDString;
+  workLogId: UUIDString;
   name: string;
   description?: string | null;
-  createdAt: TimestampString;
   workLogDate: TimestampString;
 }
 ```
@@ -1290,6 +1384,38 @@ The `data` property is an object of type `CreateWorkLogData`, which is defined i
 ```typescript
 export interface CreateWorkLogData {
   workLog_insert: WorkLog_Key;
+  seg1: TimeEntry_Key;
+  seg2: TimeEntry_Key;
+  seg3: TimeEntry_Key;
+  seg4: TimeEntry_Key;
+  seg5: TimeEntry_Key;
+  seg6: TimeEntry_Key;
+  seg7: TimeEntry_Key;
+  seg8: TimeEntry_Key;
+  seg9: TimeEntry_Key;
+  seg10: TimeEntry_Key;
+  seg11: TimeEntry_Key;
+  seg12: TimeEntry_Key;
+  seg13: TimeEntry_Key;
+  seg14: TimeEntry_Key;
+  seg15: TimeEntry_Key;
+  seg16: TimeEntry_Key;
+  seg17: TimeEntry_Key;
+  seg18: TimeEntry_Key;
+  seg19: TimeEntry_Key;
+  seg20: TimeEntry_Key;
+  seg21: TimeEntry_Key;
+  seg22: TimeEntry_Key;
+  seg23: TimeEntry_Key;
+  seg24: TimeEntry_Key;
+  seg25: TimeEntry_Key;
+  seg26: TimeEntry_Key;
+  seg27: TimeEntry_Key;
+  seg28: TimeEntry_Key;
+  seg29: TimeEntry_Key;
+  seg30: TimeEntry_Key;
+  seg31: TimeEntry_Key;
+  seg32: TimeEntry_Key;
 }
 ```
 ### Using `CreateWorkLog`'s action shortcut function
@@ -1301,9 +1427,9 @@ import { connectorConfig, createWorkLog, CreateWorkLogVariables } from '@datacon
 // The `CreateWorkLog` mutation requires an argument of type `CreateWorkLogVariables`:
 const createWorkLogVars: CreateWorkLogVariables = {
   userId: ..., 
+  workLogId: ..., 
   name: ..., 
   description: ..., // optional
-  createdAt: ..., 
   workLogDate: ..., 
 };
 
@@ -1311,18 +1437,82 @@ const createWorkLogVars: CreateWorkLogVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createWorkLog(createWorkLogVars);
 // Variables can be defined inline as well.
-const { data } = await createWorkLog({ userId: ..., name: ..., description: ..., createdAt: ..., workLogDate: ..., });
+const { data } = await createWorkLog({ userId: ..., workLogId: ..., name: ..., description: ..., workLogDate: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
 const { data } = await createWorkLog(dataConnect, createWorkLogVars);
 
 console.log(data.workLog_insert);
+console.log(data.seg1);
+console.log(data.seg2);
+console.log(data.seg3);
+console.log(data.seg4);
+console.log(data.seg5);
+console.log(data.seg6);
+console.log(data.seg7);
+console.log(data.seg8);
+console.log(data.seg9);
+console.log(data.seg10);
+console.log(data.seg11);
+console.log(data.seg12);
+console.log(data.seg13);
+console.log(data.seg14);
+console.log(data.seg15);
+console.log(data.seg16);
+console.log(data.seg17);
+console.log(data.seg18);
+console.log(data.seg19);
+console.log(data.seg20);
+console.log(data.seg21);
+console.log(data.seg22);
+console.log(data.seg23);
+console.log(data.seg24);
+console.log(data.seg25);
+console.log(data.seg26);
+console.log(data.seg27);
+console.log(data.seg28);
+console.log(data.seg29);
+console.log(data.seg30);
+console.log(data.seg31);
+console.log(data.seg32);
 
 // Or, you can use the `Promise` API.
 createWorkLog(createWorkLogVars).then((response) => {
   const data = response.data;
   console.log(data.workLog_insert);
+  console.log(data.seg1);
+  console.log(data.seg2);
+  console.log(data.seg3);
+  console.log(data.seg4);
+  console.log(data.seg5);
+  console.log(data.seg6);
+  console.log(data.seg7);
+  console.log(data.seg8);
+  console.log(data.seg9);
+  console.log(data.seg10);
+  console.log(data.seg11);
+  console.log(data.seg12);
+  console.log(data.seg13);
+  console.log(data.seg14);
+  console.log(data.seg15);
+  console.log(data.seg16);
+  console.log(data.seg17);
+  console.log(data.seg18);
+  console.log(data.seg19);
+  console.log(data.seg20);
+  console.log(data.seg21);
+  console.log(data.seg22);
+  console.log(data.seg23);
+  console.log(data.seg24);
+  console.log(data.seg25);
+  console.log(data.seg26);
+  console.log(data.seg27);
+  console.log(data.seg28);
+  console.log(data.seg29);
+  console.log(data.seg30);
+  console.log(data.seg31);
+  console.log(data.seg32);
 });
 ```
 
@@ -1335,16 +1525,16 @@ import { connectorConfig, createWorkLogRef, CreateWorkLogVariables } from '@data
 // The `CreateWorkLog` mutation requires an argument of type `CreateWorkLogVariables`:
 const createWorkLogVars: CreateWorkLogVariables = {
   userId: ..., 
+  workLogId: ..., 
   name: ..., 
   description: ..., // optional
-  createdAt: ..., 
   workLogDate: ..., 
 };
 
 // Call the `createWorkLogRef()` function to get a reference to the mutation.
 const ref = createWorkLogRef(createWorkLogVars);
 // Variables can be defined inline as well.
-const ref = createWorkLogRef({ userId: ..., name: ..., description: ..., createdAt: ..., workLogDate: ..., });
+const ref = createWorkLogRef({ userId: ..., workLogId: ..., name: ..., description: ..., workLogDate: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1355,11 +1545,75 @@ const ref = createWorkLogRef(dataConnect, createWorkLogVars);
 const { data } = await executeMutation(ref);
 
 console.log(data.workLog_insert);
+console.log(data.seg1);
+console.log(data.seg2);
+console.log(data.seg3);
+console.log(data.seg4);
+console.log(data.seg5);
+console.log(data.seg6);
+console.log(data.seg7);
+console.log(data.seg8);
+console.log(data.seg9);
+console.log(data.seg10);
+console.log(data.seg11);
+console.log(data.seg12);
+console.log(data.seg13);
+console.log(data.seg14);
+console.log(data.seg15);
+console.log(data.seg16);
+console.log(data.seg17);
+console.log(data.seg18);
+console.log(data.seg19);
+console.log(data.seg20);
+console.log(data.seg21);
+console.log(data.seg22);
+console.log(data.seg23);
+console.log(data.seg24);
+console.log(data.seg25);
+console.log(data.seg26);
+console.log(data.seg27);
+console.log(data.seg28);
+console.log(data.seg29);
+console.log(data.seg30);
+console.log(data.seg31);
+console.log(data.seg32);
 
 // Or, you can use the `Promise` API.
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.workLog_insert);
+  console.log(data.seg1);
+  console.log(data.seg2);
+  console.log(data.seg3);
+  console.log(data.seg4);
+  console.log(data.seg5);
+  console.log(data.seg6);
+  console.log(data.seg7);
+  console.log(data.seg8);
+  console.log(data.seg9);
+  console.log(data.seg10);
+  console.log(data.seg11);
+  console.log(data.seg12);
+  console.log(data.seg13);
+  console.log(data.seg14);
+  console.log(data.seg15);
+  console.log(data.seg16);
+  console.log(data.seg17);
+  console.log(data.seg18);
+  console.log(data.seg19);
+  console.log(data.seg20);
+  console.log(data.seg21);
+  console.log(data.seg22);
+  console.log(data.seg23);
+  console.log(data.seg24);
+  console.log(data.seg25);
+  console.log(data.seg26);
+  console.log(data.seg27);
+  console.log(data.seg28);
+  console.log(data.seg29);
+  console.log(data.seg30);
+  console.log(data.seg31);
+  console.log(data.seg32);
 });
 ```
 

@@ -53,16 +53,280 @@ mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) {
 
 mutation CreateWorkLog(
   $userId: UUID!
+  $workLogId: UUID!
   $name: String!
   $description: String
-  $createdAt: Timestamp!
   $workLogDate: Timestamp!
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+  query @redact {
+    user(key: { id: $userId })
+      @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to create work log for this user") {
+      id
+      googleUid
+    }
+  }
   workLog_insert(data: {
+    id: $workLogId
     user: { id: $userId }
     name: $name
     description: $description
-    createdAt: $createdAt
+    createdAt_expr: "request.time"
     workLogDate: $workLogDate
+  })
+  seg1: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('8h')"
+    endTime_expr: "vars.workLogDate + duration('8h15m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg2: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('8h15m')"
+    endTime_expr: "vars.workLogDate + duration('8h30m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg3: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('8h30m')"
+    endTime_expr: "vars.workLogDate + duration('8h45m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg4: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('8h45m')"
+    endTime_expr: "vars.workLogDate + duration('9h')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg5: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('9h')"
+    endTime_expr: "vars.workLogDate + duration('9h15m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg6: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('9h15m')"
+    endTime_expr: "vars.workLogDate + duration('9h30m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg7: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('9h30m')"
+    endTime_expr: "vars.workLogDate + duration('9h45m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg8: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('9h45m')"
+    endTime_expr: "vars.workLogDate + duration('10h')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg9: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('10h')"
+    endTime_expr: "vars.workLogDate + duration('10h15m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg10: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('10h15m')"
+    endTime_expr: "vars.workLogDate + duration('10h30m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg11: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('10h30m')"
+    endTime_expr: "vars.workLogDate + duration('10h45m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg12: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('10h45m')"
+    endTime_expr: "vars.workLogDate + duration('11h')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg13: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('11h')"
+    endTime_expr: "vars.workLogDate + duration('11h15m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg14: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('11h15m')"
+    endTime_expr: "vars.workLogDate + duration('11h30m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg15: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('11h30m')"
+    endTime_expr: "vars.workLogDate + duration('11h45m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg16: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('11h45m')"
+    endTime_expr: "vars.workLogDate + duration('12h')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg17: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('12h')"
+    endTime_expr: "vars.workLogDate + duration('12h15m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg18: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('12h15m')"
+    endTime_expr: "vars.workLogDate + duration('12h30m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg19: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('12h30m')"
+    endTime_expr: "vars.workLogDate + duration('12h45m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg20: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('12h45m')"
+    endTime_expr: "vars.workLogDate + duration('13h')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg21: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('13h')"
+    endTime_expr: "vars.workLogDate + duration('13h15m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg22: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('13h15m')"
+    endTime_expr: "vars.workLogDate + duration('13h30m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg23: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('13h30m')"
+    endTime_expr: "vars.workLogDate + duration('13h45m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg24: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('13h45m')"
+    endTime_expr: "vars.workLogDate + duration('14h')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg25: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('14h')"
+    endTime_expr: "vars.workLogDate + duration('14h15m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg26: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('14h15m')"
+    endTime_expr: "vars.workLogDate + duration('14h30m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg27: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('14h30m')"
+    endTime_expr: "vars.workLogDate + duration('14h45m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg28: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('14h45m')"
+    endTime_expr: "vars.workLogDate + duration('15h')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg29: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('15h')"
+    endTime_expr: "vars.workLogDate + duration('15h15m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg30: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('15h15m')"
+    endTime_expr: "vars.workLogDate + duration('15h30m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg31: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('15h30m')"
+    endTime_expr: "vars.workLogDate + duration('15h45m')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
+  })
+  seg32: timeEntry_insert(data: {
+    userId: $userId
+    workLogId: $workLogId
+    startTime_expr: "vars.workLogDate + duration('15h45m')"
+    endTime_expr: "vars.workLogDate + duration('16h')"
+    date_expr: "vars.workLogDate"
+    createdAt_expr: "request.time"
   })
 }

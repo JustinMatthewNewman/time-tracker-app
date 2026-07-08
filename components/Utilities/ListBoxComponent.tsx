@@ -1,18 +1,20 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { ListBox, Button, Label } from "@heroui/react";
 import type { Selection } from "react-aria-components";
 import { useWorkLogs } from "@/hooks/useWorkLogs";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
+import { NewWorkLogDialog } from "./NewWorkLogDialog";
 
 function formatDate(isoDate: string) {
   return new Date(isoDate).toISOString().split("T")[0]; // yyyy-mm-dd
 }
 
 export function WorkLogListBox() {
-  const { workLogs, loading, error } = useWorkLogs();
+  const { workLogs, loading, error, createWorkLog } = useWorkLogs();
   const { selectedWorkLogId, setSelectedWorkLogId } = useSelectedWorkLog();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const items = useMemo(
     () =>
@@ -62,17 +64,33 @@ export function WorkLogListBox() {
         ))}
       </ListBox>
 
-      {/* Export Button */}
-      <Button
-        onPress={() => {
-          const exportData = items.map((i) => ({ id: i.id, date: i.date }));
-          console.log("Export:", exportData);
+      <div className="flex gap-2">
+        <Button aria-label="New work log" onPress={() => setIsDialogOpen(true)}>
+          +
+        </Button>
 
-          // you can replace with real export logic (CSV, API, etc.)
+        {/* Export Button */}
+        <Button
+          className="flex-1"
+          onPress={() => {
+            const exportData = items.map((i) => ({ id: i.id, date: i.date }));
+            console.log("Export:", exportData);
+
+            // you can replace with real export logic (CSV, API, etc.)
+          }}
+        >
+          Export
+        </Button>
+      </div>
+
+      <NewWorkLogDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onCreate={async (data) => {
+          const { workLogId } = await createWorkLog(data);
+          setSelectedWorkLogId(workLogId);
         }}
-      >
-        Export
-      </Button>
+      />
     </div>
   );
 }

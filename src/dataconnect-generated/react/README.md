@@ -18,6 +18,7 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*Connecting to the local Emulator*](#connecting-to-the-local-emulator)
 - [**Queries**](#queries)
   - [*ListUsers*](#listusers)
+  - [*GetMyUser*](#getmyuser)
   - [*ListTimeEntries*](#listtimeentries)
   - [*GetTimeEntry*](#gettimeentry)
   - [*ListWorkLogs*](#listworklogs)
@@ -189,6 +190,77 @@ export default function ListUsersComponent() {
   // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
   if (query.isSuccess) {
     console.log(query.data.users);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## GetMyUser
+You can execute the `GetMyUser` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useGetMyUser(dc: DataConnect, options?: useDataConnectQueryOptions<GetMyUserData>): UseDataConnectQueryResult<GetMyUserData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useGetMyUser(options?: useDataConnectQueryOptions<GetMyUserData>): UseDataConnectQueryResult<GetMyUserData, undefined>;
+```
+
+### Variables
+The `GetMyUser` Query has no variables.
+### Return Type
+Recall that calling the `GetMyUser` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetMyUser` Query is of type `GetMyUserData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface GetMyUserData {
+  user?: {
+    id: UUIDString;
+  } & User_Key;
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `GetMyUser`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useGetMyUser } from '@dataconnect/generated/react'
+
+export default function GetMyUserComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useGetMyUser();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useGetMyUser(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetMyUser(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetMyUser(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.user);
   }
   return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
 }
@@ -1093,9 +1165,9 @@ The `CreateWorkLog` Mutation requires an argument of type `CreateWorkLogVariable
 ```javascript
 export interface CreateWorkLogVariables {
   userId: UUIDString;
+  workLogId: UUIDString;
   name: string;
   description?: string | null;
-  createdAt: TimestampString;
   workLogDate: TimestampString;
 }
 ```
@@ -1110,6 +1182,38 @@ To access the data returned by a Mutation, use the `UseMutationResult.data` fiel
 ```javascript
 export interface CreateWorkLogData {
   workLog_insert: WorkLog_Key;
+  seg1: TimeEntry_Key;
+  seg2: TimeEntry_Key;
+  seg3: TimeEntry_Key;
+  seg4: TimeEntry_Key;
+  seg5: TimeEntry_Key;
+  seg6: TimeEntry_Key;
+  seg7: TimeEntry_Key;
+  seg8: TimeEntry_Key;
+  seg9: TimeEntry_Key;
+  seg10: TimeEntry_Key;
+  seg11: TimeEntry_Key;
+  seg12: TimeEntry_Key;
+  seg13: TimeEntry_Key;
+  seg14: TimeEntry_Key;
+  seg15: TimeEntry_Key;
+  seg16: TimeEntry_Key;
+  seg17: TimeEntry_Key;
+  seg18: TimeEntry_Key;
+  seg19: TimeEntry_Key;
+  seg20: TimeEntry_Key;
+  seg21: TimeEntry_Key;
+  seg22: TimeEntry_Key;
+  seg23: TimeEntry_Key;
+  seg24: TimeEntry_Key;
+  seg25: TimeEntry_Key;
+  seg26: TimeEntry_Key;
+  seg27: TimeEntry_Key;
+  seg28: TimeEntry_Key;
+  seg29: TimeEntry_Key;
+  seg30: TimeEntry_Key;
+  seg31: TimeEntry_Key;
+  seg32: TimeEntry_Key;
 }
 ```
 
@@ -1147,14 +1251,14 @@ export default function CreateWorkLogComponent() {
   // The `useCreateWorkLog` Mutation requires an argument of type `CreateWorkLogVariables`:
   const createWorkLogVars: CreateWorkLogVariables = {
     userId: ..., 
+    workLogId: ..., 
     name: ..., 
     description: ..., // optional
-    createdAt: ..., 
     workLogDate: ..., 
   };
   mutation.mutate(createWorkLogVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ userId: ..., name: ..., description: ..., createdAt: ..., workLogDate: ..., });
+  mutation.mutate({ userId: ..., workLogId: ..., name: ..., description: ..., workLogDate: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
@@ -1174,6 +1278,38 @@ export default function CreateWorkLogComponent() {
   // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
   if (mutation.isSuccess) {
     console.log(mutation.data.workLog_insert);
+    console.log(mutation.data.seg1);
+    console.log(mutation.data.seg2);
+    console.log(mutation.data.seg3);
+    console.log(mutation.data.seg4);
+    console.log(mutation.data.seg5);
+    console.log(mutation.data.seg6);
+    console.log(mutation.data.seg7);
+    console.log(mutation.data.seg8);
+    console.log(mutation.data.seg9);
+    console.log(mutation.data.seg10);
+    console.log(mutation.data.seg11);
+    console.log(mutation.data.seg12);
+    console.log(mutation.data.seg13);
+    console.log(mutation.data.seg14);
+    console.log(mutation.data.seg15);
+    console.log(mutation.data.seg16);
+    console.log(mutation.data.seg17);
+    console.log(mutation.data.seg18);
+    console.log(mutation.data.seg19);
+    console.log(mutation.data.seg20);
+    console.log(mutation.data.seg21);
+    console.log(mutation.data.seg22);
+    console.log(mutation.data.seg23);
+    console.log(mutation.data.seg24);
+    console.log(mutation.data.seg25);
+    console.log(mutation.data.seg26);
+    console.log(mutation.data.seg27);
+    console.log(mutation.data.seg28);
+    console.log(mutation.data.seg29);
+    console.log(mutation.data.seg30);
+    console.log(mutation.data.seg31);
+    console.log(mutation.data.seg32);
   }
   return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
 }

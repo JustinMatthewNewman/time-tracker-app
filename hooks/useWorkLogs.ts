@@ -1,9 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useAuth } from "./useAuth";
-import { useListWorkLogs } from "@/src/dataconnect-generated/react";
-import type { ListWorkLogsData } from "@/src/dataconnect-generated";
+import {
+  useListWorkLogs,
+  useGetMyUser,
+  useCreateWorkLog,
+} from "@/src/dataconnect-generated/react";
+import type { ListWorkLogsData, CreateWorkLogVariables } from "@/src/dataconnect-generated";
 
 export interface WorkLogData {
   id: string;
@@ -17,6 +21,8 @@ export function useWorkLogs() {
   const { user } = useAuth();
 
   const listQuery = useListWorkLogs({ enabled: !!user?.uid });
+  const myUserQuery = useGetMyUser({ enabled: !!user?.uid });
+  const createMutation = useCreateWorkLog();
 
   const workLogs = useMemo<WorkLogData[]>(
     () =>
@@ -32,10 +38,32 @@ export function useWorkLogs() {
     [listQuery.data]
   );
 
+  const createWorkLog = useCallback(
+    async (data: { name: string; workLogDate: string; description?: string }) => {
+      const myUserId = myUserQuery.data?.user?.id;
+      if (!myUserId) throw new Error("User profile not found");
+
+      const workLogId = crypto.randomUUID();
+
+      await createMutation.mutateAsync({
+        userId: myUserId,
+        workLogId,
+        name: data.name,
+        workLogDate: data.workLogDate,
+        description: data.description || undefined,
+      } as CreateWorkLogVariables);
+
+      await listQuery.refetch();
+      return { workLogId };
+    },
+    [myUserQuery.data, createMutation, listQuery]
+  );
+
   return {
     workLogs,
     loading: listQuery.isPending,
     error: listQuery.error?.message || null,
     refetch: listQuery.refetch,
+    createWorkLog,
   };
 }

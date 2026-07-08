@@ -36,13 +36,45 @@ export interface CreateUserFromGoogleVariables {
 
 export interface CreateWorkLogData {
   workLog_insert: WorkLog_Key;
+  seg1: TimeEntry_Key;
+  seg2: TimeEntry_Key;
+  seg3: TimeEntry_Key;
+  seg4: TimeEntry_Key;
+  seg5: TimeEntry_Key;
+  seg6: TimeEntry_Key;
+  seg7: TimeEntry_Key;
+  seg8: TimeEntry_Key;
+  seg9: TimeEntry_Key;
+  seg10: TimeEntry_Key;
+  seg11: TimeEntry_Key;
+  seg12: TimeEntry_Key;
+  seg13: TimeEntry_Key;
+  seg14: TimeEntry_Key;
+  seg15: TimeEntry_Key;
+  seg16: TimeEntry_Key;
+  seg17: TimeEntry_Key;
+  seg18: TimeEntry_Key;
+  seg19: TimeEntry_Key;
+  seg20: TimeEntry_Key;
+  seg21: TimeEntry_Key;
+  seg22: TimeEntry_Key;
+  seg23: TimeEntry_Key;
+  seg24: TimeEntry_Key;
+  seg25: TimeEntry_Key;
+  seg26: TimeEntry_Key;
+  seg27: TimeEntry_Key;
+  seg28: TimeEntry_Key;
+  seg29: TimeEntry_Key;
+  seg30: TimeEntry_Key;
+  seg31: TimeEntry_Key;
+  seg32: TimeEntry_Key;
 }
 
 export interface CreateWorkLogVariables {
   userId: UUIDString;
+  workLogId: UUIDString;
   name: string;
   description?: string | null;
-  createdAt: TimestampString;
   workLogDate: TimestampString;
 }
 
@@ -52,6 +84,12 @@ export interface DeleteTimeEntryData {
 
 export interface DeleteTimeEntryVariables {
   entryId: UUIDString;
+}
+
+export interface GetMyUserData {
+  user?: {
+    id: UUIDString;
+  } & User_Key;
 }
 
 export interface GetTimeEntryData {
@@ -211,6 +249,11 @@ export function createWorkLog(vars: CreateWorkLogVariables, options?: OperationO
 export function listUsers(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListUsersData>>;
 /** Generated Node Admin SDK operation action function for the 'ListUsers' Query. Allow users to pass in custom DataConnect instances. */
 export function listUsers(options?: OperationOptions): Promise<ExecuteOperationResponse<ListUsersData>>;
+
+/** Generated Node Admin SDK operation action function for the 'GetMyUser' Query. Allow users to execute without passing in DataConnect. */
+export function getMyUser(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<GetMyUserData>>;
+/** Generated Node Admin SDK operation action function for the 'GetMyUser' Query. Allow users to pass in custom DataConnect instances. */
+export function getMyUser(options?: OperationOptions): Promise<ExecuteOperationResponse<GetMyUserData>>;
 
 /** Generated Node Admin SDK operation action function for the 'ListTimeEntries' Query. Allow users to execute without passing in DataConnect. */
 export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesData>>;

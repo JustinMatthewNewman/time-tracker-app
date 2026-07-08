@@ -39,13 +39,45 @@ export interface CreateUserFromGoogleVariables {
 
 export interface CreateWorkLogData {
   workLog_insert: WorkLog_Key;
+  seg1: TimeEntry_Key;
+  seg2: TimeEntry_Key;
+  seg3: TimeEntry_Key;
+  seg4: TimeEntry_Key;
+  seg5: TimeEntry_Key;
+  seg6: TimeEntry_Key;
+  seg7: TimeEntry_Key;
+  seg8: TimeEntry_Key;
+  seg9: TimeEntry_Key;
+  seg10: TimeEntry_Key;
+  seg11: TimeEntry_Key;
+  seg12: TimeEntry_Key;
+  seg13: TimeEntry_Key;
+  seg14: TimeEntry_Key;
+  seg15: TimeEntry_Key;
+  seg16: TimeEntry_Key;
+  seg17: TimeEntry_Key;
+  seg18: TimeEntry_Key;
+  seg19: TimeEntry_Key;
+  seg20: TimeEntry_Key;
+  seg21: TimeEntry_Key;
+  seg22: TimeEntry_Key;
+  seg23: TimeEntry_Key;
+  seg24: TimeEntry_Key;
+  seg25: TimeEntry_Key;
+  seg26: TimeEntry_Key;
+  seg27: TimeEntry_Key;
+  seg28: TimeEntry_Key;
+  seg29: TimeEntry_Key;
+  seg30: TimeEntry_Key;
+  seg31: TimeEntry_Key;
+  seg32: TimeEntry_Key;
 }
 
 export interface CreateWorkLogVariables {
   userId: UUIDString;
+  workLogId: UUIDString;
   name: string;
   description?: string | null;
-  createdAt: TimestampString;
   workLogDate: TimestampString;
 }
 
@@ -55,6 +87,12 @@ export interface DeleteTimeEntryData {
 
 export interface DeleteTimeEntryVariables {
   entryId: UUIDString;
+}
+
+export interface GetMyUserData {
+  user?: {
+    id: UUIDString;
+  } & User_Key;
 }
 
 export interface GetTimeEntryData {
@@ -185,6 +223,66 @@ export interface WorkLog_Key {
   __typename?: 'WorkLog_Key';
 }
 
+interface CreateUserFromGoogleRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateUserFromGoogleVariables): MutationRef<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateUserFromGoogleVariables): MutationRef<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
+  operationName: string;
+}
+export const createUserFromGoogleRef: CreateUserFromGoogleRef;
+
+export function createUserFromGoogle(vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
+export function createUserFromGoogle(dc: DataConnect, vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
+
+interface CreateTimeEntryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateTimeEntryVariables): MutationRef<CreateTimeEntryData, CreateTimeEntryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateTimeEntryVariables): MutationRef<CreateTimeEntryData, CreateTimeEntryVariables>;
+  operationName: string;
+}
+export const createTimeEntryRef: CreateTimeEntryRef;
+
+export function createTimeEntry(vars: CreateTimeEntryVariables): MutationPromise<CreateTimeEntryData, CreateTimeEntryVariables>;
+export function createTimeEntry(dc: DataConnect, vars: CreateTimeEntryVariables): MutationPromise<CreateTimeEntryData, CreateTimeEntryVariables>;
+
+interface UpdateTimeEntryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateTimeEntryVariables): MutationRef<UpdateTimeEntryData, UpdateTimeEntryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateTimeEntryVariables): MutationRef<UpdateTimeEntryData, UpdateTimeEntryVariables>;
+  operationName: string;
+}
+export const updateTimeEntryRef: UpdateTimeEntryRef;
+
+export function updateTimeEntry(vars: UpdateTimeEntryVariables): MutationPromise<UpdateTimeEntryData, UpdateTimeEntryVariables>;
+export function updateTimeEntry(dc: DataConnect, vars: UpdateTimeEntryVariables): MutationPromise<UpdateTimeEntryData, UpdateTimeEntryVariables>;
+
+interface DeleteTimeEntryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteTimeEntryVariables): MutationRef<DeleteTimeEntryData, DeleteTimeEntryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteTimeEntryVariables): MutationRef<DeleteTimeEntryData, DeleteTimeEntryVariables>;
+  operationName: string;
+}
+export const deleteTimeEntryRef: DeleteTimeEntryRef;
+
+export function deleteTimeEntry(vars: DeleteTimeEntryVariables): MutationPromise<DeleteTimeEntryData, DeleteTimeEntryVariables>;
+export function deleteTimeEntry(dc: DataConnect, vars: DeleteTimeEntryVariables): MutationPromise<DeleteTimeEntryData, DeleteTimeEntryVariables>;
+
+interface CreateWorkLogRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateWorkLogVariables): MutationRef<CreateWorkLogData, CreateWorkLogVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateWorkLogVariables): MutationRef<CreateWorkLogData, CreateWorkLogVariables>;
+  operationName: string;
+}
+export const createWorkLogRef: CreateWorkLogRef;
+
+export function createWorkLog(vars: CreateWorkLogVariables): MutationPromise<CreateWorkLogData, CreateWorkLogVariables>;
+export function createWorkLog(dc: DataConnect, vars: CreateWorkLogVariables): MutationPromise<CreateWorkLogData, CreateWorkLogVariables>;
+
 interface ListUsersRef {
   /* Allow users to create refs without passing in DataConnect */
   (): QueryRef<ListUsersData, undefined>;
@@ -196,6 +294,18 @@ export const listUsersRef: ListUsersRef;
 
 export function listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
 export function listUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
+
+interface GetMyUserRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetMyUserData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<GetMyUserData, undefined>;
+  operationName: string;
+}
+export const getMyUserRef: GetMyUserRef;
+
+export function getMyUser(options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
+export function getMyUser(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
 
 interface ListTimeEntriesRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -256,64 +366,4 @@ export const listTimeEntriesByDateRangeRef: ListTimeEntriesByDateRangeRef;
 
 export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
 export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
-
-interface CreateUserFromGoogleRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: CreateUserFromGoogleVariables): MutationRef<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: CreateUserFromGoogleVariables): MutationRef<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
-  operationName: string;
-}
-export const createUserFromGoogleRef: CreateUserFromGoogleRef;
-
-export function createUserFromGoogle(vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
-export function createUserFromGoogle(dc: DataConnect, vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
-
-interface CreateTimeEntryRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: CreateTimeEntryVariables): MutationRef<CreateTimeEntryData, CreateTimeEntryVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: CreateTimeEntryVariables): MutationRef<CreateTimeEntryData, CreateTimeEntryVariables>;
-  operationName: string;
-}
-export const createTimeEntryRef: CreateTimeEntryRef;
-
-export function createTimeEntry(vars: CreateTimeEntryVariables): MutationPromise<CreateTimeEntryData, CreateTimeEntryVariables>;
-export function createTimeEntry(dc: DataConnect, vars: CreateTimeEntryVariables): MutationPromise<CreateTimeEntryData, CreateTimeEntryVariables>;
-
-interface UpdateTimeEntryRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: UpdateTimeEntryVariables): MutationRef<UpdateTimeEntryData, UpdateTimeEntryVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: UpdateTimeEntryVariables): MutationRef<UpdateTimeEntryData, UpdateTimeEntryVariables>;
-  operationName: string;
-}
-export const updateTimeEntryRef: UpdateTimeEntryRef;
-
-export function updateTimeEntry(vars: UpdateTimeEntryVariables): MutationPromise<UpdateTimeEntryData, UpdateTimeEntryVariables>;
-export function updateTimeEntry(dc: DataConnect, vars: UpdateTimeEntryVariables): MutationPromise<UpdateTimeEntryData, UpdateTimeEntryVariables>;
-
-interface DeleteTimeEntryRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: DeleteTimeEntryVariables): MutationRef<DeleteTimeEntryData, DeleteTimeEntryVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: DeleteTimeEntryVariables): MutationRef<DeleteTimeEntryData, DeleteTimeEntryVariables>;
-  operationName: string;
-}
-export const deleteTimeEntryRef: DeleteTimeEntryRef;
-
-export function deleteTimeEntry(vars: DeleteTimeEntryVariables): MutationPromise<DeleteTimeEntryData, DeleteTimeEntryVariables>;
-export function deleteTimeEntry(dc: DataConnect, vars: DeleteTimeEntryVariables): MutationPromise<DeleteTimeEntryData, DeleteTimeEntryVariables>;
-
-interface CreateWorkLogRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: CreateWorkLogVariables): MutationRef<CreateWorkLogData, CreateWorkLogVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: CreateWorkLogVariables): MutationRef<CreateWorkLogData, CreateWorkLogVariables>;
-  operationName: string;
-}
-export const createWorkLogRef: CreateWorkLogRef;
-
-export function createWorkLog(vars: CreateWorkLogVariables): MutationPromise<CreateWorkLogData, CreateWorkLogVariables>;
-export function createWorkLog(dc: DataConnect, vars: CreateWorkLogVariables): MutationPromise<CreateWorkLogData, CreateWorkLogVariables>;
 
