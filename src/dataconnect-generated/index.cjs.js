@@ -13,6 +13,76 @@ const dataConnectSettings = {
 };
 exports.dataConnectSettings = dataConnectSettings;
 
+const createUserFromGoogleRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateUserFromGoogle', inputVars);
+}
+createUserFromGoogleRef.operationName = 'CreateUserFromGoogle';
+exports.createUserFromGoogleRef = createUserFromGoogleRef;
+
+exports.createUserFromGoogle = function createUserFromGoogle(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createUserFromGoogleRef(dcInstance, inputVars));
+}
+;
+
+const createTimeEntryRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateTimeEntry', inputVars);
+}
+createTimeEntryRef.operationName = 'CreateTimeEntry';
+exports.createTimeEntryRef = createTimeEntryRef;
+
+exports.createTimeEntry = function createTimeEntry(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createTimeEntryRef(dcInstance, inputVars));
+}
+;
+
+const updateTimeEntryRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateTimeEntry', inputVars);
+}
+updateTimeEntryRef.operationName = 'UpdateTimeEntry';
+exports.updateTimeEntryRef = updateTimeEntryRef;
+
+exports.updateTimeEntry = function updateTimeEntry(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateTimeEntryRef(dcInstance, inputVars));
+}
+;
+
+const deleteTimeEntryRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteTimeEntry', inputVars);
+}
+deleteTimeEntryRef.operationName = 'DeleteTimeEntry';
+exports.deleteTimeEntryRef = deleteTimeEntryRef;
+
+exports.deleteTimeEntry = function deleteTimeEntry(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteTimeEntryRef(dcInstance, inputVars));
+}
+;
+
+const createWorkLogRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateWorkLog', inputVars);
+}
+createWorkLogRef.operationName = 'CreateWorkLog';
+exports.createWorkLogRef = createWorkLogRef;
+
+exports.createWorkLog = function createWorkLog(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createWorkLogRef(dcInstance, inputVars));
+}
+;
+
 const listUsersRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
@@ -100,75 +170,5 @@ exports.listTimeEntriesByDateRange = function listTimeEntriesByDateRange(dcOrVar
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(listTimeEntriesByDateRangeRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
-}
-;
-
-const createUserFromGoogleRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'CreateUserFromGoogle', inputVars);
-}
-createUserFromGoogleRef.operationName = 'CreateUserFromGoogle';
-exports.createUserFromGoogleRef = createUserFromGoogleRef;
-
-exports.createUserFromGoogle = function createUserFromGoogle(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(createUserFromGoogleRef(dcInstance, inputVars));
-}
-;
-
-const createTimeEntryRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'CreateTimeEntry', inputVars);
-}
-createTimeEntryRef.operationName = 'CreateTimeEntry';
-exports.createTimeEntryRef = createTimeEntryRef;
-
-exports.createTimeEntry = function createTimeEntry(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(createTimeEntryRef(dcInstance, inputVars));
-}
-;
-
-const updateTimeEntryRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'UpdateTimeEntry', inputVars);
-}
-updateTimeEntryRef.operationName = 'UpdateTimeEntry';
-exports.updateTimeEntryRef = updateTimeEntryRef;
-
-exports.updateTimeEntry = function updateTimeEntry(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(updateTimeEntryRef(dcInstance, inputVars));
-}
-;
-
-const deleteTimeEntryRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'DeleteTimeEntry', inputVars);
-}
-deleteTimeEntryRef.operationName = 'DeleteTimeEntry';
-exports.deleteTimeEntryRef = deleteTimeEntryRef;
-
-exports.deleteTimeEntry = function deleteTimeEntry(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(deleteTimeEntryRef(dcInstance, inputVars));
-}
-;
-
-const createWorkLogRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'CreateWorkLog', inputVars);
-}
-createWorkLogRef.operationName = 'CreateWorkLog';
-exports.createWorkLogRef = createWorkLogRef;
-
-exports.createWorkLog = function createWorkLog(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(createWorkLogRef(dcInstance, inputVars));
 }
 ;
