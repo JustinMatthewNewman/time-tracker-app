@@ -49,6 +49,13 @@ function listUsers(dcOrOptions, options) {
 }
 exports.listUsers = listUsers;
 
+function getMyUser(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('GetMyUser', undefined, inputOpts);
+}
+exports.getMyUser = getMyUser;
+
 function listTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);

@@ -9,6 +9,12 @@ query ListUsers @auth(level: NO_ACCESS) {
   }
 }
 
+query GetMyUser @auth(level: USER) {
+  user(first: { where: { googleUid: { eq_expr: "auth.uid" } } }) {
+    id
+  }
+}
+
 query ListTimeEntries($userId: UUID!) @auth(level: USER) {
   timeEntries(
     where: { user: { id: { eq: $userId } } }
