@@ -1,4 +1,4 @@
-import { CreateUserFromGoogleData, CreateUserFromGoogleVariables, CreateTimeEntryData, CreateTimeEntryVariables, UpdateTimeEntryData, UpdateTimeEntryVariables, DeleteTimeEntryData, DeleteTimeEntryVariables, CreateWorkLogData, CreateWorkLogVariables, ListUsersData, GetMyUserData, ListTimeEntriesData, ListTimeEntriesVariables, GetTimeEntryData, GetTimeEntryVariables, ListWorkLogsData, ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables, ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables } from '../';
+import { CreateUserFromGoogleData, CreateUserFromGoogleVariables, CreateTimeEntryData, CreateTimeEntryVariables, UpdateTimeEntryData, UpdateTimeEntryVariables, DeleteTimeEntryData, DeleteTimeEntryVariables, CreateWorkLogData, CreateWorkLogVariables, ListUsersData, GetMyUserData, ListTimeEntriesData, ListTimeEntriesVariables, GetTimeEntryData, GetTimeEntryVariables, ListWorkLogsData, ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables, ListMyTimeEntriesData, ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables } from '../';
 import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
 import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
@@ -37,6 +37,9 @@ export function useListWorkLogs(dc: DataConnect, options?: useDataConnectQueryOp
 
 export function useListTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByWorkLogData>): UseDataConnectQueryResult<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
 export function useListTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByWorkLogData>): UseDataConnectQueryResult<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+
+export function useListMyTimeEntries(options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, undefined>;
+export function useListMyTimeEntries(dc: DataConnect, options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, undefined>;
 
 export function useListTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByDateRangeData>): UseDataConnectQueryResult<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
 export function useListTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByDateRangeData>): UseDataConnectQueryResult<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;

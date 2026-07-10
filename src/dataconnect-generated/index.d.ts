@@ -117,6 +117,20 @@ export interface GetTimeEntryVariables {
   entryId: UUIDString;
 }
 
+export interface ListMyTimeEntriesData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    workLog?: {
+      id: UUIDString;
+      name: string;
+    } & WorkLog_Key;
+  } & TimeEntry_Key)[];
+}
+
 export interface ListTimeEntriesByDateRangeData {
   timeEntries: ({
     id: UUIDString;
@@ -354,6 +368,18 @@ export const listTimeEntriesByWorkLogRef: ListTimeEntriesByWorkLogRef;
 
 export function listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
 export function listTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+
+interface ListMyTimeEntriesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListMyTimeEntriesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListMyTimeEntriesData, undefined>;
+  operationName: string;
+}
+export const listMyTimeEntriesRef: ListMyTimeEntriesRef;
+
+export function listMyTimeEntries(options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, undefined>;
+export function listMyTimeEntries(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, undefined>;
 
 interface ListTimeEntriesByDateRangeRef {
   /* Allow users to create refs without passing in DataConnect */

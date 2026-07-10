@@ -1,4 +1,4 @@
-const { createUserFromGoogleRef, createTimeEntryRef, updateTimeEntryRef, deleteTimeEntryRef, createWorkLogRef, listUsersRef, getMyUserRef, listTimeEntriesRef, getTimeEntryRef, listWorkLogsRef, listTimeEntriesByWorkLogRef, listTimeEntriesByDateRangeRef, connectorConfig } = require('../index.cjs.js');
+const { createUserFromGoogleRef, createTimeEntryRef, updateTimeEntryRef, deleteTimeEntryRef, createWorkLogRef, listUsersRef, getMyUserRef, listTimeEntriesRef, getTimeEntryRef, listWorkLogsRef, listTimeEntriesByWorkLogRef, listMyTimeEntriesRef, listTimeEntriesByDateRangeRef, connectorConfig } = require('../index.cjs.js');
 const { validateArgs, CallerSdkTypeEnum } = require('firebase/data-connect');
 const { useDataConnectQuery, useDataConnectMutation, validateReactArgs } = require('@tanstack-query-firebase/react/data-connect');
 
@@ -76,6 +76,12 @@ exports.useListWorkLogs = function useListWorkLogs(dcOrOptions, options) {
 exports.useListTimeEntriesByWorkLog = function useListTimeEntriesByWorkLog(dcOrVars, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   const ref = listTimeEntriesByWorkLogRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+exports.useListMyTimeEntries = function useListMyTimeEntries(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts } = validateReactArgs(connectorConfig, dcOrOptions, options);
+  const ref = listMyTimeEntriesRef(dcInstance);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }
 

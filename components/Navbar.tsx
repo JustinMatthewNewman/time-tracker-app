@@ -22,6 +22,7 @@ interface NavLink {
 
 const NAV_LINKS: NavLink[] = [
   { label: "Dashboard", href: "/dashboard", authRequired: true },
+  { label: "Work Logs", href: "/worklogs", authRequired: true },
   { label: "Profile", href: "/profile", authRequired: true },
   { label: "Settings", href: "/settings", authRequired: true },
 ];
@@ -59,6 +60,7 @@ export default function AppNavbar() {
 
     const routes: Record<string, string> = {
       dashboard: "/dashboard",
+      worklogs: "/worklogs",
       settings: "/settings",
       profile: "/profile",
     };
