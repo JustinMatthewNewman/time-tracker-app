@@ -8,7 +8,7 @@ import { Switch } from "@heroui/react";
 import DashboardCard from "./DashboardCard";
 import TimeEntryForm from "./TimeEntryForm";
 
-function DashboardPage() {
+function WorkLogs() {
     const { user, loading } = useAuth();
     const router = useRouter();
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -53,4 +53,4 @@ function DashboardPage() {
     );
 }
 
-export default DashboardPage;
+export default WorkLogs;

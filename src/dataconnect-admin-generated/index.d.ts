@@ -114,6 +114,20 @@ export interface GetTimeEntryVariables {
   entryId: UUIDString;
 }
 
+export interface ListMyTimeEntriesData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    ticketNumber?: string | null;
+    officeNumber?: string | null;
+    workLog?: {
+      id: UUIDString;
+      name: string;
+    } & WorkLog_Key;
+  } & TimeEntry_Key)[];
+}
+
 export interface ListTimeEntriesByDateRangeData {
   timeEntries: ({
     id: UUIDString;
@@ -274,6 +288,11 @@ export function listWorkLogs(options?: OperationOptions): Promise<ExecuteOperati
 export function listTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
 /** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByWorkLog' Query. Allow users to pass in custom DataConnect instances. */
 export function listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntries' Query. Allow users to execute without passing in DataConnect. */
+export function listMyTimeEntries(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesData>>;
+/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntries' Query. Allow users to pass in custom DataConnect instances. */
+export function listMyTimeEntries(options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesData>>;
 
 /** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByDateRange' Query. Allow users to execute without passing in DataConnect. */
 export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;

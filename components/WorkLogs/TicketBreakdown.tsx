@@ -3,14 +3,7 @@
 import { useMemo } from "react";
 import { Card } from "@heroui/react";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
-
-const UNASSIGNED_TICKET = "(No ticket)";
-
-interface TicketTotal {
-  ticket: string;
-  entryCount: number;
-  totalMinutes: number;
-}
+import { groupByTicket, formatDuration } from "@/lib/timeTotals";
 
 interface TicketBreakdownProps {
   hasSelection: boolean;
@@ -19,33 +12,8 @@ interface TicketBreakdownProps {
   error?: string | null;
 }
 
-function formatDuration(minutes: number) {
-  const hours = Math.floor(minutes / 60);
-  const mins = Math.round(minutes % 60);
-  if (hours === 0) return `${mins}m`;
-  return `${hours}h ${mins}m`;
-}
-
 export function TicketBreakdown({ hasSelection, entries, loading, error }: TicketBreakdownProps) {
-  const totals = useMemo<TicketTotal[]>(() => {
-    const byTicket = new Map<string, TicketTotal>();
-
-    for (const entry of entries) {
-      const ticket = entry.ticketNumber?.trim() || UNASSIGNED_TICKET;
-      const minutes =
-        (new Date(entry.endTime).getTime() - new Date(entry.startTime).getTime()) / 60000;
-
-      const existing = byTicket.get(ticket);
-      if (existing) {
-        existing.entryCount += 1;
-        existing.totalMinutes += minutes;
-      } else {
-        byTicket.set(ticket, { ticket, entryCount: 1, totalMinutes: minutes });
-      }
-    }
-
-    return Array.from(byTicket.values()).sort((a, b) => b.totalMinutes - a.totalMinutes);
-  }, [entries]);
+  const totals = useMemo(() => groupByTicket(entries), [entries]);
 
   if (!hasSelection) {
     return (

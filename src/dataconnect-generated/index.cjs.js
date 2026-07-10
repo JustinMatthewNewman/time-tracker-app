@@ -173,6 +173,21 @@ exports.listTimeEntriesByWorkLog = function listTimeEntriesByWorkLog(dcOrVars, v
 }
 ;
 
+const listMyTimeEntriesRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListMyTimeEntries');
+}
+listMyTimeEntriesRef.operationName = 'ListMyTimeEntries';
+exports.listMyTimeEntriesRef = listMyTimeEntriesRef;
+
+exports.listMyTimeEntries = function listMyTimeEntries(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listMyTimeEntriesRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
 const listTimeEntriesByDateRangeRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

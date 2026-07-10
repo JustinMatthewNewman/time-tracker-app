@@ -1,9 +1,9 @@
-import DashboardPage from "@/components/Dashboard/DashboardPage";
+import AnalyticsDashboard from "@/components/Dashboard/AnalyticsDashboard";
 
 function Dashboard() {
   return (
     <div>
-      <DashboardPage />
+      <AnalyticsDashboard />
     </div>
   )
 }
