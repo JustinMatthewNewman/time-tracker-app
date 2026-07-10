@@ -13,6 +13,15 @@ function todayDateString() {
   return new Date().toISOString().slice(0, 10);
 }
 
+// `new Date("yyyy-mm-dd")` parses the string as UTC midnight, not local
+// midnight. That shifts the 8am-4pm CEL duration offsets applied server-side
+// in CreateWorkLog by the browser's UTC offset, so entries land at the wrong
+// local wall-clock hours (e.g. 3am-11am instead of 8am-4pm for UTC-5 users).
+function toLocalMidnightISOString(dateString: string) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day).toISOString();
+}
+
 export function NewWorkLogDialog({ isOpen, onClose, onCreate }: NewWorkLogDialogProps) {
   const [name, setName] = useState("");
   const [date, setDate] = useState(todayDateString);
@@ -27,7 +36,7 @@ export function NewWorkLogDialog({ isOpen, onClose, onCreate }: NewWorkLogDialog
     setLoading(true);
 
     try {
-      await onCreate({ name, workLogDate: new Date(date).toISOString() });
+      await onCreate({ name, workLogDate: toLocalMidnightISOString(date) });
       setName("");
       setDate(todayDateString());
       onClose();
