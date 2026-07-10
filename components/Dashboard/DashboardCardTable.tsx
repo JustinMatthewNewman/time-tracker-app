@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUpdateTimeEntry } from "@/src/dataconnect-generated/react";
 import type { UpdateTimeEntryVariables } from "@/src/dataconnect-generated";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
@@ -10,6 +10,10 @@ interface DashboardCardTableProps {
     loading?: boolean;
     onEntryUpdated?: () => void;
 }
+
+type EditableField = "ticketNumber" | "officeNumber" | "description";
+
+const AUTOSAVE_DELAY_MS = 600;
 
 function formatTime(isoDate: string) {
     return new Date(isoDate).toLocaleTimeString([], {
@@ -22,33 +26,64 @@ export function DashboardCardTable({ entries, loading, onEntryUpdated }: Dashboa
     const updateMutation = useUpdateTimeEntry();
     const [drafts, setDrafts] = useState<Record<string, Partial<WorkLogTimeEntry>>>({});
 
-    const getValue = (entry: WorkLogTimeEntry, field: "ticketNumber" | "officeNumber" | "description") =>
+    // Mirrors kept in sync via effects (never mutated during render) so that
+    // timers/unmount cleanup always see the latest values instead of whatever
+    // was captured in the closure from the render that scheduled them.
+    const draftsRef = useRef(drafts);
+    const entriesRef = useRef(entries);
+    const timersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+    const saveEntryRef = useRef<(entryId: string) => void>(() => {});
+
+    useEffect(() => {
+        draftsRef.current = drafts;
+    }, [drafts]);
+
+    useEffect(() => {
+        entriesRef.current = entries;
+    }, [entries]);
+
+    useEffect(() => {
+        saveEntryRef.current = (entryId: string) => {
+            const draft = draftsRef.current[entryId];
+            const entry = entriesRef.current.find((e) => e.id === entryId);
+            if (!draft || !entry) return;
+
+            updateMutation
+                .mutateAsync({
+                    entryId,
+                    description: draft.description ?? entry.description ?? undefined,
+                    ticketNumber: draft.ticketNumber ?? entry.ticketNumber ?? undefined,
+                    officeNumber: draft.officeNumber ?? entry.officeNumber ?? undefined,
+                } as UpdateTimeEntryVariables)
+                .then(() => onEntryUpdated?.())
+                .catch((err) => console.error("Failed to save time entry", err));
+        };
+    });
+
+    const getValue = (entry: WorkLogTimeEntry, field: EditableField) =>
         drafts[entry.id]?.[field] ?? entry[field] ?? "";
 
-    const setDraftValue = (
-        entryId: string,
-        field: "ticketNumber" | "officeNumber" | "description",
-        value: string
-    ) => {
+    const setDraftValue = (entryId: string, field: EditableField, value: string) => {
         setDrafts((prev) => ({
             ...prev,
             [entryId]: { ...prev[entryId], [field]: value },
         }));
+
+        clearTimeout(timersRef.current[entryId]);
+        timersRef.current[entryId] = setTimeout(() => saveEntryRef.current(entryId), AUTOSAVE_DELAY_MS);
     };
 
-    const saveEntry = async (entry: WorkLogTimeEntry) => {
-        const draft = drafts[entry.id];
-        if (!draft) return;
-
-        await updateMutation.mutateAsync({
-            entryId: entry.id,
-            description: draft.description ?? entry.description ?? undefined,
-            ticketNumber: draft.ticketNumber ?? entry.ticketNumber ?? undefined,
-            officeNumber: draft.officeNumber ?? entry.officeNumber ?? undefined,
-        } as UpdateTimeEntryVariables);
-
-        onEntryUpdated?.();
-    };
+    // Flush any pending edits immediately so switching views (or navigating away)
+    // never silently drops an in-progress edit that hasn't hit the debounce yet.
+    useEffect(() => {
+        const timers = timersRef.current;
+        return () => {
+            Object.keys(timers).forEach((entryId) => {
+                clearTimeout(timers[entryId]);
+                saveEntryRef.current(entryId);
+            });
+        };
+    }, []);
 
     if (loading) {
         return <div className="p-4 text-sm text-gray-500">Loading time entries...</div>;
@@ -83,7 +118,6 @@ export function DashboardCardTable({ entries, loading, onEntryUpdated }: Dashboa
                                     className="w-full rounded border p-2"
                                     value={getValue(entry, "ticketNumber")}
                                     onChange={(e) => setDraftValue(entry.id, "ticketNumber", e.target.value)}
-                                    onBlur={() => saveEntry(entry)}
                                 />
                             </td>
 
@@ -93,7 +127,6 @@ export function DashboardCardTable({ entries, loading, onEntryUpdated }: Dashboa
                                     className="w-full rounded border p-2"
                                     value={getValue(entry, "officeNumber")}
                                     onChange={(e) => setDraftValue(entry.id, "officeNumber", e.target.value)}
-                                    onBlur={() => saveEntry(entry)}
                                 />
                             </td>
 
@@ -103,7 +136,6 @@ export function DashboardCardTable({ entries, loading, onEntryUpdated }: Dashboa
                                     rows={3}
                                     value={getValue(entry, "description")}
                                     onChange={(e) => setDraftValue(entry.id, "description", e.target.value)}
-                                    onBlur={() => saveEntry(entry)}
                                 />
                             </td>
                         </tr>
