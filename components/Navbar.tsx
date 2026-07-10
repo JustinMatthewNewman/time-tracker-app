@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import AuthSection from "./AuthSection";
 import { useSidebar } from "@/context/SideBarContext";
 
@@ -53,7 +53,9 @@ export default function AppNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const { toggle } = useSidebar();
+  const showSidebarToggle = pathname === "/worklogs";
 
   const handleAction = async (key: string) => {
     if (key === "logout") return logout();
@@ -82,13 +84,15 @@ export default function AppNavbar() {
           {/* Left Side: Sidebar Toggle & Desktop Navigation */}
           <div className="flex items-center gap-3">
 
-            <button
-              onClick={toggle}
-              className="rounded-md p-2 hover:bg-default-100 transition"
-              aria-label="Toggle Sidebar"
-            >
-              ☰
-            </button>
+            {showSidebarToggle && (
+              <button
+                onClick={toggle}
+                className="rounded-md p-2 hover:bg-default-100 transition"
+                aria-label="Toggle Sidebar"
+              >
+                ☰
+              </button>
+            )}
 
             <nav className="hidden md:flex gap-7 items-center">
               {filteredLinks.map((link) => (
