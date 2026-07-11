@@ -4,8 +4,33 @@ import {
     Card,
     Skeleton,
     Button,
+    Switch,
+    Tooltip,
 } from "@heroui/react";
+import { useState } from "react";
+import type { User } from "firebase/auth";
 import { logout } from "@/lib/auth";
+import {
+    Key,
+    Globe,
+    Calendar,
+    ClockArrowRotateLeft,
+    Bell,
+    ArrowRightFromSquare,
+    ArrowUpRightFromSquare,
+} from "@gravity-ui/icons";
+
+// ─────────────────────────────────────────────
+// Preferences (mocked, local only)
+// No settings backend exists yet, so these toggles just hold local state
+// until account preferences are wired up.
+// ─────────────────────────────────────────────
+
+const DEFAULT_PREFERENCES = [
+    { key: "emailSummaries", label: "Email summaries", description: "Weekly recap of logged hours", defaultOn: true },
+    { key: "weeklyDigest", label: "Weekly digest", description: "Highlights sent every Monday", defaultOn: false },
+    { key: "productUpdates", label: "Product updates", description: "New features and announcements", defaultOn: false },
+];
 
 // ─────────────────────────────────────────────
 // Auth Section
@@ -15,9 +40,13 @@ function ProfileAuthSection({
     user,
     loading,
 }: {
-    user: any;
+    user: User | null;
     loading: boolean;
 }) {
+    const [preferences, setPreferences] = useState<Record<string, boolean>>(
+        Object.fromEntries(DEFAULT_PREFERENCES.map((p) => [p.key, p.defaultOn]))
+    );
+
     if (loading) {
         return <Skeleton className="w-full h-40 rounded-xl" />;
     }
@@ -25,9 +54,7 @@ function ProfileAuthSection({
     if (!user) {
         return (
             <Card className="max-w-md p-6">
-                <p className="text-center text-foreground/60">
-                    👤 Not signed in
-                </p>
+                <p className="text-center text-foreground/60">Not signed in</p>
                 <p className="text-center text-sm text-foreground/40 mt-2">
                     Please log in to view your profile
                 </p>
@@ -35,85 +62,98 @@ function ProfileAuthSection({
         );
     }
 
+    const details = [
+        { label: "User ID", value: user.uid, icon: Key, mono: true },
+        {
+            label: "Provider",
+            value: user.providerData?.[0]?.providerId === "google.com"
+                ? "Google"
+                : user.providerData?.map((p) => p.providerId).join(", ") || "Unknown",
+            icon: Globe,
+        },
+        {
+            label: "Created",
+            value: user.metadata?.creationTime
+                ? new Date(user.metadata.creationTime).toLocaleDateString()
+                : "Unknown",
+            icon: Calendar,
+        },
+        {
+            label: "Last Login",
+            value: user.metadata?.lastSignInTime
+                ? new Date(user.metadata.lastSignInTime).toLocaleDateString()
+                : "Unknown",
+            icon: ClockArrowRotateLeft,
+        },
+    ];
+
     return (
-        <Card className="max-w-2xl w-full">
-            <div className="p-6">
-                {/* Header - Avatar and Basic Info */}
-                <div className="flex items-center gap-4 mb-6">
-                    {user.photoURL ? (
-                        <img
-                            src={user.photoURL}
-                            alt="avatar"
-                            className="h-20 w-20 rounded-full border-2 border-primary"
-                            referrerPolicy="no-referrer"
-                        />
-                    ) : (
-                        <div className="h-20 w-20 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-2xl font-semibold text-white">
-                            {(user.displayName ?? user.email ?? "U")[0].toUpperCase()}
+        <Card className="w-full p-6">
+            {/* Account details */}
+            <div>
+                <h2 className="text-lg font-semibold mb-4">Account Information</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {details.map(({ label, value, icon: Icon, mono }) => (
+                        <div key={label} className="flex items-start gap-3 p-3 bg-default-100 rounded-lg">
+                            <Icon className="size-4 mt-0.5 shrink-0 text-foreground/50" />
+                            <div className="min-w-0">
+                                <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">{label}</p>
+                                <p className={`text-sm text-foreground mt-1 break-all ${mono ? "font-mono" : ""}`}>{value}</p>
+                            </div>
                         </div>
-                    )}
+                    ))}
+                </div>
+            </div>
 
-                    <div className="flex-1">
-                        <h2 className="text-2xl font-bold">
-                            {user.displayName ?? "User"}
-                        </h2>
-                        <p className="text-foreground/60 text-sm mt-1">
-                            {user.email}
-                        </p>
-                        <div className="flex gap-2 mt-2">
-                            <span className={`text-xs px-2 py-1 rounded-full ${user.emailVerified ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                                {user.emailVerified ? "✓ Verified" : "⚠️ Unverified"}
-                            </span>
+            <div className="border-t border-default-200 my-6"></div>
+
+            {/* Preferences (mocked) */}
+            <div>
+                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Bell className="size-4" /> Preferences
+                </h2>
+                <div className="flex flex-col gap-3">
+                    {DEFAULT_PREFERENCES.map(({ key, label, description }) => (
+                        <div key={key} className="flex items-center justify-between gap-4 p-3 bg-default-100 rounded-lg">
+                            <div className="min-w-0">
+                                <p className="text-sm font-medium text-foreground">{label}</p>
+                                <p className="text-xs text-foreground/60">{description}</p>
+                            </div>
+                            <Switch
+                                isSelected={preferences[key]}
+                                onChange={(isSelected) => setPreferences((prev) => ({ ...prev, [key]: isSelected }))}
+                                aria-label={label}
+                            >
+                                <Switch.Content>
+                                    <Switch.Control>
+                                        <Switch.Thumb />
+                                    </Switch.Control>
+                                </Switch.Content>
+                            </Switch>
                         </div>
-                    </div>
+                    ))}
                 </div>
+            </div>
 
-                <div className="border-t border-default-200 my-4"></div>
+            <div className="border-t border-default-200 my-6"></div>
 
-                {/* Profile Details Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="p-3 bg-default-100 rounded-lg">
-                        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">User ID</p>
-                        <p className="font-mono text-sm text-foreground mt-1 break-all">{user.uid}</p>
-                    </div>
-
-                    <div className="p-3 bg-default-100 rounded-lg">
-                        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Provider</p>
-                        <p className="text-sm text-foreground mt-1">
-                            {user.providerData?.[0]?.providerId === "google.com" ? "🔵 Google" : user.providerData?.map((p: any) => p.providerId).join(", ") || "Unknown"}
-                        </p>
-                    </div>
-
-                    <div className="p-3 bg-default-100 rounded-lg">
-                        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Created</p>
-                        <p className="text-sm text-foreground mt-1">
-                            {user.metadata?.creationTime
-                                ? new Date(user.metadata.creationTime).toLocaleDateString()
-                                : "Unknown"}
-                        </p>
-                    </div>
-
-                    <div className="p-3 bg-default-100 rounded-lg">
-                        <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wider">Last Login</p>
-                        <p className="text-sm text-foreground mt-1">
-                            {user.metadata?.lastSignInTime
-                                ? new Date(user.metadata.lastSignInTime).toLocaleDateString()
-                                : "Unknown"}
-                        </p>
-                    </div>
-                </div>
-
-                <div className="border-t border-default-200 my-4"></div>
-
-                {/* Actions */}
-                <div className="flex gap-2">
-                    <Button
-                        className="flex-1 bg-red-600 text-white border border-red-600"
-                        onPress={logout}
-                    >
-                        Logout
-                    </Button>
-                </div>
+            {/* Actions */}
+            <div className="flex gap-2">
+                <Button
+                    className="flex-1"
+                    variant="danger"
+                    onPress={logout}
+                >
+                    <ArrowRightFromSquare /> Logout
+                </Button>
+                <Tooltip>
+                    <Tooltip.Trigger>
+                        <Button variant="outline">
+                            <ArrowUpRightFromSquare /> Export data
+                        </Button>
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>Coming soon</Tooltip.Content>
+                </Tooltip>
             </div>
         </Card>
     );

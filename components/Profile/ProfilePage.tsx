@@ -4,7 +4,9 @@ import React from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Spinner } from "@heroui/react";
 import ProfileCard from "./ProfileCard";
+import AmbientBackground from "@/components/AmbientBackground";
 
 function ProfilePage() {
     const { user, loading } = useAuth();
@@ -18,8 +20,8 @@ function ProfilePage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <span className="text-sm text-gray-400">Loading...</span>
+            <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+                <Spinner aria-label="Loading profile" />
             </div>
         );
     }
@@ -27,8 +29,11 @@ function ProfilePage() {
     if (!user) return null; // redirect in flight
 
     return (
-        <div className="flex flex-col items-center h-screen">
-            <ProfileCard />
+        <div className="relative h-[calc(100vh-4rem)] overflow-y-auto p-4 sm:p-6">
+            <AmbientBackground intensity={0.85} />
+            <div className="relative z-10 mx-auto w-full max-w-4xl pb-8">
+                <ProfileCard />
+            </div>
         </div>
     );
 }
