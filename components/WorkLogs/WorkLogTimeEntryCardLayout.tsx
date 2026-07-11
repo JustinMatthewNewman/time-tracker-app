@@ -58,7 +58,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false }: WorkLogTimeEntryC
 
           {selectedWorkLogId && !error && (
             <div className='grid h-full min-h-0 grid-cols-1 lg:grid-cols-1 gap-4'>
-              <Card className="flex h-full min-h-0 flex-col overflow-hidden">
+              <Card className="flex h-full min-h-0 flex-col overflow-hidden border border-default-200">
                 <Accordion className="w-full flex-1 min-h-0 overflow-y-auto">
                   {timeSlots.map((hour) => {
                     const hourEntries = entries.filter(
