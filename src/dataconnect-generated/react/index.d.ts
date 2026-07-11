@@ -1,4 +1,4 @@
-import { CreateUserFromGoogleData, CreateUserFromGoogleVariables, CreateTimeEntryData, CreateTimeEntryVariables, UpdateTimeEntryData, UpdateTimeEntryVariables, DeleteTimeEntryData, DeleteTimeEntryVariables, UpdateWorkLogData, UpdateWorkLogVariables, DeleteWorkLogData, DeleteWorkLogVariables, RestoreWorkLogData, RestoreWorkLogVariables, CreateWorkLogData, CreateWorkLogVariables, ListUsersData, GetMyUserData, ListTimeEntriesData, ListTimeEntriesVariables, GetTimeEntryData, GetTimeEntryVariables, ListWorkLogsData, ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables, ListMyTimeEntriesData, ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables } from '../';
+import { CreateUserFromGoogleData, CreateUserFromGoogleVariables, CreateTimeEntryData, CreateTimeEntryVariables, UpdateTimeEntryData, UpdateTimeEntryVariables, UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables, DeleteTimeEntryData, DeleteTimeEntryVariables, UpsertTicketData, UpsertTicketVariables, SelectMyThemeData, SelectMyThemeVariables, ClearMyThemeData, UpdateWorkLogData, UpdateWorkLogVariables, DeleteWorkLogData, DeleteWorkLogVariables, RestoreWorkLogData, RestoreWorkLogVariables, CreateWorkLogData, CreateWorkLogVariables, ListUsersData, GetMyUserData, ListThemesData, ListTimeEntriesData, ListTimeEntriesVariables, GetTimeEntryData, GetTimeEntryVariables, ListWorkLogsData, ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables, ListMyTimeEntriesData, ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables } from '../';
 import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
 import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
@@ -14,8 +14,20 @@ export function useCreateTimeEntry(dc: DataConnect, options?: useDataConnectMuta
 export function useUpdateTimeEntry(options?: useDataConnectMutationOptions<UpdateTimeEntryData, FirebaseError, UpdateTimeEntryVariables>): UseDataConnectMutationResult<UpdateTimeEntryData, UpdateTimeEntryVariables>;
 export function useUpdateTimeEntry(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateTimeEntryData, FirebaseError, UpdateTimeEntryVariables>): UseDataConnectMutationResult<UpdateTimeEntryData, UpdateTimeEntryVariables>;
 
+export function useUpdateTimeEntryClearTicket(options?: useDataConnectMutationOptions<UpdateTimeEntryClearTicketData, FirebaseError, UpdateTimeEntryClearTicketVariables>): UseDataConnectMutationResult<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+export function useUpdateTimeEntryClearTicket(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateTimeEntryClearTicketData, FirebaseError, UpdateTimeEntryClearTicketVariables>): UseDataConnectMutationResult<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+
 export function useDeleteTimeEntry(options?: useDataConnectMutationOptions<DeleteTimeEntryData, FirebaseError, DeleteTimeEntryVariables>): UseDataConnectMutationResult<DeleteTimeEntryData, DeleteTimeEntryVariables>;
 export function useDeleteTimeEntry(dc: DataConnect, options?: useDataConnectMutationOptions<DeleteTimeEntryData, FirebaseError, DeleteTimeEntryVariables>): UseDataConnectMutationResult<DeleteTimeEntryData, DeleteTimeEntryVariables>;
+
+export function useUpsertTicket(options?: useDataConnectMutationOptions<UpsertTicketData, FirebaseError, UpsertTicketVariables>): UseDataConnectMutationResult<UpsertTicketData, UpsertTicketVariables>;
+export function useUpsertTicket(dc: DataConnect, options?: useDataConnectMutationOptions<UpsertTicketData, FirebaseError, UpsertTicketVariables>): UseDataConnectMutationResult<UpsertTicketData, UpsertTicketVariables>;
+
+export function useSelectMyTheme(options?: useDataConnectMutationOptions<SelectMyThemeData, FirebaseError, SelectMyThemeVariables>): UseDataConnectMutationResult<SelectMyThemeData, SelectMyThemeVariables>;
+export function useSelectMyTheme(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyThemeData, FirebaseError, SelectMyThemeVariables>): UseDataConnectMutationResult<SelectMyThemeData, SelectMyThemeVariables>;
+
+export function useClearMyTheme(options?: useDataConnectMutationOptions<ClearMyThemeData, FirebaseError, void>): UseDataConnectMutationResult<ClearMyThemeData, undefined>;
+export function useClearMyTheme(dc: DataConnect, options?: useDataConnectMutationOptions<ClearMyThemeData, FirebaseError, void>): UseDataConnectMutationResult<ClearMyThemeData, undefined>;
 
 export function useUpdateWorkLog(options?: useDataConnectMutationOptions<UpdateWorkLogData, FirebaseError, UpdateWorkLogVariables>): UseDataConnectMutationResult<UpdateWorkLogData, UpdateWorkLogVariables>;
 export function useUpdateWorkLog(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateWorkLogData, FirebaseError, UpdateWorkLogVariables>): UseDataConnectMutationResult<UpdateWorkLogData, UpdateWorkLogVariables>;
@@ -34,6 +46,9 @@ export function useListUsers(dc: DataConnect, options?: useDataConnectQueryOptio
 
 export function useGetMyUser(options?: useDataConnectQueryOptions<GetMyUserData>): UseDataConnectQueryResult<GetMyUserData, undefined>;
 export function useGetMyUser(dc: DataConnect, options?: useDataConnectQueryOptions<GetMyUserData>): UseDataConnectQueryResult<GetMyUserData, undefined>;
+
+export function useListThemes(options?: useDataConnectQueryOptions<ListThemesData>): UseDataConnectQueryResult<ListThemesData, undefined>;
+export function useListThemes(dc: DataConnect, options?: useDataConnectQueryOptions<ListThemesData>): UseDataConnectQueryResult<ListThemesData, undefined>;
 
 export function useListTimeEntries(vars: ListTimeEntriesVariables, options?: useDataConnectQueryOptions<ListTimeEntriesData>): UseDataConnectQueryResult<ListTimeEntriesData, ListTimeEntriesVariables>;
 export function useListTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: useDataConnectQueryOptions<ListTimeEntriesData>): UseDataConnectQueryResult<ListTimeEntriesData, ListTimeEntriesVariables>;

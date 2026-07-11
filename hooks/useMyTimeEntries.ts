@@ -9,7 +9,7 @@ export interface MyTimeEntry {
   id: string;
   startTime: string;
   endTime: string;
-  ticketNumber?: string | null;
+  ticket?: { ticketNumber: number; ticketLink?: string | null } | null;
   officeNumber?: string | null;
   workLogId?: string | null;
   workLogName?: string | null;
@@ -40,7 +40,7 @@ export function useMyTimeEntries() {
           id: entry.id,
           startTime: entry.startTime,
           endTime: entry.endTime,
-          ticketNumber: entry.ticketNumber || "",
+          ticket: entry.ticket ?? null,
           officeNumber: entry.officeNumber || "",
           workLogId: entry.workLog?.id ?? null,
           workLogName: entry.workLog?.name ?? null,

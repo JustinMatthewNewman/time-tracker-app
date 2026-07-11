@@ -1,5 +1,23 @@
 extend type Mutation {
   """
+  ✨ Insert a single `Theme` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  theme_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Theme_Data!
+  ): Theme_KeyOutput! @fdc_generated(from: "Theme", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Ticket` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  ticket_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Ticket_Data!
+  ): Ticket_KeyOutput! @fdc_generated(from: "Ticket", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `TimeEntry` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   timeEntry_insert(
@@ -26,6 +44,24 @@ extend type Mutation {
     """
     data: WorkLog_Data!
   ): WorkLog_KeyOutput! @fdc_generated(from: "WorkLog", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `Theme` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  theme_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Theme_Data!]!
+  ): [Theme_KeyOutput!]! @fdc_generated(from: "Theme", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Ticket` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  ticket_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Ticket_Data!]!
+  ): [Ticket_KeyOutput!]! @fdc_generated(from: "Ticket", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `TimeEntry` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -54,6 +90,24 @@ extend type Mutation {
     data: [WorkLog_Data!]!
   ): [WorkLog_KeyOutput!]! @fdc_generated(from: "WorkLog", purpose: INSERT_MULTIPLE)
   """
+  ✨ Insert or update a single `Theme` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Theme`.
+  """
+  theme_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Theme_Data!
+  ): Theme_KeyOutput! @fdc_generated(from: "Theme", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Ticket` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Ticket`.
+  """
+  ticket_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Ticket_Data!
+  ): Ticket_KeyOutput! @fdc_generated(from: "Ticket", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `TimeEntry` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `TimeEntry`.
   """
   timeEntry_upsert(
@@ -81,6 +135,24 @@ extend type Mutation {
     data: WorkLog_Data!
   ): WorkLog_KeyOutput! @fdc_generated(from: "WorkLog", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update `Theme` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Theme`.
+  """
+  theme_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Theme_Data!]!
+  ): [Theme_KeyOutput!]! @fdc_generated(from: "Theme", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Ticket` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Ticket`.
+  """
+  ticket_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Ticket_Data!]!
+  ): [Ticket_KeyOutput!]! @fdc_generated(from: "Ticket", purpose: UPSERT_MULTIPLE)
+  """
   ✨ Insert or update `TimeEntry` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `TimeEntry`.
   """
   timeEntry_upsertMany(
@@ -107,6 +179,49 @@ extend type Mutation {
     """
     data: [WorkLog_Data!]!
   ): [WorkLog_KeyOutput!]! @fdc_generated(from: "WorkLog", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `Theme` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Theme` or `null` if not found.
+  """
+  theme_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Theme_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Theme_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Theme_Data!
+  ): Theme_KeyOutput @fdc_generated(from: "Theme", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Ticket` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Ticket` or `null` if not found.
+  """
+  ticket_update(
+    """
+    The key used to identify the object.
+    """
+    key: Ticket_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Ticket_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Ticket_Data!
+  ): Ticket_KeyOutput @fdc_generated(from: "Ticket", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `TimeEntry` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `TimeEntry` or `null` if not found.
   """
@@ -180,6 +295,44 @@ extend type Mutation {
     data: WorkLog_Data!
   ): WorkLog_KeyOutput @fdc_generated(from: "WorkLog", purpose: UPDATE_SINGLE)
   """
+  ✨ Update `Theme` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  theme_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Theme_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Theme_Data!
+  ): Int! @fdc_generated(from: "Theme", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Ticket` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  ticket_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Ticket_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Ticket_Data!
+  ): Int! @fdc_generated(from: "Ticket", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `TimeEntry` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   timeEntry_updateMany(
@@ -237,6 +390,39 @@ extend type Mutation {
     data: WorkLog_Data!
   ): Int! @fdc_generated(from: "WorkLog", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Delete a single `Theme` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  theme_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Theme_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Theme_FirstRow
+  ): Theme_KeyOutput @fdc_generated(from: "Theme", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Ticket` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  ticket_delete(
+    """
+    The key used to identify the object.
+    """
+    key: Ticket_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Ticket_FirstRow
+  ): Ticket_KeyOutput @fdc_generated(from: "Ticket", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `TimeEntry` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   timeEntry_delete(
@@ -293,6 +479,34 @@ extend type Mutation {
     """
     first: WorkLog_FirstRow
   ): WorkLog_KeyOutput @fdc_generated(from: "WorkLog", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `Theme` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  theme_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Theme_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Theme", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Ticket` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  ticket_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Ticket_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Ticket", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `TimeEntry` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

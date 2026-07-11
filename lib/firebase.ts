@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -17,3 +17,16 @@ const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Opt-in local dev flag (set NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true in
+// .env.local) so `npm run dev` can point at the Auth + Data Connect
+// emulators instead of the live project. Guarded against Fast Refresh
+// re-running this module and reconnecting an already-started emulator.
+declare global {
+  var __authEmulatorConnected: boolean | undefined;
+}
+
+if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true" && !globalThis.__authEmulatorConnected) {
+  connectAuthEmulator(auth, "http://127.0.0.1:9099", { disableWarnings: true });
+  globalThis.__authEmulatorConnected = true;
+}

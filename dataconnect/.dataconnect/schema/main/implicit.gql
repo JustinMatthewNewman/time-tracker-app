@@ -4,6 +4,10 @@ extend type TimeEntry {
   """
   id: UUID! @default(expr: "uuidV4()") @fdc_generated(from: "TimeEntry", purpose: IMPLICIT_KEY_FIELD)
   """
+  ✨ Implicit foreign key field based on `TimeEntry`.`ticket`. It must match the value of `Ticket`.`ticketNumber`. See `@ref` for how to customize it.
+  """
+  ticketTicketNumber: Int @fdc_generated(from: "TimeEntry.ticket", purpose: IMPLICIT_REF_FIELD)
+  """
   ✨ Implicit foreign key field based on `TimeEntry`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
   """
   userId: UUID! @fdc_generated(from: "TimeEntry.user", purpose: IMPLICIT_REF_FIELD)
@@ -11,6 +15,12 @@ extend type TimeEntry {
   ✨ Implicit foreign key field based on `TimeEntry`.`workLog`. It must match the value of `WorkLog`.`id`. See `@ref` for how to customize it.
   """
   workLogId: UUID @fdc_generated(from: "TimeEntry.workLog", purpose: IMPLICIT_REF_FIELD)
+}
+extend type User {
+  """
+  ✨ Implicit foreign key field based on `User`.`theme`. It must match the value of `Theme`.`id`. See `@ref` for how to customize it.
+  """
+  themeId: UUID @fdc_generated(from: "User.theme", purpose: IMPLICIT_REF_FIELD)
 }
 extend type WorkLog {
   """

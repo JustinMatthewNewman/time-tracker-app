@@ -8,6 +8,10 @@ export type Int64String = string;
 export type DateString = string;
 
 
+export interface ClearMyThemeData {
+  user_update?: User_Key | null;
+}
+
 export interface CreateTimeEntryData {
   timeEntry_insert: TimeEntry_Key;
 }
@@ -19,7 +23,6 @@ export interface CreateTimeEntryVariables {
   date: DateString;
   createdAt: TimestampString;
   description?: string | null;
-  ticketNumber?: string | null;
   officeNumber?: string | null;
 }
 
@@ -97,6 +100,13 @@ export interface DeleteWorkLogVariables {
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
+    theme?: {
+      id: UUIDString;
+      name: string;
+      background: string;
+      foreground: string;
+      isDark: boolean;
+    } & Theme_Key;
   } & User_Key;
 }
 
@@ -112,7 +122,11 @@ export interface GetTimeEntryData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key;
@@ -127,13 +141,27 @@ export interface ListMyTimeEntriesData {
     id: UUIDString;
     startTime: TimestampString;
     endTime: TimestampString;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     workLog?: {
       id: UUIDString;
       name: string;
     } & WorkLog_Key;
   } & TimeEntry_Key)[];
+}
+
+export interface ListThemesData {
+  themes: ({
+    id: UUIDString;
+    name: string;
+    background: string;
+    foreground: string;
+    isDark: boolean;
+  } & Theme_Key)[];
 }
 
 export interface ListTimeEntriesByDateRangeData {
@@ -146,7 +174,11 @@ export interface ListTimeEntriesByDateRangeData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -165,7 +197,11 @@ export interface ListTimeEntriesByWorkLogData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -187,7 +223,11 @@ export interface ListTimeEntriesData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -224,9 +264,37 @@ export interface RestoreWorkLogVariables {
   workLogId: UUIDString;
 }
 
+export interface SelectMyThemeData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyThemeVariables {
+  themeId: UUIDString;
+}
+
+export interface Theme_Key {
+  id: UUIDString;
+  __typename?: 'Theme_Key';
+}
+
+export interface Ticket_Key {
+  ticketNumber: number;
+  __typename?: 'Ticket_Key';
+}
+
 export interface TimeEntry_Key {
   id: UUIDString;
   __typename?: 'TimeEntry_Key';
+}
+
+export interface UpdateTimeEntryClearTicketData {
+  timeEntry_update?: TimeEntry_Key | null;
+}
+
+export interface UpdateTimeEntryClearTicketVariables {
+  entryId: UUIDString;
+  description?: string | null;
+  officeNumber?: string | null;
 }
 
 export interface UpdateTimeEntryData {
@@ -236,7 +304,7 @@ export interface UpdateTimeEntryData {
 export interface UpdateTimeEntryVariables {
   entryId: UUIDString;
   description?: string | null;
-  ticketNumber?: string | null;
+  ticketNumber: number;
   officeNumber?: string | null;
 }
 
@@ -247,6 +315,15 @@ export interface UpdateWorkLogData {
 export interface UpdateWorkLogVariables {
   workLogId: UUIDString;
   name: string;
+}
+
+export interface UpsertTicketData {
+  ticket_upsert: Ticket_Key;
+}
+
+export interface UpsertTicketVariables {
+  ticketNumber: number;
+  ticketLink?: string | null;
 }
 
 export interface User_Key {
@@ -274,10 +351,30 @@ export function updateTimeEntry(dc: DataConnect, vars: UpdateTimeEntryVariables,
 /** Generated Node Admin SDK operation action function for the 'UpdateTimeEntry' Mutation. Allow users to pass in custom DataConnect instances. */
 export function updateTimeEntry(vars: UpdateTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateTimeEntryData>>;
 
+/** Generated Node Admin SDK operation action function for the 'UpdateTimeEntryClearTicket' Mutation. Allow users to execute without passing in DataConnect. */
+export function updateTimeEntryClearTicket(dc: DataConnect, vars: UpdateTimeEntryClearTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateTimeEntryClearTicketData>>;
+/** Generated Node Admin SDK operation action function for the 'UpdateTimeEntryClearTicket' Mutation. Allow users to pass in custom DataConnect instances. */
+export function updateTimeEntryClearTicket(vars: UpdateTimeEntryClearTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateTimeEntryClearTicketData>>;
+
 /** Generated Node Admin SDK operation action function for the 'DeleteTimeEntry' Mutation. Allow users to execute without passing in DataConnect. */
 export function deleteTimeEntry(dc: DataConnect, vars: DeleteTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteTimeEntryData>>;
 /** Generated Node Admin SDK operation action function for the 'DeleteTimeEntry' Mutation. Allow users to pass in custom DataConnect instances. */
 export function deleteTimeEntry(vars: DeleteTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteTimeEntryData>>;
+
+/** Generated Node Admin SDK operation action function for the 'UpsertTicket' Mutation. Allow users to execute without passing in DataConnect. */
+export function upsertTicket(dc: DataConnect, vars: UpsertTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpsertTicketData>>;
+/** Generated Node Admin SDK operation action function for the 'UpsertTicket' Mutation. Allow users to pass in custom DataConnect instances. */
+export function upsertTicket(vars: UpsertTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpsertTicketData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SelectMyTheme' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyTheme(dc: DataConnect, vars: SelectMyThemeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyThemeData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyTheme' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyTheme(vars: SelectMyThemeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyThemeData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ClearMyTheme' Mutation. Allow users to execute without passing in DataConnect. */
+export function clearMyTheme(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ClearMyThemeData>>;
+/** Generated Node Admin SDK operation action function for the 'ClearMyTheme' Mutation. Allow users to pass in custom DataConnect instances. */
+export function clearMyTheme(options?: OperationOptions): Promise<ExecuteOperationResponse<ClearMyThemeData>>;
 
 /** Generated Node Admin SDK operation action function for the 'UpdateWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
 export function updateWorkLog(dc: DataConnect, vars: UpdateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateWorkLogData>>;
@@ -308,6 +405,11 @@ export function listUsers(options?: OperationOptions): Promise<ExecuteOperationR
 export function getMyUser(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<GetMyUserData>>;
 /** Generated Node Admin SDK operation action function for the 'GetMyUser' Query. Allow users to pass in custom DataConnect instances. */
 export function getMyUser(options?: OperationOptions): Promise<ExecuteOperationResponse<GetMyUserData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListThemes' Query. Allow users to execute without passing in DataConnect. */
+export function listThemes(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListThemesData>>;
+/** Generated Node Admin SDK operation action function for the 'ListThemes' Query. Allow users to pass in custom DataConnect instances. */
+export function listThemes(options?: OperationOptions): Promise<ExecuteOperationResponse<ListThemesData>>;
 
 /** Generated Node Admin SDK operation action function for the 'ListTimeEntries' Query. Allow users to execute without passing in DataConnect. */
 export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesData>>;

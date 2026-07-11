@@ -2,12 +2,13 @@ export const UNASSIGNED_TICKET = "(No ticket)";
 
 export interface TicketTotal {
   ticket: string;
+  ticketLink?: string | null;
   entryCount: number;
   totalMinutes: number;
 }
 
 interface EntryLike {
-  ticketNumber?: string | null;
+  ticket?: { ticketNumber: number; ticketLink?: string | null } | null;
   startTime: string;
   endTime: string;
 }
@@ -20,15 +21,20 @@ export function groupByTicket<T extends EntryLike>(entries: T[]): TicketTotal[] 
   const byTicket = new Map<string, TicketTotal>();
 
   for (const entry of entries) {
-    const ticket = entry.ticketNumber?.trim() || UNASSIGNED_TICKET;
+    const ticketLabel = entry.ticket ? String(entry.ticket.ticketNumber) : UNASSIGNED_TICKET;
     const minutes = minutesBetween(entry.startTime, entry.endTime);
 
-    const existing = byTicket.get(ticket);
+    const existing = byTicket.get(ticketLabel);
     if (existing) {
       existing.entryCount += 1;
       existing.totalMinutes += minutes;
     } else {
-      byTicket.set(ticket, { ticket, entryCount: 1, totalMinutes: minutes });
+      byTicket.set(ticketLabel, {
+        ticket: ticketLabel,
+        ticketLink: entry.ticket?.ticketLink,
+        entryCount: 1,
+        totalMinutes: minutes,
+      });
     }
   }
 

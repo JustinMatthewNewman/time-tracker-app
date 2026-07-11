@@ -11,6 +11,10 @@ export type DateString = string;
 
 
 
+export interface ClearMyThemeData {
+  user_update?: User_Key | null;
+}
+
 export interface CreateTimeEntryData {
   timeEntry_insert: TimeEntry_Key;
 }
@@ -22,7 +26,6 @@ export interface CreateTimeEntryVariables {
   date: DateString;
   createdAt: TimestampString;
   description?: string | null;
-  ticketNumber?: string | null;
   officeNumber?: string | null;
 }
 
@@ -100,6 +103,13 @@ export interface DeleteWorkLogVariables {
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
+    theme?: {
+      id: UUIDString;
+      name: string;
+      background: string;
+      foreground: string;
+      isDark: boolean;
+    } & Theme_Key;
   } & User_Key;
 }
 
@@ -115,7 +125,11 @@ export interface GetTimeEntryData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key;
@@ -130,13 +144,27 @@ export interface ListMyTimeEntriesData {
     id: UUIDString;
     startTime: TimestampString;
     endTime: TimestampString;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     workLog?: {
       id: UUIDString;
       name: string;
     } & WorkLog_Key;
   } & TimeEntry_Key)[];
+}
+
+export interface ListThemesData {
+  themes: ({
+    id: UUIDString;
+    name: string;
+    background: string;
+    foreground: string;
+    isDark: boolean;
+  } & Theme_Key)[];
 }
 
 export interface ListTimeEntriesByDateRangeData {
@@ -149,7 +177,11 @@ export interface ListTimeEntriesByDateRangeData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -168,7 +200,11 @@ export interface ListTimeEntriesByWorkLogData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -190,7 +226,11 @@ export interface ListTimeEntriesData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -227,9 +267,37 @@ export interface RestoreWorkLogVariables {
   workLogId: UUIDString;
 }
 
+export interface SelectMyThemeData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyThemeVariables {
+  themeId: UUIDString;
+}
+
+export interface Theme_Key {
+  id: UUIDString;
+  __typename?: 'Theme_Key';
+}
+
+export interface Ticket_Key {
+  ticketNumber: number;
+  __typename?: 'Ticket_Key';
+}
+
 export interface TimeEntry_Key {
   id: UUIDString;
   __typename?: 'TimeEntry_Key';
+}
+
+export interface UpdateTimeEntryClearTicketData {
+  timeEntry_update?: TimeEntry_Key | null;
+}
+
+export interface UpdateTimeEntryClearTicketVariables {
+  entryId: UUIDString;
+  description?: string | null;
+  officeNumber?: string | null;
 }
 
 export interface UpdateTimeEntryData {
@@ -239,7 +307,7 @@ export interface UpdateTimeEntryData {
 export interface UpdateTimeEntryVariables {
   entryId: UUIDString;
   description?: string | null;
-  ticketNumber?: string | null;
+  ticketNumber: number;
   officeNumber?: string | null;
 }
 
@@ -250,6 +318,15 @@ export interface UpdateWorkLogData {
 export interface UpdateWorkLogVariables {
   workLogId: UUIDString;
   name: string;
+}
+
+export interface UpsertTicketData {
+  ticket_upsert: Ticket_Key;
+}
+
+export interface UpsertTicketVariables {
+  ticketNumber: number;
+  ticketLink?: string | null;
 }
 
 export interface User_Key {
@@ -298,6 +375,18 @@ export const updateTimeEntryRef: UpdateTimeEntryRef;
 export function updateTimeEntry(vars: UpdateTimeEntryVariables): MutationPromise<UpdateTimeEntryData, UpdateTimeEntryVariables>;
 export function updateTimeEntry(dc: DataConnect, vars: UpdateTimeEntryVariables): MutationPromise<UpdateTimeEntryData, UpdateTimeEntryVariables>;
 
+interface UpdateTimeEntryClearTicketRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateTimeEntryClearTicketVariables): MutationRef<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateTimeEntryClearTicketVariables): MutationRef<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+  operationName: string;
+}
+export const updateTimeEntryClearTicketRef: UpdateTimeEntryClearTicketRef;
+
+export function updateTimeEntryClearTicket(vars: UpdateTimeEntryClearTicketVariables): MutationPromise<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+export function updateTimeEntryClearTicket(dc: DataConnect, vars: UpdateTimeEntryClearTicketVariables): MutationPromise<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+
 interface DeleteTimeEntryRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars: DeleteTimeEntryVariables): MutationRef<DeleteTimeEntryData, DeleteTimeEntryVariables>;
@@ -309,6 +398,42 @@ export const deleteTimeEntryRef: DeleteTimeEntryRef;
 
 export function deleteTimeEntry(vars: DeleteTimeEntryVariables): MutationPromise<DeleteTimeEntryData, DeleteTimeEntryVariables>;
 export function deleteTimeEntry(dc: DataConnect, vars: DeleteTimeEntryVariables): MutationPromise<DeleteTimeEntryData, DeleteTimeEntryVariables>;
+
+interface UpsertTicketRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpsertTicketVariables): MutationRef<UpsertTicketData, UpsertTicketVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpsertTicketVariables): MutationRef<UpsertTicketData, UpsertTicketVariables>;
+  operationName: string;
+}
+export const upsertTicketRef: UpsertTicketRef;
+
+export function upsertTicket(vars: UpsertTicketVariables): MutationPromise<UpsertTicketData, UpsertTicketVariables>;
+export function upsertTicket(dc: DataConnect, vars: UpsertTicketVariables): MutationPromise<UpsertTicketData, UpsertTicketVariables>;
+
+interface SelectMyThemeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyThemeVariables): MutationRef<SelectMyThemeData, SelectMyThemeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SelectMyThemeVariables): MutationRef<SelectMyThemeData, SelectMyThemeVariables>;
+  operationName: string;
+}
+export const selectMyThemeRef: SelectMyThemeRef;
+
+export function selectMyTheme(vars: SelectMyThemeVariables): MutationPromise<SelectMyThemeData, SelectMyThemeVariables>;
+export function selectMyTheme(dc: DataConnect, vars: SelectMyThemeVariables): MutationPromise<SelectMyThemeData, SelectMyThemeVariables>;
+
+interface ClearMyThemeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): MutationRef<ClearMyThemeData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): MutationRef<ClearMyThemeData, undefined>;
+  operationName: string;
+}
+export const clearMyThemeRef: ClearMyThemeRef;
+
+export function clearMyTheme(): MutationPromise<ClearMyThemeData, undefined>;
+export function clearMyTheme(dc: DataConnect): MutationPromise<ClearMyThemeData, undefined>;
 
 interface UpdateWorkLogRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -381,6 +506,18 @@ export const getMyUserRef: GetMyUserRef;
 
 export function getMyUser(options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
 export function getMyUser(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
+
+interface ListThemesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListThemesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListThemesData, undefined>;
+  operationName: string;
+}
+export const listThemesRef: ListThemesRef;
+
+export function listThemes(options?: ExecuteQueryOptions): QueryPromise<ListThemesData, undefined>;
+export function listThemes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListThemesData, undefined>;
 
 interface ListTimeEntriesRef {
   /* Allow users to create refs without passing in DataConnect */

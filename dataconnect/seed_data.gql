@@ -1,0 +1,13 @@
+# dataconnect/seed_data.gql
+# LOCAL ONLY — excluded from production deploys and client SDK generation.
+# Re-run any time to reset these rows: theme_upsertMany matches on `id`
+# (Theme's table key), and these ids are fixed, so this is idempotent.
+
+mutation SeedThemes {
+  theme_upsertMany(data: [
+    { id: "00000000-0000-0000-0000-000000000001", name: "Light", background: "#ffffff", foreground: "#171717", isDark: false }
+    { id: "00000000-0000-0000-0000-000000000002", name: "Dark", background: "#0a0a0a", foreground: "#ededed", isDark: true }
+    { id: "00000000-0000-0000-0000-000000000003", name: "Slate", background: "#1e293b", foreground: "#e2e8f0", isDark: true }
+    { id: "00000000-0000-0000-0000-000000000004", name: "Sepia", background: "#f4ecd8", foreground: "#433422", isDark: false }
+  ])
+}
