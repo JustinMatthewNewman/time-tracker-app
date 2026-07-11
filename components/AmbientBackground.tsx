@@ -2,7 +2,12 @@
 
 // Shared ambient blob/dot-grid layer used behind page content.
 // Only visible in dark mode, matching the landing page's original design.
-export default function AmbientBackground() {
+type AmbientBackgroundProps = {
+    // Multiplier applied to every orb's opacity, e.g. 0.9 = 10% dimmer.
+    intensity?: number;
+};
+
+export default function AmbientBackground({ intensity = 1 }: AmbientBackgroundProps) {
     return (
         <>
             <style>{`
@@ -55,7 +60,11 @@ export default function AmbientBackground() {
                 }
             `}</style>
 
-            <div className="pointer-events-none ambient-bg fixed inset-0 z-0" aria-hidden="true">
+            <div
+                className="pointer-events-none ambient-bg fixed inset-0 z-0"
+                aria-hidden="true"
+                style={{ "--intensity": intensity } as React.CSSProperties}
+            >
                 <svg
                     className="absolute inset-0 w-full h-full"
                     xmlns="http://www.w3.org/2000/svg"
@@ -79,15 +88,15 @@ export default function AmbientBackground() {
                     </defs>
 
                     <circle cx="15%" cy="20%" r="380" fill="#7c3aed" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb1-opacity)", animation: "drift1 18s ease-in-out infinite alternate" }} />
+                        style={{ opacity: "calc(var(--orb1-opacity) * var(--intensity))", animation: "drift1 18s ease-in-out infinite alternate" }} />
                     <circle cx="80%" cy="10%" r="320" fill="#4f46e5" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb2-opacity)", animation: "drift2 22s ease-in-out infinite alternate" }} />
+                        style={{ opacity: "calc(var(--orb2-opacity) * var(--intensity))", animation: "drift2 22s ease-in-out infinite alternate" }} />
                     <circle cx="70%" cy="55%" r="280" fill="#0891b2" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb3-opacity)", animation: "drift3 26s ease-in-out infinite alternate" }} />
+                        style={{ opacity: "calc(var(--orb3-opacity) * var(--intensity))", animation: "drift3 26s ease-in-out infinite alternate" }} />
                     <circle cx="20%" cy="80%" r="350" fill="#a21caf" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb4-opacity)", animation: "drift4 20s ease-in-out infinite alternate" }} />
+                        style={{ opacity: "calc(var(--orb4-opacity) * var(--intensity))", animation: "drift4 20s ease-in-out infinite alternate" }} />
                     <circle cx="50%" cy="45%" r="160" fill="#6d28d9" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb5-opacity)", animation: "drift5 14s ease-in-out infinite alternate" }} />
+                        style={{ opacity: "calc(var(--orb5-opacity) * var(--intensity))", animation: "drift5 14s ease-in-out infinite alternate" }} />
 
                     <rect x="0" y="0" width="100%" height="100%"
                         fill="transparent" filter="url(#noise)" opacity="0.04" />

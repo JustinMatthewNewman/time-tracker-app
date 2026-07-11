@@ -33,7 +33,7 @@ function WorkLogs() {
 
     return (
         <div className="relative flex h-[calc(100vh-4rem)] flex-col gap-4 overflow-hidden p-4">
-            <AmbientBackground />
+            <AmbientBackground intensity={0.85} />
 
             <div className="relative z-10 flex h-full min-h-0 flex-col gap-4 overflow-hidden">
                 <WorkLogTimeEntryCard showBreakdown={showBreakdown} />
