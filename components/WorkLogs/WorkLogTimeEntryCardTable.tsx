@@ -5,7 +5,7 @@ import { useUpdateTimeEntry } from "@/src/dataconnect-generated/react";
 import type { UpdateTimeEntryVariables } from "@/src/dataconnect-generated";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 
-interface DashboardCardTableProps {
+interface WorkLogTimeEntryCardTableProps {
     entries: WorkLogTimeEntry[];
     loading?: boolean;
     onEntryUpdated?: () => void;
@@ -22,7 +22,7 @@ function formatTime(isoDate: string) {
     });
 }
 
-export function DashboardCardTable({ entries, loading, onEntryUpdated }: DashboardCardTableProps) {
+export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: WorkLogTimeEntryCardTableProps) {
     const updateMutation = useUpdateTimeEntry();
     const [drafts, setDrafts] = useState<Record<string, Partial<WorkLogTimeEntry>>>({});
 
@@ -146,4 +146,4 @@ export function DashboardCardTable({ entries, loading, onEntryUpdated }: Dashboa
     );
 }
 
-export default DashboardCardTable;
+export default WorkLogTimeEntryCardTable;

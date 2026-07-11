@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ListBox, Button, Label } from "@heroui/react";
-import type { Selection } from "react-aria-components";
+import { Tabs, Button, Label } from "@heroui/react";
+import type { Key } from "react-aria-components";
 import { useWorkLogs } from "@/hooks/useWorkLogs";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
 import { NewWorkLogDialog } from "./NewWorkLogDialog";
@@ -27,10 +27,8 @@ export function WorkLogListBox() {
     [workLogs]
   );
 
-  const handleSelectionChange = (keys: Selection) => {
-    if (keys === "all") return;
-    const [firstKey] = keys;
-    setSelectedWorkLogId(firstKey != null ? String(firstKey) : null);
+  const handleSelectionChange = (key: Key) => {
+    setSelectedWorkLogId(key != null ? String(key) : null);
   };
 
   if (loading) {
@@ -42,27 +40,39 @@ export function WorkLogListBox() {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <ListBox
-        aria-label="Work Logs"
-        className="w-[260px]"
-        selectionMode="single"
-        selectedKeys={selectedWorkLogId ? [selectedWorkLogId] : []}
+    <div className="flex h-full w-full min-h-0 flex-col gap-3">
+      <Tabs
+        orientation="vertical"
+        className="w-full min-h-0 flex-1 overflow-hidden"
+        selectedKey={selectedWorkLogId ?? undefined}
         onSelectionChange={handleSelectionChange}
       >
-        {items.map((item) => (
-          <ListBox.Item key={item.id} id={item.id} textValue={item.label}>
-            <div className="flex flex-col">
-              <Label className="font-medium">{item.label}</Label>
-              <span className="text-sm text-gray-500">
-                {formatDate(item.date)}
-              </span>
-            </div>
+        <Tabs.ListContainer className="h-full w-full min-w-0">
+          <Tabs.List aria-label="Work Logs" className="h-full w-full min-w-0 overflow-hidden">
+            {items.map((item) => (
+              <Tabs.Tab
+                key={item.id}
+                id={item.id}
+                className="h-auto w-full min-w-0 justify-start px-3 py-2 text-left"
+              >
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <Label className="truncate font-medium">{item.label}</Label>
+                  <span className="truncate text-sm text-gray-500">
+                    {formatDate(item.date)}
+                  </span>
+                </div>
+                <Tabs.Indicator />
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
+        </Tabs.ListContainer>
 
-            <ListBox.ItemIndicator />
-          </ListBox.Item>
+        {items.map((item) => (
+          <Tabs.Panel key={item.id} id={item.id} className="hidden">
+            {null}
+          </Tabs.Panel>
         ))}
-      </ListBox>
+      </Tabs>
 
       <div className="flex gap-2">
         <Button aria-label="New work log" onPress={() => setIsDialogOpen(true)}>

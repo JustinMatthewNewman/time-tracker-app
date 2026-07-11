@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react'
-import { Card, Accordion, TextArea, Input } from '@heroui/react'
+import { Accordion } from '@heroui/react'
 import { ChevronDown } from '@gravity-ui/icons'
 import ListBoxComponent from '../Utilities/ListBoxComponent'
 import { useTimeRange } from '../../context/TimeRangeContext'
@@ -9,21 +9,21 @@ import { formatHour } from '../TimeRangeSettings'
 import { useSidebar } from "../../context/SideBarContext";
 import { useSelectedWorkLog } from "../../context/SelectedWorkLogContext";
 import { useTimeEntriesByWorkLog } from "@/hooks/useTimeEntriesByWorkLog";
-import { DashboardCardTable } from './DashboardCardTable';
+import { WorkLogTimeEntryCardTable } from './WorkLogTimeEntryCardTable';
 import TicketBreakdown from './TicketBreakdown';
 
-interface DashboardCardLayoutProps {
+interface WorkLogTimeEntryCardLayoutProps {
   showBreakdown?: boolean;
 }
 
-function DashboardCardLayout({ showBreakdown = false }: DashboardCardLayoutProps) {
+function WorkLogTimeEntryCardLayout({ showBreakdown = false }: WorkLogTimeEntryCardLayoutProps) {
   const { timeSlots } = useTimeRange()
   const { isOpen } = useSidebar();
   const { selectedWorkLogId } = useSelectedWorkLog();
   const { entries, loading, error, refetch } = useTimeEntriesByWorkLog(selectedWorkLogId);
 
   return (
-    <div className='flex flex-grid items-center justify-center h-screen'>
+    <div className='flex h-full items-stretch overflow-hidden'>
       {/* Sidebar */}
       <aside
         className={`
@@ -31,18 +31,18 @@ function DashboardCardLayout({ showBreakdown = false }: DashboardCardLayoutProps
           ${isOpen ? "w-88" : "w-0"}
         `}
       >
-        <div className="w-88 h-screen bg-default-50 p-4">
+        <div className="w-88 h-full bg-default-50 p-4">
           <ListBoxComponent />
         </div>
       </aside>
 
       <div
-        className={`h-full w-screen text-foreground p-4 m-4 border-l transition-colors duration-300 
+        className={`h-full min-w-0 flex-1 overflow-y-auto text-foreground p-4 m-4 border-l transition-colors duration-300
           ${isOpen ? "border-default-200" : "border-transparent"}`}
       >
         {/*
           Both views stay mounted at all times and are only hidden via CSS.
-          Unmounting DashboardCardTable on toggle would discard any in-progress
+          Unmounting WorkLogTimeEntryCardTable on toggle would discard any in-progress
           edit sitting in its local draft state before the autosave debounce fires.
         */}
         <div className={showBreakdown ? "hidden" : ""}>
@@ -78,7 +78,7 @@ function DashboardCardLayout({ showBreakdown = false }: DashboardCardLayoutProps
                       </Accordion.Heading>
                       <Accordion.Panel>
                         <Accordion.Body>
-                          <DashboardCardTable
+                          <WorkLogTimeEntryCardTable
                             entries={hourEntries}
                             loading={loading}
                             onEntryUpdated={() => refetch()}
@@ -106,4 +106,4 @@ function DashboardCardLayout({ showBreakdown = false }: DashboardCardLayoutProps
   )
 }
 
-export default DashboardCardLayout
+export default WorkLogTimeEntryCardLayout

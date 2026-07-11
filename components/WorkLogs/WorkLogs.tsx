@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Switch } from "@heroui/react";
-import DashboardCard from "./DashboardCard";
+import WorkLogTimeEntryCard from "./WorkLogTimeEntryCard";
 import TimeEntryForm from "./TimeEntryForm";
 
 function WorkLogs() {
@@ -31,8 +31,8 @@ function WorkLogs() {
     if (!user) return null; // redirect in flight
 
     return (
-        <div className="flex flex-col gap-4 p-4">
-            <div className="flex items-center justify-end">
+        <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 overflow-hidden p-4">
+            <div className="flex shrink-0 items-center justify-end">
                 <Switch isSelected={showBreakdown} onChange={setShowBreakdown}>
                 <Switch.Content>
                     <Switch.Control>
@@ -43,7 +43,7 @@ function WorkLogs() {
                 </Switch>
             </div>
 
-            <DashboardCard showBreakdown={showBreakdown} />
+            <WorkLogTimeEntryCard showBreakdown={showBreakdown} />
 
             <TimeEntryForm
                 isOpen={isFormOpen}
