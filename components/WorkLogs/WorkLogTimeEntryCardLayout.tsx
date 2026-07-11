@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react'
-import { Accordion } from '@heroui/react'
+import { Accordion, Card } from '@heroui/react'
 import { ChevronDown } from '@gravity-ui/icons'
 import ListBoxComponent from '../Utilities/ListBoxComponent'
 import { useTimeRange } from '../../context/TimeRangeContext'
@@ -37,7 +37,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false }: WorkLogTimeEntryC
       </aside>
 
       <div
-        className={`h-full min-w-0 flex-1 overflow-y-auto no-scrollbar text-foreground p-4 m-4 border-l transition-colors duration-300
+        className={`h-full min-w-0 flex-1 min-h-0 text-foreground p-4 border-l transition-colors duration-300
           ${isOpen ? "border-default-200" : "border-transparent"}`}
       >
         {/*
@@ -45,7 +45,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false }: WorkLogTimeEntryC
           Unmounting WorkLogTimeEntryCardTable on toggle would discard any in-progress
           edit sitting in its local draft state before the autosave debounce fires.
         */}
-        <div className={showBreakdown ? "hidden" : ""}>
+        <div className={`h-full min-h-0 ${showBreakdown ? "hidden" : ""}`}>
           {!selectedWorkLogId && (
             <div className="text-sm text-gray-500 p-4">
               Select a work log from the sidebar to view its time entries.
@@ -57,38 +57,40 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false }: WorkLogTimeEntryC
           )}
 
           {selectedWorkLogId && !error && (
-            <div className='grid grid-cols-1 lg:grid-cols-1 gap-4'>
-              <Accordion className="w-full">
-                {timeSlots.map((hour) => {
-                  const hourEntries = entries.filter(
-                    (entry) => new Date(entry.startTime).getHours() === hour
-                  );
+            <div className='grid h-full min-h-0 grid-cols-1 lg:grid-cols-1 gap-4'>
+              <Card className="flex h-full min-h-0 flex-col overflow-hidden">
+                <Accordion className="w-full flex-1 min-h-0 overflow-y-auto">
+                  {timeSlots.map((hour) => {
+                    const hourEntries = entries.filter(
+                      (entry) => new Date(entry.startTime).getHours() === hour
+                    );
 
-                  return (
-                    <Accordion.Item key={hour}>
-                      <Accordion.Heading>
-                        <Accordion.Trigger>
-                          <span className='text-sm text-gray-500'>
-                            {formatHour(hour)} – {formatHour(hour + 1)}
-                          </span>
-                          <Accordion.Indicator>
-                            <ChevronDown />
-                          </Accordion.Indicator>
-                        </Accordion.Trigger>
-                      </Accordion.Heading>
-                      <Accordion.Panel>
-                        <Accordion.Body>
-                          <WorkLogTimeEntryCardTable
-                            entries={hourEntries}
-                            loading={loading}
-                            onEntryUpdated={() => refetch()}
-                          />
-                        </Accordion.Body>
-                      </Accordion.Panel>
-                    </Accordion.Item>
-                  );
-                })}
-              </Accordion>
+                    return (
+                      <Accordion.Item key={hour}>
+                        <Accordion.Heading>
+                          <Accordion.Trigger>
+                            <span className='text-sm text-gray-500'>
+                              {formatHour(hour)} – {formatHour(hour + 1)}
+                            </span>
+                            <Accordion.Indicator>
+                              <ChevronDown />
+                            </Accordion.Indicator>
+                          </Accordion.Trigger>
+                        </Accordion.Heading>
+                        <Accordion.Panel>
+                          <Accordion.Body>
+                            <WorkLogTimeEntryCardTable
+                              entries={hourEntries}
+                              loading={loading}
+                              onEntryUpdated={() => refetch()}
+                            />
+                          </Accordion.Body>
+                        </Accordion.Panel>
+                      </Accordion.Item>
+                    );
+                  })}
+                </Accordion>
+              </Card>
             </div>
           )}
         </div>

@@ -32,23 +32,22 @@ function WorkLogs() {
 
     return (
         <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 overflow-hidden p-4">
-            <div className="flex shrink-0 items-center justify-end">
-                <Switch isSelected={showBreakdown} onChange={setShowBreakdown}>
-                <Switch.Content>
-                    <Switch.Control>
-                    <Switch.Thumb />
-                    </Switch.Control>
-                    {showBreakdown ? "Ticket Breakdown" : "Time Card"}
-                </Switch.Content>
-                </Switch>
-            </div>
-
+            
             <WorkLogTimeEntryCard showBreakdown={showBreakdown} />
 
             <TimeEntryForm
                 isOpen={isFormOpen}
                 onClose={() => setIsFormOpen(false)}
             />
+            <div className="flex shrink-0 items-center justify-end">
+                <Switch isSelected={showBreakdown} onChange={setShowBreakdown}>
+                <Switch.Content>
+                    <Switch.Control>
+                    <Switch.Thumb />
+                    </Switch.Control>
+                </Switch.Content>
+                </Switch>
+            </div>
         </div>
     );
 }
