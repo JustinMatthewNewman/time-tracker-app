@@ -340,6 +340,15 @@ extend type WorkLog {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "WorkLog.id", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `WorkLog` table where the `isDeleted` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  isDeleted_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "WorkLog.isDeleted", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `WorkLog` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   name_count(

@@ -86,6 +86,14 @@ export interface DeleteTimeEntryVariables {
   entryId: UUIDString;
 }
 
+export interface DeleteWorkLogData {
+  workLog_update?: WorkLog_Key | null;
+}
+
+export interface DeleteWorkLogVariables {
+  workLogId: UUIDString;
+}
+
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
@@ -208,6 +216,14 @@ export interface ListWorkLogsData {
   } & WorkLog_Key)[];
 }
 
+export interface RestoreWorkLogData {
+  workLog_update?: WorkLog_Key | null;
+}
+
+export interface RestoreWorkLogVariables {
+  workLogId: UUIDString;
+}
+
 export interface TimeEntry_Key {
   id: UUIDString;
   __typename?: 'TimeEntry_Key';
@@ -222,6 +238,15 @@ export interface UpdateTimeEntryVariables {
   description?: string | null;
   ticketNumber?: string | null;
   officeNumber?: string | null;
+}
+
+export interface UpdateWorkLogData {
+  workLog_update?: WorkLog_Key | null;
+}
+
+export interface UpdateWorkLogVariables {
+  workLogId: UUIDString;
+  name: string;
 }
 
 export interface User_Key {
@@ -253,6 +278,21 @@ export function updateTimeEntry(vars: UpdateTimeEntryVariables, options?: Operat
 export function deleteTimeEntry(dc: DataConnect, vars: DeleteTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteTimeEntryData>>;
 /** Generated Node Admin SDK operation action function for the 'DeleteTimeEntry' Mutation. Allow users to pass in custom DataConnect instances. */
 export function deleteTimeEntry(vars: DeleteTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteTimeEntryData>>;
+
+/** Generated Node Admin SDK operation action function for the 'UpdateWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
+export function updateWorkLog(dc: DataConnect, vars: UpdateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateWorkLogData>>;
+/** Generated Node Admin SDK operation action function for the 'UpdateWorkLog' Mutation. Allow users to pass in custom DataConnect instances. */
+export function updateWorkLog(vars: UpdateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateWorkLogData>>;
+
+/** Generated Node Admin SDK operation action function for the 'DeleteWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
+export function deleteWorkLog(dc: DataConnect, vars: DeleteWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteWorkLogData>>;
+/** Generated Node Admin SDK operation action function for the 'DeleteWorkLog' Mutation. Allow users to pass in custom DataConnect instances. */
+export function deleteWorkLog(vars: DeleteWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteWorkLogData>>;
+
+/** Generated Node Admin SDK operation action function for the 'RestoreWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
+export function restoreWorkLog(dc: DataConnect, vars: RestoreWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<RestoreWorkLogData>>;
+/** Generated Node Admin SDK operation action function for the 'RestoreWorkLog' Mutation. Allow users to pass in custom DataConnect instances. */
+export function restoreWorkLog(vars: RestoreWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<RestoreWorkLogData>>;
 
 /** Generated Node Admin SDK operation action function for the 'CreateWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
 export function createWorkLog(dc: DataConnect, vars: CreateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateWorkLogData>>;

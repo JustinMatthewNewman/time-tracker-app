@@ -775,6 +775,14 @@ input WorkLog_Data {
   """
   description_expr: String_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `WorkLog`.`isDeleted` of type `Boolean`
+  """
+  isDeleted: Boolean
+  """
+  ✨ `_expr` server value variant of `isDeleted` (✨ Generated from Field `WorkLog`.`isDeleted` of type `Boolean`)
+  """
+  isDeleted_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `WorkLog`.`name` of type `String!`
   """
   name: String
@@ -840,6 +848,10 @@ input WorkLog_Filter {
   """
   description: String_Filter
   """
+  ✨ Generated from Field `WorkLog`.`isDeleted` of type `Boolean`
+  """
+  isDeleted: Boolean_Filter
+  """
   ✨ Generated from Field `WorkLog`.`name` of type `String!`
   """
   name: String_Filter
@@ -901,6 +913,10 @@ input WorkLog_Having {
   ✨ Generated from Field `WorkLog`.`id_count` of type `Int!`
   """
   id_count: Int_Filter
+  """
+  ✨ Generated from Field `WorkLog`.`isDeleted_count` of type `Int!`
+  """
+  isDeleted_count: Int_Filter
   """
   ✨ Generated from Field `WorkLog`.`name_count` of type `Int!`
   """
@@ -981,6 +997,10 @@ input WorkLog_Order {
   """
   description: OrderDirection
   """
+  ✨ Generated from Field `WorkLog`.`isDeleted` of type `Boolean`
+  """
+  isDeleted: OrderDirection
+  """
   ✨ Generated from Field `WorkLog`.`name` of type `String!`
   """
   name: OrderDirection
@@ -1004,6 +1024,10 @@ input WorkLog_Order {
   ✨ Generated from Field `WorkLog`.`id_count` of type `Int!`
   """
   id_count: OrderDirection
+  """
+  ✨ Generated from Field `WorkLog`.`isDeleted_count` of type `Int!`
+  """
+  isDeleted_count: OrderDirection
   """
   ✨ Generated from Field `WorkLog`.`name_count` of type `Int!`
   """

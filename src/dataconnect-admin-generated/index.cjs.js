@@ -35,6 +35,27 @@ function deleteTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
 }
 exports.deleteTimeEntry = deleteTimeEntry;
 
+function updateWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpdateWorkLog', inputVars, inputOpts);
+}
+exports.updateWorkLog = updateWorkLog;
+
+function deleteWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('DeleteWorkLog', inputVars, inputOpts);
+}
+exports.deleteWorkLog = deleteWorkLog;
+
+function restoreWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('RestoreWorkLog', inputVars, inputOpts);
+}
+exports.restoreWorkLog = restoreWorkLog;
+
 function createWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);

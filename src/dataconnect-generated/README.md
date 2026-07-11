@@ -23,6 +23,9 @@ This README will guide you through the process of using the generated JavaScript
   - [*CreateTimeEntry*](#createtimeentry)
   - [*UpdateTimeEntry*](#updatetimeentry)
   - [*DeleteTimeEntry*](#deletetimeentry)
+  - [*UpdateWorkLog*](#updateworklog)
+  - [*DeleteWorkLog*](#deleteworklog)
+  - [*RestoreWorkLog*](#restoreworklog)
   - [*CreateWorkLog*](#createworklog)
 
 # Accessing the connector
@@ -1435,6 +1438,336 @@ console.log(data.timeEntry_delete);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.timeEntry_delete);
+});
+```
+
+## UpdateWorkLog
+You can execute the `UpdateWorkLog` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+updateWorkLog(vars: UpdateWorkLogVariables): MutationPromise<UpdateWorkLogData, UpdateWorkLogVariables>;
+
+interface UpdateWorkLogRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateWorkLogVariables): MutationRef<UpdateWorkLogData, UpdateWorkLogVariables>;
+}
+export const updateWorkLogRef: UpdateWorkLogRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+updateWorkLog(dc: DataConnect, vars: UpdateWorkLogVariables): MutationPromise<UpdateWorkLogData, UpdateWorkLogVariables>;
+
+interface UpdateWorkLogRef {
+  ...
+  (dc: DataConnect, vars: UpdateWorkLogVariables): MutationRef<UpdateWorkLogData, UpdateWorkLogVariables>;
+}
+export const updateWorkLogRef: UpdateWorkLogRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the updateWorkLogRef:
+```typescript
+const name = updateWorkLogRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpdateWorkLog` mutation requires an argument of type `UpdateWorkLogVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpdateWorkLogVariables {
+  workLogId: UUIDString;
+  name: string;
+}
+```
+### Return Type
+Recall that executing the `UpdateWorkLog` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpdateWorkLogData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpdateWorkLogData {
+  workLog_update?: WorkLog_Key | null;
+}
+```
+### Using `UpdateWorkLog`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, updateWorkLog, UpdateWorkLogVariables } from '@dataconnect/generated';
+
+// The `UpdateWorkLog` mutation requires an argument of type `UpdateWorkLogVariables`:
+const updateWorkLogVars: UpdateWorkLogVariables = {
+  workLogId: ..., 
+  name: ..., 
+};
+
+// Call the `updateWorkLog()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await updateWorkLog(updateWorkLogVars);
+// Variables can be defined inline as well.
+const { data } = await updateWorkLog({ workLogId: ..., name: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await updateWorkLog(dataConnect, updateWorkLogVars);
+
+console.log(data.workLog_update);
+
+// Or, you can use the `Promise` API.
+updateWorkLog(updateWorkLogVars).then((response) => {
+  const data = response.data;
+  console.log(data.workLog_update);
+});
+```
+
+### Using `UpdateWorkLog`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, updateWorkLogRef, UpdateWorkLogVariables } from '@dataconnect/generated';
+
+// The `UpdateWorkLog` mutation requires an argument of type `UpdateWorkLogVariables`:
+const updateWorkLogVars: UpdateWorkLogVariables = {
+  workLogId: ..., 
+  name: ..., 
+};
+
+// Call the `updateWorkLogRef()` function to get a reference to the mutation.
+const ref = updateWorkLogRef(updateWorkLogVars);
+// Variables can be defined inline as well.
+const ref = updateWorkLogRef({ workLogId: ..., name: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = updateWorkLogRef(dataConnect, updateWorkLogVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.workLog_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.workLog_update);
+});
+```
+
+## DeleteWorkLog
+You can execute the `DeleteWorkLog` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+deleteWorkLog(vars: DeleteWorkLogVariables): MutationPromise<DeleteWorkLogData, DeleteWorkLogVariables>;
+
+interface DeleteWorkLogRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteWorkLogVariables): MutationRef<DeleteWorkLogData, DeleteWorkLogVariables>;
+}
+export const deleteWorkLogRef: DeleteWorkLogRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+deleteWorkLog(dc: DataConnect, vars: DeleteWorkLogVariables): MutationPromise<DeleteWorkLogData, DeleteWorkLogVariables>;
+
+interface DeleteWorkLogRef {
+  ...
+  (dc: DataConnect, vars: DeleteWorkLogVariables): MutationRef<DeleteWorkLogData, DeleteWorkLogVariables>;
+}
+export const deleteWorkLogRef: DeleteWorkLogRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the deleteWorkLogRef:
+```typescript
+const name = deleteWorkLogRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `DeleteWorkLog` mutation requires an argument of type `DeleteWorkLogVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface DeleteWorkLogVariables {
+  workLogId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `DeleteWorkLog` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `DeleteWorkLogData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface DeleteWorkLogData {
+  workLog_update?: WorkLog_Key | null;
+}
+```
+### Using `DeleteWorkLog`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, deleteWorkLog, DeleteWorkLogVariables } from '@dataconnect/generated';
+
+// The `DeleteWorkLog` mutation requires an argument of type `DeleteWorkLogVariables`:
+const deleteWorkLogVars: DeleteWorkLogVariables = {
+  workLogId: ..., 
+};
+
+// Call the `deleteWorkLog()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await deleteWorkLog(deleteWorkLogVars);
+// Variables can be defined inline as well.
+const { data } = await deleteWorkLog({ workLogId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await deleteWorkLog(dataConnect, deleteWorkLogVars);
+
+console.log(data.workLog_update);
+
+// Or, you can use the `Promise` API.
+deleteWorkLog(deleteWorkLogVars).then((response) => {
+  const data = response.data;
+  console.log(data.workLog_update);
+});
+```
+
+### Using `DeleteWorkLog`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, deleteWorkLogRef, DeleteWorkLogVariables } from '@dataconnect/generated';
+
+// The `DeleteWorkLog` mutation requires an argument of type `DeleteWorkLogVariables`:
+const deleteWorkLogVars: DeleteWorkLogVariables = {
+  workLogId: ..., 
+};
+
+// Call the `deleteWorkLogRef()` function to get a reference to the mutation.
+const ref = deleteWorkLogRef(deleteWorkLogVars);
+// Variables can be defined inline as well.
+const ref = deleteWorkLogRef({ workLogId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = deleteWorkLogRef(dataConnect, deleteWorkLogVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.workLog_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.workLog_update);
+});
+```
+
+## RestoreWorkLog
+You can execute the `RestoreWorkLog` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+restoreWorkLog(vars: RestoreWorkLogVariables): MutationPromise<RestoreWorkLogData, RestoreWorkLogVariables>;
+
+interface RestoreWorkLogRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: RestoreWorkLogVariables): MutationRef<RestoreWorkLogData, RestoreWorkLogVariables>;
+}
+export const restoreWorkLogRef: RestoreWorkLogRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+restoreWorkLog(dc: DataConnect, vars: RestoreWorkLogVariables): MutationPromise<RestoreWorkLogData, RestoreWorkLogVariables>;
+
+interface RestoreWorkLogRef {
+  ...
+  (dc: DataConnect, vars: RestoreWorkLogVariables): MutationRef<RestoreWorkLogData, RestoreWorkLogVariables>;
+}
+export const restoreWorkLogRef: RestoreWorkLogRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the restoreWorkLogRef:
+```typescript
+const name = restoreWorkLogRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `RestoreWorkLog` mutation requires an argument of type `RestoreWorkLogVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface RestoreWorkLogVariables {
+  workLogId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `RestoreWorkLog` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `RestoreWorkLogData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface RestoreWorkLogData {
+  workLog_update?: WorkLog_Key | null;
+}
+```
+### Using `RestoreWorkLog`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, restoreWorkLog, RestoreWorkLogVariables } from '@dataconnect/generated';
+
+// The `RestoreWorkLog` mutation requires an argument of type `RestoreWorkLogVariables`:
+const restoreWorkLogVars: RestoreWorkLogVariables = {
+  workLogId: ..., 
+};
+
+// Call the `restoreWorkLog()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await restoreWorkLog(restoreWorkLogVars);
+// Variables can be defined inline as well.
+const { data } = await restoreWorkLog({ workLogId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await restoreWorkLog(dataConnect, restoreWorkLogVars);
+
+console.log(data.workLog_update);
+
+// Or, you can use the `Promise` API.
+restoreWorkLog(restoreWorkLogVars).then((response) => {
+  const data = response.data;
+  console.log(data.workLog_update);
+});
+```
+
+### Using `RestoreWorkLog`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, restoreWorkLogRef, RestoreWorkLogVariables } from '@dataconnect/generated';
+
+// The `RestoreWorkLog` mutation requires an argument of type `RestoreWorkLogVariables`:
+const restoreWorkLogVars: RestoreWorkLogVariables = {
+  workLogId: ..., 
+};
+
+// Call the `restoreWorkLogRef()` function to get a reference to the mutation.
+const ref = restoreWorkLogRef(restoreWorkLogVars);
+// Variables can be defined inline as well.
+const ref = restoreWorkLogRef({ workLogId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = restoreWorkLogRef(dataConnect, restoreWorkLogVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.workLog_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.workLog_update);
 });
 ```
 

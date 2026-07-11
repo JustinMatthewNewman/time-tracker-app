@@ -12,6 +12,7 @@ type WorkLog @table {
   description: String
   workLogDate: Timestamp!
   createdAt: Timestamp!
+  isDeleted: Boolean @default(expr: "false")
 }
 
 type TimeEntry @table {

@@ -89,6 +89,14 @@ export interface DeleteTimeEntryVariables {
   entryId: UUIDString;
 }
 
+export interface DeleteWorkLogData {
+  workLog_update?: WorkLog_Key | null;
+}
+
+export interface DeleteWorkLogVariables {
+  workLogId: UUIDString;
+}
+
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
@@ -211,6 +219,14 @@ export interface ListWorkLogsData {
   } & WorkLog_Key)[];
 }
 
+export interface RestoreWorkLogData {
+  workLog_update?: WorkLog_Key | null;
+}
+
+export interface RestoreWorkLogVariables {
+  workLogId: UUIDString;
+}
+
 export interface TimeEntry_Key {
   id: UUIDString;
   __typename?: 'TimeEntry_Key';
@@ -225,6 +241,15 @@ export interface UpdateTimeEntryVariables {
   description?: string | null;
   ticketNumber?: string | null;
   officeNumber?: string | null;
+}
+
+export interface UpdateWorkLogData {
+  workLog_update?: WorkLog_Key | null;
+}
+
+export interface UpdateWorkLogVariables {
+  workLogId: UUIDString;
+  name: string;
 }
 
 export interface User_Key {
@@ -284,6 +309,42 @@ export const deleteTimeEntryRef: DeleteTimeEntryRef;
 
 export function deleteTimeEntry(vars: DeleteTimeEntryVariables): MutationPromise<DeleteTimeEntryData, DeleteTimeEntryVariables>;
 export function deleteTimeEntry(dc: DataConnect, vars: DeleteTimeEntryVariables): MutationPromise<DeleteTimeEntryData, DeleteTimeEntryVariables>;
+
+interface UpdateWorkLogRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateWorkLogVariables): MutationRef<UpdateWorkLogData, UpdateWorkLogVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateWorkLogVariables): MutationRef<UpdateWorkLogData, UpdateWorkLogVariables>;
+  operationName: string;
+}
+export const updateWorkLogRef: UpdateWorkLogRef;
+
+export function updateWorkLog(vars: UpdateWorkLogVariables): MutationPromise<UpdateWorkLogData, UpdateWorkLogVariables>;
+export function updateWorkLog(dc: DataConnect, vars: UpdateWorkLogVariables): MutationPromise<UpdateWorkLogData, UpdateWorkLogVariables>;
+
+interface DeleteWorkLogRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteWorkLogVariables): MutationRef<DeleteWorkLogData, DeleteWorkLogVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteWorkLogVariables): MutationRef<DeleteWorkLogData, DeleteWorkLogVariables>;
+  operationName: string;
+}
+export const deleteWorkLogRef: DeleteWorkLogRef;
+
+export function deleteWorkLog(vars: DeleteWorkLogVariables): MutationPromise<DeleteWorkLogData, DeleteWorkLogVariables>;
+export function deleteWorkLog(dc: DataConnect, vars: DeleteWorkLogVariables): MutationPromise<DeleteWorkLogData, DeleteWorkLogVariables>;
+
+interface RestoreWorkLogRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: RestoreWorkLogVariables): MutationRef<RestoreWorkLogData, RestoreWorkLogVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: RestoreWorkLogVariables): MutationRef<RestoreWorkLogData, RestoreWorkLogVariables>;
+  operationName: string;
+}
+export const restoreWorkLogRef: RestoreWorkLogRef;
+
+export function restoreWorkLog(vars: RestoreWorkLogVariables): MutationPromise<RestoreWorkLogData, RestoreWorkLogVariables>;
+export function restoreWorkLog(dc: DataConnect, vars: RestoreWorkLogVariables): MutationPromise<RestoreWorkLogData, RestoreWorkLogVariables>;
 
 interface CreateWorkLogRef {
   /* Allow users to create refs without passing in DataConnect */

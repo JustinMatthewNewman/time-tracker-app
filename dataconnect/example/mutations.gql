@@ -51,6 +51,42 @@ mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) {
   timeEntry_delete(id: $entryId)
 }
 
+mutation UpdateWorkLog($workLogId: UUID!, $name: String!) @auth(level: USER) @transaction {
+  query @redact {
+    workLog(key: { id: $workLogId }) {
+      id
+      user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to modify this work log") {
+        googleUid
+      }
+    }
+  }
+  workLog_update(id: $workLogId, data: { name: $name })
+}
+
+mutation DeleteWorkLog($workLogId: UUID!) @auth(level: USER) @transaction {
+  query @redact {
+    workLog(key: { id: $workLogId }) {
+      id
+      user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to delete this work log") {
+        googleUid
+      }
+    }
+  }
+  workLog_update(id: $workLogId, data: { isDeleted: true })
+}
+
+mutation RestoreWorkLog($workLogId: UUID!) @auth(level: USER) @transaction {
+  query @redact {
+    workLog(key: { id: $workLogId }) {
+      id
+      user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to restore this work log") {
+        googleUid
+      }
+    }
+  }
+  workLog_update(id: $workLogId, data: { isDeleted: false })
+}
+
 mutation CreateWorkLog(
   $userId: UUID!
   $workLogId: UUID!
