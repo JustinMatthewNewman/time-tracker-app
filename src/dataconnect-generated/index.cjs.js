@@ -69,6 +69,48 @@ exports.deleteTimeEntry = function deleteTimeEntry(dcOrVars, vars) {
 }
 ;
 
+const updateWorkLogRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateWorkLog', inputVars);
+}
+updateWorkLogRef.operationName = 'UpdateWorkLog';
+exports.updateWorkLogRef = updateWorkLogRef;
+
+exports.updateWorkLog = function updateWorkLog(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateWorkLogRef(dcInstance, inputVars));
+}
+;
+
+const deleteWorkLogRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteWorkLog', inputVars);
+}
+deleteWorkLogRef.operationName = 'DeleteWorkLog';
+exports.deleteWorkLogRef = deleteWorkLogRef;
+
+exports.deleteWorkLog = function deleteWorkLog(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteWorkLogRef(dcInstance, inputVars));
+}
+;
+
+const restoreWorkLogRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'RestoreWorkLog', inputVars);
+}
+restoreWorkLogRef.operationName = 'RestoreWorkLog';
+exports.restoreWorkLogRef = restoreWorkLogRef;
+
+exports.restoreWorkLog = function restoreWorkLog(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(restoreWorkLogRef(dcInstance, inputVars));
+}
+;
+
 const createWorkLogRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

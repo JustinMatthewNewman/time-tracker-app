@@ -1,20 +1,25 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Tabs, Button, Label } from "@heroui/react";
+import { Tabs, Button, Label, Dropdown } from "@heroui/react";
+import { Ellipsis, Pencil } from "@gravity-ui/icons";
 import type { Key } from "react-aria-components";
 import { useWorkLogs } from "@/hooks/useWorkLogs";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
 import { NewWorkLogDialog } from "./NewWorkLogDialog";
+import { RenameWorkLogDialog } from "./RenameWorkLogDialog";
+import { DeleteWorkLogDialog } from "./DeleteWorkLogDialog";
 
 function formatDate(isoDate: string) {
   return new Date(isoDate).toISOString().split("T")[0]; // yyyy-mm-dd
 }
 
 export function WorkLogListBox() {
-  const { workLogs, loading, error, createWorkLog } = useWorkLogs();
+  const { workLogs, loading, error, createWorkLog, renameWorkLog, deleteWorkLog } = useWorkLogs();
   const { selectedWorkLogId, setSelectedWorkLogId } = useSelectedWorkLog();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const items = useMemo(
     () =>
@@ -26,6 +31,8 @@ export function WorkLogListBox() {
       })),
     [workLogs]
   );
+
+  const selectedItem = items.find((item) => item.id === selectedWorkLogId) ?? null;
 
   const handleSelectionChange = (key: Key) => {
     setSelectedWorkLogId(key != null ? String(key) : null);
@@ -79,6 +86,29 @@ export function WorkLogListBox() {
           +
         </Button>
 
+        <Button
+          aria-label="Rename work log"
+          isDisabled={!selectedItem}
+          onPress={() => setIsRenameDialogOpen(true)}
+        >
+          <Pencil width={16} height={16} />
+        </Button>
+
+        <Dropdown>
+          <Dropdown.Trigger aria-label="Work log actions" isDisabled={!selectedItem}>
+            <Ellipsis width={16} height={16} />
+          </Dropdown.Trigger>
+          <Dropdown.Popover>
+            <Dropdown.Menu
+              onAction={(key) => {
+                if (key === "delete") setIsDeleteDialogOpen(true);
+              }}
+            >
+              <Dropdown.Item id="delete">Delete</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown.Popover>
+        </Dropdown>
+
         {/* Export Button */}
         {/* <Button
           className="flex-1"
@@ -101,6 +131,27 @@ export function WorkLogListBox() {
           setSelectedWorkLogId(workLogId);
         }}
       />
+
+      {selectedItem && (
+        <RenameWorkLogDialog
+          isOpen={isRenameDialogOpen}
+          initialName={selectedItem.label}
+          onClose={() => setIsRenameDialogOpen(false)}
+          onRename={(name) => renameWorkLog(selectedItem.id, name)}
+        />
+      )}
+
+      {selectedItem && (
+        <DeleteWorkLogDialog
+          isOpen={isDeleteDialogOpen}
+          workLogName={selectedItem.label}
+          onClose={() => setIsDeleteDialogOpen(false)}
+          onDelete={async () => {
+            await deleteWorkLog(selectedItem.id);
+            setSelectedWorkLogId(null);
+          }}
+        />
+      )}
     </div>
   );
 }

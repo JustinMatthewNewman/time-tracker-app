@@ -1,4 +1,4 @@
-import { CreateUserFromGoogleData, CreateUserFromGoogleVariables, CreateTimeEntryData, CreateTimeEntryVariables, UpdateTimeEntryData, UpdateTimeEntryVariables, DeleteTimeEntryData, DeleteTimeEntryVariables, CreateWorkLogData, CreateWorkLogVariables, ListUsersData, GetMyUserData, ListTimeEntriesData, ListTimeEntriesVariables, GetTimeEntryData, GetTimeEntryVariables, ListWorkLogsData, ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables, ListMyTimeEntriesData, ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables } from '../';
+import { CreateUserFromGoogleData, CreateUserFromGoogleVariables, CreateTimeEntryData, CreateTimeEntryVariables, UpdateTimeEntryData, UpdateTimeEntryVariables, DeleteTimeEntryData, DeleteTimeEntryVariables, UpdateWorkLogData, UpdateWorkLogVariables, DeleteWorkLogData, DeleteWorkLogVariables, RestoreWorkLogData, RestoreWorkLogVariables, CreateWorkLogData, CreateWorkLogVariables, ListUsersData, GetMyUserData, ListTimeEntriesData, ListTimeEntriesVariables, GetTimeEntryData, GetTimeEntryVariables, ListWorkLogsData, ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables, ListMyTimeEntriesData, ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables } from '../';
 import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
 import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
@@ -16,6 +16,15 @@ export function useUpdateTimeEntry(dc: DataConnect, options?: useDataConnectMuta
 
 export function useDeleteTimeEntry(options?: useDataConnectMutationOptions<DeleteTimeEntryData, FirebaseError, DeleteTimeEntryVariables>): UseDataConnectMutationResult<DeleteTimeEntryData, DeleteTimeEntryVariables>;
 export function useDeleteTimeEntry(dc: DataConnect, options?: useDataConnectMutationOptions<DeleteTimeEntryData, FirebaseError, DeleteTimeEntryVariables>): UseDataConnectMutationResult<DeleteTimeEntryData, DeleteTimeEntryVariables>;
+
+export function useUpdateWorkLog(options?: useDataConnectMutationOptions<UpdateWorkLogData, FirebaseError, UpdateWorkLogVariables>): UseDataConnectMutationResult<UpdateWorkLogData, UpdateWorkLogVariables>;
+export function useUpdateWorkLog(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateWorkLogData, FirebaseError, UpdateWorkLogVariables>): UseDataConnectMutationResult<UpdateWorkLogData, UpdateWorkLogVariables>;
+
+export function useDeleteWorkLog(options?: useDataConnectMutationOptions<DeleteWorkLogData, FirebaseError, DeleteWorkLogVariables>): UseDataConnectMutationResult<DeleteWorkLogData, DeleteWorkLogVariables>;
+export function useDeleteWorkLog(dc: DataConnect, options?: useDataConnectMutationOptions<DeleteWorkLogData, FirebaseError, DeleteWorkLogVariables>): UseDataConnectMutationResult<DeleteWorkLogData, DeleteWorkLogVariables>;
+
+export function useRestoreWorkLog(options?: useDataConnectMutationOptions<RestoreWorkLogData, FirebaseError, RestoreWorkLogVariables>): UseDataConnectMutationResult<RestoreWorkLogData, RestoreWorkLogVariables>;
+export function useRestoreWorkLog(dc: DataConnect, options?: useDataConnectMutationOptions<RestoreWorkLogData, FirebaseError, RestoreWorkLogVariables>): UseDataConnectMutationResult<RestoreWorkLogData, RestoreWorkLogVariables>;
 
 export function useCreateWorkLog(options?: useDataConnectMutationOptions<CreateWorkLogData, FirebaseError, CreateWorkLogVariables>): UseDataConnectMutationResult<CreateWorkLogData, CreateWorkLogVariables>;
 export function useCreateWorkLog(dc: DataConnect, options?: useDataConnectMutationOptions<CreateWorkLogData, FirebaseError, CreateWorkLogVariables>): UseDataConnectMutationResult<CreateWorkLogData, CreateWorkLogVariables>;

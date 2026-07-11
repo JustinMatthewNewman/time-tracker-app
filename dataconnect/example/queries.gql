@@ -56,7 +56,12 @@ query GetTimeEntry($entryId: UUID!) @auth(level: USER) {
 
 query ListWorkLogs @auth(level: USER) {
   workLogs(
-    where: { user: { googleUid: { eq_expr: "auth.uid" } } }
+    where: {
+      _and: [
+        { user: { googleUid: { eq_expr: "auth.uid" } } }
+        { _or: [{ isDeleted: { eq: false } }, { isDeleted: { isNull: true } }] }
+      ]
+    }
     orderBy: [{ workLogDate: DESC }]
   ) {
     id
