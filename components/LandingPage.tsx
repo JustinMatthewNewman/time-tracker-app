@@ -4,6 +4,7 @@ import { Button } from "@heroui/react";
 import { useAuth } from "@/hooks/useAuth";
 import { loginWithGoogle, logout } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import AmbientBackground from "@/components/AmbientBackground";
 
 export default function LandingPage() {
     const { user, loading } = useAuth();
@@ -31,8 +32,6 @@ export default function LandingPage() {
                     --fg:              #1e1b4b;
                     --fg-muted:        rgba(30,27,75,0.52);
                     --fg-faint:        rgba(30,27,75,0.32);
-                    --vignette:        #f4f3ff;
-                    --dot-color:       rgba(0,0,0,0.07);
                     --glass-bg:        rgba(255,255,255,0.55);
                     --glass-bg-hover:  rgba(255,255,255,0.80);
                     --glass-border:    rgba(109,40,217,0.15);
@@ -40,11 +39,6 @@ export default function LandingPage() {
                     --pill-bg:         rgba(109,40,217,0.10);
                     --pill-border:     rgba(109,40,217,0.22);
                     --pill-fg:         #6d28d9;
-                    --orb1-opacity:    0.30;
-                    --orb2-opacity:    0.25;
-                    --orb3-opacity:    0.20;
-                    --orb4-opacity:    0.22;
-                    --orb5-opacity:    0.18;
                 }
 
                 /* ── Dark mode tokens ── */
@@ -53,8 +47,6 @@ export default function LandingPage() {
                     --fg:              #ffffff;
                     --fg-muted:        rgba(255,255,255,0.52);
                     --fg-faint:        rgba(255,255,255,0.30);
-                    --vignette:        #06060f;
-                    --dot-color:       rgba(255,255,255,0.07);
                     --glass-bg:        rgba(255,255,255,0.04);
                     --glass-bg-hover:  rgba(255,255,255,0.07);
                     --glass-border:    rgba(255,255,255,0.09);
@@ -62,35 +54,6 @@ export default function LandingPage() {
                     --pill-bg:         rgba(124,58,237,0.18);
                     --pill-border:     rgba(167,139,250,0.28);
                     --pill-fg:         #a78bfa;
-                    --orb1-opacity:    0.55;
-                    --orb2-opacity:    0.45;
-                    --orb3-opacity:    0.35;
-                    --orb4-opacity:    0.40;
-                    --orb5-opacity:    0.30;
-                }
-
-                .ambient-bg { display: none; }
-                .dark .ambient-bg { display: block; }
-
-                @keyframes drift1 {
-                    0%   { transform: translate(0px,   0px)  scale(1);    }
-                    100% { transform: translate(60px,  80px) scale(1.12); }
-                }
-                @keyframes drift2 {
-                    0%   { transform: translate(0px,  0px)  scale(1);    }
-                    100% { transform: translate(-80px,60px) scale(0.92); }
-                }
-                @keyframes drift3 {
-                    0%   { transform: translate(0px,   0px)   scale(1);    }
-                    100% { transform: translate(-50px,-70px)  scale(1.08); }
-                }
-                @keyframes drift4 {
-                    0%   { transform: translate(0px, 0px)   scale(1);    }
-                    100% { transform: translate(70px,-50px) scale(1.15); }
-                }
-                @keyframes drift5 {
-                    0%   { transform: translate(0px,0px)   scale(1);    }
-                    100% { transform: translate(-30px,40px) scale(0.88); }
                 }
 
                 @keyframes fadeUp {
@@ -104,7 +67,7 @@ export default function LandingPage() {
                 .fade-up-4 { animation-delay: 0.42s; }
 
                 @media (prefers-reduced-motion: reduce) {
-                    circle, .fade-up { animation: none !important; }
+                    .fade-up { animation: none !important; }
                 }
 
                 .glass-card {
@@ -241,58 +204,8 @@ export default function LandingPage() {
                 }
             `}</style>
 
-            {/* ── Ambient background layer ── */}
-            <div className="pointer-events-none ambient-bg fixed inset-0 z-0" aria-hidden="true">
-                <svg
-                    className="absolute inset-0 w-full h-full"
-                    xmlns="http://www.w3.org/2000/svg"
-                    preserveAspectRatio="xMidYMid slice"
-                >
-                    <defs>
-                        <filter id="blob-blur" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="80" result="blur" />
-                        </filter>
-                        <filter id="noise" x="0%" y="0%" width="100%" height="100%">
-                            <feTurbulence type="fractalNoise" baseFrequency="0.65"
-                                numOctaves="3" stitchTiles="stitch" result="noise" />
-                            <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise" />
-                            <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay" result="blended" />
-                            <feComposite in="blended" in2="SourceGraphic" operator="in" />
-                        </filter>
-                        <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
-                            <stop offset="0%" stopColor="transparent" />
-                            <stop offset="100%" stopColor="var(--vignette)" />
-                        </radialGradient>
-                    </defs>
+            <AmbientBackground />
 
-                    <circle cx="15%" cy="20%" r="380" fill="#7c3aed" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb1-opacity)", animation: "drift1 18s ease-in-out infinite alternate" }} />
-                    <circle cx="80%" cy="10%" r="320" fill="#4f46e5" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb2-opacity)", animation: "drift2 22s ease-in-out infinite alternate" }} />
-                    <circle cx="70%" cy="55%" r="280" fill="#0891b2" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb3-opacity)", animation: "drift3 26s ease-in-out infinite alternate" }} />
-                    <circle cx="20%" cy="80%" r="350" fill="#a21caf" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb4-opacity)", animation: "drift4 20s ease-in-out infinite alternate" }} />
-                    <circle cx="50%" cy="45%" r="160" fill="#6d28d9" filter="url(#blob-blur)"
-                        style={{ opacity: "var(--orb5-opacity)", animation: "drift5 14s ease-in-out infinite alternate" }} />
-
-                    <rect x="0" y="0" width="100%" height="100%"
-                        fill="transparent" filter="url(#noise)" opacity="0.04" />
-                    <rect x="0" y="0" width="100%" height="100%" fill="url(#vignette)" />
-                </svg>
-
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        backgroundImage: `radial-gradient(circle, var(--dot-color) 1px, transparent 1px)`,
-                        backgroundSize: "36px 36px",
-                        maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)",
-                        WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)",
-                    }}
-                />
-            </div>
-
-           
             {/* ── Hero ── */}
             <section className="relative z-10 container mx-auto flex flex-col items-center justify-center px-6 py-24 text-center">
                 <div className="pill fade-up fade-up-1 mb-6">

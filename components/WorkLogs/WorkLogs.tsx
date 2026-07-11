@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { Switch } from "@heroui/react";
 import WorkLogTimeEntryCard from "./WorkLogTimeEntryCard";
 import TimeEntryForm from "./TimeEntryForm";
+import AmbientBackground from "@/components/AmbientBackground";
 
 function WorkLogs() {
     const { user, loading } = useAuth();
@@ -31,22 +32,25 @@ function WorkLogs() {
     if (!user) return null; // redirect in flight
 
     return (
-        <div className="flex h-[calc(100vh-4rem)] flex-col gap-4 overflow-hidden p-4">
-            
-            <WorkLogTimeEntryCard showBreakdown={showBreakdown} />
+        <div className="relative flex h-[calc(100vh-4rem)] flex-col gap-4 overflow-hidden p-4">
+            <AmbientBackground />
 
-            <TimeEntryForm
-                isOpen={isFormOpen}
-                onClose={() => setIsFormOpen(false)}
-            />
-            <div className="flex shrink-0 items-center justify-end">
-                <Switch isSelected={showBreakdown} onChange={setShowBreakdown}>
-                <Switch.Content>
-                    <Switch.Control>
-                    <Switch.Thumb />
-                    </Switch.Control>
-                </Switch.Content>
-                </Switch>
+            <div className="relative z-10 flex h-full min-h-0 flex-col gap-4 overflow-hidden">
+                <WorkLogTimeEntryCard showBreakdown={showBreakdown} />
+
+                <TimeEntryForm
+                    isOpen={isFormOpen}
+                    onClose={() => setIsFormOpen(false)}
+                />
+                <div className="flex shrink-0 items-center justify-end">
+                    <Switch isSelected={showBreakdown} onChange={setShowBreakdown}>
+                    <Switch.Content>
+                        <Switch.Control>
+                        <Switch.Thumb />
+                        </Switch.Control>
+                    </Switch.Content>
+                    </Switch>
+                </div>
             </div>
         </div>
     );
