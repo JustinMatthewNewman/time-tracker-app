@@ -1,75 +1,156 @@
 "use client";
 
-import { Card, Switch } from '@heroui/react'
+import { Card, Switch, Button, Tooltip } from '@heroui/react'
+import { useTheme } from 'next-themes'
 import TimeRangeSettings from '../TimeRangeSettings'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import {
+  Gear,
+  Bell,
+  Sun,
+  Moon,
+  CircleInfo,
+  ShieldKeyhole,
+  ArrowUpRightFromSquare,
+  TrashBin,
+} from '@gravity-ui/icons'
+
+const APP_VERSION = "1.0.0";
 
 function SettingsCard() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [autoBreakReminder, setAutoBreakReminder] = useState(true)
+  const { resolvedTheme, setTheme } = useTheme()
+
+  // next-themes only knows the real theme after mount (it reads from
+  // localStorage/media query client-side), so the switch stays hidden
+  // until then to avoid a flash of the wrong state.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   return (
-    <div>
-      <Card className='h-full w-screen text-foreground p-6 m-4'>
-        <h1 className='text-3xl font-bold mb-2'>⚙️ Settings</h1>
-        <p className='text-gray-600 mb-8'>Customize your time tracking experience</p>
-        
-        <div className='space-y-8'>
-          {/* Time Range Settings */}
-          <div>
-            <h2 className='text-xl font-semibold mb-4'>⏱️ Working Hours</h2>
-            <TimeRangeSettings />
-          </div>
+    <div className="flex w-full flex-col gap-6">
+      {/* Header */}
+      <div>
+        <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <Gear className="size-6" /> Settings
+        </h1>
+        <p className="mt-1 text-sm text-foreground/60">Customize your time tracking experience</p>
+      </div>
 
-          <div className='border-t border-default-200 my-4'></div>
+      {/* Working Hours */}
+      <TimeRangeSettings />
 
-          {/* Notification Settings */}
-          <div>
-            <h2 className='text-xl font-semibold mb-4'>🔔 Notifications</h2>
-            <div className='space-y-4'>
-              <div className='flex items-center justify-between p-3 bg-default-50 rounded-lg'>
-                <div>
-                  <p className='font-semibold'>Enable Notifications</p>
-                  <p className='text-sm text-gray-600'>Get reminders for your time entries</p>
-                </div>
-                <Switch
-                  isSelected={notificationsEnabled}
-                  onChange={setNotificationsEnabled}
-                />
-              </div>
-
-              {notificationsEnabled && (
-                <div className='flex items-center justify-between p-3 bg-default-50 rounded-lg ml-4'>
-                  <div>
-                    <p className='font-semibold'>Break Reminders</p>
-                    <p className='text-sm text-gray-600'>Remind me to take breaks every 2 hours</p>
-                  </div>
-                  <Switch
-                    isSelected={autoBreakReminder}
-                    onChange={setAutoBreakReminder}
-                  />
-                </div>
-              )}
+      {/* Notifications */}
+      <Card className="p-6">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+          <Bell className="size-4" /> Notifications
+        </h2>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-4 rounded-lg bg-default-100 p-3">
+            <div>
+              <p className="text-sm font-medium text-foreground">Enable notifications</p>
+              <p className="text-xs text-foreground/60">Get reminders for your time entries</p>
             </div>
+            <Switch
+              isSelected={notificationsEnabled}
+              onChange={setNotificationsEnabled}
+              aria-label="Enable notifications"
+            >
+              <Switch.Content>
+                <Switch.Control>
+                  <Switch.Thumb />
+                </Switch.Control>
+              </Switch.Content>
+            </Switch>
           </div>
 
-          <div className='border-t border-default-200 my-4'></div>
-
-          {/* About */}
-          <div>
-            <h2 className='text-xl font-semibold mb-4'>ℹ️ About</h2>
-            <Card className='p-4 bg-default-50'>
-              <div className='space-y-2 text-sm'>
-                <div className='flex justify-between'>
-                  <span className='text-foreground/60'>App Version:</span>
-                  <span className='font-mono'>1.0.0</span>
-                </div>
-                <div className='flex justify-between'>
-                  <span className='text-foreground/60'>Last Updated:</span>
-                  <span>{new Date().toLocaleDateString()}</span>
-                </div>
+          {notificationsEnabled && (
+            <div className="ml-4 flex items-center justify-between gap-4 rounded-lg bg-default-100 p-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Break reminders</p>
+                <p className="text-xs text-foreground/60">Remind me to take breaks every 2 hours</p>
               </div>
-            </Card>
+              <Switch
+                isSelected={autoBreakReminder}
+                onChange={setAutoBreakReminder}
+                aria-label="Break reminders"
+              >
+                <Switch.Content>
+                  <Switch.Control>
+                    <Switch.Thumb />
+                  </Switch.Control>
+                </Switch.Content>
+              </Switch>
+            </div>
+          )}
+        </div>
+      </Card>
+
+      {/* Appearance */}
+      <Card className="p-6">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+          {resolvedTheme === "dark" ? <Moon className="size-4" /> : <Sun className="size-4" />} Appearance
+        </h2>
+        <div className="flex items-center justify-between gap-4 rounded-lg bg-default-100 p-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">Dark mode</p>
+            <p className="text-xs text-foreground/60">Switch between light and dark themes</p>
+          </div>
+          {mounted && (
+            <Switch
+              isSelected={resolvedTheme === "dark"}
+              onChange={(isDark) => setTheme(isDark ? "dark" : "light")}
+              aria-label="Dark mode"
+            >
+              <Switch.Content>
+                <Switch.Control>
+                  <Switch.Thumb />
+                </Switch.Control>
+              </Switch.Content>
+            </Switch>
+          )}
+        </div>
+      </Card>
+
+      {/* Data & Privacy (mocked) */}
+      <Card className="p-6">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+          <ShieldKeyhole className="size-4" /> Data & Privacy
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          <Tooltip>
+            <Tooltip.Trigger>
+              <Button variant="outline">
+                <ArrowUpRightFromSquare /> Export my data
+              </Button>
+            </Tooltip.Trigger>
+            <Tooltip.Content>Coming soon</Tooltip.Content>
+          </Tooltip>
+          <Tooltip>
+            <Tooltip.Trigger>
+              <Button variant="danger-soft">
+                <TrashBin /> Delete account
+              </Button>
+            </Tooltip.Trigger>
+            <Tooltip.Content>Coming soon</Tooltip.Content>
+          </Tooltip>
+        </div>
+      </Card>
+
+      {/* About */}
+      <Card className="p-6">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+          <CircleInfo className="size-4" /> About
+        </h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="rounded-lg bg-default-100 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground/60">App Version</p>
+            <p className="mt-1 font-mono text-sm text-foreground">{APP_VERSION}</p>
+          </div>
+          <div className="rounded-lg bg-default-100 p-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-foreground/60">Last Updated</p>
+            <p className="mt-1 text-sm text-foreground">{new Date().toLocaleDateString()}</p>
           </div>
         </div>
       </Card>

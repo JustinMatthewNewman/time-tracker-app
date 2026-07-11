@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { Card, Select, Label, ListBox } from '@heroui/react'
+import { Clock, CircleExclamation } from '@gravity-ui/icons'
 import { useTimeRange } from '../context/TimeRangeContext'
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i)
@@ -16,9 +17,11 @@ function TimeRangeSettings() {
   const { startHour, endHour, timeSlots, setStartHour, setEndHour } = useTimeRange()
 
   return (
-    <Card className='p-4 mb-4 rounded-lg'>
-      <h2 className='text-xl font-semibold mb-3'>⏱️ Configure Working Hours</h2>
-      <p className='text-sm text-gray-600 mb-4'>Set your typical working hours for time tracking</p>
+    <Card className='p-6'>
+      <h2 className='flex items-center gap-2 text-lg font-semibold mb-1'>
+        <Clock className='size-4' /> Working Hours
+      </h2>
+      <p className='text-sm text-foreground/60 mb-4'>Set your typical working hours for time tracking</p>
       <div className='flex items-center gap-4 flex-wrap'>
 
         <div className='flex flex-col gap-1'>
@@ -45,7 +48,7 @@ function TimeRangeSettings() {
           </Select>
         </div>
 
-        <span className='text-gray-400 text-2xl mt-6'>→</span>
+        <span className='text-foreground/40 text-2xl mt-6'>→</span>
 
         <div className='flex flex-col gap-1'>
           <Label className='text-xs font-semibold'>End Hour</Label>
@@ -72,14 +75,15 @@ function TimeRangeSettings() {
         </div>
       </div>
 
-      <div className='mt-4 p-3 bg-blue-50 rounded-lg'>
-        <p className='text-sm text-gray-700'>
+      <div className='mt-4 p-3 bg-default-100 rounded-lg'>
+        <p className='text-sm text-foreground'>
           <strong>Working Hours:</strong> {formatHour(startHour)} - {formatHour(endHour)}
         </p>
-        <p className='text-xs text-gray-600 mt-1'>
+        <p className={`text-xs mt-1 flex items-center gap-1 ${timeSlots.length > 0 ? 'text-foreground/60' : 'text-danger'}`}>
+          {timeSlots.length === 0 && <CircleExclamation className='size-3.5 shrink-0' />}
           {timeSlots.length > 0
             ? `${timeSlots.length} hour${timeSlots.length !== 1 ? 's' : ''} per day`
-            : '❌ End time must be after start time'}
+            : 'End time must be after start time'}
         </p>
       </div>
     </Card>
