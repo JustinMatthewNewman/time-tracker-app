@@ -37,7 +37,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false }: WorkLogTimeEntryC
       </aside>
 
       <div
-        className={`h-full min-w-0 flex-1 overflow-y-auto text-foreground p-4 m-4 border-l transition-colors duration-300
+        className={`h-full min-w-0 flex-1 overflow-y-auto no-scrollbar text-foreground p-4 m-4 border-l transition-colors duration-300
           ${isOpen ? "border-default-200" : "border-transparent"}`}
       >
         {/*
