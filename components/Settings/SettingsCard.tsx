@@ -4,11 +4,13 @@ import { Card, Switch, Button, Tooltip } from '@heroui/react'
 import { useTheme } from 'next-themes'
 import TimeRangeSettings from '../TimeRangeSettings'
 import { useEffect, useState } from 'react'
+import { useThemeSelection } from '@/context/ThemeSelectionContext'
 import {
   Gear,
   Bell,
   Sun,
   Moon,
+  Paintbrush,
   CircleInfo,
   ShieldKeyhole,
   ArrowUpRightFromSquare,
@@ -21,6 +23,7 @@ function SettingsCard() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [autoBreakReminder, setAutoBreakReminder] = useState(true)
   const { resolvedTheme, setTheme } = useTheme()
+  const { themes, selectedTheme, selectTheme, clearTheme } = useThemeSelection()
 
   // next-themes only knows the real theme after mount (it reads from
   // localStorage/media query client-side), so the switch stays hidden
@@ -111,6 +114,46 @@ function SettingsCard() {
             </Switch>
           )}
         </div>
+
+        {themes.length > 0 && (
+          <div className="mt-3 rounded-lg bg-default-100 p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <Paintbrush className="size-4" />
+              <p className="text-sm font-medium text-foreground">Color theme</p>
+            </div>
+            <p className="mb-3 text-xs text-foreground/60">
+              Overrides dark mode above with a theme stored in the database.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                key="__default"
+                variant={selectedTheme === null ? "primary" : "outline"}
+                size="sm"
+                onPress={() => clearTheme()}
+              >
+                Default
+              </Button>
+              {themes.map((theme) => (
+                <Tooltip key={theme.id}>
+                  <Tooltip.Trigger>
+                    <Button
+                      variant={selectedTheme?.id === theme.id ? "primary" : "outline"}
+                      size="sm"
+                      onPress={() => selectTheme(theme.id)}
+                    >
+                      <span
+                        className="size-3 rounded-full border border-default-300"
+                        style={{ backgroundColor: theme.background }}
+                      />
+                      {theme.name}
+                    </Button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{theme.isDark ? "Dark" : "Light"} theme</Tooltip.Content>
+                </Tooltip>
+              ))}
+            </div>
+          </div>
+        )}
       </Card>
 
       {/* Data & Privacy (mocked) */}

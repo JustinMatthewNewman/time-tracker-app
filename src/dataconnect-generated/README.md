@@ -12,6 +12,7 @@ This README will guide you through the process of using the generated JavaScript
 - [**Queries**](#queries)
   - [*ListUsers*](#listusers)
   - [*GetMyUser*](#getmyuser)
+  - [*ListThemes*](#listthemes)
   - [*ListTimeEntries*](#listtimeentries)
   - [*GetTimeEntry*](#gettimeentry)
   - [*ListWorkLogs*](#listworklogs)
@@ -22,7 +23,11 @@ This README will guide you through the process of using the generated JavaScript
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*CreateTimeEntry*](#createtimeentry)
   - [*UpdateTimeEntry*](#updatetimeentry)
+  - [*UpdateTimeEntryClearTicket*](#updatetimeentryclearticket)
   - [*DeleteTimeEntry*](#deletetimeentry)
+  - [*UpsertTicket*](#upsertticket)
+  - [*SelectMyTheme*](#selectmytheme)
+  - [*ClearMyTheme*](#clearmytheme)
   - [*UpdateWorkLog*](#updateworklog)
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
@@ -208,6 +213,13 @@ The `data` property is an object of type `GetMyUserData`, which is defined in [d
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
+    theme?: {
+      id: UUIDString;
+      name: string;
+      background: string;
+      foreground: string;
+      isDark: boolean;
+    } & Theme_Key;
   } & User_Key;
 }
 ```
@@ -259,6 +271,103 @@ console.log(data.user);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.user);
+});
+```
+
+## ListThemes
+You can execute the `ListThemes` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listThemes(options?: ExecuteQueryOptions): QueryPromise<ListThemesData, undefined>;
+
+interface ListThemesRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListThemesData, undefined>;
+}
+export const listThemesRef: ListThemesRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listThemes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListThemesData, undefined>;
+
+interface ListThemesRef {
+  ...
+  (dc: DataConnect): QueryRef<ListThemesData, undefined>;
+}
+export const listThemesRef: ListThemesRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listThemesRef:
+```typescript
+const name = listThemesRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListThemes` query has no variables.
+### Return Type
+Recall that executing the `ListThemes` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListThemesData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListThemesData {
+  themes: ({
+    id: UUIDString;
+    name: string;
+    background: string;
+    foreground: string;
+    isDark: boolean;
+  } & Theme_Key)[];
+}
+```
+### Using `ListThemes`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listThemes } from '@dataconnect/generated';
+
+
+// Call the `listThemes()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listThemes();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listThemes(dataConnect);
+
+console.log(data.themes);
+
+// Or, you can use the `Promise` API.
+listThemes().then((response) => {
+  const data = response.data;
+  console.log(data.themes);
+});
+```
+
+### Using `ListThemes`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listThemesRef } from '@dataconnect/generated';
+
+
+// Call the `listThemesRef()` function to get a reference to the query.
+const ref = listThemesRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listThemesRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.themes);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.themes);
 });
 ```
 
@@ -316,7 +425,11 @@ export interface ListTimeEntriesData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -439,7 +552,11 @@ export interface GetTimeEntryData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key;
@@ -654,7 +771,11 @@ export interface ListTimeEntriesByWorkLogData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -764,7 +885,11 @@ export interface ListMyTimeEntriesData {
     id: UUIDString;
     startTime: TimestampString;
     endTime: TimestampString;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     workLog?: {
       id: UUIDString;
@@ -878,7 +1003,11 @@ export interface ListTimeEntriesByDateRangeData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -1124,7 +1253,6 @@ export interface CreateTimeEntryVariables {
   date: DateString;
   createdAt: TimestampString;
   description?: string | null;
-  ticketNumber?: string | null;
   officeNumber?: string | null;
 }
 ```
@@ -1151,7 +1279,6 @@ const createTimeEntryVars: CreateTimeEntryVariables = {
   date: ..., 
   createdAt: ..., 
   description: ..., // optional
-  ticketNumber: ..., // optional
   officeNumber: ..., // optional
 };
 
@@ -1159,7 +1286,7 @@ const createTimeEntryVars: CreateTimeEntryVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createTimeEntry(createTimeEntryVars);
 // Variables can be defined inline as well.
-const { data } = await createTimeEntry({ userId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., ticketNumber: ..., officeNumber: ..., });
+const { data } = await createTimeEntry({ userId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., officeNumber: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1188,14 +1315,13 @@ const createTimeEntryVars: CreateTimeEntryVariables = {
   date: ..., 
   createdAt: ..., 
   description: ..., // optional
-  ticketNumber: ..., // optional
   officeNumber: ..., // optional
 };
 
 // Call the `createTimeEntryRef()` function to get a reference to the mutation.
 const ref = createTimeEntryRef(createTimeEntryVars);
 // Variables can be defined inline as well.
-const ref = createTimeEntryRef({ userId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., ticketNumber: ..., officeNumber: ..., });
+const ref = createTimeEntryRef({ userId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., officeNumber: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1250,7 +1376,7 @@ The `UpdateTimeEntry` mutation requires an argument of type `UpdateTimeEntryVari
 export interface UpdateTimeEntryVariables {
   entryId: UUIDString;
   description?: string | null;
-  ticketNumber?: string | null;
+  ticketNumber: number;
   officeNumber?: string | null;
 }
 ```
@@ -1273,7 +1399,7 @@ import { connectorConfig, updateTimeEntry, UpdateTimeEntryVariables } from '@dat
 const updateTimeEntryVars: UpdateTimeEntryVariables = {
   entryId: ..., 
   description: ..., // optional
-  ticketNumber: ..., // optional
+  ticketNumber: ..., 
   officeNumber: ..., // optional
 };
 
@@ -1306,7 +1432,7 @@ import { connectorConfig, updateTimeEntryRef, UpdateTimeEntryVariables } from '@
 const updateTimeEntryVars: UpdateTimeEntryVariables = {
   entryId: ..., 
   description: ..., // optional
-  ticketNumber: ..., // optional
+  ticketNumber: ..., 
   officeNumber: ..., // optional
 };
 
@@ -1318,6 +1444,121 @@ const ref = updateTimeEntryRef({ entryId: ..., description: ..., ticketNumber: .
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = updateTimeEntryRef(dataConnect, updateTimeEntryVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.timeEntry_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntry_update);
+});
+```
+
+## UpdateTimeEntryClearTicket
+You can execute the `UpdateTimeEntryClearTicket` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+updateTimeEntryClearTicket(vars: UpdateTimeEntryClearTicketVariables): MutationPromise<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+
+interface UpdateTimeEntryClearTicketRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateTimeEntryClearTicketVariables): MutationRef<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+}
+export const updateTimeEntryClearTicketRef: UpdateTimeEntryClearTicketRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+updateTimeEntryClearTicket(dc: DataConnect, vars: UpdateTimeEntryClearTicketVariables): MutationPromise<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+
+interface UpdateTimeEntryClearTicketRef {
+  ...
+  (dc: DataConnect, vars: UpdateTimeEntryClearTicketVariables): MutationRef<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+}
+export const updateTimeEntryClearTicketRef: UpdateTimeEntryClearTicketRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the updateTimeEntryClearTicketRef:
+```typescript
+const name = updateTimeEntryClearTicketRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpdateTimeEntryClearTicket` mutation requires an argument of type `UpdateTimeEntryClearTicketVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpdateTimeEntryClearTicketVariables {
+  entryId: UUIDString;
+  description?: string | null;
+  officeNumber?: string | null;
+}
+```
+### Return Type
+Recall that executing the `UpdateTimeEntryClearTicket` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpdateTimeEntryClearTicketData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpdateTimeEntryClearTicketData {
+  timeEntry_update?: TimeEntry_Key | null;
+}
+```
+### Using `UpdateTimeEntryClearTicket`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, updateTimeEntryClearTicket, UpdateTimeEntryClearTicketVariables } from '@dataconnect/generated';
+
+// The `UpdateTimeEntryClearTicket` mutation requires an argument of type `UpdateTimeEntryClearTicketVariables`:
+const updateTimeEntryClearTicketVars: UpdateTimeEntryClearTicketVariables = {
+  entryId: ..., 
+  description: ..., // optional
+  officeNumber: ..., // optional
+};
+
+// Call the `updateTimeEntryClearTicket()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await updateTimeEntryClearTicket(updateTimeEntryClearTicketVars);
+// Variables can be defined inline as well.
+const { data } = await updateTimeEntryClearTicket({ entryId: ..., description: ..., officeNumber: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await updateTimeEntryClearTicket(dataConnect, updateTimeEntryClearTicketVars);
+
+console.log(data.timeEntry_update);
+
+// Or, you can use the `Promise` API.
+updateTimeEntryClearTicket(updateTimeEntryClearTicketVars).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntry_update);
+});
+```
+
+### Using `UpdateTimeEntryClearTicket`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, updateTimeEntryClearTicketRef, UpdateTimeEntryClearTicketVariables } from '@dataconnect/generated';
+
+// The `UpdateTimeEntryClearTicket` mutation requires an argument of type `UpdateTimeEntryClearTicketVariables`:
+const updateTimeEntryClearTicketVars: UpdateTimeEntryClearTicketVariables = {
+  entryId: ..., 
+  description: ..., // optional
+  officeNumber: ..., // optional
+};
+
+// Call the `updateTimeEntryClearTicketRef()` function to get a reference to the mutation.
+const ref = updateTimeEntryClearTicketRef(updateTimeEntryClearTicketVars);
+// Variables can be defined inline as well.
+const ref = updateTimeEntryClearTicketRef({ entryId: ..., description: ..., officeNumber: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = updateTimeEntryClearTicketRef(dataConnect, updateTimeEntryClearTicketVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
@@ -1438,6 +1679,318 @@ console.log(data.timeEntry_delete);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.timeEntry_delete);
+});
+```
+
+## UpsertTicket
+You can execute the `UpsertTicket` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+upsertTicket(vars: UpsertTicketVariables): MutationPromise<UpsertTicketData, UpsertTicketVariables>;
+
+interface UpsertTicketRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpsertTicketVariables): MutationRef<UpsertTicketData, UpsertTicketVariables>;
+}
+export const upsertTicketRef: UpsertTicketRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+upsertTicket(dc: DataConnect, vars: UpsertTicketVariables): MutationPromise<UpsertTicketData, UpsertTicketVariables>;
+
+interface UpsertTicketRef {
+  ...
+  (dc: DataConnect, vars: UpsertTicketVariables): MutationRef<UpsertTicketData, UpsertTicketVariables>;
+}
+export const upsertTicketRef: UpsertTicketRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the upsertTicketRef:
+```typescript
+const name = upsertTicketRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpsertTicket` mutation requires an argument of type `UpsertTicketVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpsertTicketVariables {
+  ticketNumber: number;
+  ticketLink?: string | null;
+}
+```
+### Return Type
+Recall that executing the `UpsertTicket` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpsertTicketData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpsertTicketData {
+  ticket_upsert: Ticket_Key;
+}
+```
+### Using `UpsertTicket`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, upsertTicket, UpsertTicketVariables } from '@dataconnect/generated';
+
+// The `UpsertTicket` mutation requires an argument of type `UpsertTicketVariables`:
+const upsertTicketVars: UpsertTicketVariables = {
+  ticketNumber: ..., 
+  ticketLink: ..., // optional
+};
+
+// Call the `upsertTicket()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await upsertTicket(upsertTicketVars);
+// Variables can be defined inline as well.
+const { data } = await upsertTicket({ ticketNumber: ..., ticketLink: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await upsertTicket(dataConnect, upsertTicketVars);
+
+console.log(data.ticket_upsert);
+
+// Or, you can use the `Promise` API.
+upsertTicket(upsertTicketVars).then((response) => {
+  const data = response.data;
+  console.log(data.ticket_upsert);
+});
+```
+
+### Using `UpsertTicket`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, upsertTicketRef, UpsertTicketVariables } from '@dataconnect/generated';
+
+// The `UpsertTicket` mutation requires an argument of type `UpsertTicketVariables`:
+const upsertTicketVars: UpsertTicketVariables = {
+  ticketNumber: ..., 
+  ticketLink: ..., // optional
+};
+
+// Call the `upsertTicketRef()` function to get a reference to the mutation.
+const ref = upsertTicketRef(upsertTicketVars);
+// Variables can be defined inline as well.
+const ref = upsertTicketRef({ ticketNumber: ..., ticketLink: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = upsertTicketRef(dataConnect, upsertTicketVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.ticket_upsert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.ticket_upsert);
+});
+```
+
+## SelectMyTheme
+You can execute the `SelectMyTheme` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyTheme(vars: SelectMyThemeVariables): MutationPromise<SelectMyThemeData, SelectMyThemeVariables>;
+
+interface SelectMyThemeRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyThemeVariables): MutationRef<SelectMyThemeData, SelectMyThemeVariables>;
+}
+export const selectMyThemeRef: SelectMyThemeRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyTheme(dc: DataConnect, vars: SelectMyThemeVariables): MutationPromise<SelectMyThemeData, SelectMyThemeVariables>;
+
+interface SelectMyThemeRef {
+  ...
+  (dc: DataConnect, vars: SelectMyThemeVariables): MutationRef<SelectMyThemeData, SelectMyThemeVariables>;
+}
+export const selectMyThemeRef: SelectMyThemeRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyThemeRef:
+```typescript
+const name = selectMyThemeRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyTheme` mutation requires an argument of type `SelectMyThemeVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyThemeVariables {
+  themeId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `SelectMyTheme` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyThemeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyThemeData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyTheme`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyTheme, SelectMyThemeVariables } from '@dataconnect/generated';
+
+// The `SelectMyTheme` mutation requires an argument of type `SelectMyThemeVariables`:
+const selectMyThemeVars: SelectMyThemeVariables = {
+  themeId: ..., 
+};
+
+// Call the `selectMyTheme()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyTheme(selectMyThemeVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyTheme({ themeId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyTheme(dataConnect, selectMyThemeVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyTheme(selectMyThemeVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyTheme`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyThemeRef, SelectMyThemeVariables } from '@dataconnect/generated';
+
+// The `SelectMyTheme` mutation requires an argument of type `SelectMyThemeVariables`:
+const selectMyThemeVars: SelectMyThemeVariables = {
+  themeId: ..., 
+};
+
+// Call the `selectMyThemeRef()` function to get a reference to the mutation.
+const ref = selectMyThemeRef(selectMyThemeVars);
+// Variables can be defined inline as well.
+const ref = selectMyThemeRef({ themeId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyThemeRef(dataConnect, selectMyThemeVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## ClearMyTheme
+You can execute the `ClearMyTheme` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+clearMyTheme(): MutationPromise<ClearMyThemeData, undefined>;
+
+interface ClearMyThemeRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): MutationRef<ClearMyThemeData, undefined>;
+}
+export const clearMyThemeRef: ClearMyThemeRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+clearMyTheme(dc: DataConnect): MutationPromise<ClearMyThemeData, undefined>;
+
+interface ClearMyThemeRef {
+  ...
+  (dc: DataConnect): MutationRef<ClearMyThemeData, undefined>;
+}
+export const clearMyThemeRef: ClearMyThemeRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the clearMyThemeRef:
+```typescript
+const name = clearMyThemeRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ClearMyTheme` mutation has no variables.
+### Return Type
+Recall that executing the `ClearMyTheme` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ClearMyThemeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ClearMyThemeData {
+  user_update?: User_Key | null;
+}
+```
+### Using `ClearMyTheme`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, clearMyTheme } from '@dataconnect/generated';
+
+
+// Call the `clearMyTheme()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await clearMyTheme();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await clearMyTheme(dataConnect);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+clearMyTheme().then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `ClearMyTheme`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, clearMyThemeRef } from '@dataconnect/generated';
+
+
+// Call the `clearMyThemeRef()` function to get a reference to the mutation.
+const ref = clearMyThemeRef();
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = clearMyThemeRef(dataConnect);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
 });
 ```
 

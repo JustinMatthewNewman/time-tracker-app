@@ -1,8 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useUpdateTimeEntry } from "@/src/dataconnect-generated/react";
-import type { UpdateTimeEntryVariables } from "@/src/dataconnect-generated";
+import {
+    useUpdateTimeEntry,
+    useUpdateTimeEntryClearTicket,
+    useUpsertTicket,
+} from "@/src/dataconnect-generated/react";
+import type {
+    UpdateTimeEntryVariables,
+    UpdateTimeEntryClearTicketVariables,
+    UpsertTicketVariables,
+} from "@/src/dataconnect-generated";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 
 interface WorkLogTimeEntryCardTableProps {
@@ -12,6 +20,7 @@ interface WorkLogTimeEntryCardTableProps {
 }
 
 type EditableField = "ticketNumber" | "officeNumber" | "description";
+type Drafts = Record<string, Partial<Record<EditableField, string>>>;
 
 const AUTOSAVE_DELAY_MS = 600;
 
@@ -23,8 +32,10 @@ function formatTime(isoDate: string) {
 }
 
 export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: WorkLogTimeEntryCardTableProps) {
+    const upsertTicketMutation = useUpsertTicket();
     const updateMutation = useUpdateTimeEntry();
-    const [drafts, setDrafts] = useState<Record<string, Partial<WorkLogTimeEntry>>>({});
+    const clearTicketMutation = useUpdateTimeEntryClearTicket();
+    const [drafts, setDrafts] = useState<Drafts>({});
 
     // Mirrors kept in sync via effects (never mutated during render) so that
     // timers/unmount cleanup always see the latest values instead of whatever
@@ -48,20 +59,51 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
             const entry = entriesRef.current.find((e) => e.id === entryId);
             if (!draft || !entry) return;
 
-            updateMutation
-                .mutateAsync({
+            const description = draft.description ?? entry.description ?? undefined;
+            const officeNumber = draft.officeNumber ?? entry.officeNumber ?? undefined;
+            const ticketText = (
+                draft.ticketNumber ?? (entry.ticket ? String(entry.ticket.ticketNumber) : "")
+            ).trim();
+
+            const run = async () => {
+                if (ticketText === "") {
+                    await clearTicketMutation.mutateAsync({
+                        entryId,
+                        description,
+                        officeNumber,
+                    } as UpdateTimeEntryClearTicketVariables);
+                    return;
+                }
+
+                const ticketNumber = Number(ticketText);
+                // Non-integer input is left unsaved (ticket and other fields)
+                // rather than silently coerced, since there's no valid ticket
+                // row to attach the entry to.
+                if (!Number.isInteger(ticketNumber)) return;
+
+                // Ensures the Ticket row exists before the entry references it;
+                // ticketLink is left untouched since this table doesn't collect it.
+                await upsertTicketMutation.mutateAsync({ ticketNumber } as UpsertTicketVariables);
+                await updateMutation.mutateAsync({
                     entryId,
-                    description: draft.description ?? entry.description ?? undefined,
-                    ticketNumber: draft.ticketNumber ?? entry.ticketNumber ?? undefined,
-                    officeNumber: draft.officeNumber ?? entry.officeNumber ?? undefined,
-                } as UpdateTimeEntryVariables)
+                    description,
+                    ticketNumber,
+                    officeNumber,
+                } as UpdateTimeEntryVariables);
+            };
+
+            run()
                 .then(() => onEntryUpdated?.())
                 .catch((err) => console.error("Failed to save time entry", err));
         };
     });
 
-    const getValue = (entry: WorkLogTimeEntry, field: EditableField) =>
-        drafts[entry.id]?.[field] ?? entry[field] ?? "";
+    const getValue = (entry: WorkLogTimeEntry, field: EditableField) => {
+        const draftValue = drafts[entry.id]?.[field];
+        if (draftValue !== undefined) return draftValue;
+        if (field === "ticketNumber") return entry.ticket ? String(entry.ticket.ticketNumber) : "";
+        return entry[field] ?? "";
+    };
 
     const setDraftValue = (entryId: string, field: EditableField, value: string) => {
         setDrafts((prev) => ({
@@ -114,7 +156,8 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
 
                             <td className="border p-2">
                                 <input
-                                    type="text"
+                                    type="number"
+                                    inputMode="numeric"
                                     className="w-full rounded border p-2"
                                     value={getValue(entry, "ticketNumber")}
                                     onChange={(e) => setDraftValue(entry.id, "ticketNumber", e.target.value)}

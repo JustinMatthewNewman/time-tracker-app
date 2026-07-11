@@ -1,8 +1,9 @@
 type User @table {
-  id: UUID! @default(expr: "uuidV4()")  
-  googleUid: String! @unique                      
+  id: UUID! @default(expr: "uuidV4()")
+  googleUid: String! @unique
   username: String!
   email: String
+  theme: Theme
   createdAt: Timestamp!
 }
 
@@ -22,7 +23,29 @@ type TimeEntry @table {
   endTime: Timestamp!
   date: Date!
   description: String
-  ticketNumber: String
+  ticket: Ticket
   officeNumber: String
   createdAt: Timestamp!
+}
+
+# A selectable UI theme. Only background/foreground are wired into
+# app/globals.css today (next-themes handles the light/dark class toggle);
+# a user's selection here overrides those CSS variables at render time.
+type Theme @table {
+  id: UUID! @default(expr: "uuidV4()")
+  name: String! @unique
+  background: String!
+  foreground: String!
+  isDark: Boolean! @default(expr: "false")
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# Ticket metadata keyed by the human-entered ticket number (e.g. from the
+# WorkLogTimeEntryCardTable "Ticket" column). ticketNumber (not id) is the
+# table key so ticket_upsert can find-or-create a row for a given number.
+type Ticket @table(key: "ticketNumber") {
+  id: UUID! @default(expr: "uuidV4()") @unique
+  ticketNumber: Int!
+  ticketLink: String
+  createdAt: Timestamp! @default(expr: "request.time")
 }

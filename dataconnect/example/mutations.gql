@@ -16,7 +16,6 @@ mutation CreateTimeEntry(
   $date: Date!
   $createdAt: Timestamp!
   $description: String
-  $ticketNumber: String
   $officeNumber: String
 ) @auth(level: USER) {
   timeEntry_insert(data: {
@@ -25,23 +24,45 @@ mutation CreateTimeEntry(
     endTime: $endTime
     date: $date
     description: $description
-    ticketNumber: $ticketNumber
     officeNumber: $officeNumber
     createdAt: $createdAt
   })
 }
 
+# Sets the entry's ticket to $ticketNumber. Call UpsertTicket first so the
+# referenced Ticket row is guaranteed to exist. Uses the raw ticketTicketNumber
+# FK scalar rather than a nested `ticket: { ticketNumber }` key object —
+# relation fields set that way silently produce an empty SQL SET clause on
+# _update (unlike _insert, where the nested form works fine).
 mutation UpdateTimeEntry(
   $entryId: UUID!
   $description: String
-  $ticketNumber: String
+  $ticketNumber: Int!
   $officeNumber: String
 ) @auth(level: USER) {
   timeEntry_update(
     id: $entryId
     data: {
       description: $description
-      ticketNumber: $ticketNumber
+      ticketTicketNumber: $ticketNumber
+      officeNumber: $officeNumber
+    }
+  )
+}
+
+# Same as UpdateTimeEntry but clears the ticket (used when the Ticket column
+# is emptied out). A separate mutation avoids ambiguity between "no change"
+# and "clear" for the ticket relation.
+mutation UpdateTimeEntryClearTicket(
+  $entryId: UUID!
+  $description: String
+  $officeNumber: String
+) @auth(level: USER) {
+  timeEntry_update(
+    id: $entryId
+    data: {
+      description: $description
+      ticketTicketNumber: null
       officeNumber: $officeNumber
     }
   )
@@ -49,6 +70,37 @@ mutation UpdateTimeEntry(
 
 mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) {
   timeEntry_delete(id: $entryId)
+}
+
+# Find-or-create a Ticket by number. ticketNumber is the table key, so this
+# updates ticketLink on conflict rather than creating a duplicate row.
+mutation UpsertTicket($ticketNumber: Int!, $ticketLink: String) @auth(level: USER) {
+  ticket_upsert(data: {
+    ticketNumber: $ticketNumber
+    ticketLink: $ticketLink
+  })
+}
+
+# Points the signed-in user's theme selection at $themeId. Scoped to the
+# caller's own row via auth.uid rather than a client-supplied user id.
+# Uses the raw themeId FK scalar rather than a nested `theme: { id }` key
+# object — see UpdateTimeEntry for why (nested form no-ops on _update).
+mutation SelectMyTheme($themeId: UUID!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { themeId: $themeId }
+  )
+}
+
+# Resets the signed-in user back to no DB theme (falls back to the
+# next-themes light/dark toggle). Separate mutation for the same reason as
+# UpdateTimeEntryClearTicket: literal `null` can't share a document with a
+# variant that sets a required variable.
+mutation ClearMyTheme @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { themeId: null }
+  )
 }
 
 mutation UpdateWorkLog($workLogId: UUID!, $name: String!) @auth(level: USER) @transaction {

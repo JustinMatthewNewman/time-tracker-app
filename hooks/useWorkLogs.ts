@@ -1,14 +1,15 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { QueryFetchPolicy } from "firebase/data-connect";
 import { useAuth } from "./useAuth";
 import {
-  useListWorkLogs,
   useGetMyUser,
   useCreateWorkLog,
   useUpdateWorkLog,
   useDeleteWorkLog,
 } from "@/src/dataconnect-generated/react";
+import { listWorkLogs } from "@/src/dataconnect-generated";
 import type {
   ListWorkLogsData,
   CreateWorkLogVariables,
@@ -24,28 +25,54 @@ export interface WorkLogData {
   createdAt: string;
 }
 
+function toWorkLogData(logs: ListWorkLogsData["workLogs"]): WorkLogData[] {
+  return logs.map((log) => ({
+    id: log.id,
+    name: log.name,
+    description: log.description || "",
+    workLogDate: log.workLogDate,
+    createdAt: log.createdAt,
+  }));
+}
+
 export function useWorkLogs() {
   const { user } = useAuth();
 
-  const listQuery = useListWorkLogs({ enabled: !!user?.uid });
   const myUserQuery = useGetMyUser({ enabled: !!user?.uid });
   const createMutation = useCreateWorkLog();
   const updateMutation = useUpdateWorkLog();
   const deleteMutation = useDeleteWorkLog();
 
-  const workLogs = useMemo<WorkLogData[]>(
-    () =>
-      (listQuery.data?.workLogs ?? []).map(
-        (log: ListWorkLogsData["workLogs"][number]) => ({
-          id: log.id,
-          name: log.name,
-          description: log.description || "",
-          workLogDate: log.workLogDate,
-          createdAt: log.createdAt,
-        })
-      ),
-    [listQuery.data]
-  );
+  const [workLogs, setWorkLogs] = useState<WorkLogData[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Data Connect's generated React query hooks default to a "prefer cache"
+  // fetch policy that mutations never invalidate (see useTimeEntriesByWorkLog
+  // for the same issue), so a plain refetch() from useListWorkLogs can return
+  // a stale list forever after a create/rename/delete. SERVER_ONLY guarantees
+  // the sidebar reflects the latest state.
+  const refetch = useCallback(async () => {
+    if (!user?.uid) {
+      setWorkLogs([]);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await listWorkLogs({ fetchPolicy: QueryFetchPolicy.SERVER_ONLY });
+      setWorkLogs(toWorkLogData(result.data.workLogs));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load work logs");
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.uid]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    refetch();
+  }, [refetch]);
 
   const createWorkLog = useCallback(
     async (data: { name: string; workLogDate: string; description?: string }) => {
@@ -62,33 +89,38 @@ export function useWorkLogs() {
         description: data.description || undefined,
       } as CreateWorkLogVariables);
 
-      await listQuery.refetch();
-      return { workLogId };
+      await refetch();
+      // Data Connect always returns UUIDs with hyphens stripped, but
+      // crypto.randomUUID() produces the hyphenated form. Returning the raw
+      // client id here means callers who use it to select/highlight the new
+      // row (e.g. ListBoxComponent) never find a match against workLogs[].id,
+      // so the new entry silently never appears selected.
+      return { workLogId: workLogId.replace(/-/g, "") };
     },
-    [myUserQuery.data, createMutation, listQuery]
+    [myUserQuery.data, createMutation, refetch]
   );
 
   const renameWorkLog = useCallback(
     async (workLogId: string, name: string) => {
       await updateMutation.mutateAsync({ workLogId, name } as UpdateWorkLogVariables);
-      await listQuery.refetch();
+      await refetch();
     },
-    [updateMutation, listQuery]
+    [updateMutation, refetch]
   );
 
   const deleteWorkLog = useCallback(
     async (workLogId: string) => {
       await deleteMutation.mutateAsync({ workLogId } as DeleteWorkLogVariables);
-      await listQuery.refetch();
+      await refetch();
     },
-    [deleteMutation, listQuery]
+    [deleteMutation, refetch]
   );
 
   return {
     workLogs,
-    loading: listQuery.isPending,
-    error: listQuery.error?.message || null,
-    refetch: listQuery.refetch,
+    loading,
+    error,
+    refetch,
     createWorkLog,
     renameWorkLog,
     deleteWorkLog,

@@ -46,6 +46,18 @@ export function updateTimeEntry(dcOrVars, vars) {
   return executeMutation(updateTimeEntryRef(dcInstance, inputVars));
 }
 
+export const updateTimeEntryClearTicketRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateTimeEntryClearTicket', inputVars);
+}
+updateTimeEntryClearTicketRef.operationName = 'UpdateTimeEntryClearTicket';
+
+export function updateTimeEntryClearTicket(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateTimeEntryClearTicketRef(dcInstance, inputVars));
+}
+
 export const deleteTimeEntryRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -56,6 +68,42 @@ deleteTimeEntryRef.operationName = 'DeleteTimeEntry';
 export function deleteTimeEntry(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(deleteTimeEntryRef(dcInstance, inputVars));
+}
+
+export const upsertTicketRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpsertTicket', inputVars);
+}
+upsertTicketRef.operationName = 'UpsertTicket';
+
+export function upsertTicket(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(upsertTicketRef(dcInstance, inputVars));
+}
+
+export const selectMyThemeRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SelectMyTheme', inputVars);
+}
+selectMyThemeRef.operationName = 'SelectMyTheme';
+
+export function selectMyTheme(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(selectMyThemeRef(dcInstance, inputVars));
+}
+
+export const clearMyThemeRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'ClearMyTheme');
+}
+clearMyThemeRef.operationName = 'ClearMyTheme';
+
+export function clearMyTheme(dc) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dc, undefined);
+  return executeMutation(clearMyThemeRef(dcInstance, inputVars));
 }
 
 export const updateWorkLogRef = (dcOrVars, vars) => {
@@ -130,6 +178,19 @@ export function getMyUser(dcOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
   return executeQuery(getMyUserRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+
+export const listThemesRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListThemes');
+}
+listThemesRef.operationName = 'ListThemes';
+
+export function listThemes(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listThemesRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 
 export const listTimeEntriesRef = (dcOrVars, vars) => {

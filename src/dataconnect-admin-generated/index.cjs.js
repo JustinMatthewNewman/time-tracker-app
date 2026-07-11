@@ -28,12 +28,40 @@ function updateTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
 }
 exports.updateTimeEntry = updateTimeEntry;
 
+function updateTimeEntryClearTicket(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpdateTimeEntryClearTicket', inputVars, inputOpts);
+}
+exports.updateTimeEntryClearTicket = updateTimeEntryClearTicket;
+
 function deleteTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
   return dcInstance.executeMutation('DeleteTimeEntry', inputVars, inputOpts);
 }
 exports.deleteTimeEntry = deleteTimeEntry;
+
+function upsertTicket(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpsertTicket', inputVars, inputOpts);
+}
+exports.upsertTicket = upsertTicket;
+
+function selectMyTheme(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SelectMyTheme', inputVars, inputOpts);
+}
+exports.selectMyTheme = selectMyTheme;
+
+function clearMyTheme(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('ClearMyTheme', undefined, inputOpts);
+}
+exports.clearMyTheme = clearMyTheme;
 
 function updateWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
@@ -76,6 +104,13 @@ function getMyUser(dcOrOptions, options) {
   return dcInstance.executeQuery('GetMyUser', undefined, inputOpts);
 }
 exports.getMyUser = getMyUser;
+
+function listThemes(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListThemes', undefined, inputOpts);
+}
+exports.listThemes = listThemes;
 
 function listTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);

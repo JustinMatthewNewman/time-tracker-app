@@ -19,6 +19,7 @@ You can also follow the instructions from the [Data Connect documentation](https
 - [**Queries**](#queries)
   - [*ListUsers*](#listusers)
   - [*GetMyUser*](#getmyuser)
+  - [*ListThemes*](#listthemes)
   - [*ListTimeEntries*](#listtimeentries)
   - [*GetTimeEntry*](#gettimeentry)
   - [*ListWorkLogs*](#listworklogs)
@@ -29,7 +30,11 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*CreateTimeEntry*](#createtimeentry)
   - [*UpdateTimeEntry*](#updatetimeentry)
+  - [*UpdateTimeEntryClearTicket*](#updatetimeentryclearticket)
   - [*DeleteTimeEntry*](#deletetimeentry)
+  - [*UpsertTicket*](#upsertticket)
+  - [*SelectMyTheme*](#selectmytheme)
+  - [*ClearMyTheme*](#clearmytheme)
   - [*UpdateWorkLog*](#updateworklog)
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
@@ -222,6 +227,13 @@ To access the data returned by a Query, use the `UseQueryResult.data` field. The
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
+    theme?: {
+      id: UUIDString;
+      name: string;
+      background: string;
+      foreground: string;
+      isDark: boolean;
+    } & Theme_Key;
   } & User_Key;
 }
 ```
@@ -270,6 +282,81 @@ export default function GetMyUserComponent() {
 }
 ```
 
+## ListThemes
+You can execute the `ListThemes` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useListThemes(dc: DataConnect, options?: useDataConnectQueryOptions<ListThemesData>): UseDataConnectQueryResult<ListThemesData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useListThemes(options?: useDataConnectQueryOptions<ListThemesData>): UseDataConnectQueryResult<ListThemesData, undefined>;
+```
+
+### Variables
+The `ListThemes` Query has no variables.
+### Return Type
+Recall that calling the `ListThemes` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListThemes` Query is of type `ListThemesData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListThemesData {
+  themes: ({
+    id: UUIDString;
+    name: string;
+    background: string;
+    foreground: string;
+    isDark: boolean;
+  } & Theme_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `ListThemes`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useListThemes } from '@dataconnect/generated/react'
+
+export default function ListThemesComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListThemes();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useListThemes(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useListThemes(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useListThemes(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.themes);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
 ## ListTimeEntries
 You can execute the `ListTimeEntries` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
 
@@ -308,7 +395,11 @@ export interface ListTimeEntriesData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -404,7 +495,11 @@ export interface GetTimeEntryData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key;
@@ -570,7 +665,11 @@ export interface ListTimeEntriesByWorkLogData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -653,7 +752,11 @@ export interface ListMyTimeEntriesData {
     id: UUIDString;
     startTime: TimestampString;
     endTime: TimestampString;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     workLog?: {
       id: UUIDString;
@@ -745,7 +848,11 @@ export interface ListTimeEntriesByDateRangeData {
     endTime: TimestampString;
     date: DateString;
     description?: string | null;
-    ticketNumber?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      ticketLink?: string | null;
+    } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
@@ -951,7 +1058,6 @@ export interface CreateTimeEntryVariables {
   date: DateString;
   createdAt: TimestampString;
   description?: string | null;
-  ticketNumber?: string | null;
   officeNumber?: string | null;
 }
 ```
@@ -1008,12 +1114,11 @@ export default function CreateTimeEntryComponent() {
     date: ..., 
     createdAt: ..., 
     description: ..., // optional
-    ticketNumber: ..., // optional
     officeNumber: ..., // optional
   };
   mutation.mutate(createTimeEntryVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ userId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., ticketNumber: ..., officeNumber: ..., });
+  mutation.mutate({ userId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., officeNumber: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
@@ -1055,7 +1160,7 @@ The `UpdateTimeEntry` Mutation requires an argument of type `UpdateTimeEntryVari
 export interface UpdateTimeEntryVariables {
   entryId: UUIDString;
   description?: string | null;
-  ticketNumber?: string | null;
+  ticketNumber: number;
   officeNumber?: string | null;
 }
 ```
@@ -1108,7 +1213,7 @@ export default function UpdateTimeEntryComponent() {
   const updateTimeEntryVars: UpdateTimeEntryVariables = {
     entryId: ..., 
     description: ..., // optional
-    ticketNumber: ..., // optional
+    ticketNumber: ..., 
     officeNumber: ..., // optional
   };
   mutation.mutate(updateTimeEntryVars);
@@ -1120,6 +1225,104 @@ export default function UpdateTimeEntryComponent() {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
   mutation.mutate(updateTimeEntryVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.timeEntry_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## UpdateTimeEntryClearTicket
+You can execute the `UpdateTimeEntryClearTicket` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useUpdateTimeEntryClearTicket(options?: useDataConnectMutationOptions<UpdateTimeEntryClearTicketData, FirebaseError, UpdateTimeEntryClearTicketVariables>): UseDataConnectMutationResult<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useUpdateTimeEntryClearTicket(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateTimeEntryClearTicketData, FirebaseError, UpdateTimeEntryClearTicketVariables>): UseDataConnectMutationResult<UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables>;
+```
+
+### Variables
+The `UpdateTimeEntryClearTicket` Mutation requires an argument of type `UpdateTimeEntryClearTicketVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface UpdateTimeEntryClearTicketVariables {
+  entryId: UUIDString;
+  description?: string | null;
+  officeNumber?: string | null;
+}
+```
+### Return Type
+Recall that calling the `UpdateTimeEntryClearTicket` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `UpdateTimeEntryClearTicket` Mutation is of type `UpdateTimeEntryClearTicketData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface UpdateTimeEntryClearTicketData {
+  timeEntry_update?: TimeEntry_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `UpdateTimeEntryClearTicket`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, UpdateTimeEntryClearTicketVariables } from '@dataconnect/generated';
+import { useUpdateTimeEntryClearTicket } from '@dataconnect/generated/react'
+
+export default function UpdateTimeEntryClearTicketComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useUpdateTimeEntryClearTicket();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useUpdateTimeEntryClearTicket(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useUpdateTimeEntryClearTicket(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useUpdateTimeEntryClearTicket(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useUpdateTimeEntryClearTicket` Mutation requires an argument of type `UpdateTimeEntryClearTicketVariables`:
+  const updateTimeEntryClearTicketVars: UpdateTimeEntryClearTicketVariables = {
+    entryId: ..., 
+    description: ..., // optional
+    officeNumber: ..., // optional
+  };
+  mutation.mutate(updateTimeEntryClearTicketVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ entryId: ..., description: ..., officeNumber: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(updateTimeEntryClearTicketVars, options);
 
   // Then, you can render your component dynamically based on the status of the Mutation.
   if (mutation.isPending) {
@@ -1227,6 +1430,279 @@ export default function DeleteTimeEntryComponent() {
   // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
   if (mutation.isSuccess) {
     console.log(mutation.data.timeEntry_delete);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## UpsertTicket
+You can execute the `UpsertTicket` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useUpsertTicket(options?: useDataConnectMutationOptions<UpsertTicketData, FirebaseError, UpsertTicketVariables>): UseDataConnectMutationResult<UpsertTicketData, UpsertTicketVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useUpsertTicket(dc: DataConnect, options?: useDataConnectMutationOptions<UpsertTicketData, FirebaseError, UpsertTicketVariables>): UseDataConnectMutationResult<UpsertTicketData, UpsertTicketVariables>;
+```
+
+### Variables
+The `UpsertTicket` Mutation requires an argument of type `UpsertTicketVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface UpsertTicketVariables {
+  ticketNumber: number;
+  ticketLink?: string | null;
+}
+```
+### Return Type
+Recall that calling the `UpsertTicket` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `UpsertTicket` Mutation is of type `UpsertTicketData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface UpsertTicketData {
+  ticket_upsert: Ticket_Key;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `UpsertTicket`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, UpsertTicketVariables } from '@dataconnect/generated';
+import { useUpsertTicket } from '@dataconnect/generated/react'
+
+export default function UpsertTicketComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useUpsertTicket();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useUpsertTicket(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useUpsertTicket(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useUpsertTicket(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useUpsertTicket` Mutation requires an argument of type `UpsertTicketVariables`:
+  const upsertTicketVars: UpsertTicketVariables = {
+    ticketNumber: ..., 
+    ticketLink: ..., // optional
+  };
+  mutation.mutate(upsertTicketVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ ticketNumber: ..., ticketLink: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(upsertTicketVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.ticket_upsert);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## SelectMyTheme
+You can execute the `SelectMyTheme` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useSelectMyTheme(options?: useDataConnectMutationOptions<SelectMyThemeData, FirebaseError, SelectMyThemeVariables>): UseDataConnectMutationResult<SelectMyThemeData, SelectMyThemeVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useSelectMyTheme(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyThemeData, FirebaseError, SelectMyThemeVariables>): UseDataConnectMutationResult<SelectMyThemeData, SelectMyThemeVariables>;
+```
+
+### Variables
+The `SelectMyTheme` Mutation requires an argument of type `SelectMyThemeVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface SelectMyThemeVariables {
+  themeId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `SelectMyTheme` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SelectMyTheme` Mutation is of type `SelectMyThemeData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface SelectMyThemeData {
+  user_update?: User_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `SelectMyTheme`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, SelectMyThemeVariables } from '@dataconnect/generated';
+import { useSelectMyTheme } from '@dataconnect/generated/react'
+
+export default function SelectMyThemeComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useSelectMyTheme();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useSelectMyTheme(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyTheme(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyTheme(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useSelectMyTheme` Mutation requires an argument of type `SelectMyThemeVariables`:
+  const selectMyThemeVars: SelectMyThemeVariables = {
+    themeId: ..., 
+  };
+  mutation.mutate(selectMyThemeVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ themeId: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(selectMyThemeVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.user_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## ClearMyTheme
+You can execute the `ClearMyTheme` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useClearMyTheme(options?: useDataConnectMutationOptions<ClearMyThemeData, FirebaseError, void>): UseDataConnectMutationResult<ClearMyThemeData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useClearMyTheme(dc: DataConnect, options?: useDataConnectMutationOptions<ClearMyThemeData, FirebaseError, void>): UseDataConnectMutationResult<ClearMyThemeData, undefined>;
+```
+
+### Variables
+The `ClearMyTheme` Mutation has no variables.
+### Return Type
+Recall that calling the `ClearMyTheme` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `ClearMyTheme` Mutation is of type `ClearMyThemeData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ClearMyThemeData {
+  user_update?: User_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `ClearMyTheme`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useClearMyTheme } from '@dataconnect/generated/react'
+
+export default function ClearMyThemeComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useClearMyTheme();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useClearMyTheme(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useClearMyTheme(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useClearMyTheme(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  mutation.mutate();
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  // Since this Mutation accepts no variables, you must pass `undefined` where you would normally pass the variables.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(undefined, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.user_update);
   }
   return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
 }

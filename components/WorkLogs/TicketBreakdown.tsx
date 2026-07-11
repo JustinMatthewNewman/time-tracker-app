@@ -66,7 +66,20 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
           <tbody>
             {totals.map((t) => (
               <tr key={t.ticket}>
-                <td className="border p-2">{t.ticket}</td>
+                <td className="border p-2">
+                  {t.ticketLink ? (
+                    <a
+                      href={t.ticketLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary underline"
+                    >
+                      {t.ticket}
+                    </a>
+                  ) : (
+                    t.ticket
+                  )}
+                </td>
                 <td className="border p-2">{t.entryCount}</td>
                 <td className="border p-2">{formatDuration(t.totalMinutes)}</td>
               </tr>

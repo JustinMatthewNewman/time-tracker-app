@@ -12,6 +12,23 @@ query ListUsers @auth(level: NO_ACCESS) {
 query GetMyUser @auth(level: USER) {
   user(first: { where: { googleUid: { eq_expr: "auth.uid" } } }) {
     id
+    theme {
+      id
+      name
+      background
+      foreground
+      isDark
+    }
+  }
+}
+
+query ListThemes @auth(level: USER) {
+  themes(orderBy: [{ name: ASC }]) {
+    id
+    name
+    background
+    foreground
+    isDark
   }
 }
 
@@ -30,7 +47,11 @@ query ListTimeEntries($userId: UUID!) @auth(level: USER) {
     endTime
     date
     description
-    ticketNumber
+    ticket {
+      id
+      ticketNumber
+      ticketLink
+    }
     officeNumber
     createdAt
   }
@@ -48,7 +69,11 @@ query GetTimeEntry($entryId: UUID!) @auth(level: USER) {
     endTime
     date
     description
-    ticketNumber
+    ticket {
+      id
+      ticketNumber
+      ticketLink
+    }
     officeNumber
     createdAt
   }
@@ -87,7 +112,11 @@ query ListTimeEntriesByWorkLog($workLogId: UUID!) @auth(level: USER) {
     endTime
     date
     description
-    ticketNumber
+    ticket {
+      id
+      ticketNumber
+      ticketLink
+    }
     officeNumber
     createdAt
   }
@@ -101,7 +130,11 @@ query ListMyTimeEntries @auth(level: USER) {
     id
     startTime
     endTime
-    ticketNumber
+    ticket {
+      id
+      ticketNumber
+      ticketLink
+    }
     officeNumber
     workLog {
       id
@@ -127,7 +160,11 @@ query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Da
     endTime
     date
     description
-    ticketNumber
+    ticket {
+      id
+      ticketNumber
+      ticketLink
+    }
     officeNumber
     createdAt
   }

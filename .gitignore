@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local Firebase SQL Connect emulator state/logs
+/dataconnect/.dataconnect/pgliteData
+/dataconnect-debug.log
+/firebase-debug.log
+/pglite-debug.log

@@ -5,13 +5,13 @@ import { useAuth } from "./useAuth";
 import {
   useListTimeEntries,
   useCreateTimeEntry,
-  useUpdateTimeEntry,
+  useUpdateTimeEntryClearTicket,
   useDeleteTimeEntry,
 } from "@/src/dataconnect-generated/react";
 import {
   ListTimeEntriesVariables,
   CreateTimeEntryVariables,
-  UpdateTimeEntryVariables,
+  UpdateTimeEntryClearTicketVariables,
   DeleteTimeEntryVariables,
 } from "@/src/dataconnect-generated";
 
@@ -21,7 +21,7 @@ export interface TimeEntryData {
   endTime: string;
   date: string;
   description?: string | null;
-  ticketNumber?: string | null;
+  ticket?: { ticketNumber: number; ticketLink?: string | null } | null;
   officeNumber?: string | null;
   createdAt: string;
 }
@@ -40,7 +40,7 @@ export function useFirebaseDataConnect() {
 
   // Mutation hooks
   const createMutation = useCreateTimeEntry();
-  const updateMutation = useUpdateTimeEntry();
+  const updateMutation = useUpdateTimeEntryClearTicket();
   const deleteMutation = useDeleteTimeEntry();
 
   // Sync query data to state
@@ -52,7 +52,7 @@ export function useFirebaseDataConnect() {
         endTime: entry.endTime,
         date: entry.date,
         description: entry.description || "",
-        ticketNumber: entry.ticketNumber || "",
+        ticket: entry.ticket ?? null,
         officeNumber: entry.officeNumber || "",
         createdAt: entry.createdAt,
       }));
@@ -70,14 +70,13 @@ export function useFirebaseDataConnect() {
       endTime: string;
       date: string;
       description?: string;
-      ticketNumber?: string;
       officeNumber?: string;
     }) => {
       if (!user?.uid) throw new Error("Not authenticated");
 
       try {
         const now = new Date().toISOString();
-        
+
         const result = await createMutation.mutateAsync({
           userId: user.uid as any,
           startTime: data.startTime,
@@ -85,7 +84,6 @@ export function useFirebaseDataConnect() {
           date: data.date,
           createdAt: now,
           description: data.description || undefined,
-          ticketNumber: data.ticketNumber || undefined,
           officeNumber: data.officeNumber || undefined,
         } as CreateTimeEntryVariables);
 
@@ -101,13 +99,14 @@ export function useFirebaseDataConnect() {
     [user?.uid, createMutation, listQuery]
   );
 
-  // Update an existing time entry
+  // Update an existing time entry's description/office number. Ticket
+  // assignment goes through UpsertTicket + UpdateTimeEntry (see
+  // WorkLogTimeEntryCardTable), so this always clears any existing ticket.
   const updateEntry = useCallback(
     async (
       entryId: string,
       data: {
         description?: string;
-        ticketNumber?: string;
         officeNumber?: string;
       }
     ) => {
@@ -117,9 +116,8 @@ export function useFirebaseDataConnect() {
         const result = await updateMutation.mutateAsync({
           entryId: entryId as any,
           description: data.description || undefined,
-          ticketNumber: data.ticketNumber || undefined,
           officeNumber: data.officeNumber || undefined,
-        } as UpdateTimeEntryVariables);
+        } as UpdateTimeEntryClearTicketVariables);
 
         // Refetch to get updated entry
         await listQuery.refetch();
