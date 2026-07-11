@@ -35,13 +35,16 @@ body {
   }
 }
 
-/* Hides scrollbars everywhere in the app while keeping content scrollable. */
+/* Hides scrollbars everywhere in the app while keeping content scrollable.
+   !important is needed to beat @heroui/styles' own themed scrollbar utility
+   (its `scrollbar` class sets a visible "thin" scrollbar via --scrollbar-width
+   on things like Dropdown.Popover). */
 * {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 
   &::-webkit-scrollbar {
-    display: none;
+    display: none !important;
   }
 }
 
