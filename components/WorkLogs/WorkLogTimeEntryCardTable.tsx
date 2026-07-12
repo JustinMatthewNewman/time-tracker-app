@@ -1,19 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Copy, CopyCheck } from "@gravity-ui/icons";
+import { Copy, CopyCheck, Pencil } from "@gravity-ui/icons";
 import {
     useUpdateTimeEntry,
     useUpdateTimeEntryClearTicket,
-    useUpsertTicket,
 } from "@/src/dataconnect-generated/react";
 import type {
     UpdateTimeEntryVariables,
     UpdateTimeEntryClearTicketVariables,
-    UpsertTicketVariables,
 } from "@/src/dataconnect-generated";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { formatEntryClipboardLine } from "@/lib/entryClipboard";
+import { TicketComboBox } from "./TicketComboBox";
+import { TicketDialog } from "./TicketDialog";
+import type { Ticket } from "@/context/TicketsContext";
 
 interface WorkLogTimeEntryCardTableProps {
     entries: WorkLogTimeEntry[];
@@ -21,10 +22,15 @@ interface WorkLogTimeEntryCardTableProps {
     onEntryUpdated?: () => void;
 }
 
-type EditableField = "ticketNumber" | "officeNumber" | "description";
-type Drafts = Record<string, Partial<Record<EditableField, string>>>;
+type Drafts = Record<string, string>; // entryId -> description draft
 
 const AUTOSAVE_DELAY_MS = 600;
+
+// One shared dialog instance for the whole table rather than one per row —
+// only one row's ticket can be created/edited at a time.
+type DialogState =
+    | { mode: "create"; entryId: string; initialTicketNumber?: number }
+    | { mode: "edit"; entryId: string; ticket: Ticket };
 
 function formatTime(isoDate: string) {
     return new Date(isoDate).toLocaleTimeString([], {
@@ -34,11 +40,11 @@ function formatTime(isoDate: string) {
 }
 
 export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: WorkLogTimeEntryCardTableProps) {
-    const upsertTicketMutation = useUpsertTicket();
     const updateMutation = useUpdateTimeEntry();
     const clearTicketMutation = useUpdateTimeEntryClearTicket();
     const [drafts, setDrafts] = useState<Drafts>({});
     const [copiedEntryId, setCopiedEntryId] = useState<string | null>(null);
+    const [dialogState, setDialogState] = useState<DialogState | null>(null);
 
     const handleCopyEntry = async (entry: WorkLogTimeEntry) => {
         try {
@@ -56,7 +62,7 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
     const draftsRef = useRef(drafts);
     const entriesRef = useRef(entries);
     const timersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
-    const saveEntryRef = useRef<(entryId: string) => void>(() => {});
+    const saveDescriptionRef = useRef<(entryId: string) => void>(() => {});
 
     useEffect(() => {
         draftsRef.current = drafts;
@@ -67,42 +73,24 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
     }, [entries]);
 
     useEffect(() => {
-        saveEntryRef.current = (entryId: string) => {
-            const draft = draftsRef.current[entryId];
+        saveDescriptionRef.current = (entryId: string) => {
+            const description = draftsRef.current[entryId];
             const entry = entriesRef.current.find((e) => e.id === entryId);
-            if (!draft || !entry) return;
-
-            const description = draft.description ?? entry.description ?? undefined;
-            const officeNumber = draft.officeNumber ?? entry.officeNumber ?? undefined;
-            const ticketText = (
-                draft.ticketNumber ?? (entry.ticket ? String(entry.ticket.ticketNumber) : "")
-            ).trim();
+            if (description === undefined || !entry) return;
 
             const run = async () => {
-                if (ticketText === "") {
+                if (entry.ticket) {
+                    await updateMutation.mutateAsync({
+                        entryId,
+                        description,
+                        ticketNumber: entry.ticket.ticketNumber,
+                    } as UpdateTimeEntryVariables);
+                } else {
                     await clearTicketMutation.mutateAsync({
                         entryId,
                         description,
-                        officeNumber,
                     } as UpdateTimeEntryClearTicketVariables);
-                    return;
                 }
-
-                const ticketNumber = Number(ticketText);
-                // Non-integer input is left unsaved (ticket and other fields)
-                // rather than silently coerced, since there's no valid ticket
-                // row to attach the entry to.
-                if (!Number.isInteger(ticketNumber)) return;
-
-                // Ensures the Ticket row exists before the entry references it;
-                // ticketLink is left untouched since this table doesn't collect it.
-                await upsertTicketMutation.mutateAsync({ ticketNumber } as UpsertTicketVariables);
-                await updateMutation.mutateAsync({
-                    entryId,
-                    description,
-                    ticketNumber,
-                    officeNumber,
-                } as UpdateTimeEntryVariables);
             };
 
             run()
@@ -111,21 +99,13 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
         };
     });
 
-    const getValue = (entry: WorkLogTimeEntry, field: EditableField) => {
-        const draftValue = drafts[entry.id]?.[field];
-        if (draftValue !== undefined) return draftValue;
-        if (field === "ticketNumber") return entry.ticket ? String(entry.ticket.ticketNumber) : "";
-        return entry[field] ?? "";
-    };
+    const getDescription = (entry: WorkLogTimeEntry) => drafts[entry.id] ?? entry.description ?? "";
 
-    const setDraftValue = (entryId: string, field: EditableField, value: string) => {
-        setDrafts((prev) => ({
-            ...prev,
-            [entryId]: { ...prev[entryId], [field]: value },
-        }));
+    const setDescriptionDraft = (entryId: string, value: string) => {
+        setDrafts((prev) => ({ ...prev, [entryId]: value }));
 
         clearTimeout(timersRef.current[entryId]);
-        timersRef.current[entryId] = setTimeout(() => saveEntryRef.current(entryId), AUTOSAVE_DELAY_MS);
+        timersRef.current[entryId] = setTimeout(() => saveDescriptionRef.current(entryId), AUTOSAVE_DELAY_MS);
     };
 
     // Flush any pending edits immediately so switching views (or navigating away)
@@ -135,10 +115,49 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
         return () => {
             Object.keys(timers).forEach((entryId) => {
                 clearTimeout(timers[entryId]);
-                saveEntryRef.current(entryId);
+                saveDescriptionRef.current(entryId);
             });
         };
     }, []);
+
+    // Ticket selection/clearing is a discrete action (not free text), so it
+    // saves immediately rather than going through the description's debounce.
+    const handleSelectTicket = async (entry: WorkLogTimeEntry, ticket: Ticket) => {
+        try {
+            await updateMutation.mutateAsync({
+                entryId: entry.id,
+                description: getDescription(entry),
+                ticketNumber: ticket.ticketNumber,
+            } as UpdateTimeEntryVariables);
+            onEntryUpdated?.();
+        } catch (err) {
+            console.error("Failed to link ticket to time entry", err);
+        }
+    };
+
+    const handleClearTicket = async (entry: WorkLogTimeEntry) => {
+        try {
+            await clearTicketMutation.mutateAsync({
+                entryId: entry.id,
+                description: getDescription(entry),
+            } as UpdateTimeEntryClearTicketVariables);
+            onEntryUpdated?.();
+        } catch (err) {
+            console.error("Failed to clear time entry's ticket", err);
+        }
+    };
+
+    const handleDialogSaved = async (saved: Ticket) => {
+        if (!dialogState) return;
+        if (dialogState.mode === "create") {
+            const entry = entriesRef.current.find((e) => e.id === dialogState.entryId);
+            if (entry) await handleSelectTicket(entry, saved);
+        } else {
+            // Details changed on an already-linked ticket — refresh so the
+            // locked Office cell picks up the new value.
+            onEntryUpdated?.();
+        }
+    };
 
     if (loading) {
         return <div className="p-4 text-sm text-gray-500">Loading time entries...</div>;
@@ -154,8 +173,8 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
                 <thead>
                     <tr>
                         <th className="w-40 border p-2 text-left">Time</th>
-                        <th className="w-24 border p-2 text-left">Ticket</th>
-                        <th className="w-20 border p-2 text-left">Office</th>
+                        <th className="w-48 border p-2 text-left">Ticket</th>
+                        <th className="w-32 border p-2 text-left">Office</th>
                         <th className="border p-2 text-left">Description</th>
                         <th className="w-10 border p-2"></th>
                     </tr>
@@ -169,30 +188,45 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
                             </td>
 
                             <td className="border p-2">
-                                <input
-                                    type="number"
-                                    inputMode="numeric"
-                                    className="w-full rounded border p-2"
-                                    value={getValue(entry, "ticketNumber")}
-                                    onChange={(e) => setDraftValue(entry.id, "ticketNumber", e.target.value)}
+                                <TicketComboBox
+                                    ticket={entry.ticket ?? null}
+                                    onSelect={(ticket) => handleSelectTicket(entry, ticket)}
+                                    onClear={() => handleClearTicket(entry)}
+                                    onRequestCreate={(ticketNumberText) => {
+                                        const parsed = Number(ticketNumberText);
+                                        setDialogState({
+                                            mode: "create",
+                                            entryId: entry.id,
+                                            initialTicketNumber: Number.isInteger(parsed) ? parsed : undefined,
+                                        });
+                                    }}
                                 />
                             </td>
 
                             <td className="border p-2">
-                                <input
-                                    type="text"
-                                    className="w-full rounded border p-2"
-                                    value={getValue(entry, "officeNumber")}
-                                    onChange={(e) => setDraftValue(entry.id, "officeNumber", e.target.value)}
-                                />
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500">{entry.ticket?.office ?? "—"}</span>
+                                    {entry.ticket && (
+                                        <button
+                                            type="button"
+                                            aria-label={`Edit ticket ${entry.ticket.ticketNumber}`}
+                                            onClick={() =>
+                                                setDialogState({ mode: "edit", entryId: entry.id, ticket: entry.ticket! })
+                                            }
+                                            className="rounded p-1 text-foreground/40 hover:bg-default hover:text-foreground"
+                                        >
+                                            <Pencil className="size-3.5" />
+                                        </button>
+                                    )}
+                                </div>
                             </td>
 
                             <td className="border p-2">
                                 <textarea
                                     className="w-full rounded border p-2"
                                     rows={3}
-                                    value={getValue(entry, "description")}
-                                    onChange={(e) => setDraftValue(entry.id, "description", e.target.value)}
+                                    value={getDescription(entry)}
+                                    onChange={(e) => setDescriptionDraft(entry.id, e.target.value)}
                                 />
                             </td>
 
@@ -214,6 +248,17 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
                     ))}
                 </tbody>
             </table>
+
+            {dialogState && (
+                <TicketDialog
+                    isOpen
+                    mode={dialogState.mode}
+                    initialTicketNumber={dialogState.mode === "create" ? dialogState.initialTicketNumber : undefined}
+                    ticket={dialogState.mode === "edit" ? dialogState.ticket : undefined}
+                    onClose={() => setDialogState(null)}
+                    onSaved={handleDialogSaved}
+                />
+            )}
         </div>
     );
 }

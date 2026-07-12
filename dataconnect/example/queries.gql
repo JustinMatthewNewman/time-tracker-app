@@ -46,6 +46,19 @@ query ListColorSchemes @auth(level: USER) {
   }
 }
 
+# Full ticket list backing the Ticket autocomplete field — filtering happens
+# client-side (see TicketComboBox), so this returns everything rather than
+# taking a search term.
+query ListTickets @auth(level: USER) {
+  tickets(orderBy: [{ ticketNumber: ASC }]) {
+    id
+    ticketNumber
+    office
+    ticketTitle
+    ticketLink
+  }
+}
+
 query ListTimeEntries($userId: UUID!) @auth(level: USER) {
   timeEntries(
     where: { user: { id: { eq: $userId } } }
@@ -64,6 +77,8 @@ query ListTimeEntries($userId: UUID!) @auth(level: USER) {
     ticket {
       id
       ticketNumber
+      office
+      ticketTitle
       ticketLink
     }
     officeNumber
@@ -86,6 +101,8 @@ query GetTimeEntry($entryId: UUID!) @auth(level: USER) {
     ticket {
       id
       ticketNumber
+      office
+      ticketTitle
       ticketLink
     }
     officeNumber
@@ -129,6 +146,8 @@ query ListTimeEntriesByWorkLog($workLogId: UUID!) @auth(level: USER) {
     ticket {
       id
       ticketNumber
+      office
+      ticketTitle
       ticketLink
     }
     officeNumber
@@ -147,6 +166,8 @@ query ListMyTimeEntries @auth(level: USER) {
     ticket {
       id
       ticketNumber
+      office
+      ticketTitle
       ticketLink
     }
     officeNumber
@@ -177,6 +198,8 @@ query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Da
     ticket {
       id
       ticketNumber
+      office
+      ticketTitle
       ticketLink
     }
     officeNumber

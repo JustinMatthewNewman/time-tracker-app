@@ -7,90 +7,6 @@ const connectorConfig = {
 };
 exports.connectorConfig = connectorConfig;
 
-function createUserFromGoogle(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('CreateUserFromGoogle', inputVars, inputOpts);
-}
-exports.createUserFromGoogle = createUserFromGoogle;
-
-function createTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('CreateTimeEntry', inputVars, inputOpts);
-}
-exports.createTimeEntry = createTimeEntry;
-
-function updateTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('UpdateTimeEntry', inputVars, inputOpts);
-}
-exports.updateTimeEntry = updateTimeEntry;
-
-function updateTimeEntryClearTicket(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('UpdateTimeEntryClearTicket', inputVars, inputOpts);
-}
-exports.updateTimeEntryClearTicket = updateTimeEntryClearTicket;
-
-function deleteTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('DeleteTimeEntry', inputVars, inputOpts);
-}
-exports.deleteTimeEntry = deleteTimeEntry;
-
-function upsertTicket(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('UpsertTicket', inputVars, inputOpts);
-}
-exports.upsertTicket = upsertTicket;
-
-function selectMyColorScheme(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('SelectMyColorScheme', inputVars, inputOpts);
-}
-exports.selectMyColorScheme = selectMyColorScheme;
-
-function clearMyColorScheme(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('ClearMyColorScheme', undefined, inputOpts);
-}
-exports.clearMyColorScheme = clearMyColorScheme;
-
-function updateWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('UpdateWorkLog', inputVars, inputOpts);
-}
-exports.updateWorkLog = updateWorkLog;
-
-function deleteWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('DeleteWorkLog', inputVars, inputOpts);
-}
-exports.deleteWorkLog = deleteWorkLog;
-
-function restoreWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('RestoreWorkLog', inputVars, inputOpts);
-}
-exports.restoreWorkLog = restoreWorkLog;
-
-function createWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeMutation('CreateWorkLog', inputVars, inputOpts);
-}
-exports.createWorkLog = createWorkLog;
-
 function listUsers(dcOrOptions, options) {
   const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
@@ -111,6 +27,13 @@ function listColorSchemes(dcOrOptions, options) {
   return dcInstance.executeQuery('ListColorSchemes', undefined, inputOpts);
 }
 exports.listColorSchemes = listColorSchemes;
+
+function listTickets(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTickets', undefined, inputOpts);
+}
+exports.listTickets = listTickets;
 
 function listTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
@@ -153,4 +76,95 @@ function listTimeEntriesByDateRange(dcOrVarsOrOptions, varsOrOptions, options) {
   return dcInstance.executeQuery('ListTimeEntriesByDateRange', inputVars, inputOpts);
 }
 exports.listTimeEntriesByDateRange = listTimeEntriesByDateRange;
+
+function createUserFromGoogle(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('CreateUserFromGoogle', inputVars, inputOpts);
+}
+exports.createUserFromGoogle = createUserFromGoogle;
+
+function createTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('CreateTimeEntry', inputVars, inputOpts);
+}
+exports.createTimeEntry = createTimeEntry;
+
+function updateTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpdateTimeEntry', inputVars, inputOpts);
+}
+exports.updateTimeEntry = updateTimeEntry;
+
+function updateTimeEntryClearTicket(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpdateTimeEntryClearTicket', inputVars, inputOpts);
+}
+exports.updateTimeEntryClearTicket = updateTimeEntryClearTicket;
+
+function deleteTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('DeleteTimeEntry', inputVars, inputOpts);
+}
+exports.deleteTimeEntry = deleteTimeEntry;
+
+function upsertTicket(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpsertTicket', inputVars, inputOpts);
+}
+exports.upsertTicket = upsertTicket;
+
+function updateTicket(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpdateTicket', inputVars, inputOpts);
+}
+exports.updateTicket = updateTicket;
+
+function selectMyColorScheme(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SelectMyColorScheme', inputVars, inputOpts);
+}
+exports.selectMyColorScheme = selectMyColorScheme;
+
+function clearMyColorScheme(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('ClearMyColorScheme', undefined, inputOpts);
+}
+exports.clearMyColorScheme = clearMyColorScheme;
+
+function updateWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpdateWorkLog', inputVars, inputOpts);
+}
+exports.updateWorkLog = updateWorkLog;
+
+function deleteWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('DeleteWorkLog', inputVars, inputOpts);
+}
+exports.deleteWorkLog = deleteWorkLog;
+
+function restoreWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('RestoreWorkLog', inputVars, inputOpts);
+}
+exports.restoreWorkLog = restoreWorkLog;
+
+function createWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('CreateWorkLog', inputVars, inputOpts);
+}
+exports.createWorkLog = createWorkLog;
 
