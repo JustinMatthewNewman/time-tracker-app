@@ -34,18 +34,21 @@ mutation CreateTimeEntry(
 # FK scalar rather than a nested `ticket: { ticketNumber }` key object —
 # relation fields set that way silently produce an empty SQL SET clause on
 # _update (unlike _insert, where the nested form works fine).
+# officeNumber is intentionally not a parameter here (or on
+# UpdateTimeEntryClearTicket below) — office is now sourced from the linked
+# Ticket (see Ticket.office), not edited per entry. Leaving officeNumber out
+# of `data` entirely means this never touches the column, so old per-entry
+# values are preserved rather than silently nulled on every ticket change.
 mutation UpdateTimeEntry(
   $entryId: UUID!
   $description: String
   $ticketNumber: Int!
-  $officeNumber: String
 ) @auth(level: USER) {
   timeEntry_update(
     id: $entryId
     data: {
       description: $description
       ticketTicketNumber: $ticketNumber
-      officeNumber: $officeNumber
     }
   )
 }
@@ -56,14 +59,12 @@ mutation UpdateTimeEntry(
 mutation UpdateTimeEntryClearTicket(
   $entryId: UUID!
   $description: String
-  $officeNumber: String
 ) @auth(level: USER) {
   timeEntry_update(
     id: $entryId
     data: {
       description: $description
       ticketTicketNumber: null
-      officeNumber: $officeNumber
     }
   )
 }
@@ -73,12 +74,43 @@ mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) {
 }
 
 # Find-or-create a Ticket by number. ticketNumber is the table key, so this
-# updates ticketLink on conflict rather than creating a duplicate row.
-mutation UpsertTicket($ticketNumber: Int!, $ticketLink: String) @auth(level: USER) {
+# updates office/ticketTitle/ticketLink on conflict rather than creating a
+# duplicate row. Used by the create-ticket dialog (office and ticketNumber
+# are required there; ticketTitle and ticketLink are optional).
+mutation UpsertTicket(
+  $ticketNumber: Int!
+  $office: String
+  $ticketTitle: String
+  $ticketLink: String
+) @auth(level: USER) {
   ticket_upsert(data: {
     ticketNumber: $ticketNumber
+    office: $office
+    ticketTitle: $ticketTitle
     ticketLink: $ticketLink
   })
+}
+
+# Edits an existing ticket's metadata in place (edit-ticket dialog). Keyed by
+# ticketNumber (Ticket's actual table key — see @table(key: "ticketNumber")
+# above) rather than id, since Data Connect's generated _update takes the
+# table's real key field. ticketNumber itself is intentionally not editable
+# here — changing it would move the whole shared row rather than just this
+# ticket's details.
+mutation UpdateTicket(
+  $ticketNumber: Int!
+  $office: String
+  $ticketTitle: String
+  $ticketLink: String
+) @auth(level: USER) {
+  ticket_update(
+    key: { ticketNumber: $ticketNumber }
+    data: {
+      office: $office
+      ticketTitle: $ticketTitle
+      ticketLink: $ticketLink
+    }
+  )
 }
 
 # Points the signed-in user's color scheme selection at $colorSchemeId.

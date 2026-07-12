@@ -352,6 +352,15 @@ extend type Ticket {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Ticket.id", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `Ticket` table where the `office` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  office_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Ticket.office", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `Ticket` table where the `ticketLink` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   ticketLink_count(
@@ -369,6 +378,15 @@ extend type Ticket {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Ticket.ticketNumber", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Ticket` table where the `ticketTitle` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  ticketTitle_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Ticket.ticketTitle", purpose: QUERY_COUNT)
   """
   ✨ Sum the `ticketNumber` field in the `Ticket` table.
   """

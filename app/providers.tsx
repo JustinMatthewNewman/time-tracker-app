@@ -6,6 +6,7 @@ import { SidebarProvider } from "@/context/SideBarContext";
 import { TimeRangeProvider } from "@/context/TimeRangeContext";
 import { SelectedWorkLogProvider } from "@/context/SelectedWorkLogContext";
 import { ThemeSelectionProvider } from "@/context/ThemeSelectionContext";
+import { TicketsProvider } from "@/context/TicketsContext";
 import { ThemeProvider } from "next-themes";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -24,14 +25,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
           enableSystem={false}
         >
           <ThemeSelectionProvider>
-            <SidebarProvider>
-              <TimeRangeProvider>
-                <SelectedWorkLogProvider>
-                  <DbThemeApplier />
-                  {children}
-                </SelectedWorkLogProvider>
-              </TimeRangeProvider>
-            </SidebarProvider>
+            <TicketsProvider>
+              <SidebarProvider>
+                <TimeRangeProvider>
+                  <SelectedWorkLogProvider>
+                    <DbThemeApplier />
+                    {children}
+                  </SelectedWorkLogProvider>
+                </TimeRangeProvider>
+              </SidebarProvider>
+            </TicketsProvider>
           </ThemeSelectionProvider>
         </ThemeProvider>
       </QueryClientProvider>

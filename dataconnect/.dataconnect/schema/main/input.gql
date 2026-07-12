@@ -821,6 +821,14 @@ input Ticket_Data {
   """
   id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `Ticket`.`office` of type `String`
+  """
+  office: String
+  """
+  ✨ `_expr` server value variant of `office` (✨ Generated from Field `Ticket`.`office` of type `String`)
+  """
+  office_expr: String_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `Ticket`.`ticketLink` of type `String`
   """
   ticketLink: String
@@ -828,6 +836,14 @@ input Ticket_Data {
   ✨ `_expr` server value variant of `ticketLink` (✨ Generated from Field `Ticket`.`ticketLink` of type `String`)
   """
   ticketLink_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Ticket`.`ticketTitle` of type `String`
+  """
+  ticketTitle: String
+  """
+  ✨ `_expr` server value variant of `ticketTitle` (✨ Generated from Field `Ticket`.`ticketTitle` of type `String`)
+  """
+  ticketTitle_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `Ticket`.`timeEntries_on_ticket` of type `[TimeEntry!]!`
   """
@@ -862,9 +878,17 @@ input Ticket_Filter {
   """
   id: UUID_Filter
   """
+  ✨ Generated from Field `Ticket`.`office` of type `String`
+  """
+  office: String_Filter
+  """
   ✨ Generated from Field `Ticket`.`ticketLink` of type `String`
   """
   ticketLink: String_Filter
+  """
+  ✨ Generated from Field `Ticket`.`ticketTitle` of type `String`
+  """
+  ticketTitle: String_Filter
   """
   ✨ Generated from Field `Ticket`.`timeEntries_on_ticket` of type `[TimeEntry!]!`
   """
@@ -916,6 +940,10 @@ input Ticket_Having {
   """
   id_count: Int_Filter
   """
+  ✨ Generated from Field `Ticket`.`office_count` of type `Int!`
+  """
+  office_count: Int_Filter
+  """
   ✨ Generated from Field `Ticket`.`ticketLink_count` of type `Int!`
   """
   ticketLink_count: Int_Filter
@@ -923,6 +951,10 @@ input Ticket_Having {
   ✨ Generated from Field `Ticket`.`ticketNumber_count` of type `Int!`
   """
   ticketNumber_count: Int_Filter
+  """
+  ✨ Generated from Field `Ticket`.`ticketTitle_count` of type `Int!`
+  """
+  ticketTitle_count: Int_Filter
   """
   ✨ Generated from Field `Ticket`.`ticketNumber_sum` of type `Int`
   """
@@ -991,9 +1023,17 @@ input Ticket_Order {
   """
   id: OrderDirection
   """
+  ✨ Generated from Field `Ticket`.`office` of type `String`
+  """
+  office: OrderDirection
+  """
   ✨ Generated from Field `Ticket`.`ticketLink` of type `String`
   """
   ticketLink: OrderDirection
+  """
+  ✨ Generated from Field `Ticket`.`ticketTitle` of type `String`
+  """
+  ticketTitle: OrderDirection
   """
   ✨ Generated from Field `Ticket`.`_count` of type `Int!`
   """
@@ -1007,6 +1047,10 @@ input Ticket_Order {
   """
   id_count: OrderDirection
   """
+  ✨ Generated from Field `Ticket`.`office_count` of type `Int!`
+  """
+  office_count: OrderDirection
+  """
   ✨ Generated from Field `Ticket`.`ticketLink_count` of type `Int!`
   """
   ticketLink_count: OrderDirection
@@ -1014,6 +1058,10 @@ input Ticket_Order {
   ✨ Generated from Field `Ticket`.`ticketNumber_count` of type `Int!`
   """
   ticketNumber_count: OrderDirection
+  """
+  ✨ Generated from Field `Ticket`.`ticketTitle_count` of type `Int!`
+  """
+  ticketTitle_count: OrderDirection
   """
   ✨ Generated from Field `Ticket`.`ticketNumber_sum` of type `Int`
   """

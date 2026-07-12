@@ -67,9 +67,16 @@ type Theme @table @unique(fields: ["colorScheme", "isDark"]) {
 # Ticket metadata keyed by the human-entered ticket number (e.g. from the
 # WorkLogTimeEntryCardTable "Ticket" column). ticketNumber (not id) is the
 # table key so ticket_upsert can find-or-create a row for a given number.
+# office lives here (not on TimeEntry) so every time entry linked to the same
+# ticket shows the same office, editable in one place via the ticket dialog
+# rather than per entry. Nullable at the DB level even though the create-ticket
+# dialog requires it client-side, so tickets created before this field existed
+# don't need a backfill.
 type Ticket @table(key: "ticketNumber") {
   id: UUID! @default(expr: "uuidV4()") @unique
   ticketNumber: Int!
+  office: String
+  ticketTitle: String
   ticketLink: String
   createdAt: Timestamp! @default(expr: "request.time")
 }

@@ -7,8 +7,11 @@ import { listTimeEntriesByWorkLog } from "@/src/dataconnect-generated";
 import type { ListTimeEntriesByWorkLogData } from "@/src/dataconnect-generated";
 
 export interface WorkLogTimeEntryTicket {
+  id: string;
   ticketNumber: number;
-  ticketLink?: string | null;
+  office: string | null;
+  ticketTitle: string | null;
+  ticketLink: string | null;
 }
 
 export interface WorkLogTimeEntry {
@@ -18,7 +21,6 @@ export interface WorkLogTimeEntry {
   date: string;
   description?: string | null;
   ticket?: WorkLogTimeEntryTicket | null;
-  officeNumber?: string | null;
   createdAt: string;
 }
 
@@ -31,8 +33,15 @@ function toWorkLogTimeEntries(
     endTime: entry.endTime,
     date: entry.date,
     description: entry.description || "",
-    ticket: entry.ticket ?? null,
-    officeNumber: entry.officeNumber || "",
+    ticket: entry.ticket
+      ? {
+          id: entry.ticket.id,
+          ticketNumber: entry.ticket.ticketNumber,
+          office: entry.ticket.office ?? null,
+          ticketTitle: entry.ticket.ticketTitle ?? null,
+          ticketLink: entry.ticket.ticketLink ?? null,
+        }
+      : null,
     createdAt: entry.createdAt,
   }));
 }
