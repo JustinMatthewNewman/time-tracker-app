@@ -81,25 +81,26 @@ mutation UpsertTicket($ticketNumber: Int!, $ticketLink: String) @auth(level: USE
   })
 }
 
-# Points the signed-in user's theme selection at $themeId. Scoped to the
-# caller's own row via auth.uid rather than a client-supplied user id.
-# Uses the raw themeId FK scalar rather than a nested `theme: { id }` key
-# object — see UpdateTimeEntry for why (nested form no-ops on _update).
-mutation SelectMyTheme($themeId: UUID!) @auth(level: USER) {
+# Points the signed-in user's color scheme selection at $colorSchemeId.
+# Scoped to the caller's own row via auth.uid rather than a client-supplied
+# user id. Uses the raw colorSchemeId FK scalar rather than a nested
+# `colorScheme: { id }` key object — see UpdateTimeEntry for why (nested form
+# no-ops on _update).
+mutation SelectMyColorScheme($colorSchemeId: UUID!) @auth(level: USER) {
   user_update(
     first: { where: { googleUid: { eq_expr: "auth.uid" } } }
-    data: { themeId: $themeId }
+    data: { colorSchemeId: $colorSchemeId }
   )
 }
 
-# Resets the signed-in user back to no DB theme (falls back to the
-# next-themes light/dark toggle). Separate mutation for the same reason as
-# UpdateTimeEntryClearTicket: literal `null` can't share a document with a
+# Resets the signed-in user back to no DB color scheme (falls back to
+# HeroUI's built-in default palette). Separate mutation for the same reason
+# as UpdateTimeEntryClearTicket: literal `null` can't share a document with a
 # variant that sets a required variable.
-mutation ClearMyTheme @auth(level: USER) {
+mutation ClearMyColorScheme @auth(level: USER) {
   user_update(
     first: { where: { googleUid: { eq_expr: "auth.uid" } } }
-    data: { themeId: null }
+    data: { colorSchemeId: null }
   )
 }
 

@@ -8,8 +8,13 @@ export type Int64String = string;
 export type DateString = string;
 
 
-export interface ClearMyThemeData {
+export interface ClearMyColorSchemeData {
   user_update?: User_Key | null;
+}
+
+export interface ColorScheme_Key {
+  id: UUIDString;
+  __typename?: 'ColorScheme_Key';
 }
 
 export interface CreateTimeEntryData {
@@ -100,13 +105,10 @@ export interface DeleteWorkLogVariables {
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
-    theme?: {
+    colorScheme?: {
       id: UUIDString;
       name: string;
-      background: string;
-      foreground: string;
-      isDark: boolean;
-    } & Theme_Key;
+    } & ColorScheme_Key;
   } & User_Key;
 }
 
@@ -136,6 +138,30 @@ export interface GetTimeEntryVariables {
   entryId: UUIDString;
 }
 
+export interface ListColorSchemesData {
+  colorSchemes: ({
+    id: UUIDString;
+    name: string;
+    themes: ({
+      id: UUIDString;
+      isDark: boolean;
+      background: string;
+      foreground: string;
+      surface: string;
+      surfaceForeground: string;
+      overlay: string;
+      overlayForeground: string;
+      muted: string;
+      default: string;
+      defaultForeground: string;
+      accent: string;
+      accentForeground: string;
+      border: string;
+      separator: string;
+    } & Theme_Key)[];
+  } & ColorScheme_Key)[];
+}
+
 export interface ListMyTimeEntriesData {
   timeEntries: ({
     id: UUIDString;
@@ -152,16 +178,6 @@ export interface ListMyTimeEntriesData {
       name: string;
     } & WorkLog_Key;
   } & TimeEntry_Key)[];
-}
-
-export interface ListThemesData {
-  themes: ({
-    id: UUIDString;
-    name: string;
-    background: string;
-    foreground: string;
-    isDark: boolean;
-  } & Theme_Key)[];
 }
 
 export interface ListTimeEntriesByDateRangeData {
@@ -264,12 +280,12 @@ export interface RestoreWorkLogVariables {
   workLogId: UUIDString;
 }
 
-export interface SelectMyThemeData {
+export interface SelectMyColorSchemeData {
   user_update?: User_Key | null;
 }
 
-export interface SelectMyThemeVariables {
-  themeId: UUIDString;
+export interface SelectMyColorSchemeVariables {
+  colorSchemeId: UUIDString;
 }
 
 export interface Theme_Key {
@@ -366,15 +382,15 @@ export function upsertTicket(dc: DataConnect, vars: UpsertTicketVariables, optio
 /** Generated Node Admin SDK operation action function for the 'UpsertTicket' Mutation. Allow users to pass in custom DataConnect instances. */
 export function upsertTicket(vars: UpsertTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpsertTicketData>>;
 
-/** Generated Node Admin SDK operation action function for the 'SelectMyTheme' Mutation. Allow users to execute without passing in DataConnect. */
-export function selectMyTheme(dc: DataConnect, vars: SelectMyThemeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyThemeData>>;
-/** Generated Node Admin SDK operation action function for the 'SelectMyTheme' Mutation. Allow users to pass in custom DataConnect instances. */
-export function selectMyTheme(vars: SelectMyThemeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyThemeData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyColorScheme' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyColorScheme(dc: DataConnect, vars: SelectMyColorSchemeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyColorSchemeData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyColorScheme' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyColorScheme(vars: SelectMyColorSchemeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyColorSchemeData>>;
 
-/** Generated Node Admin SDK operation action function for the 'ClearMyTheme' Mutation. Allow users to execute without passing in DataConnect. */
-export function clearMyTheme(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ClearMyThemeData>>;
-/** Generated Node Admin SDK operation action function for the 'ClearMyTheme' Mutation. Allow users to pass in custom DataConnect instances. */
-export function clearMyTheme(options?: OperationOptions): Promise<ExecuteOperationResponse<ClearMyThemeData>>;
+/** Generated Node Admin SDK operation action function for the 'ClearMyColorScheme' Mutation. Allow users to execute without passing in DataConnect. */
+export function clearMyColorScheme(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ClearMyColorSchemeData>>;
+/** Generated Node Admin SDK operation action function for the 'ClearMyColorScheme' Mutation. Allow users to pass in custom DataConnect instances. */
+export function clearMyColorScheme(options?: OperationOptions): Promise<ExecuteOperationResponse<ClearMyColorSchemeData>>;
 
 /** Generated Node Admin SDK operation action function for the 'UpdateWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
 export function updateWorkLog(dc: DataConnect, vars: UpdateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateWorkLogData>>;
@@ -406,10 +422,10 @@ export function getMyUser(dc: DataConnect, options?: OperationOptions): Promise<
 /** Generated Node Admin SDK operation action function for the 'GetMyUser' Query. Allow users to pass in custom DataConnect instances. */
 export function getMyUser(options?: OperationOptions): Promise<ExecuteOperationResponse<GetMyUserData>>;
 
-/** Generated Node Admin SDK operation action function for the 'ListThemes' Query. Allow users to execute without passing in DataConnect. */
-export function listThemes(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListThemesData>>;
-/** Generated Node Admin SDK operation action function for the 'ListThemes' Query. Allow users to pass in custom DataConnect instances. */
-export function listThemes(options?: OperationOptions): Promise<ExecuteOperationResponse<ListThemesData>>;
+/** Generated Node Admin SDK operation action function for the 'ListColorSchemes' Query. Allow users to execute without passing in DataConnect. */
+export function listColorSchemes(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListColorSchemesData>>;
+/** Generated Node Admin SDK operation action function for the 'ListColorSchemes' Query. Allow users to pass in custom DataConnect instances. */
+export function listColorSchemes(options?: OperationOptions): Promise<ExecuteOperationResponse<ListColorSchemesData>>;
 
 /** Generated Node Admin SDK operation action function for the 'ListTimeEntries' Query. Allow users to execute without passing in DataConnect. */
 export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesData>>;

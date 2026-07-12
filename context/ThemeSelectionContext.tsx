@@ -4,61 +4,90 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { QueryFetchPolicy } from "firebase/data-connect";
 import { useAuth } from "@/hooks/useAuth";
 import {
-  useListThemes,
-  useSelectMyTheme,
-  useClearMyTheme,
+  useListColorSchemes,
+  useSelectMyColorScheme,
+  useClearMyColorScheme,
 } from "@/src/dataconnect-generated/react";
 import { getMyUser } from "@/src/dataconnect-generated";
-import type { SelectMyThemeVariables } from "@/src/dataconnect-generated";
+import type { SelectMyColorSchemeVariables } from "@/src/dataconnect-generated";
 
-export interface ThemeOption {
+// Mirrors HeroUI's base semantic color tokens (@heroui/styles
+// themes/default/variables.css) — hover/soft/secondary variants all derive
+// from these via color-mix(), so applying just these re-themes everything.
+export interface ThemeVariant {
   id: string;
-  name: string;
+  isDark: boolean;
   background: string;
   foreground: string;
-  isDark: boolean;
+  surface: string;
+  surfaceForeground: string;
+  overlay: string;
+  overlayForeground: string;
+  muted: string;
+  default: string;
+  defaultForeground: string;
+  accent: string;
+  accentForeground: string;
+  border: string;
+  separator: string;
+}
+
+export interface ColorSchemeOption {
+  id: string;
+  name: string;
+  variants: ThemeVariant[];
+}
+
+export function getVariant(scheme: ColorSchemeOption | null, isDark: boolean): ThemeVariant | null {
+  if (!scheme) return null;
+  return scheme.variants.find((v) => v.isDark === isDark) ?? null;
 }
 
 type ThemeSelectionContextType = {
-  themes: ThemeOption[];
-  selectedTheme: ThemeOption | null;
-  selectTheme: (themeId: string) => Promise<void>;
-  clearTheme: () => Promise<void>;
+  schemes: ColorSchemeOption[];
+  selectedScheme: ColorSchemeOption | null;
+  selectScheme: (colorSchemeId: string) => Promise<void>;
+  clearScheme: () => Promise<void>;
   loading: boolean;
 };
 
 const ThemeSelectionContext = createContext<ThemeSelectionContextType | null>(null);
 
-// Single source of truth for the signed-in user's DB theme selection.
+// Single source of truth for the signed-in user's color scheme selection.
 // DbThemeApplier and SettingsCard both need this value; without a shared
 // context each would hold its own independent fetch state, so a selection
 // made in one would never be visible to the other until a full page reload.
 export function ThemeSelectionProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
 
-  const listQuery = useListThemes({ enabled: !!user?.uid });
-  const selectMutation = useSelectMyTheme();
-  const clearMutation = useClearMyTheme();
+  const listQuery = useListColorSchemes({ enabled: !!user?.uid });
+  const selectMutation = useSelectMyColorScheme();
+  const clearMutation = useClearMyColorScheme();
 
-  const [selectedTheme, setSelectedTheme] = useState<ThemeOption | null>(null);
+  const [selectedSchemeId, setSelectedSchemeId] = useState<string | null>(null);
   const [loadingUser, setLoadingUser] = useState(false);
 
-  const themes: ThemeOption[] = listQuery.data?.themes ?? [];
+  const schemes: ColorSchemeOption[] = (listQuery.data?.colorSchemes ?? []).map((s) => ({
+    id: s.id,
+    name: s.name,
+    variants: s.themes,
+  }));
+  const selectedScheme = schemes.find((s) => s.id === selectedSchemeId) ?? null;
 
   // Data Connect's generated React query hooks default to a "prefer cache"
   // fetch policy that mutations never invalidate (see useTimeEntriesByWorkLog
   // for the same issue with time entries), so a plain refetch() can return a
-  // stale theme forever. Fetching directly with SERVER_ONLY guarantees this
-  // reflects the latest selection.
-  const refetchMyTheme = useCallback(async () => {
+  // stale selection forever. Fetching directly with SERVER_ONLY guarantees
+  // this reflects the latest selection.
+  const refetchMyScheme = useCallback(async () => {
     if (!user?.uid) {
-      setSelectedTheme(null);
+      setSelectedSchemeId(null);
       return;
     }
     setLoadingUser(true);
     try {
       const result = await getMyUser({ fetchPolicy: QueryFetchPolicy.SERVER_ONLY });
-      setSelectedTheme(result.data.user?.theme ?? null);
+      setSelectedSchemeId(result.data.user?.colorScheme?.id ?? null);
     } finally {
       setLoadingUser(false);
     }
@@ -66,29 +95,29 @@ export function ThemeSelectionProvider({ children }: { children: React.ReactNode
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    refetchMyTheme();
-  }, [refetchMyTheme]);
+    refetchMyScheme();
+  }, [refetchMyScheme]);
 
-  const selectTheme = useCallback(
-    async (themeId: string) => {
-      await selectMutation.mutateAsync({ themeId } as SelectMyThemeVariables);
-      await refetchMyTheme();
+  const selectScheme = useCallback(
+    async (colorSchemeId: string) => {
+      await selectMutation.mutateAsync({ colorSchemeId } as SelectMyColorSchemeVariables);
+      await refetchMyScheme();
     },
-    [selectMutation, refetchMyTheme]
+    [selectMutation, refetchMyScheme]
   );
 
-  const clearTheme = useCallback(async () => {
+  const clearScheme = useCallback(async () => {
     await clearMutation.mutateAsync(undefined);
-    await refetchMyTheme();
-  }, [clearMutation, refetchMyTheme]);
+    await refetchMyScheme();
+  }, [clearMutation, refetchMyScheme]);
 
   return (
     <ThemeSelectionContext.Provider
       value={{
-        themes,
-        selectedTheme,
-        selectTheme,
-        clearTheme,
+        schemes,
+        selectedScheme,
+        selectScheme,
+        clearScheme,
         loading: listQuery.isPending || loadingUser,
       }}
     >

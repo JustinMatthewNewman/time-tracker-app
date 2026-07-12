@@ -42,16 +42,16 @@ export function upsertTicket(dcOrVarsOrOptions, varsOrOptions, options) {
   return dcInstance.executeMutation('UpsertTicket', inputVars, inputOpts);
 }
 
-export function selectMyTheme(dcOrVarsOrOptions, varsOrOptions, options) {
+export function selectMyColorScheme(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
-  return dcInstance.executeMutation('SelectMyTheme', inputVars, inputOpts);
+  return dcInstance.executeMutation('SelectMyColorScheme', inputVars, inputOpts);
 }
 
-export function clearMyTheme(dcOrOptions, options) {
+export function clearMyColorScheme(dcOrOptions, options) {
   const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
-  return dcInstance.executeMutation('ClearMyTheme', undefined, inputOpts);
+  return dcInstance.executeMutation('ClearMyColorScheme', undefined, inputOpts);
 }
 
 export function updateWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
@@ -90,10 +90,10 @@ export function getMyUser(dcOrOptions, options) {
   return dcInstance.executeQuery('GetMyUser', undefined, inputOpts);
 }
 
-export function listThemes(dcOrOptions, options) {
+export function listColorSchemes(dcOrOptions, options) {
   const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListThemes', undefined, inputOpts);
+  return dcInstance.executeQuery('ListColorSchemes', undefined, inputOpts);
 }
 
 export function listTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {

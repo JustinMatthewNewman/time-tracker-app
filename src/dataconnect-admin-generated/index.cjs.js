@@ -49,19 +49,19 @@ function upsertTicket(dcOrVarsOrOptions, varsOrOptions, options) {
 }
 exports.upsertTicket = upsertTicket;
 
-function selectMyTheme(dcOrVarsOrOptions, varsOrOptions, options) {
+function selectMyColorScheme(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
-  return dcInstance.executeMutation('SelectMyTheme', inputVars, inputOpts);
+  return dcInstance.executeMutation('SelectMyColorScheme', inputVars, inputOpts);
 }
-exports.selectMyTheme = selectMyTheme;
+exports.selectMyColorScheme = selectMyColorScheme;
 
-function clearMyTheme(dcOrOptions, options) {
+function clearMyColorScheme(dcOrOptions, options) {
   const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
-  return dcInstance.executeMutation('ClearMyTheme', undefined, inputOpts);
+  return dcInstance.executeMutation('ClearMyColorScheme', undefined, inputOpts);
 }
-exports.clearMyTheme = clearMyTheme;
+exports.clearMyColorScheme = clearMyColorScheme;
 
 function updateWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
@@ -105,12 +105,12 @@ function getMyUser(dcOrOptions, options) {
 }
 exports.getMyUser = getMyUser;
 
-function listThemes(dcOrOptions, options) {
+function listColorSchemes(dcOrOptions, options) {
   const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListThemes', undefined, inputOpts);
+  return dcInstance.executeQuery('ListColorSchemes', undefined, inputOpts);
 }
-exports.listThemes = listThemes;
+exports.listColorSchemes = listColorSchemes;
 
 function listTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);

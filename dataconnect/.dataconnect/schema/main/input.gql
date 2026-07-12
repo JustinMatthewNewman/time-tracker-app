@@ -1,4 +1,10 @@
 """
+✨ `ColorScheme_KeyOutput` returns the primary key fields of table type `ColorScheme`.
+
+It has the same format as `ColorScheme_Key`, but is only used as mutation return value.
+"""
+scalar ColorScheme_KeyOutput
+"""
 ✨ `Theme_KeyOutput` returns the primary key fields of table type `Theme`.
 
 It has the same format as `Theme_Key`, but is only used as mutation return value.
@@ -29,6 +35,213 @@ It has the same format as `WorkLog_Key`, but is only used as mutation return val
 """
 scalar WorkLog_KeyOutput
 """
+✨ Generated data input type for table 'ColorScheme'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input ColorScheme_Data {
+  """
+  ✨ Generated from Field `ColorScheme`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `ColorScheme`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ColorScheme`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `ColorScheme`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `ColorScheme`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `ColorScheme`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ColorScheme`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `ColorScheme`.`name` of type `String!`)
+  """
+  name_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `ColorScheme`.`themes_on_colorScheme` of type `[Theme!]!`
+  """
+  themes_on_colorScheme: [Theme_Data!]
+  """
+  ✨ Generated from Field `ColorScheme`.`users_on_colorScheme` of type `[User!]!`
+  """
+  users_on_colorScheme: [User_Data!]
+}
+"""
+✨ Generated filter input type for table 'ColorScheme'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input ColorScheme_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [ColorScheme_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: ColorScheme_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [ColorScheme_Filter!]
+  """
+  ✨ Generated from Field `ColorScheme`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `ColorScheme`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `ColorScheme`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `ColorScheme`.`themes_on_colorScheme` of type `[Theme!]!`
+  """
+  themes_on_colorScheme: Theme_ListFilter
+  """
+  ✨ Generated from Field `ColorScheme`.`users_on_colorScheme` of type `[User!]!`
+  """
+  users_on_colorScheme: User_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'ColorScheme'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input ColorScheme_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [ColorScheme_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: ColorScheme_Filter
+}
+"""
+✨ Generated having input type for table 'ColorScheme'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input ColorScheme_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [ColorScheme_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: ColorScheme_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [ColorScheme_Having!]
+  """
+  ✨ Generated from Field `ColorScheme`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `ColorScheme`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `ColorScheme`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `ColorScheme`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `ColorScheme`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `ColorScheme`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'ColorScheme'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input ColorScheme_Key {
+  """
+  ✨ Generated from Field `ColorScheme`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `ColorScheme`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr @fdc_forbiddenInVariables
+}
+"""
+✨ Generated list filter input type for table 'ColorScheme'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input ColorScheme_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: ColorScheme_Filter
+}
+"""
+✨ Generated order input type for table 'ColorScheme'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input ColorScheme_Order {
+  """
+  ✨ Generated from Field `ColorScheme`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `ColorScheme`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `ColorScheme`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `ColorScheme`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `ColorScheme`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `ColorScheme`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `ColorScheme`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `ColorScheme`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `ColorScheme`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+}
+"""
 ✨ Generated data input type for table 'Theme'. It includes all necessary fields for creating or upserting rows into table.
 """
 input Theme_Data {
@@ -41,6 +254,34 @@ input Theme_Data {
   """
   id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `Theme`.`colorSchemeId` of type `UUID!`
+  """
+  colorSchemeId: UUID
+  """
+  ✨ `_expr` server value variant of `colorSchemeId` (✨ Generated from Field `Theme`.`colorSchemeId` of type `UUID!`)
+  """
+  colorSchemeId_expr: UUID_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Theme`.`colorScheme` of type `ColorScheme!`
+  """
+  colorScheme: ColorScheme_Key @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Theme`.`accent` of type `String!`
+  """
+  accent: String
+  """
+  ✨ `_expr` server value variant of `accent` (✨ Generated from Field `Theme`.`accent` of type `String!`)
+  """
+  accent_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Theme`.`accentForeground` of type `String!`
+  """
+  accentForeground: String
+  """
+  ✨ `_expr` server value variant of `accentForeground` (✨ Generated from Field `Theme`.`accentForeground` of type `String!`)
+  """
+  accentForeground_expr: String_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `Theme`.`background` of type `String!`
   """
   background: String
@@ -48,6 +289,14 @@ input Theme_Data {
   ✨ `_expr` server value variant of `background` (✨ Generated from Field `Theme`.`background` of type `String!`)
   """
   background_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Theme`.`border` of type `String!`
+  """
+  border: String
+  """
+  ✨ `_expr` server value variant of `border` (✨ Generated from Field `Theme`.`border` of type `String!`)
+  """
+  border_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `Theme`.`createdAt` of type `Timestamp!`
   """
@@ -65,6 +314,22 @@ input Theme_Data {
   """
   createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `Theme`.`default` of type `String!`
+  """
+  default: String
+  """
+  ✨ `_expr` server value variant of `default` (✨ Generated from Field `Theme`.`default` of type `String!`)
+  """
+  default_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Theme`.`defaultForeground` of type `String!`
+  """
+  defaultForeground: String
+  """
+  ✨ `_expr` server value variant of `defaultForeground` (✨ Generated from Field `Theme`.`defaultForeground` of type `String!`)
+  """
+  defaultForeground_expr: String_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `Theme`.`foreground` of type `String!`
   """
   foreground: String
@@ -81,17 +346,53 @@ input Theme_Data {
   """
   isDark_expr: Boolean_Expr @fdc_forbiddenInVariables
   """
-  ✨ Generated from Field `Theme`.`name` of type `String!`
+  ✨ Generated from Field `Theme`.`muted` of type `String!`
   """
-  name: String
+  muted: String
   """
-  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Theme`.`name` of type `String!`)
+  ✨ `_expr` server value variant of `muted` (✨ Generated from Field `Theme`.`muted` of type `String!`)
   """
-  name_expr: String_Expr @fdc_forbiddenInVariables
+  muted_expr: String_Expr @fdc_forbiddenInVariables
   """
-  ✨ Generated from Field `Theme`.`users_on_theme` of type `[User!]!`
+  ✨ Generated from Field `Theme`.`overlay` of type `String!`
   """
-  users_on_theme: [User_Data!]
+  overlay: String
+  """
+  ✨ `_expr` server value variant of `overlay` (✨ Generated from Field `Theme`.`overlay` of type `String!`)
+  """
+  overlay_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Theme`.`overlayForeground` of type `String!`
+  """
+  overlayForeground: String
+  """
+  ✨ `_expr` server value variant of `overlayForeground` (✨ Generated from Field `Theme`.`overlayForeground` of type `String!`)
+  """
+  overlayForeground_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Theme`.`separator` of type `String!`
+  """
+  separator: String
+  """
+  ✨ `_expr` server value variant of `separator` (✨ Generated from Field `Theme`.`separator` of type `String!`)
+  """
+  separator_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Theme`.`surface` of type `String!`
+  """
+  surface: String
+  """
+  ✨ `_expr` server value variant of `surface` (✨ Generated from Field `Theme`.`surface` of type `String!`)
+  """
+  surface_expr: String_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `Theme`.`surfaceForeground` of type `String!`
+  """
+  surfaceForeground: String
+  """
+  ✨ `_expr` server value variant of `surfaceForeground` (✨ Generated from Field `Theme`.`surfaceForeground` of type `String!`)
+  """
+  surfaceForeground_expr: String_Expr @fdc_forbiddenInVariables
 }
 """
 ✨ Generated filter input type for table 'Theme'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -114,13 +415,41 @@ input Theme_Filter {
   """
   id: UUID_Filter
   """
+  ✨ Generated from Field `Theme`.`colorSchemeId` of type `UUID!`
+  """
+  colorSchemeId: UUID_Filter
+  """
+  ✨ Generated from Field `Theme`.`colorScheme` of type `ColorScheme!`
+  """
+  colorScheme: ColorScheme_Filter
+  """
+  ✨ Generated from Field `Theme`.`accent` of type `String!`
+  """
+  accent: String_Filter
+  """
+  ✨ Generated from Field `Theme`.`accentForeground` of type `String!`
+  """
+  accentForeground: String_Filter
+  """
   ✨ Generated from Field `Theme`.`background` of type `String!`
   """
   background: String_Filter
   """
+  ✨ Generated from Field `Theme`.`border` of type `String!`
+  """
+  border: String_Filter
+  """
   ✨ Generated from Field `Theme`.`createdAt` of type `Timestamp!`
   """
   createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Theme`.`default` of type `String!`
+  """
+  default: String_Filter
+  """
+  ✨ Generated from Field `Theme`.`defaultForeground` of type `String!`
+  """
+  defaultForeground: String_Filter
   """
   ✨ Generated from Field `Theme`.`foreground` of type `String!`
   """
@@ -130,13 +459,29 @@ input Theme_Filter {
   """
   isDark: Boolean_Filter
   """
-  ✨ Generated from Field `Theme`.`name` of type `String!`
+  ✨ Generated from Field `Theme`.`muted` of type `String!`
   """
-  name: String_Filter
+  muted: String_Filter
   """
-  ✨ Generated from Field `Theme`.`users_on_theme` of type `[User!]!`
+  ✨ Generated from Field `Theme`.`overlay` of type `String!`
   """
-  users_on_theme: User_ListFilter
+  overlay: String_Filter
+  """
+  ✨ Generated from Field `Theme`.`overlayForeground` of type `String!`
+  """
+  overlayForeground: String_Filter
+  """
+  ✨ Generated from Field `Theme`.`separator` of type `String!`
+  """
+  separator: String_Filter
+  """
+  ✨ Generated from Field `Theme`.`surface` of type `String!`
+  """
+  surface: String_Filter
+  """
+  ✨ Generated from Field `Theme`.`surfaceForeground` of type `String!`
+  """
+  surfaceForeground: String_Filter
 }
 """
 ✨ Generated first-row input type for table 'Theme'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -176,13 +521,37 @@ input Theme_Having {
   """
   _count: Int_Filter
   """
+  ✨ Generated from Field `Theme`.`accentForeground_count` of type `Int!`
+  """
+  accentForeground_count: Int_Filter
+  """
+  ✨ Generated from Field `Theme`.`accent_count` of type `Int!`
+  """
+  accent_count: Int_Filter
+  """
   ✨ Generated from Field `Theme`.`background_count` of type `Int!`
   """
   background_count: Int_Filter
   """
+  ✨ Generated from Field `Theme`.`border_count` of type `Int!`
+  """
+  border_count: Int_Filter
+  """
+  ✨ Generated from Field `Theme`.`colorSchemeId_count` of type `Int!`
+  """
+  colorSchemeId_count: Int_Filter
+  """
   ✨ Generated from Field `Theme`.`createdAt_count` of type `Int!`
   """
   createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Theme`.`defaultForeground_count` of type `Int!`
+  """
+  defaultForeground_count: Int_Filter
+  """
+  ✨ Generated from Field `Theme`.`default_count` of type `Int!`
+  """
+  default_count: Int_Filter
   """
   ✨ Generated from Field `Theme`.`foreground_count` of type `Int!`
   """
@@ -196,9 +565,29 @@ input Theme_Having {
   """
   isDark_count: Int_Filter
   """
-  ✨ Generated from Field `Theme`.`name_count` of type `Int!`
+  ✨ Generated from Field `Theme`.`muted_count` of type `Int!`
   """
-  name_count: Int_Filter
+  muted_count: Int_Filter
+  """
+  ✨ Generated from Field `Theme`.`overlayForeground_count` of type `Int!`
+  """
+  overlayForeground_count: Int_Filter
+  """
+  ✨ Generated from Field `Theme`.`overlay_count` of type `Int!`
+  """
+  overlay_count: Int_Filter
+  """
+  ✨ Generated from Field `Theme`.`separator_count` of type `Int!`
+  """
+  separator_count: Int_Filter
+  """
+  ✨ Generated from Field `Theme`.`surfaceForeground_count` of type `Int!`
+  """
+  surfaceForeground_count: Int_Filter
+  """
+  ✨ Generated from Field `Theme`.`surface_count` of type `Int!`
+  """
+  surface_count: Int_Filter
   """
   ✨ Generated from Field `Theme`.`createdAt_min` of type `Timestamp`
   """
@@ -243,13 +632,41 @@ input Theme_Order {
   """
   id: OrderDirection
   """
+  ✨ Generated from Field `Theme`.`colorSchemeId` of type `UUID!`
+  """
+  colorSchemeId: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`colorScheme` of type `ColorScheme!`
+  """
+  colorScheme: ColorScheme_Order
+  """
+  ✨ Generated from Field `Theme`.`accent` of type `String!`
+  """
+  accent: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`accentForeground` of type `String!`
+  """
+  accentForeground: OrderDirection
+  """
   ✨ Generated from Field `Theme`.`background` of type `String!`
   """
   background: OrderDirection
   """
+  ✨ Generated from Field `Theme`.`border` of type `String!`
+  """
+  border: OrderDirection
+  """
   ✨ Generated from Field `Theme`.`createdAt` of type `Timestamp!`
   """
   createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`default` of type `String!`
+  """
+  default: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`defaultForeground` of type `String!`
+  """
+  defaultForeground: OrderDirection
   """
   ✨ Generated from Field `Theme`.`foreground` of type `String!`
   """
@@ -259,21 +676,65 @@ input Theme_Order {
   """
   isDark: OrderDirection
   """
-  ✨ Generated from Field `Theme`.`name` of type `String!`
+  ✨ Generated from Field `Theme`.`muted` of type `String!`
   """
-  name: OrderDirection
+  muted: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`overlay` of type `String!`
+  """
+  overlay: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`overlayForeground` of type `String!`
+  """
+  overlayForeground: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`separator` of type `String!`
+  """
+  separator: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`surface` of type `String!`
+  """
+  surface: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`surfaceForeground` of type `String!`
+  """
+  surfaceForeground: OrderDirection
   """
   ✨ Generated from Field `Theme`.`_count` of type `Int!`
   """
   _count: OrderDirection
   """
+  ✨ Generated from Field `Theme`.`accentForeground_count` of type `Int!`
+  """
+  accentForeground_count: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`accent_count` of type `Int!`
+  """
+  accent_count: OrderDirection
+  """
   ✨ Generated from Field `Theme`.`background_count` of type `Int!`
   """
   background_count: OrderDirection
   """
+  ✨ Generated from Field `Theme`.`border_count` of type `Int!`
+  """
+  border_count: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`colorSchemeId_count` of type `Int!`
+  """
+  colorSchemeId_count: OrderDirection
+  """
   ✨ Generated from Field `Theme`.`createdAt_count` of type `Int!`
   """
   createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`defaultForeground_count` of type `Int!`
+  """
+  defaultForeground_count: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`default_count` of type `Int!`
+  """
+  default_count: OrderDirection
   """
   ✨ Generated from Field `Theme`.`foreground_count` of type `Int!`
   """
@@ -287,9 +748,29 @@ input Theme_Order {
   """
   isDark_count: OrderDirection
   """
-  ✨ Generated from Field `Theme`.`name_count` of type `Int!`
+  ✨ Generated from Field `Theme`.`muted_count` of type `Int!`
   """
-  name_count: OrderDirection
+  muted_count: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`overlayForeground_count` of type `Int!`
+  """
+  overlayForeground_count: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`overlay_count` of type `Int!`
+  """
+  overlay_count: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`separator_count` of type `Int!`
+  """
+  separator_count: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`surfaceForeground_count` of type `Int!`
+  """
+  surfaceForeground_count: OrderDirection
+  """
+  ✨ Generated from Field `Theme`.`surface_count` of type `Int!`
+  """
+  surface_count: OrderDirection
   """
   ✨ Generated from Field `Theme`.`createdAt_min` of type `Timestamp`
   """
@@ -1074,17 +1555,17 @@ input User_Data {
   """
   id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
-  ✨ Generated from Field `User`.`themeId` of type `UUID`
+  ✨ Generated from Field `User`.`colorSchemeId` of type `UUID`
   """
-  themeId: UUID
+  colorSchemeId: UUID
   """
-  ✨ `_expr` server value variant of `themeId` (✨ Generated from Field `User`.`themeId` of type `UUID`)
+  ✨ `_expr` server value variant of `colorSchemeId` (✨ Generated from Field `User`.`colorSchemeId` of type `UUID`)
   """
-  themeId_expr: UUID_Expr @fdc_forbiddenInVariables
+  colorSchemeId_expr: UUID_Expr @fdc_forbiddenInVariables
   """
-  ✨ Generated from Field `User`.`theme` of type `Theme`
+  ✨ Generated from Field `User`.`colorScheme` of type `ColorScheme`
   """
-  theme: Theme_Key @fdc_forbiddenInVariables
+  colorScheme: ColorScheme_Key @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
   """
@@ -1155,13 +1636,13 @@ input User_Filter {
   """
   id: UUID_Filter
   """
-  ✨ Generated from Field `User`.`themeId` of type `UUID`
+  ✨ Generated from Field `User`.`colorSchemeId` of type `UUID`
   """
-  themeId: UUID_Filter
+  colorSchemeId: UUID_Filter
   """
-  ✨ Generated from Field `User`.`theme` of type `Theme`
+  ✨ Generated from Field `User`.`colorScheme` of type `ColorScheme`
   """
-  theme: Theme_Filter
+  colorScheme: ColorScheme_Filter
   """
   ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
   """
@@ -1225,6 +1706,10 @@ input User_Having {
   """
   _count: Int_Filter
   """
+  ✨ Generated from Field `User`.`colorSchemeId_count` of type `Int!`
+  """
+  colorSchemeId_count: Int_Filter
+  """
   ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
   """
   createdAt_count: Int_Filter
@@ -1240,10 +1725,6 @@ input User_Having {
   ✨ Generated from Field `User`.`id_count` of type `Int!`
   """
   id_count: Int_Filter
-  """
-  ✨ Generated from Field `User`.`themeId_count` of type `Int!`
-  """
-  themeId_count: Int_Filter
   """
   ✨ Generated from Field `User`.`username_count` of type `Int!`
   """
@@ -1292,13 +1773,13 @@ input User_Order {
   """
   id: OrderDirection
   """
-  ✨ Generated from Field `User`.`themeId` of type `UUID`
+  ✨ Generated from Field `User`.`colorSchemeId` of type `UUID`
   """
-  themeId: OrderDirection
+  colorSchemeId: OrderDirection
   """
-  ✨ Generated from Field `User`.`theme` of type `Theme`
+  ✨ Generated from Field `User`.`colorScheme` of type `ColorScheme`
   """
-  theme: Theme_Order
+  colorScheme: ColorScheme_Order
   """
   ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
   """
@@ -1320,6 +1801,10 @@ input User_Order {
   """
   _count: OrderDirection
   """
+  ✨ Generated from Field `User`.`colorSchemeId_count` of type `Int!`
+  """
+  colorSchemeId_count: OrderDirection
+  """
   ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
   """
   createdAt_count: OrderDirection
@@ -1335,10 +1820,6 @@ input User_Order {
   ✨ Generated from Field `User`.`id_count` of type `Int!`
   """
   id_count: OrderDirection
-  """
-  ✨ Generated from Field `User`.`themeId_count` of type `Int!`
-  """
-  themeId_count: OrderDirection
   """
   ✨ Generated from Field `User`.`username_count` of type `Int!`
   """

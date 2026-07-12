@@ -1,5 +1,14 @@
 extend type Mutation {
   """
+  ✨ Insert a single `ColorScheme` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  colorScheme_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: ColorScheme_Data!
+  ): ColorScheme_KeyOutput! @fdc_generated(from: "ColorScheme", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Theme` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   theme_insert(
@@ -44,6 +53,15 @@ extend type Mutation {
     """
     data: WorkLog_Data!
   ): WorkLog_KeyOutput! @fdc_generated(from: "WorkLog", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `ColorScheme` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  colorScheme_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [ColorScheme_Data!]!
+  ): [ColorScheme_KeyOutput!]! @fdc_generated(from: "ColorScheme", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `Theme` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -90,6 +108,15 @@ extend type Mutation {
     data: [WorkLog_Data!]!
   ): [WorkLog_KeyOutput!]! @fdc_generated(from: "WorkLog", purpose: INSERT_MULTIPLE)
   """
+  ✨ Insert or update a single `ColorScheme` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ColorScheme`.
+  """
+  colorScheme_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: ColorScheme_Data!
+  ): ColorScheme_KeyOutput! @fdc_generated(from: "ColorScheme", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `Theme` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Theme`.
   """
   theme_upsert(
@@ -135,6 +162,15 @@ extend type Mutation {
     data: WorkLog_Data!
   ): WorkLog_KeyOutput! @fdc_generated(from: "WorkLog", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update `ColorScheme` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `ColorScheme`.
+  """
+  colorScheme_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [ColorScheme_Data!]!
+  ): [ColorScheme_KeyOutput!]! @fdc_generated(from: "ColorScheme", purpose: UPSERT_MULTIPLE)
+  """
   ✨ Insert or update `Theme` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Theme`.
   """
   theme_upsertMany(
@@ -179,6 +215,30 @@ extend type Mutation {
     """
     data: [WorkLog_Data!]!
   ): [WorkLog_KeyOutput!]! @fdc_generated(from: "WorkLog", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `ColorScheme` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `ColorScheme` or `null` if not found.
+  """
+  colorScheme_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: ColorScheme_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: ColorScheme_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: ColorScheme_Data!
+  ): ColorScheme_KeyOutput @fdc_generated(from: "ColorScheme", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Theme` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Theme` or `null` if not found.
   """
@@ -295,6 +355,25 @@ extend type Mutation {
     data: WorkLog_Data!
   ): WorkLog_KeyOutput @fdc_generated(from: "WorkLog", purpose: UPDATE_SINGLE)
   """
+  ✨ Update `ColorScheme` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  colorScheme_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: ColorScheme_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: ColorScheme_Data!
+  ): Int! @fdc_generated(from: "ColorScheme", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `Theme` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   theme_updateMany(
@@ -390,6 +469,25 @@ extend type Mutation {
     data: WorkLog_Data!
   ): Int! @fdc_generated(from: "WorkLog", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Delete a single `ColorScheme` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  colorScheme_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: ColorScheme_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: ColorScheme_FirstRow
+  ): ColorScheme_KeyOutput @fdc_generated(from: "ColorScheme", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `Theme` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   theme_delete(
@@ -479,6 +577,20 @@ extend type Mutation {
     """
     first: WorkLog_FirstRow
   ): WorkLog_KeyOutput @fdc_generated(from: "WorkLog", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `ColorScheme` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  colorScheme_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: ColorScheme_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "ColorScheme", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `Theme` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
