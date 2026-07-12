@@ -1,15 +1,16 @@
 "use client";
 
-import React from 'react'
+import { useState } from 'react'
 import { Accordion, Card, Switch } from '@heroui/react'
-import { ChevronDown, ListUl, FileText } from '@gravity-ui/icons'
+import { ChevronDown, ListUl, FileText, Copy, CopyCheck } from '@gravity-ui/icons'
 import ListBoxComponent from '../Utilities/ListBoxComponent'
 import { useTimeRange } from '../../context/TimeRangeContext'
 import { formatHour } from '../TimeRangeSettings'
 import { useSidebar } from "../../context/SideBarContext";
 import { useSelectedWorkLog } from "../../context/SelectedWorkLogContext";
-import { useTimeEntriesByWorkLog } from "@/hooks/useTimeEntriesByWorkLog";
+import { useTimeEntriesByWorkLog, type WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { useWorkLogs } from "@/hooks/useWorkLogs";
+import { buildHourClipboardText } from "@/lib/entryClipboard";
 import { WorkLogTimeEntryCardTable } from './WorkLogTimeEntryCardTable';
 import TicketBreakdown from './TicketBreakdown';
 
@@ -29,6 +30,18 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
   const { entries, loading, error, refetch } = useTimeEntriesByWorkLog(selectedWorkLogId);
   const { workLogs, loading: workLogsLoading, error: workLogsError, createWorkLog, renameWorkLog, deleteWorkLog } = useWorkLogs();
   const selectedWorkLog = workLogs.find((log) => log.id === selectedWorkLogId) ?? null;
+
+  const [copiedHour, setCopiedHour] = useState<number | null>(null);
+
+  const handleCopyHour = async (hour: number, hourEntries: WorkLogTimeEntry[]) => {
+    try {
+      await navigator.clipboard.writeText(buildHourClipboardText(hour, hourEntries));
+      setCopiedHour(hour);
+      setTimeout(() => setCopiedHour((current) => (current === hour ? null : current)), 1500);
+    } catch (err) {
+      console.error("Failed to copy hour summary", err);
+    }
+  };
 
   return (
     <div className='flex h-full items-stretch overflow-hidden'>
@@ -114,6 +127,21 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
                               <ChevronDown />
                             </Accordion.Indicator>
                           </Accordion.Trigger>
+                          <button
+                            type="button"
+                            aria-label={`Copy ${formatHour(hour)} – ${formatHour(hour + 1)} summary`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCopyHour(hour, hourEntries);
+                            }}
+                            className="mr-4 shrink-0 rounded p-1.5 text-foreground/50 hover:bg-default hover:text-foreground"
+                          >
+                            {copiedHour === hour ? (
+                              <CopyCheck className="size-4" />
+                            ) : (
+                              <Copy className="size-4" />
+                            )}
+                          </button>
                         </Accordion.Heading>
                         <Accordion.Panel>
                           <Accordion.Body>

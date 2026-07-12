@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Copy, CopyCheck } from "@gravity-ui/icons";
 import {
     useUpdateTimeEntry,
     useUpdateTimeEntryClearTicket,
@@ -12,6 +13,7 @@ import type {
     UpsertTicketVariables,
 } from "@/src/dataconnect-generated";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
+import { formatEntryClipboardLine } from "@/lib/entryClipboard";
 
 interface WorkLogTimeEntryCardTableProps {
     entries: WorkLogTimeEntry[];
@@ -36,6 +38,17 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
     const updateMutation = useUpdateTimeEntry();
     const clearTicketMutation = useUpdateTimeEntryClearTicket();
     const [drafts, setDrafts] = useState<Drafts>({});
+    const [copiedEntryId, setCopiedEntryId] = useState<string | null>(null);
+
+    const handleCopyEntry = async (entry: WorkLogTimeEntry) => {
+        try {
+            await navigator.clipboard.writeText(formatEntryClipboardLine(entry));
+            setCopiedEntryId(entry.id);
+            setTimeout(() => setCopiedEntryId((current) => (current === entry.id ? null : current)), 1500);
+        } catch (err) {
+            console.error("Failed to copy time entry", err);
+        }
+    };
 
     // Mirrors kept in sync via effects (never mutated during render) so that
     // timers/unmount cleanup always see the latest values instead of whatever
@@ -144,6 +157,7 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
                         <th className="w-24 border p-2 text-left">Ticket</th>
                         <th className="w-20 border p-2 text-left">Office</th>
                         <th className="border p-2 text-left">Description</th>
+                        <th className="w-10 border p-2"></th>
                     </tr>
                 </thead>
 
@@ -180,6 +194,21 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
                                     value={getValue(entry, "description")}
                                     onChange={(e) => setDraftValue(entry.id, "description", e.target.value)}
                                 />
+                            </td>
+
+                            <td className="border p-2 text-center">
+                                <button
+                                    type="button"
+                                    aria-label={`Copy ${formatTime(entry.startTime)} - ${formatTime(entry.endTime)} entry`}
+                                    onClick={() => handleCopyEntry(entry)}
+                                    className="rounded p-1.5 text-foreground/50 hover:bg-default hover:text-foreground"
+                                >
+                                    {copiedEntryId === entry.id ? (
+                                        <CopyCheck className="size-4" />
+                                    ) : (
+                                        <Copy className="size-4" />
+                                    )}
+                                </button>
                             </td>
                         </tr>
                     ))}
