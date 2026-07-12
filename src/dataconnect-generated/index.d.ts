@@ -11,8 +11,13 @@ export type DateString = string;
 
 
 
-export interface ClearMyThemeData {
+export interface ClearMyColorSchemeData {
   user_update?: User_Key | null;
+}
+
+export interface ColorScheme_Key {
+  id: UUIDString;
+  __typename?: 'ColorScheme_Key';
 }
 
 export interface CreateTimeEntryData {
@@ -103,13 +108,10 @@ export interface DeleteWorkLogVariables {
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
-    theme?: {
+    colorScheme?: {
       id: UUIDString;
       name: string;
-      background: string;
-      foreground: string;
-      isDark: boolean;
-    } & Theme_Key;
+    } & ColorScheme_Key;
   } & User_Key;
 }
 
@@ -139,6 +141,30 @@ export interface GetTimeEntryVariables {
   entryId: UUIDString;
 }
 
+export interface ListColorSchemesData {
+  colorSchemes: ({
+    id: UUIDString;
+    name: string;
+    themes: ({
+      id: UUIDString;
+      isDark: boolean;
+      background: string;
+      foreground: string;
+      surface: string;
+      surfaceForeground: string;
+      overlay: string;
+      overlayForeground: string;
+      muted: string;
+      default: string;
+      defaultForeground: string;
+      accent: string;
+      accentForeground: string;
+      border: string;
+      separator: string;
+    } & Theme_Key)[];
+  } & ColorScheme_Key)[];
+}
+
 export interface ListMyTimeEntriesData {
   timeEntries: ({
     id: UUIDString;
@@ -155,16 +181,6 @@ export interface ListMyTimeEntriesData {
       name: string;
     } & WorkLog_Key;
   } & TimeEntry_Key)[];
-}
-
-export interface ListThemesData {
-  themes: ({
-    id: UUIDString;
-    name: string;
-    background: string;
-    foreground: string;
-    isDark: boolean;
-  } & Theme_Key)[];
 }
 
 export interface ListTimeEntriesByDateRangeData {
@@ -267,12 +283,12 @@ export interface RestoreWorkLogVariables {
   workLogId: UUIDString;
 }
 
-export interface SelectMyThemeData {
+export interface SelectMyColorSchemeData {
   user_update?: User_Key | null;
 }
 
-export interface SelectMyThemeVariables {
-  themeId: UUIDString;
+export interface SelectMyColorSchemeVariables {
+  colorSchemeId: UUIDString;
 }
 
 export interface Theme_Key {
@@ -338,6 +354,114 @@ export interface WorkLog_Key {
   id: UUIDString;
   __typename?: 'WorkLog_Key';
 }
+
+interface ListUsersRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListUsersData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListUsersData, undefined>;
+  operationName: string;
+}
+export const listUsersRef: ListUsersRef;
+
+export function listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
+export function listUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
+
+interface GetMyUserRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<GetMyUserData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<GetMyUserData, undefined>;
+  operationName: string;
+}
+export const getMyUserRef: GetMyUserRef;
+
+export function getMyUser(options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
+export function getMyUser(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
+
+interface ListColorSchemesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListColorSchemesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListColorSchemesData, undefined>;
+  operationName: string;
+}
+export const listColorSchemesRef: ListColorSchemesRef;
+
+export function listColorSchemes(options?: ExecuteQueryOptions): QueryPromise<ListColorSchemesData, undefined>;
+export function listColorSchemes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListColorSchemesData, undefined>;
+
+interface ListTimeEntriesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListTimeEntriesVariables): QueryRef<ListTimeEntriesData, ListTimeEntriesVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListTimeEntriesVariables): QueryRef<ListTimeEntriesData, ListTimeEntriesVariables>;
+  operationName: string;
+}
+export const listTimeEntriesRef: ListTimeEntriesRef;
+
+export function listTimeEntries(vars: ListTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
+export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
+
+interface GetTimeEntryRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetTimeEntryVariables): QueryRef<GetTimeEntryData, GetTimeEntryVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetTimeEntryVariables): QueryRef<GetTimeEntryData, GetTimeEntryVariables>;
+  operationName: string;
+}
+export const getTimeEntryRef: GetTimeEntryRef;
+
+export function getTimeEntry(vars: GetTimeEntryVariables, options?: ExecuteQueryOptions): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
+export function getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: ExecuteQueryOptions): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
+
+interface ListWorkLogsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListWorkLogsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListWorkLogsData, undefined>;
+  operationName: string;
+}
+export const listWorkLogsRef: ListWorkLogsRef;
+
+export function listWorkLogs(options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, undefined>;
+export function listWorkLogs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, undefined>;
+
+interface ListTimeEntriesByWorkLogRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListTimeEntriesByWorkLogVariables): QueryRef<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables): QueryRef<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+  operationName: string;
+}
+export const listTimeEntriesByWorkLogRef: ListTimeEntriesByWorkLogRef;
+
+export function listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+export function listTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+
+interface ListMyTimeEntriesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListMyTimeEntriesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListMyTimeEntriesData, undefined>;
+  operationName: string;
+}
+export const listMyTimeEntriesRef: ListMyTimeEntriesRef;
+
+export function listMyTimeEntries(options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, undefined>;
+export function listMyTimeEntries(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, undefined>;
+
+interface ListTimeEntriesByDateRangeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListTimeEntriesByDateRangeVariables): QueryRef<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables): QueryRef<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
+  operationName: string;
+}
+export const listTimeEntriesByDateRangeRef: ListTimeEntriesByDateRangeRef;
+
+export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
+export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
 
 interface CreateUserFromGoogleRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -411,29 +535,29 @@ export const upsertTicketRef: UpsertTicketRef;
 export function upsertTicket(vars: UpsertTicketVariables): MutationPromise<UpsertTicketData, UpsertTicketVariables>;
 export function upsertTicket(dc: DataConnect, vars: UpsertTicketVariables): MutationPromise<UpsertTicketData, UpsertTicketVariables>;
 
-interface SelectMyThemeRef {
+interface SelectMyColorSchemeRef {
   /* Allow users to create refs without passing in DataConnect */
-  (vars: SelectMyThemeVariables): MutationRef<SelectMyThemeData, SelectMyThemeVariables>;
+  (vars: SelectMyColorSchemeVariables): MutationRef<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: SelectMyThemeVariables): MutationRef<SelectMyThemeData, SelectMyThemeVariables>;
+  (dc: DataConnect, vars: SelectMyColorSchemeVariables): MutationRef<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
   operationName: string;
 }
-export const selectMyThemeRef: SelectMyThemeRef;
+export const selectMyColorSchemeRef: SelectMyColorSchemeRef;
 
-export function selectMyTheme(vars: SelectMyThemeVariables): MutationPromise<SelectMyThemeData, SelectMyThemeVariables>;
-export function selectMyTheme(dc: DataConnect, vars: SelectMyThemeVariables): MutationPromise<SelectMyThemeData, SelectMyThemeVariables>;
+export function selectMyColorScheme(vars: SelectMyColorSchemeVariables): MutationPromise<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
+export function selectMyColorScheme(dc: DataConnect, vars: SelectMyColorSchemeVariables): MutationPromise<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
 
-interface ClearMyThemeRef {
+interface ClearMyColorSchemeRef {
   /* Allow users to create refs without passing in DataConnect */
-  (): MutationRef<ClearMyThemeData, undefined>;
+  (): MutationRef<ClearMyColorSchemeData, undefined>;
   /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): MutationRef<ClearMyThemeData, undefined>;
+  (dc: DataConnect): MutationRef<ClearMyColorSchemeData, undefined>;
   operationName: string;
 }
-export const clearMyThemeRef: ClearMyThemeRef;
+export const clearMyColorSchemeRef: ClearMyColorSchemeRef;
 
-export function clearMyTheme(): MutationPromise<ClearMyThemeData, undefined>;
-export function clearMyTheme(dc: DataConnect): MutationPromise<ClearMyThemeData, undefined>;
+export function clearMyColorScheme(): MutationPromise<ClearMyColorSchemeData, undefined>;
+export function clearMyColorScheme(dc: DataConnect): MutationPromise<ClearMyColorSchemeData, undefined>;
 
 interface UpdateWorkLogRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -482,112 +606,4 @@ export const createWorkLogRef: CreateWorkLogRef;
 
 export function createWorkLog(vars: CreateWorkLogVariables): MutationPromise<CreateWorkLogData, CreateWorkLogVariables>;
 export function createWorkLog(dc: DataConnect, vars: CreateWorkLogVariables): MutationPromise<CreateWorkLogData, CreateWorkLogVariables>;
-
-interface ListUsersRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListUsersData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListUsersData, undefined>;
-  operationName: string;
-}
-export const listUsersRef: ListUsersRef;
-
-export function listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
-export function listUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
-
-interface GetMyUserRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<GetMyUserData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<GetMyUserData, undefined>;
-  operationName: string;
-}
-export const getMyUserRef: GetMyUserRef;
-
-export function getMyUser(options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
-export function getMyUser(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<GetMyUserData, undefined>;
-
-interface ListThemesRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListThemesData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListThemesData, undefined>;
-  operationName: string;
-}
-export const listThemesRef: ListThemesRef;
-
-export function listThemes(options?: ExecuteQueryOptions): QueryPromise<ListThemesData, undefined>;
-export function listThemes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListThemesData, undefined>;
-
-interface ListTimeEntriesRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: ListTimeEntriesVariables): QueryRef<ListTimeEntriesData, ListTimeEntriesVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: ListTimeEntriesVariables): QueryRef<ListTimeEntriesData, ListTimeEntriesVariables>;
-  operationName: string;
-}
-export const listTimeEntriesRef: ListTimeEntriesRef;
-
-export function listTimeEntries(vars: ListTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
-export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesData, ListTimeEntriesVariables>;
-
-interface GetTimeEntryRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: GetTimeEntryVariables): QueryRef<GetTimeEntryData, GetTimeEntryVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: GetTimeEntryVariables): QueryRef<GetTimeEntryData, GetTimeEntryVariables>;
-  operationName: string;
-}
-export const getTimeEntryRef: GetTimeEntryRef;
-
-export function getTimeEntry(vars: GetTimeEntryVariables, options?: ExecuteQueryOptions): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
-export function getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: ExecuteQueryOptions): QueryPromise<GetTimeEntryData, GetTimeEntryVariables>;
-
-interface ListWorkLogsRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListWorkLogsData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListWorkLogsData, undefined>;
-  operationName: string;
-}
-export const listWorkLogsRef: ListWorkLogsRef;
-
-export function listWorkLogs(options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, undefined>;
-export function listWorkLogs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, undefined>;
-
-interface ListTimeEntriesByWorkLogRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: ListTimeEntriesByWorkLogVariables): QueryRef<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables): QueryRef<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
-  operationName: string;
-}
-export const listTimeEntriesByWorkLogRef: ListTimeEntriesByWorkLogRef;
-
-export function listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
-export function listTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
-
-interface ListMyTimeEntriesRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListMyTimeEntriesData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListMyTimeEntriesData, undefined>;
-  operationName: string;
-}
-export const listMyTimeEntriesRef: ListMyTimeEntriesRef;
-
-export function listMyTimeEntries(options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, undefined>;
-export function listMyTimeEntries(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, undefined>;
-
-interface ListTimeEntriesByDateRangeRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (vars: ListTimeEntriesByDateRangeVariables): QueryRef<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables): QueryRef<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
-  operationName: string;
-}
-export const listTimeEntriesByDateRangeRef: ListTimeEntriesByDateRangeRef;
-
-export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
-export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
 

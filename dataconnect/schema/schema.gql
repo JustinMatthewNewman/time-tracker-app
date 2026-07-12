@@ -3,7 +3,7 @@ type User @table {
   googleUid: String! @unique
   username: String!
   email: String
-  theme: Theme
+  colorScheme: ColorScheme
   createdAt: Timestamp!
 }
 
@@ -28,15 +28,39 @@ type TimeEntry @table {
   createdAt: Timestamp!
 }
 
-# A selectable UI theme. Only background/foreground are wired into
-# app/globals.css today (next-themes handles the light/dark class toggle);
-# a user's selection here overrides those CSS variables at render time.
-type Theme @table {
+# A named color scheme (e.g. "Ocean", "Forest") a user can pick in Settings.
+# Each scheme has exactly one light and one dark Theme row (see below); the
+# existing next-themes light/dark switch selects which variant applies, so
+# switching dark mode re-themes using the same scheme instead of leaving it.
+type ColorScheme @table {
   id: UUID! @default(expr: "uuidV4()")
   name: String! @unique
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# One light or dark variant of a ColorScheme. Fields mirror HeroUI's base
+# semantic color tokens (@heroui/styles themes/default/variables.css) —
+# hover/soft/secondary variants are all derived from these via color-mix(),
+# so setting just these overrides the whole HeroUI palette consistently.
+# Status colors (success/warning/danger) are deliberately left out: they
+# stay constant across schemes so meaning (error vs. warning) doesn't shift.
+type Theme @table @unique(fields: ["colorScheme", "isDark"]) {
+  id: UUID! @default(expr: "uuidV4()")
+  colorScheme: ColorScheme!
+  isDark: Boolean!
   background: String!
   foreground: String!
-  isDark: Boolean! @default(expr: "false")
+  surface: String!
+  surfaceForeground: String!
+  overlay: String!
+  overlayForeground: String!
+  muted: String!
+  default: String!
+  defaultForeground: String!
+  accent: String!
+  accentForeground: String!
+  border: String!
+  separator: String!
   createdAt: Timestamp! @default(expr: "request.time")
 }
 

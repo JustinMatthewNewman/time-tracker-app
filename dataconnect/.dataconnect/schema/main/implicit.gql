@@ -1,3 +1,9 @@
+extend type Theme {
+  """
+  ✨ Implicit foreign key field based on `Theme`.`colorScheme`. It must match the value of `ColorScheme`.`id`. See `@ref` for how to customize it.
+  """
+  colorSchemeId: UUID! @fdc_generated(from: "Theme.colorScheme", purpose: IMPLICIT_REF_FIELD)
+}
 extend type TimeEntry {
   """
   ✨ Implicit primary key field. It's a UUID column default to a generated new value. See `@table` for how to customize it.
@@ -18,9 +24,9 @@ extend type TimeEntry {
 }
 extend type User {
   """
-  ✨ Implicit foreign key field based on `User`.`theme`. It must match the value of `Theme`.`id`. See `@ref` for how to customize it.
+  ✨ Implicit foreign key field based on `User`.`colorScheme`. It must match the value of `ColorScheme`.`id`. See `@ref` for how to customize it.
   """
-  themeId: UUID @fdc_generated(from: "User.theme", purpose: IMPLICIT_REF_FIELD)
+  colorSchemeId: UUID @fdc_generated(from: "User.colorScheme", purpose: IMPLICIT_REF_FIELD)
 }
 extend type WorkLog {
   """

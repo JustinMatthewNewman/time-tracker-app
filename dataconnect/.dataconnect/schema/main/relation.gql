@@ -1,8 +1,42 @@
-extend type Theme {
+extend type ColorScheme {
   """
-  ✨ List `User` objects in a one-to-many relationship (where `User`.`theme` is this object).
+  ✨ List `Theme` objects in a one-to-many relationship (where `Theme`.`colorScheme` is this object).
   """
-  users_on_theme(
+  themes_on_colorScheme(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Theme_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Theme_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Theme_Having
+  ): [Theme!]! @fdc_generated(from: "Theme.colorScheme", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `User` objects in a one-to-many relationship (where `User`.`colorScheme` is this object).
+  """
+  users_on_colorScheme(
     """
     Filter condition to narrow down the query results.
     """
@@ -32,7 +66,56 @@ extend type Theme {
     Filter condition to apply to the groups of aggregate queries.
     """
     having: User_Having
-  ): [User!]! @fdc_generated(from: "User.theme", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  ): [User!]! @fdc_generated(from: "User.colorScheme", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "ColorScheme", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `ColorScheme` table.
+  """
+  _count: Int! @fdc_generated(from: "ColorScheme.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ColorScheme` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ColorScheme.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ColorScheme` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ColorScheme.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `ColorScheme` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "ColorScheme.name", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `ColorScheme` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "ColorScheme.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `ColorScheme` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "ColorScheme.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "ColorScheme.id", purpose: ENTITY_ID)
+}
+extend type Theme {
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
@@ -41,6 +124,24 @@ extend type Theme {
   ✨ Count the number of rows in the `Theme` table.
   """
   _count: Int! @fdc_generated(from: "Theme.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `accentForeground` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  accentForeground_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.accentForeground", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `accent` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  accent_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.accent", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `Theme` table where the `background` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
@@ -51,6 +152,24 @@ extend type Theme {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Theme.background", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `Theme` table where the `border` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  border_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.border", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `colorSchemeId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  colorSchemeId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.colorSchemeId", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `Theme` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   createdAt_count(
@@ -59,6 +178,24 @@ extend type Theme {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Theme.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `defaultForeground` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  defaultForeground_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.defaultForeground", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `default` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  default_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.default", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `Theme` table where the `foreground` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
@@ -87,14 +224,59 @@ extend type Theme {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Theme.isDark", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `Theme` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  ✨ Count the number of rows in the `Theme` table where the `muted` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
-  name_count(
+  muted_count(
     """
     Set to true to count the number of distinct values.
     """
     distinct: Boolean = false
-  ): Int! @fdc_generated(from: "Theme.name", purpose: QUERY_COUNT)
+  ): Int! @fdc_generated(from: "Theme.muted", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `overlayForeground` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  overlayForeground_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.overlayForeground", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `overlay` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  overlay_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.overlay", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `separator` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  separator_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.separator", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `surfaceForeground` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  surfaceForeground_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.surfaceForeground", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Theme` table where the `surface` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  surface_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Theme.surface", purpose: QUERY_COUNT)
   """
   ✨ Minimum of the `createdAt` field in the `Theme` table.
   """
@@ -466,6 +648,15 @@ extend type User {
   """
   _count: Int! @fdc_generated(from: "User.", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `User` table where the `colorSchemeId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  colorSchemeId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.colorSchemeId", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `User` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   createdAt_count(
@@ -501,15 +692,6 @@ extend type User {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "User.id", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `User` table where the `themeId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  themeId_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "User.themeId", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `User` table where the `username` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """

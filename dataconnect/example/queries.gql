@@ -12,23 +12,37 @@ query ListUsers @auth(level: NO_ACCESS) {
 query GetMyUser @auth(level: USER) {
   user(first: { where: { googleUid: { eq_expr: "auth.uid" } } }) {
     id
-    theme {
+    colorScheme {
       id
       name
-      background
-      foreground
-      isDark
     }
   }
 }
 
-query ListThemes @auth(level: USER) {
-  themes(orderBy: [{ name: ASC }]) {
+# Each scheme's light + dark Theme rows come along nested, so the client can
+# apply whichever variant matches the current next-themes light/dark state
+# without a second round-trip.
+query ListColorSchemes @auth(level: USER) {
+  colorSchemes(orderBy: [{ name: ASC }]) {
     id
     name
-    background
-    foreground
-    isDark
+    themes: themes_on_colorScheme {
+      id
+      isDark
+      background
+      foreground
+      surface
+      surfaceForeground
+      overlay
+      overlayForeground
+      muted
+      default
+      defaultForeground
+      accent
+      accentForeground
+      border
+      separator
+    }
   }
 }
 

@@ -12,7 +12,7 @@ This README will guide you through the process of using the generated JavaScript
 - [**Queries**](#queries)
   - [*ListUsers*](#listusers)
   - [*GetMyUser*](#getmyuser)
-  - [*ListThemes*](#listthemes)
+  - [*ListColorSchemes*](#listcolorschemes)
   - [*ListTimeEntries*](#listtimeentries)
   - [*GetTimeEntry*](#gettimeentry)
   - [*ListWorkLogs*](#listworklogs)
@@ -26,8 +26,8 @@ This README will guide you through the process of using the generated JavaScript
   - [*UpdateTimeEntryClearTicket*](#updatetimeentryclearticket)
   - [*DeleteTimeEntry*](#deletetimeentry)
   - [*UpsertTicket*](#upsertticket)
-  - [*SelectMyTheme*](#selectmytheme)
-  - [*ClearMyTheme*](#clearmytheme)
+  - [*SelectMyColorScheme*](#selectmycolorscheme)
+  - [*ClearMyColorScheme*](#clearmycolorscheme)
   - [*UpdateWorkLog*](#updateworklog)
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
@@ -213,13 +213,10 @@ The `data` property is an object of type `GetMyUserData`, which is defined in [d
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
-    theme?: {
+    colorScheme?: {
       id: UUIDString;
       name: string;
-      background: string;
-      foreground: string;
-      isDark: boolean;
-    } & Theme_Key;
+    } & ColorScheme_Key;
   } & User_Key;
 }
 ```
@@ -274,100 +271,114 @@ executeQuery(ref).then((response) => {
 });
 ```
 
-## ListThemes
-You can execute the `ListThemes` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+## ListColorSchemes
+You can execute the `ListColorSchemes` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listThemes(options?: ExecuteQueryOptions): QueryPromise<ListThemesData, undefined>;
+listColorSchemes(options?: ExecuteQueryOptions): QueryPromise<ListColorSchemesData, undefined>;
 
-interface ListThemesRef {
+interface ListColorSchemesRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListThemesData, undefined>;
+  (): QueryRef<ListColorSchemesData, undefined>;
 }
-export const listThemesRef: ListThemesRef;
+export const listColorSchemesRef: ListColorSchemesRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listThemes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListThemesData, undefined>;
+listColorSchemes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListColorSchemesData, undefined>;
 
-interface ListThemesRef {
+interface ListColorSchemesRef {
   ...
-  (dc: DataConnect): QueryRef<ListThemesData, undefined>;
+  (dc: DataConnect): QueryRef<ListColorSchemesData, undefined>;
 }
-export const listThemesRef: ListThemesRef;
+export const listColorSchemesRef: ListColorSchemesRef;
 ```
 
-If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listThemesRef:
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listColorSchemesRef:
 ```typescript
-const name = listThemesRef.operationName;
+const name = listColorSchemesRef.operationName;
 console.log(name);
 ```
 
 ### Variables
-The `ListThemes` query has no variables.
+The `ListColorSchemes` query has no variables.
 ### Return Type
-Recall that executing the `ListThemes` query returns a `QueryPromise` that resolves to an object with a `data` property.
+Recall that executing the `ListColorSchemes` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `ListThemesData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `ListColorSchemesData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
-export interface ListThemesData {
-  themes: ({
+export interface ListColorSchemesData {
+  colorSchemes: ({
     id: UUIDString;
     name: string;
-    background: string;
-    foreground: string;
-    isDark: boolean;
-  } & Theme_Key)[];
+    themes: ({
+      id: UUIDString;
+      isDark: boolean;
+      background: string;
+      foreground: string;
+      surface: string;
+      surfaceForeground: string;
+      overlay: string;
+      overlayForeground: string;
+      muted: string;
+      default: string;
+      defaultForeground: string;
+      accent: string;
+      accentForeground: string;
+      border: string;
+      separator: string;
+    } & Theme_Key)[];
+  } & ColorScheme_Key)[];
 }
 ```
-### Using `ListThemes`'s action shortcut function
+### Using `ListColorSchemes`'s action shortcut function
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, listThemes } from '@dataconnect/generated';
+import { connectorConfig, listColorSchemes } from '@dataconnect/generated';
 
 
-// Call the `listThemes()` function to execute the query.
+// Call the `listColorSchemes()` function to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await listThemes();
+const { data } = await listColorSchemes();
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await listThemes(dataConnect);
+const { data } = await listColorSchemes(dataConnect);
 
-console.log(data.themes);
+console.log(data.colorSchemes);
 
 // Or, you can use the `Promise` API.
-listThemes().then((response) => {
+listColorSchemes().then((response) => {
   const data = response.data;
-  console.log(data.themes);
+  console.log(data.colorSchemes);
 });
 ```
 
-### Using `ListThemes`'s `QueryRef` function
+### Using `ListColorSchemes`'s `QueryRef` function
 
 ```typescript
 import { getDataConnect, executeQuery } from 'firebase/data-connect';
-import { connectorConfig, listThemesRef } from '@dataconnect/generated';
+import { connectorConfig, listColorSchemesRef } from '@dataconnect/generated';
 
 
-// Call the `listThemesRef()` function to get a reference to the query.
-const ref = listThemesRef();
+// Call the `listColorSchemesRef()` function to get a reference to the query.
+const ref = listColorSchemesRef();
 
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = listThemesRef(dataConnect);
+const ref = listColorSchemesRef(dataConnect);
 
 // Call `executeQuery()` on the reference to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await executeQuery(ref);
 
-console.log(data.themes);
+console.log(data.colorSchemes);
 
 // Or, you can use the `Promise` API.
 executeQuery(ref).then((response) => {
   const data = response.data;
-  console.log(data.themes);
+  console.log(data.colorSchemes);
 });
 ```
 
@@ -1794,101 +1805,101 @@ executeMutation(ref).then((response) => {
 });
 ```
 
-## SelectMyTheme
-You can execute the `SelectMyTheme` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+## SelectMyColorScheme
+You can execute the `SelectMyColorScheme` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-selectMyTheme(vars: SelectMyThemeVariables): MutationPromise<SelectMyThemeData, SelectMyThemeVariables>;
+selectMyColorScheme(vars: SelectMyColorSchemeVariables): MutationPromise<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
 
-interface SelectMyThemeRef {
+interface SelectMyColorSchemeRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (vars: SelectMyThemeVariables): MutationRef<SelectMyThemeData, SelectMyThemeVariables>;
+  (vars: SelectMyColorSchemeVariables): MutationRef<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
 }
-export const selectMyThemeRef: SelectMyThemeRef;
+export const selectMyColorSchemeRef: SelectMyColorSchemeRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
 ```typescript
-selectMyTheme(dc: DataConnect, vars: SelectMyThemeVariables): MutationPromise<SelectMyThemeData, SelectMyThemeVariables>;
+selectMyColorScheme(dc: DataConnect, vars: SelectMyColorSchemeVariables): MutationPromise<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
 
-interface SelectMyThemeRef {
+interface SelectMyColorSchemeRef {
   ...
-  (dc: DataConnect, vars: SelectMyThemeVariables): MutationRef<SelectMyThemeData, SelectMyThemeVariables>;
+  (dc: DataConnect, vars: SelectMyColorSchemeVariables): MutationRef<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
 }
-export const selectMyThemeRef: SelectMyThemeRef;
+export const selectMyColorSchemeRef: SelectMyColorSchemeRef;
 ```
 
-If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyThemeRef:
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyColorSchemeRef:
 ```typescript
-const name = selectMyThemeRef.operationName;
+const name = selectMyColorSchemeRef.operationName;
 console.log(name);
 ```
 
 ### Variables
-The `SelectMyTheme` mutation requires an argument of type `SelectMyThemeVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `SelectMyColorScheme` mutation requires an argument of type `SelectMyColorSchemeVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
-export interface SelectMyThemeVariables {
-  themeId: UUIDString;
+export interface SelectMyColorSchemeVariables {
+  colorSchemeId: UUIDString;
 }
 ```
 ### Return Type
-Recall that executing the `SelectMyTheme` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+Recall that executing the `SelectMyColorScheme` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `SelectMyThemeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `SelectMyColorSchemeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
-export interface SelectMyThemeData {
+export interface SelectMyColorSchemeData {
   user_update?: User_Key | null;
 }
 ```
-### Using `SelectMyTheme`'s action shortcut function
+### Using `SelectMyColorScheme`'s action shortcut function
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, selectMyTheme, SelectMyThemeVariables } from '@dataconnect/generated';
+import { connectorConfig, selectMyColorScheme, SelectMyColorSchemeVariables } from '@dataconnect/generated';
 
-// The `SelectMyTheme` mutation requires an argument of type `SelectMyThemeVariables`:
-const selectMyThemeVars: SelectMyThemeVariables = {
-  themeId: ..., 
+// The `SelectMyColorScheme` mutation requires an argument of type `SelectMyColorSchemeVariables`:
+const selectMyColorSchemeVars: SelectMyColorSchemeVariables = {
+  colorSchemeId: ..., 
 };
 
-// Call the `selectMyTheme()` function to execute the mutation.
+// Call the `selectMyColorScheme()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await selectMyTheme(selectMyThemeVars);
+const { data } = await selectMyColorScheme(selectMyColorSchemeVars);
 // Variables can be defined inline as well.
-const { data } = await selectMyTheme({ themeId: ..., });
+const { data } = await selectMyColorScheme({ colorSchemeId: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await selectMyTheme(dataConnect, selectMyThemeVars);
+const { data } = await selectMyColorScheme(dataConnect, selectMyColorSchemeVars);
 
 console.log(data.user_update);
 
 // Or, you can use the `Promise` API.
-selectMyTheme(selectMyThemeVars).then((response) => {
+selectMyColorScheme(selectMyColorSchemeVars).then((response) => {
   const data = response.data;
   console.log(data.user_update);
 });
 ```
 
-### Using `SelectMyTheme`'s `MutationRef` function
+### Using `SelectMyColorScheme`'s `MutationRef` function
 
 ```typescript
 import { getDataConnect, executeMutation } from 'firebase/data-connect';
-import { connectorConfig, selectMyThemeRef, SelectMyThemeVariables } from '@dataconnect/generated';
+import { connectorConfig, selectMyColorSchemeRef, SelectMyColorSchemeVariables } from '@dataconnect/generated';
 
-// The `SelectMyTheme` mutation requires an argument of type `SelectMyThemeVariables`:
-const selectMyThemeVars: SelectMyThemeVariables = {
-  themeId: ..., 
+// The `SelectMyColorScheme` mutation requires an argument of type `SelectMyColorSchemeVariables`:
+const selectMyColorSchemeVars: SelectMyColorSchemeVariables = {
+  colorSchemeId: ..., 
 };
 
-// Call the `selectMyThemeRef()` function to get a reference to the mutation.
-const ref = selectMyThemeRef(selectMyThemeVars);
+// Call the `selectMyColorSchemeRef()` function to get a reference to the mutation.
+const ref = selectMyColorSchemeRef(selectMyColorSchemeVars);
 // Variables can be defined inline as well.
-const ref = selectMyThemeRef({ themeId: ..., });
+const ref = selectMyColorSchemeRef({ colorSchemeId: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = selectMyThemeRef(dataConnect, selectMyThemeVars);
+const ref = selectMyColorSchemeRef(dataConnect, selectMyColorSchemeVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
@@ -1903,83 +1914,83 @@ executeMutation(ref).then((response) => {
 });
 ```
 
-## ClearMyTheme
-You can execute the `ClearMyTheme` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+## ClearMyColorScheme
+You can execute the `ClearMyColorScheme` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-clearMyTheme(): MutationPromise<ClearMyThemeData, undefined>;
+clearMyColorScheme(): MutationPromise<ClearMyColorSchemeData, undefined>;
 
-interface ClearMyThemeRef {
+interface ClearMyColorSchemeRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (): MutationRef<ClearMyThemeData, undefined>;
+  (): MutationRef<ClearMyColorSchemeData, undefined>;
 }
-export const clearMyThemeRef: ClearMyThemeRef;
+export const clearMyColorSchemeRef: ClearMyColorSchemeRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
 ```typescript
-clearMyTheme(dc: DataConnect): MutationPromise<ClearMyThemeData, undefined>;
+clearMyColorScheme(dc: DataConnect): MutationPromise<ClearMyColorSchemeData, undefined>;
 
-interface ClearMyThemeRef {
+interface ClearMyColorSchemeRef {
   ...
-  (dc: DataConnect): MutationRef<ClearMyThemeData, undefined>;
+  (dc: DataConnect): MutationRef<ClearMyColorSchemeData, undefined>;
 }
-export const clearMyThemeRef: ClearMyThemeRef;
+export const clearMyColorSchemeRef: ClearMyColorSchemeRef;
 ```
 
-If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the clearMyThemeRef:
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the clearMyColorSchemeRef:
 ```typescript
-const name = clearMyThemeRef.operationName;
+const name = clearMyColorSchemeRef.operationName;
 console.log(name);
 ```
 
 ### Variables
-The `ClearMyTheme` mutation has no variables.
+The `ClearMyColorScheme` mutation has no variables.
 ### Return Type
-Recall that executing the `ClearMyTheme` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+Recall that executing the `ClearMyColorScheme` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `ClearMyThemeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `ClearMyColorSchemeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
-export interface ClearMyThemeData {
+export interface ClearMyColorSchemeData {
   user_update?: User_Key | null;
 }
 ```
-### Using `ClearMyTheme`'s action shortcut function
+### Using `ClearMyColorScheme`'s action shortcut function
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, clearMyTheme } from '@dataconnect/generated';
+import { connectorConfig, clearMyColorScheme } from '@dataconnect/generated';
 
 
-// Call the `clearMyTheme()` function to execute the mutation.
+// Call the `clearMyColorScheme()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
-const { data } = await clearMyTheme();
+const { data } = await clearMyColorScheme();
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await clearMyTheme(dataConnect);
+const { data } = await clearMyColorScheme(dataConnect);
 
 console.log(data.user_update);
 
 // Or, you can use the `Promise` API.
-clearMyTheme().then((response) => {
+clearMyColorScheme().then((response) => {
   const data = response.data;
   console.log(data.user_update);
 });
 ```
 
-### Using `ClearMyTheme`'s `MutationRef` function
+### Using `ClearMyColorScheme`'s `MutationRef` function
 
 ```typescript
 import { getDataConnect, executeMutation } from 'firebase/data-connect';
-import { connectorConfig, clearMyThemeRef } from '@dataconnect/generated';
+import { connectorConfig, clearMyColorSchemeRef } from '@dataconnect/generated';
 
 
-// Call the `clearMyThemeRef()` function to get a reference to the mutation.
-const ref = clearMyThemeRef();
+// Call the `clearMyColorSchemeRef()` function to get a reference to the mutation.
+const ref = clearMyColorSchemeRef();
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = clearMyThemeRef(dataConnect);
+const ref = clearMyColorSchemeRef(dataConnect);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.

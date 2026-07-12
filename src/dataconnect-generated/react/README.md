@@ -19,7 +19,7 @@ You can also follow the instructions from the [Data Connect documentation](https
 - [**Queries**](#queries)
   - [*ListUsers*](#listusers)
   - [*GetMyUser*](#getmyuser)
-  - [*ListThemes*](#listthemes)
+  - [*ListColorSchemes*](#listcolorschemes)
   - [*ListTimeEntries*](#listtimeentries)
   - [*GetTimeEntry*](#gettimeentry)
   - [*ListWorkLogs*](#listworklogs)
@@ -33,8 +33,8 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*UpdateTimeEntryClearTicket*](#updatetimeentryclearticket)
   - [*DeleteTimeEntry*](#deletetimeentry)
   - [*UpsertTicket*](#upsertticket)
-  - [*SelectMyTheme*](#selectmytheme)
-  - [*ClearMyTheme*](#clearmytheme)
+  - [*SelectMyColorScheme*](#selectmycolorscheme)
+  - [*ClearMyColorScheme*](#clearmycolorscheme)
   - [*UpdateWorkLog*](#updateworklog)
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
@@ -227,13 +227,10 @@ To access the data returned by a Query, use the `UseQueryResult.data` field. The
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
-    theme?: {
+    colorScheme?: {
       id: UUIDString;
       name: string;
-      background: string;
-      foreground: string;
-      isDark: boolean;
-    } & Theme_Key;
+    } & ColorScheme_Key;
   } & User_Key;
 }
 ```
@@ -282,63 +279,77 @@ export default function GetMyUserComponent() {
 }
 ```
 
-## ListThemes
-You can execute the `ListThemes` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+## ListColorSchemes
+You can execute the `ListColorSchemes` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
-useListThemes(dc: DataConnect, options?: useDataConnectQueryOptions<ListThemesData>): UseDataConnectQueryResult<ListThemesData, undefined>;
+useListColorSchemes(dc: DataConnect, options?: useDataConnectQueryOptions<ListColorSchemesData>): UseDataConnectQueryResult<ListColorSchemesData, undefined>;
 ```
 You can also pass in a `DataConnect` instance to the Query hook function.
 ```javascript
-useListThemes(options?: useDataConnectQueryOptions<ListThemesData>): UseDataConnectQueryResult<ListThemesData, undefined>;
+useListColorSchemes(options?: useDataConnectQueryOptions<ListColorSchemesData>): UseDataConnectQueryResult<ListColorSchemesData, undefined>;
 ```
 
 ### Variables
-The `ListThemes` Query has no variables.
+The `ListColorSchemes` Query has no variables.
 ### Return Type
-Recall that calling the `ListThemes` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+Recall that calling the `ListColorSchemes` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListThemes` Query is of type `ListThemesData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListColorSchemes` Query is of type `ListColorSchemesData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
-export interface ListThemesData {
-  themes: ({
+export interface ListColorSchemesData {
+  colorSchemes: ({
     id: UUIDString;
     name: string;
-    background: string;
-    foreground: string;
-    isDark: boolean;
-  } & Theme_Key)[];
+    themes: ({
+      id: UUIDString;
+      isDark: boolean;
+      background: string;
+      foreground: string;
+      surface: string;
+      surfaceForeground: string;
+      overlay: string;
+      overlayForeground: string;
+      muted: string;
+      default: string;
+      defaultForeground: string;
+      accent: string;
+      accentForeground: string;
+      border: string;
+      separator: string;
+    } & Theme_Key)[];
+  } & ColorScheme_Key)[];
 }
 ```
 
 To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
 
-### Using `ListThemes`'s Query hook function
+### Using `ListColorSchemes`'s Query hook function
 
 ```javascript
 import { getDataConnect } from 'firebase/data-connect';
 import { connectorConfig } from '@dataconnect/generated';
-import { useListThemes } from '@dataconnect/generated/react'
+import { useListColorSchemes } from '@dataconnect/generated/react'
 
-export default function ListThemesComponent() {
+export default function ListColorSchemesComponent() {
   // You don't have to do anything to "execute" the Query.
   // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
-  const query = useListThemes();
+  const query = useListColorSchemes();
 
   // You can also pass in a `DataConnect` instance to the Query hook function.
   const dataConnect = getDataConnect(connectorConfig);
-  const query = useListThemes(dataConnect);
+  const query = useListColorSchemes(dataConnect);
 
   // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
   const options = { staleTime: 5 * 1000 };
-  const query = useListThemes(options);
+  const query = useListColorSchemes(options);
 
   // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
   const dataConnect = getDataConnect(connectorConfig);
   const options = { staleTime: 5 * 1000 };
-  const query = useListThemes(dataConnect, options);
+  const query = useListColorSchemes(dataConnect, options);
 
   // Then, you can render your component dynamically based on the status of the Query.
   if (query.isPending) {
@@ -351,7 +362,7 @@ export default function ListThemesComponent() {
 
   // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
   if (query.isSuccess) {
-    console.log(query.data.themes);
+    console.log(query.data.colorSchemes);
   }
   return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
 }
@@ -1531,82 +1542,82 @@ export default function UpsertTicketComponent() {
 }
 ```
 
-## SelectMyTheme
-You can execute the `SelectMyTheme` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+## SelectMyColorScheme
+You can execute the `SelectMyColorScheme` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
 ```javascript
-useSelectMyTheme(options?: useDataConnectMutationOptions<SelectMyThemeData, FirebaseError, SelectMyThemeVariables>): UseDataConnectMutationResult<SelectMyThemeData, SelectMyThemeVariables>;
+useSelectMyColorScheme(options?: useDataConnectMutationOptions<SelectMyColorSchemeData, FirebaseError, SelectMyColorSchemeVariables>): UseDataConnectMutationResult<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
 ```
 You can also pass in a `DataConnect` instance to the Mutation hook function.
 ```javascript
-useSelectMyTheme(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyThemeData, FirebaseError, SelectMyThemeVariables>): UseDataConnectMutationResult<SelectMyThemeData, SelectMyThemeVariables>;
+useSelectMyColorScheme(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyColorSchemeData, FirebaseError, SelectMyColorSchemeVariables>): UseDataConnectMutationResult<SelectMyColorSchemeData, SelectMyColorSchemeVariables>;
 ```
 
 ### Variables
-The `SelectMyTheme` Mutation requires an argument of type `SelectMyThemeVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `SelectMyColorScheme` Mutation requires an argument of type `SelectMyColorSchemeVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
-export interface SelectMyThemeVariables {
-  themeId: UUIDString;
+export interface SelectMyColorSchemeVariables {
+  colorSchemeId: UUIDString;
 }
 ```
 ### Return Type
-Recall that calling the `SelectMyTheme` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+Recall that calling the `SelectMyColorScheme` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
 
 To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
 
 To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
 
-To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SelectMyTheme` Mutation is of type `SelectMyThemeData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SelectMyColorScheme` Mutation is of type `SelectMyColorSchemeData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
-export interface SelectMyThemeData {
+export interface SelectMyColorSchemeData {
   user_update?: User_Key | null;
 }
 ```
 
 To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
 
-### Using `SelectMyTheme`'s Mutation hook function
+### Using `SelectMyColorScheme`'s Mutation hook function
 
 ```javascript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, SelectMyThemeVariables } from '@dataconnect/generated';
-import { useSelectMyTheme } from '@dataconnect/generated/react'
+import { connectorConfig, SelectMyColorSchemeVariables } from '@dataconnect/generated';
+import { useSelectMyColorScheme } from '@dataconnect/generated/react'
 
-export default function SelectMyThemeComponent() {
+export default function SelectMyColorSchemeComponent() {
   // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
-  const mutation = useSelectMyTheme();
+  const mutation = useSelectMyColorScheme();
 
   // You can also pass in a `DataConnect` instance to the Mutation hook function.
   const dataConnect = getDataConnect(connectorConfig);
-  const mutation = useSelectMyTheme(dataConnect);
+  const mutation = useSelectMyColorScheme(dataConnect);
 
   // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
   const options = {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
-  const mutation = useSelectMyTheme(options);
+  const mutation = useSelectMyColorScheme(options);
 
   // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
   const dataConnect = getDataConnect(connectorConfig);
   const options = {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
-  const mutation = useSelectMyTheme(dataConnect, options);
+  const mutation = useSelectMyColorScheme(dataConnect, options);
 
   // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
-  // The `useSelectMyTheme` Mutation requires an argument of type `SelectMyThemeVariables`:
-  const selectMyThemeVars: SelectMyThemeVariables = {
-    themeId: ..., 
+  // The `useSelectMyColorScheme` Mutation requires an argument of type `SelectMyColorSchemeVariables`:
+  const selectMyColorSchemeVars: SelectMyColorSchemeVariables = {
+    colorSchemeId: ..., 
   };
-  mutation.mutate(selectMyThemeVars);
+  mutation.mutate(selectMyColorSchemeVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ themeId: ..., });
+  mutation.mutate({ colorSchemeId: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
-  mutation.mutate(selectMyThemeVars, options);
+  mutation.mutate(selectMyColorSchemeVars, options);
 
   // Then, you can render your component dynamically based on the status of the Mutation.
   if (mutation.isPending) {
@@ -1625,61 +1636,61 @@ export default function SelectMyThemeComponent() {
 }
 ```
 
-## ClearMyTheme
-You can execute the `ClearMyTheme` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+## ClearMyColorScheme
+You can execute the `ClearMyColorScheme` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
 ```javascript
-useClearMyTheme(options?: useDataConnectMutationOptions<ClearMyThemeData, FirebaseError, void>): UseDataConnectMutationResult<ClearMyThemeData, undefined>;
+useClearMyColorScheme(options?: useDataConnectMutationOptions<ClearMyColorSchemeData, FirebaseError, void>): UseDataConnectMutationResult<ClearMyColorSchemeData, undefined>;
 ```
 You can also pass in a `DataConnect` instance to the Mutation hook function.
 ```javascript
-useClearMyTheme(dc: DataConnect, options?: useDataConnectMutationOptions<ClearMyThemeData, FirebaseError, void>): UseDataConnectMutationResult<ClearMyThemeData, undefined>;
+useClearMyColorScheme(dc: DataConnect, options?: useDataConnectMutationOptions<ClearMyColorSchemeData, FirebaseError, void>): UseDataConnectMutationResult<ClearMyColorSchemeData, undefined>;
 ```
 
 ### Variables
-The `ClearMyTheme` Mutation has no variables.
+The `ClearMyColorScheme` Mutation has no variables.
 ### Return Type
-Recall that calling the `ClearMyTheme` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+Recall that calling the `ClearMyColorScheme` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
 
 To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
 
 To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
 
-To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `ClearMyTheme` Mutation is of type `ClearMyThemeData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `ClearMyColorScheme` Mutation is of type `ClearMyColorSchemeData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
-export interface ClearMyThemeData {
+export interface ClearMyColorSchemeData {
   user_update?: User_Key | null;
 }
 ```
 
 To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
 
-### Using `ClearMyTheme`'s Mutation hook function
+### Using `ClearMyColorScheme`'s Mutation hook function
 
 ```javascript
 import { getDataConnect } from 'firebase/data-connect';
 import { connectorConfig } from '@dataconnect/generated';
-import { useClearMyTheme } from '@dataconnect/generated/react'
+import { useClearMyColorScheme } from '@dataconnect/generated/react'
 
-export default function ClearMyThemeComponent() {
+export default function ClearMyColorSchemeComponent() {
   // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
-  const mutation = useClearMyTheme();
+  const mutation = useClearMyColorScheme();
 
   // You can also pass in a `DataConnect` instance to the Mutation hook function.
   const dataConnect = getDataConnect(connectorConfig);
-  const mutation = useClearMyTheme(dataConnect);
+  const mutation = useClearMyColorScheme(dataConnect);
 
   // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
   const options = {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
-  const mutation = useClearMyTheme(options);
+  const mutation = useClearMyColorScheme(options);
 
   // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
   const dataConnect = getDataConnect(connectorConfig);
   const options = {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
-  const mutation = useClearMyTheme(dataConnect, options);
+  const mutation = useClearMyColorScheme(dataConnect, options);
 
   // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
   mutation.mutate();

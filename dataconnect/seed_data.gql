@@ -1,13 +1,175 @@
 # dataconnect/seed_data.gql
 # LOCAL ONLY — excluded from production deploys and client SDK generation.
-# Re-run any time to reset these rows: theme_upsertMany matches on `id`
-# (Theme's table key), and these ids are fixed, so this is idempotent.
+# Re-run any time to reset these rows: colorScheme_upsert/nested Theme rows
+# match on `id`, and these ids are fixed, so this is idempotent.
+#
+# Each scheme carries HeroUI's base semantic tokens (see
+# @heroui/styles themes/default/variables.css) for both a light and dark
+# variant. Status colors (success/warning/danger) are intentionally left to
+# HeroUI's own defaults, so they aren't set here.
 
-mutation SeedThemes {
-  theme_upsertMany(data: [
-    { id: "00000000-0000-0000-0000-000000000001", name: "Light", background: "#ffffff", foreground: "#171717", isDark: false }
-    { id: "00000000-0000-0000-0000-000000000002", name: "Dark", background: "#0a0a0a", foreground: "#ededed", isDark: true }
-    { id: "00000000-0000-0000-0000-000000000003", name: "Slate", background: "#1e293b", foreground: "#e2e8f0", isDark: true }
-    { id: "00000000-0000-0000-0000-000000000004", name: "Sepia", background: "#f4ecd8", foreground: "#433422", isDark: false }
-  ])
+mutation SeedColorSchemes @transaction {
+  ocean: colorScheme_upsert(data: {
+    id: "00000000-0000-0000-0000-000000000010"
+    name: "Ocean"
+    themes_on_colorScheme: [
+      {
+        id: "00000000-0000-0000-0000-000000000011"
+        isDark: false
+        background: "#f0f9fa"
+        foreground: "#0f2a2e"
+        surface: "#ffffff"
+        surfaceForeground: "#0f2a2e"
+        overlay: "#ffffff"
+        overlayForeground: "#0f2a2e"
+        muted: "#5f7c80"
+        default: "#e0f2f4"
+        defaultForeground: "#0f2a2e"
+        accent: "#0891b2"
+        accentForeground: "#ffffff"
+        border: "#cde8ea"
+        separator: "#cde8ea"
+      }
+      {
+        id: "00000000-0000-0000-0000-000000000012"
+        isDark: true
+        background: "#041619"
+        foreground: "#e0f7fa"
+        surface: "#0b2529"
+        surfaceForeground: "#e0f7fa"
+        overlay: "#0b2529"
+        overlayForeground: "#e0f7fa"
+        muted: "#7fa3a8"
+        default: "#123338"
+        defaultForeground: "#e0f7fa"
+        accent: "#22d3ee"
+        accentForeground: "#041619"
+        border: "#123338"
+        separator: "#123338"
+      }
+    ]
+  })
+
+  forest: colorScheme_upsert(data: {
+    id: "00000000-0000-0000-0000-000000000020"
+    name: "Forest"
+    themes_on_colorScheme: [
+      {
+        id: "00000000-0000-0000-0000-000000000021"
+        isDark: false
+        background: "#f3f9f2"
+        foreground: "#14261a"
+        surface: "#ffffff"
+        surfaceForeground: "#14261a"
+        overlay: "#ffffff"
+        overlayForeground: "#14261a"
+        muted: "#5c7a63"
+        default: "#e5f2e3"
+        defaultForeground: "#14261a"
+        accent: "#16a34a"
+        accentForeground: "#ffffff"
+        border: "#d7ead3"
+        separator: "#d7ead3"
+      }
+      {
+        id: "00000000-0000-0000-0000-000000000022"
+        isDark: true
+        background: "#0a150d"
+        foreground: "#e6f4e3"
+        surface: "#142218"
+        surfaceForeground: "#e6f4e3"
+        overlay: "#142218"
+        overlayForeground: "#e6f4e3"
+        muted: "#86a68c"
+        default: "#1c3122"
+        defaultForeground: "#e6f4e3"
+        accent: "#4ade80"
+        accentForeground: "#0a150d"
+        border: "#1c3122"
+        separator: "#1c3122"
+      }
+    ]
+  })
+
+  sunset: colorScheme_upsert(data: {
+    id: "00000000-0000-0000-0000-000000000030"
+    name: "Sunset"
+    themes_on_colorScheme: [
+      {
+        id: "00000000-0000-0000-0000-000000000031"
+        isDark: false
+        background: "#fff8f2"
+        foreground: "#2b1810"
+        surface: "#ffffff"
+        surfaceForeground: "#2b1810"
+        overlay: "#ffffff"
+        overlayForeground: "#2b1810"
+        muted: "#8a6a5c"
+        default: "#ffe9d9"
+        defaultForeground: "#2b1810"
+        accent: "#ea580c"
+        accentForeground: "#ffffff"
+        border: "#ffdcc2"
+        separator: "#ffdcc2"
+      }
+      {
+        id: "00000000-0000-0000-0000-000000000032"
+        isDark: true
+        background: "#1a0f0a"
+        foreground: "#ffe8d9"
+        surface: "#2b1810"
+        surfaceForeground: "#ffe8d9"
+        overlay: "#2b1810"
+        overlayForeground: "#ffe8d9"
+        muted: "#b08a72"
+        default: "#3a2317"
+        defaultForeground: "#ffe8d9"
+        accent: "#fb923c"
+        accentForeground: "#1a0f0a"
+        border: "#3a2317"
+        separator: "#3a2317"
+      }
+    ]
+  })
+
+  grape: colorScheme_upsert(data: {
+    id: "00000000-0000-0000-0000-000000000040"
+    name: "Grape"
+    themes_on_colorScheme: [
+      {
+        id: "00000000-0000-0000-0000-000000000041"
+        isDark: false
+        background: "#f8f5ff"
+        foreground: "#241832"
+        surface: "#ffffff"
+        surfaceForeground: "#241832"
+        overlay: "#ffffff"
+        overlayForeground: "#241832"
+        muted: "#7c6a8f"
+        default: "#ede5fb"
+        defaultForeground: "#241832"
+        accent: "#9333ea"
+        accentForeground: "#ffffff"
+        border: "#e3d5f7"
+        separator: "#e3d5f7"
+      }
+      {
+        id: "00000000-0000-0000-0000-000000000042"
+        isDark: true
+        background: "#150d1e"
+        foreground: "#ede2fa"
+        surface: "#241832"
+        surfaceForeground: "#ede2fa"
+        overlay: "#241832"
+        overlayForeground: "#ede2fa"
+        muted: "#a690b8"
+        default: "#32213f"
+        defaultForeground: "#ede2fa"
+        accent: "#c084fc"
+        accentForeground: "#150d1e"
+        border: "#32213f"
+        separator: "#32213f"
+      }
+    ]
+  })
 }
