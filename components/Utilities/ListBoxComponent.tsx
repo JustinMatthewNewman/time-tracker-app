@@ -74,7 +74,7 @@ export function WorkLogListBox({
         <Tabs.ListContainer className="h-full w-full min-w-0">
           <Tabs.List
             aria-label="Work Logs"
-            className="h-full w-full min-w-0 overflow-hidden border border-default-200 dark:bg-zinc-900"
+            className="h-full w-full min-w-0 overflow-hidden border border-default-200 bg-surface"
           >
             {items.map((item) => (
               <Tabs.Tab
