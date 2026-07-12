@@ -12,7 +12,9 @@ export default function AmbientBackground({ intensity = 1 }: AmbientBackgroundPr
         <>
             <style>{`
                 :root {
-                    --vignette:        #f4f3ff;
+                    /* Tied to the active color scheme (see DbThemeApplier) rather
+                       than a fixed hex, so the ambient glow re-themes with it. */
+                    --vignette:        var(--background);
                     --dot-color:       rgba(0,0,0,0.07);
                     --orb1-opacity:    0.30;
                     --orb2-opacity:    0.25;
@@ -22,7 +24,6 @@ export default function AmbientBackground({ intensity = 1 }: AmbientBackgroundPr
                 }
 
                 .dark {
-                    --vignette:        #06060f;
                     --dot-color:       rgba(255,255,255,0.07);
                     --orb1-opacity:    0.55;
                     --orb2-opacity:    0.45;
@@ -87,16 +88,21 @@ export default function AmbientBackground({ intensity = 1 }: AmbientBackgroundPr
                         </radialGradient>
                     </defs>
 
-                    <circle cx="15%" cy="20%" r="380" fill="#7c3aed" filter="url(#blob-blur)"
-                        style={{ opacity: "calc(var(--orb1-opacity) * var(--intensity))", animation: "drift1 18s ease-in-out infinite alternate" }} />
-                    <circle cx="80%" cy="10%" r="320" fill="#4f46e5" filter="url(#blob-blur)"
-                        style={{ opacity: "calc(var(--orb2-opacity) * var(--intensity))", animation: "drift2 22s ease-in-out infinite alternate" }} />
-                    <circle cx="70%" cy="55%" r="280" fill="#0891b2" filter="url(#blob-blur)"
-                        style={{ opacity: "calc(var(--orb3-opacity) * var(--intensity))", animation: "drift3 26s ease-in-out infinite alternate" }} />
-                    <circle cx="20%" cy="80%" r="350" fill="#a21caf" filter="url(#blob-blur)"
-                        style={{ opacity: "calc(var(--orb4-opacity) * var(--intensity))", animation: "drift4 20s ease-in-out infinite alternate" }} />
-                    <circle cx="50%" cy="45%" r="160" fill="#6d28d9" filter="url(#blob-blur)"
-                        style={{ opacity: "calc(var(--orb5-opacity) * var(--intensity))", animation: "drift5 14s ease-in-out infinite alternate" }} />
+                    {/*
+                        All five orbs are the theme's --accent color; hue-rotate gives
+                        them variety without hardcoding hex values that would clash
+                        once a color scheme other than the original purple is picked.
+                    */}
+                    <circle cx="15%" cy="20%" r="380" fill="var(--accent)"
+                        style={{ filter: "url(#blob-blur) hue-rotate(0deg)", opacity: "calc(var(--orb1-opacity) * var(--intensity))", animation: "drift1 18s ease-in-out infinite alternate" }} />
+                    <circle cx="80%" cy="10%" r="320" fill="var(--accent)"
+                        style={{ filter: "url(#blob-blur) hue-rotate(-30deg)", opacity: "calc(var(--orb2-opacity) * var(--intensity))", animation: "drift2 22s ease-in-out infinite alternate" }} />
+                    <circle cx="70%" cy="55%" r="280" fill="var(--accent)"
+                        style={{ filter: "url(#blob-blur) hue-rotate(45deg)", opacity: "calc(var(--orb3-opacity) * var(--intensity))", animation: "drift3 26s ease-in-out infinite alternate" }} />
+                    <circle cx="20%" cy="80%" r="350" fill="var(--accent)"
+                        style={{ filter: "url(#blob-blur) hue-rotate(-50deg)", opacity: "calc(var(--orb4-opacity) * var(--intensity))", animation: "drift4 20s ease-in-out infinite alternate" }} />
+                    <circle cx="50%" cy="45%" r="160" fill="var(--accent)"
+                        style={{ filter: "url(#blob-blur) hue-rotate(20deg)", opacity: "calc(var(--orb5-opacity) * var(--intensity))", animation: "drift5 14s ease-in-out infinite alternate" }} />
 
                     <rect x="0" y="0" width="100%" height="100%"
                         fill="transparent" filter="url(#noise)" opacity="0.04" />
