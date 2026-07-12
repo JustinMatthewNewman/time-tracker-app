@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Tabs, Button, Label, Dropdown } from "@heroui/react";
 import { Ellipsis, Pencil } from "@gravity-ui/icons";
 import type { Key } from "react-aria-components";
-import { useWorkLogs } from "@/hooks/useWorkLogs";
+import type { useWorkLogs } from "@/hooks/useWorkLogs";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
 import { NewWorkLogDialog } from "./NewWorkLogDialog";
 import { RenameWorkLogDialog } from "./RenameWorkLogDialog";
@@ -14,8 +14,25 @@ function formatDate(isoDate: string) {
   return new Date(isoDate).toISOString().split("T")[0]; // yyyy-mm-dd
 }
 
-export function WorkLogListBox() {
-  const { workLogs, loading, error, createWorkLog, renameWorkLog, deleteWorkLog } = useWorkLogs();
+// Accepts useWorkLogs()'s result as props rather than calling the hook
+// itself — WorkLogTimeEntryCardLayout (the parent) also needs the selected
+// work log's name/date for its header, and useWorkLogs holds its state in a
+// plain useState, not a shared context, so two independent calls would each
+// have their own copy and go stale relative to each other (e.g. a work log
+// created here would never show up in the parent's copy).
+type WorkLogListBoxProps = Pick<
+  ReturnType<typeof useWorkLogs>,
+  "workLogs" | "loading" | "error" | "createWorkLog" | "renameWorkLog" | "deleteWorkLog"
+>;
+
+export function WorkLogListBox({
+  workLogs,
+  loading,
+  error,
+  createWorkLog,
+  renameWorkLog,
+  deleteWorkLog,
+}: WorkLogListBoxProps) {
   const { selectedWorkLogId, setSelectedWorkLogId } = useSelectedWorkLog();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);

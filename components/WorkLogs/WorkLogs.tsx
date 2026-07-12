@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Switch } from "@heroui/react";
 import WorkLogTimeEntryCard from "./WorkLogTimeEntryCard";
 import TimeEntryForm from "./TimeEntryForm";
 import AmbientBackground from "@/components/AmbientBackground";
@@ -36,21 +35,15 @@ function WorkLogs() {
             <AmbientBackground intensity={0.85} />
 
             <div className="relative z-10 flex h-full min-h-0 flex-col gap-4 overflow-hidden">
-                <WorkLogTimeEntryCard showBreakdown={showBreakdown} />
+                <WorkLogTimeEntryCard
+                    showBreakdown={showBreakdown}
+                    onToggleBreakdown={setShowBreakdown}
+                />
 
                 <TimeEntryForm
                     isOpen={isFormOpen}
                     onClose={() => setIsFormOpen(false)}
                 />
-                <div className="flex shrink-0 items-center justify-end">
-                    <Switch isSelected={showBreakdown} onChange={setShowBreakdown}>
-                    <Switch.Content>
-                        <Switch.Control>
-                        <Switch.Thumb />
-                        </Switch.Control>
-                    </Switch.Content>
-                    </Switch>
-                </div>
             </div>
         </div>
     );

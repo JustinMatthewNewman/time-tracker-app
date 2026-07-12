@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { Card } from "@heroui/react";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { groupByTicket, formatDuration } from "@/lib/timeTotals";
 
@@ -12,47 +11,48 @@ interface TicketBreakdownProps {
   error?: string | null;
 }
 
+// Renders as plain content rather than its own Card — it's shown nested
+// inside WorkLogTimeEntryCardLayout's shared card, alongside the entries
+// table view, behind the same sticky header.
 export function TicketBreakdown({ hasSelection, entries, loading, error }: TicketBreakdownProps) {
   const totals = useMemo(() => groupByTicket(entries), [entries]);
 
   if (!hasSelection) {
     return (
-      <Card className="p-8 text-center">
+      <div className="p-8 text-center">
         <p className="text-foreground/60">Select a work log from the sidebar to view its ticket breakdown.</p>
-      </Card>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Card className="p-6 bg-red-50 border border-red-200">
+      <div className="p-6">
         <p className="text-red-700 text-sm">{error}</p>
-      </Card>
+      </div>
     );
   }
 
   if (loading) {
     return (
-      <Card className="p-8 text-center">
+      <div className="p-8 text-center">
         <p className="text-foreground/60">Loading ticket breakdown...</p>
-      </Card>
+      </div>
     );
   }
 
   if (totals.length === 0) {
     return (
-      <Card className="p-8 text-center">
+      <div className="p-8 text-center">
         <p className="text-foreground/60">No time entries for this work log.</p>
-      </Card>
+      </div>
     );
   }
 
   const grandTotalMinutes = totals.reduce((sum, t) => sum + t.totalMinutes, 0);
 
   return (
-    <Card className="p-4">
-      <h2 className="text-lg font-semibold mb-3">Ticket Breakdown</h2>
-
+    <div className="p-4">
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border">
           <thead>
@@ -95,7 +95,7 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
           </tfoot>
         </table>
       </div>
-    </Card>
+    </div>
   );
 }
 
