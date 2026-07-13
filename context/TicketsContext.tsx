@@ -34,6 +34,7 @@ type TicketsContextType = {
   error: string | null;
   createTicket: (data: CreateTicketInput) => Promise<Ticket>;
   updateTicketDetails: (data: UpdateTicketInput) => Promise<Ticket>;
+  ensureTicketsExist: (ticketNumbers: number[]) => Promise<void>;
 };
 
 const TicketsContext = createContext<TicketsContextType | null>(null);
@@ -121,8 +122,31 @@ export function TicketsProvider({ children }: { children: React.ReactNode }) {
     [refetch]
   );
 
+  // Bulk-import path (parsed work log upload): guarantees a Ticket row exists
+  // for every referenced number, without touching office/title/link on any
+  // that already exist. Only ticketNumber is ever sent for a genuinely new
+  // row — parsed text carries no office info, and there's nothing else to
+  // set, so there's no risk of clobbering data that isn't there yet.
+  const ensureTicketsExist = useCallback(
+    async (ticketNumbers: number[]) => {
+      const distinct = Array.from(new Set(ticketNumbers));
+      if (distinct.length === 0) return;
+
+      const current = await refetch();
+      const known = new Set(current.map((t) => t.ticketNumber));
+      const missing = distinct.filter((n) => !known.has(n));
+      if (missing.length === 0) return;
+
+      await Promise.all(missing.map((ticketNumber) => upsertTicket({ ticketNumber })));
+      await refetch();
+    },
+    [refetch]
+  );
+
   return (
-    <TicketsContext.Provider value={{ tickets, loading, error, createTicket, updateTicketDetails }}>
+    <TicketsContext.Provider
+      value={{ tickets, loading, error, createTicket, updateTicketDetails, ensureTicketsExist }}
+    >
       {children}
     </TicketsContext.Provider>
   );

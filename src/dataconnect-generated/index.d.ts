@@ -26,12 +26,13 @@ export interface CreateTimeEntryData {
 
 export interface CreateTimeEntryVariables {
   userId: UUIDString;
+  workLogId?: UUIDString | null;
   startTime: TimestampString;
   endTime: TimestampString;
   date: DateString;
   createdAt: TimestampString;
   description?: string | null;
-  officeNumber?: string | null;
+  ticketNumber?: number | null;
 }
 
 export interface CreateUserFromGoogleData {
@@ -79,6 +80,18 @@ export interface CreateWorkLogData {
   seg30: TimeEntry_Key;
   seg31: TimeEntry_Key;
   seg32: TimeEntry_Key;
+}
+
+export interface CreateWorkLogOnlyData {
+  workLog_insert: WorkLog_Key;
+}
+
+export interface CreateWorkLogOnlyVariables {
+  userId: UUIDString;
+  workLogId: UUIDString;
+  name: string;
+  description?: string | null;
+  workLogDate: TimestampString;
 }
 
 export interface CreateWorkLogVariables {
@@ -409,6 +422,18 @@ export const createTimeEntryRef: CreateTimeEntryRef;
 
 export function createTimeEntry(vars: CreateTimeEntryVariables): MutationPromise<CreateTimeEntryData, CreateTimeEntryVariables>;
 export function createTimeEntry(dc: DataConnect, vars: CreateTimeEntryVariables): MutationPromise<CreateTimeEntryData, CreateTimeEntryVariables>;
+
+interface CreateWorkLogOnlyRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateWorkLogOnlyVariables): MutationRef<CreateWorkLogOnlyData, CreateWorkLogOnlyVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: CreateWorkLogOnlyVariables): MutationRef<CreateWorkLogOnlyData, CreateWorkLogOnlyVariables>;
+  operationName: string;
+}
+export const createWorkLogOnlyRef: CreateWorkLogOnlyRef;
+
+export function createWorkLogOnly(vars: CreateWorkLogOnlyVariables): MutationPromise<CreateWorkLogOnlyData, CreateWorkLogOnlyVariables>;
+export function createWorkLogOnly(dc: DataConnect, vars: CreateWorkLogOnlyVariables): MutationPromise<CreateWorkLogOnlyData, CreateWorkLogOnlyVariables>;
 
 interface UpdateTimeEntryRef {
   /* Allow users to create refs without passing in DataConnect */
