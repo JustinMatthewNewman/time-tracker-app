@@ -112,7 +112,7 @@ function ProfileAuthSection({
                 <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                     <Bell className="size-4" /> Preferences
                 </h2>
-                <div className="flex flex-col gap-3">
+                {/* <div className="flex flex-col gap-3">
                     {DEFAULT_PREFERENCES.map(({ key, label, description }) => (
                         <div key={key} className="flex items-center justify-between gap-4 p-3 bg-default-100 rounded-lg">
                             <div className="min-w-0">
@@ -132,7 +132,7 @@ function ProfileAuthSection({
                             </Switch>
                         </div>
                     ))}
-                </div>
+                </div> */}
             </div>
 
             <div className="border-t border-default-200 my-6"></div>

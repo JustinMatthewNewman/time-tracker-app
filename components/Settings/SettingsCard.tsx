@@ -41,11 +41,11 @@ function SettingsCard() {
         <p className="mt-1 text-sm text-foreground/60">Customize your time tracking experience</p>
       </div>
 
-      {/* Working Hours */}
-      <TimeRangeSettings />
+      {/* Working Hours
+      <TimeRangeSettings /> */}
 
       {/* Notifications */}
-      <Card className="p-6">
+      {/* <Card className="p-6">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
           <Bell className="size-4" /> Notifications
         </h2>
@@ -88,7 +88,7 @@ function SettingsCard() {
             </div>
           )}
         </div>
-      </Card>
+      </Card> */}
 
       {/* Appearance */}
       <Card className="p-6">
@@ -165,7 +165,7 @@ function SettingsCard() {
       </Card>
 
       {/* Data & Privacy (mocked) */}
-      <Card className="p-6">
+      {/* <Card className="p-6">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
           <ShieldKeyhole className="size-4" /> Data & Privacy
         </h2>
@@ -187,7 +187,7 @@ function SettingsCard() {
             <Tooltip.Content>Coming soon</Tooltip.Content>
           </Tooltip>
         </div>
-      </Card>
+      </Card> */}
 
       {/* About */}
       <Card className="p-6">
