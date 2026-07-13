@@ -41,6 +41,20 @@ exports.createTimeEntry = function createTimeEntry(dcOrVars, vars) {
 }
 ;
 
+const createWorkLogOnlyRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateWorkLogOnly', inputVars);
+}
+createWorkLogOnlyRef.operationName = 'CreateWorkLogOnly';
+exports.createWorkLogOnlyRef = createWorkLogOnlyRef;
+
+exports.createWorkLogOnly = function createWorkLogOnly(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createWorkLogOnlyRef(dcInstance, inputVars));
+}
+;
+
 const updateTimeEntryRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

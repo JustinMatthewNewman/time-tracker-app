@@ -3,9 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { QueryFetchPolicy } from "firebase/data-connect";
 import { useAuth } from "./useAuth";
+import { useTickets } from "@/context/TicketsContext";
+import type { ParsedHourBlock } from "@/lib/workLogParser";
 import {
   useGetMyUser,
   useCreateWorkLog,
+  useCreateWorkLogOnly,
+  useCreateTimeEntry,
   useUpdateWorkLog,
   useDeleteWorkLog,
 } from "@/src/dataconnect-generated/react";
@@ -13,6 +17,8 @@ import { listWorkLogs } from "@/src/dataconnect-generated";
 import type {
   ListWorkLogsData,
   CreateWorkLogVariables,
+  CreateWorkLogOnlyVariables,
+  CreateTimeEntryVariables,
   UpdateWorkLogVariables,
   DeleteWorkLogVariables,
 } from "@/src/dataconnect-generated";
@@ -35,11 +41,23 @@ function toWorkLogData(logs: ListWorkLogsData["workLogs"]): WorkLogData[] {
   }));
 }
 
+// Turns a parsed block's minutes-since-midnight offset into an absolute
+// Timestamp by shifting the work log's local-midnight ISO instant — the same
+// approach CreateWorkLog's server-side `vars.workLogDate + duration(...)`
+// takes, just computed client-side since these offsets are arbitrary
+// (not fixed 15-min increments).
+function addMinutesToIso(workLogDateIso: string, minutes: number): string {
+  return new Date(new Date(workLogDateIso).getTime() + minutes * 60_000).toISOString();
+}
+
 export function useWorkLogs() {
   const { user } = useAuth();
+  const { ensureTicketsExist } = useTickets();
 
   const myUserQuery = useGetMyUser({ enabled: !!user?.uid });
   const createMutation = useCreateWorkLog();
+  const createWorkLogOnlyMutation = useCreateWorkLogOnly();
+  const createTimeEntryMutation = useCreateTimeEntry();
   const updateMutation = useUpdateWorkLog();
   const deleteMutation = useDeleteWorkLog();
 
@@ -75,19 +93,60 @@ export function useWorkLogs() {
   }, [refetch]);
 
   const createWorkLog = useCallback(
-    async (data: { name: string; workLogDate: string; description?: string }) => {
+    async (data: {
+      name: string;
+      workLogDate: string;
+      description?: string;
+      // Present when the user pasted/uploaded a work log in NewWorkLogDialog.
+      // Replaces the usual fixed 15-min blank template with exactly the
+      // entries parsed from their text.
+      parsedBlocks?: ParsedHourBlock[];
+    }) => {
       const myUserId = myUserQuery.data?.user?.id;
       if (!myUserId) throw new Error("User profile not found");
 
       const workLogId = crypto.randomUUID();
+      const hasParsedEntries = !!data.parsedBlocks?.some((block) => block.entries.length > 0);
 
-      await createMutation.mutateAsync({
-        userId: myUserId,
-        workLogId,
-        name: data.name,
-        workLogDate: data.workLogDate,
-        description: data.description || undefined,
-      } as CreateWorkLogVariables);
+      if (hasParsedEntries) {
+        await createWorkLogOnlyMutation.mutateAsync({
+          userId: myUserId,
+          workLogId,
+          name: data.name,
+          workLogDate: data.workLogDate,
+          description: data.description || undefined,
+        } as CreateWorkLogOnlyVariables);
+
+        const entries = data.parsedBlocks!.flatMap((block) => block.entries);
+        const ticketNumbers = entries
+          .map((entry) => entry.ticketNumber)
+          .filter((n): n is number => n != null);
+        await ensureTicketsExist(ticketNumbers);
+
+        const now = new Date().toISOString();
+        await Promise.all(
+          entries.map((entry) =>
+            createTimeEntryMutation.mutateAsync({
+              userId: myUserId,
+              workLogId,
+              startTime: addMinutesToIso(data.workLogDate, entry.startMinutes),
+              endTime: addMinutesToIso(data.workLogDate, entry.endMinutes),
+              date: data.workLogDate,
+              createdAt: now,
+              description: entry.description || undefined,
+              ticketNumber: entry.ticketNumber ?? undefined,
+            } as CreateTimeEntryVariables)
+          )
+        );
+      } else {
+        await createMutation.mutateAsync({
+          userId: myUserId,
+          workLogId,
+          name: data.name,
+          workLogDate: data.workLogDate,
+          description: data.description || undefined,
+        } as CreateWorkLogVariables);
+      }
 
       await refetch();
       // Data Connect always returns UUIDs with hyphens stripped, but
@@ -97,7 +156,7 @@ export function useWorkLogs() {
       // so the new entry silently never appears selected.
       return { workLogId: workLogId.replace(/-/g, "") };
     },
-    [myUserQuery.data, createMutation, refetch]
+    [myUserQuery.data, createMutation, createWorkLogOnlyMutation, createTimeEntryMutation, ensureTicketsExist, refetch]
   );
 
   const renameWorkLog = useCallback(

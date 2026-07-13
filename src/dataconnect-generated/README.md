@@ -23,6 +23,7 @@ This README will guide you through the process of using the generated JavaScript
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*CreateTimeEntry*](#createtimeentry)
+  - [*CreateWorkLogOnly*](#createworklogonly)
   - [*UpdateTimeEntry*](#updatetimeentry)
   - [*UpdateTimeEntryClearTicket*](#updatetimeentryclearticket)
   - [*DeleteTimeEntry*](#deletetimeentry)
@@ -1368,12 +1369,13 @@ The `CreateTimeEntry` mutation requires an argument of type `CreateTimeEntryVari
 ```typescript
 export interface CreateTimeEntryVariables {
   userId: UUIDString;
+  workLogId?: UUIDString | null;
   startTime: TimestampString;
   endTime: TimestampString;
   date: DateString;
   createdAt: TimestampString;
   description?: string | null;
-  officeNumber?: string | null;
+  ticketNumber?: number | null;
 }
 ```
 ### Return Type
@@ -1394,19 +1396,20 @@ import { connectorConfig, createTimeEntry, CreateTimeEntryVariables } from '@dat
 // The `CreateTimeEntry` mutation requires an argument of type `CreateTimeEntryVariables`:
 const createTimeEntryVars: CreateTimeEntryVariables = {
   userId: ..., 
+  workLogId: ..., // optional
   startTime: ..., 
   endTime: ..., 
   date: ..., 
   createdAt: ..., 
   description: ..., // optional
-  officeNumber: ..., // optional
+  ticketNumber: ..., // optional
 };
 
 // Call the `createTimeEntry()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createTimeEntry(createTimeEntryVars);
 // Variables can be defined inline as well.
-const { data } = await createTimeEntry({ userId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., officeNumber: ..., });
+const { data } = await createTimeEntry({ userId: ..., workLogId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., ticketNumber: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1430,18 +1433,19 @@ import { connectorConfig, createTimeEntryRef, CreateTimeEntryVariables } from '@
 // The `CreateTimeEntry` mutation requires an argument of type `CreateTimeEntryVariables`:
 const createTimeEntryVars: CreateTimeEntryVariables = {
   userId: ..., 
+  workLogId: ..., // optional
   startTime: ..., 
   endTime: ..., 
   date: ..., 
   createdAt: ..., 
   description: ..., // optional
-  officeNumber: ..., // optional
+  ticketNumber: ..., // optional
 };
 
 // Call the `createTimeEntryRef()` function to get a reference to the mutation.
 const ref = createTimeEntryRef(createTimeEntryVars);
 // Variables can be defined inline as well.
-const ref = createTimeEntryRef({ userId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., officeNumber: ..., });
+const ref = createTimeEntryRef({ userId: ..., workLogId: ..., startTime: ..., endTime: ..., date: ..., createdAt: ..., description: ..., ticketNumber: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1457,6 +1461,127 @@ console.log(data.timeEntry_insert);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.timeEntry_insert);
+});
+```
+
+## CreateWorkLogOnly
+You can execute the `CreateWorkLogOnly` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+createWorkLogOnly(vars: CreateWorkLogOnlyVariables): MutationPromise<CreateWorkLogOnlyData, CreateWorkLogOnlyVariables>;
+
+interface CreateWorkLogOnlyRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateWorkLogOnlyVariables): MutationRef<CreateWorkLogOnlyData, CreateWorkLogOnlyVariables>;
+}
+export const createWorkLogOnlyRef: CreateWorkLogOnlyRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+createWorkLogOnly(dc: DataConnect, vars: CreateWorkLogOnlyVariables): MutationPromise<CreateWorkLogOnlyData, CreateWorkLogOnlyVariables>;
+
+interface CreateWorkLogOnlyRef {
+  ...
+  (dc: DataConnect, vars: CreateWorkLogOnlyVariables): MutationRef<CreateWorkLogOnlyData, CreateWorkLogOnlyVariables>;
+}
+export const createWorkLogOnlyRef: CreateWorkLogOnlyRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createWorkLogOnlyRef:
+```typescript
+const name = createWorkLogOnlyRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `CreateWorkLogOnly` mutation requires an argument of type `CreateWorkLogOnlyVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreateWorkLogOnlyVariables {
+  userId: UUIDString;
+  workLogId: UUIDString;
+  name: string;
+  description?: string | null;
+  workLogDate: TimestampString;
+}
+```
+### Return Type
+Recall that executing the `CreateWorkLogOnly` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `CreateWorkLogOnlyData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface CreateWorkLogOnlyData {
+  workLog_insert: WorkLog_Key;
+}
+```
+### Using `CreateWorkLogOnly`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createWorkLogOnly, CreateWorkLogOnlyVariables } from '@dataconnect/generated';
+
+// The `CreateWorkLogOnly` mutation requires an argument of type `CreateWorkLogOnlyVariables`:
+const createWorkLogOnlyVars: CreateWorkLogOnlyVariables = {
+  userId: ..., 
+  workLogId: ..., 
+  name: ..., 
+  description: ..., // optional
+  workLogDate: ..., 
+};
+
+// Call the `createWorkLogOnly()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await createWorkLogOnly(createWorkLogOnlyVars);
+// Variables can be defined inline as well.
+const { data } = await createWorkLogOnly({ userId: ..., workLogId: ..., name: ..., description: ..., workLogDate: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await createWorkLogOnly(dataConnect, createWorkLogOnlyVars);
+
+console.log(data.workLog_insert);
+
+// Or, you can use the `Promise` API.
+createWorkLogOnly(createWorkLogOnlyVars).then((response) => {
+  const data = response.data;
+  console.log(data.workLog_insert);
+});
+```
+
+### Using `CreateWorkLogOnly`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, createWorkLogOnlyRef, CreateWorkLogOnlyVariables } from '@dataconnect/generated';
+
+// The `CreateWorkLogOnly` mutation requires an argument of type `CreateWorkLogOnlyVariables`:
+const createWorkLogOnlyVars: CreateWorkLogOnlyVariables = {
+  userId: ..., 
+  workLogId: ..., 
+  name: ..., 
+  description: ..., // optional
+  workLogDate: ..., 
+};
+
+// Call the `createWorkLogOnlyRef()` function to get a reference to the mutation.
+const ref = createWorkLogOnlyRef(createWorkLogOnlyVars);
+// Variables can be defined inline as well.
+const ref = createWorkLogOnlyRef({ userId: ..., workLogId: ..., name: ..., description: ..., workLogDate: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = createWorkLogOnlyRef(dataConnect, createWorkLogOnlyVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.workLog_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.workLog_insert);
 });
 ```
 

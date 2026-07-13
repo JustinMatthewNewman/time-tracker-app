@@ -11,21 +11,51 @@ mutation CreateUserFromGoogle($googleUid: String!, $username: String!, $email: S
 
 mutation CreateTimeEntry(
   $userId: UUID!
+  $workLogId: UUID
   $startTime: Timestamp!
   $endTime: Timestamp!
   $date: Date!
   $createdAt: Timestamp!
   $description: String
-  $officeNumber: String
+  $ticketNumber: Int
 ) @auth(level: USER) {
   timeEntry_insert(data: {
     user: { id: $userId }
+    workLogId: $workLogId
     startTime: $startTime
     endTime: $endTime
     date: $date
     description: $description
-    officeNumber: $officeNumber
+    ticketTicketNumber: $ticketNumber
     createdAt: $createdAt
+  })
+}
+
+# Work log with no starter time entries — used by the parsed-upload flow in
+# NewWorkLogDialog, which creates its own entries from the parsed text
+# (arbitrary times/durations) instead of the fixed 15-min template CreateWorkLog
+# below always seeds.
+mutation CreateWorkLogOnly(
+  $userId: UUID!
+  $workLogId: UUID!
+  $name: String!
+  $description: String
+  $workLogDate: Timestamp!
+) @auth(level: USER) @transaction {
+  query @redact {
+    user(key: { id: $userId })
+      @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to create work log for this user") {
+      id
+      googleUid
+    }
+  }
+  workLog_insert(data: {
+    id: $workLogId
+    user: { id: $userId }
+    name: $name
+    description: $description
+    createdAt_expr: "request.time"
+    workLogDate: $workLogDate
   })
 }
 

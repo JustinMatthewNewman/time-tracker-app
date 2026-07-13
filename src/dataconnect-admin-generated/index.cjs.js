@@ -21,6 +21,13 @@ function createTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
 }
 exports.createTimeEntry = createTimeEntry;
 
+function createWorkLogOnly(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('CreateWorkLogOnly', inputVars, inputOpts);
+}
+exports.createWorkLogOnly = createWorkLogOnly;
+
 function updateTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);

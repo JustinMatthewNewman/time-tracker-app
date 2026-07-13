@@ -23,12 +23,13 @@ export interface CreateTimeEntryData {
 
 export interface CreateTimeEntryVariables {
   userId: UUIDString;
+  workLogId?: UUIDString | null;
   startTime: TimestampString;
   endTime: TimestampString;
   date: DateString;
   createdAt: TimestampString;
   description?: string | null;
-  officeNumber?: string | null;
+  ticketNumber?: number | null;
 }
 
 export interface CreateUserFromGoogleData {
@@ -76,6 +77,18 @@ export interface CreateWorkLogData {
   seg30: TimeEntry_Key;
   seg31: TimeEntry_Key;
   seg32: TimeEntry_Key;
+}
+
+export interface CreateWorkLogOnlyData {
+  workLog_insert: WorkLog_Key;
+}
+
+export interface CreateWorkLogOnlyVariables {
+  userId: UUIDString;
+  workLogId: UUIDString;
+  name: string;
+  description?: string | null;
+  workLogDate: TimestampString;
 }
 
 export interface CreateWorkLogVariables {
@@ -392,6 +405,11 @@ export function createUserFromGoogle(vars: CreateUserFromGoogleVariables, option
 export function createTimeEntry(dc: DataConnect, vars: CreateTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateTimeEntryData>>;
 /** Generated Node Admin SDK operation action function for the 'CreateTimeEntry' Mutation. Allow users to pass in custom DataConnect instances. */
 export function createTimeEntry(vars: CreateTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateTimeEntryData>>;
+
+/** Generated Node Admin SDK operation action function for the 'CreateWorkLogOnly' Mutation. Allow users to execute without passing in DataConnect. */
+export function createWorkLogOnly(dc: DataConnect, vars: CreateWorkLogOnlyVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateWorkLogOnlyData>>;
+/** Generated Node Admin SDK operation action function for the 'CreateWorkLogOnly' Mutation. Allow users to pass in custom DataConnect instances. */
+export function createWorkLogOnly(vars: CreateWorkLogOnlyVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateWorkLogOnlyData>>;
 
 /** Generated Node Admin SDK operation action function for the 'UpdateTimeEntry' Mutation. Allow users to execute without passing in DataConnect. */
 export function updateTimeEntry(dc: DataConnect, vars: UpdateTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateTimeEntryData>>;
