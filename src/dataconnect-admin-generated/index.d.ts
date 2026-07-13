@@ -182,6 +182,7 @@ export interface ListMyTimeEntriesData {
     id: UUIDString;
     startTime: TimestampString;
     endTime: TimestampString;
+    description?: string | null;
     ticket?: {
       id: UUIDString;
       ticketNumber: number;

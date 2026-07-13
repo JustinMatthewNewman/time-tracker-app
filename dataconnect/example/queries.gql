@@ -163,6 +163,7 @@ query ListMyTimeEntries @auth(level: USER) {
     id
     startTime
     endTime
+    description
     ticket {
       id
       ticketNumber

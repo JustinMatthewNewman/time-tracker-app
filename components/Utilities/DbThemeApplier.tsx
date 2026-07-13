@@ -43,6 +43,21 @@ export function DbThemeApplier() {
         root.style.removeProperty(cssVar);
       }
     }
+
+    // HeroUI's form fields (Input, SearchField, ComboBox, ...) read their own
+    // --field-background/--field-foreground tokens rather than --surface —
+    // those aren't part of a ColorScheme row and default to a fixed
+    // white/zinc-900 regardless of scheme, so without this override the
+    // search bar and ticket combobox inputs stay theme-agnostic even though
+    // everything else re-themes. Tying them to surface/surfaceForeground
+    // keeps fields visually consistent with Cards under any scheme.
+    if (variant) {
+      root.style.setProperty("--field-background", variant.surface);
+      root.style.setProperty("--field-foreground", variant.surfaceForeground);
+    } else {
+      root.style.removeProperty("--field-background");
+      root.style.removeProperty("--field-foreground");
+    }
   }, [selectedScheme, resolvedTheme]);
 
   return null;

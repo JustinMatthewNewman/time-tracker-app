@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Accordion, Card, Switch } from '@heroui/react'
 import { ChevronDown, ListUl, FileText, Copy, CopyCheck } from '@gravity-ui/icons'
 import ListBoxComponent from '../Utilities/ListBoxComponent'
@@ -26,12 +26,38 @@ function formatWorkLogDate(isoDate: string) {
 function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }: WorkLogTimeEntryCardLayoutProps) {
   const { timeSlots } = useTimeRange()
   const { isOpen } = useSidebar();
-  const { selectedWorkLogId } = useSelectedWorkLog();
+  const { selectedWorkLogId, focusEntryId, setFocusEntryId } = useSelectedWorkLog();
   const { entries, loading, error, refetch } = useTimeEntriesByWorkLog(selectedWorkLogId);
   const { workLogs, loading: workLogsLoading, error: workLogsError, createWorkLog, renameWorkLog, deleteWorkLog } = useWorkLogs();
   const selectedWorkLog = workLogs.find((log) => log.id === selectedWorkLogId) ?? null;
 
   const [copiedHour, setCopiedHour] = useState<number | null>(null);
+
+  // Which hour blocks are expanded — lifted out of the Accordion so a search
+  // result (see GlobalSearch/SelectedWorkLogContext.focusEntryId) can force
+  // the entry's hour open instead of leaving the user to find it themselves.
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+
+  // Genuinely effectful (not derivable during render): entries arrive
+  // asynchronously from a separate fetch, and this also schedules a timer.
+  useEffect(() => {
+    if (!focusEntryId) return;
+    const target = entries.find((entry) => entry.id === focusEntryId);
+    if (!target) return; // not in this work log, or still loading
+
+    // Replaces rather than adds to the existing set — the Accordion defaults
+    // to single-expand (allowsMultipleExpanded isn't set), so a search jump
+    // should honor that and swap to the target hour rather than stacking it
+    // on top of whatever else happened to be open.
+    const hourKey = String(new Date(target.startTime).getHours());
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setExpandedKeys((prev) => (prev.size === 1 && prev.has(hourKey) ? prev : new Set([hourKey])));
+
+    // One-shot: clear it so re-expanding/collapsing the same hour later
+    // doesn't keep snapping back open.
+    const timeout = setTimeout(() => setFocusEntryId(null), 2000);
+    return () => clearTimeout(timeout);
+  }, [focusEntryId, entries, setFocusEntryId]);
 
   const handleCopyHour = async (hour: number, hourEntries: WorkLogTimeEntry[]) => {
     try {
@@ -110,14 +136,18 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
                 edit sitting in its local draft state before the autosave debounce fires.
               */}
               <div className={`flex-1 min-h-0 ${showBreakdown ? "hidden" : "overflow-y-auto"}`}>
-                <Accordion className="w-full">
+                <Accordion
+                  className="w-full"
+                  expandedKeys={expandedKeys}
+                  onExpandedChange={(keys) => setExpandedKeys(new Set(Array.from(keys, String)))}
+                >
                   {timeSlots.map((hour) => {
                     const hourEntries = entries.filter(
                       (entry) => new Date(entry.startTime).getHours() === hour
                     );
 
                     return (
-                      <Accordion.Item key={hour}>
+                      <Accordion.Item key={hour} id={String(hour)}>
                         <Accordion.Heading>
                           <Accordion.Trigger>
                             <span className='text-sm text-gray-500'>
@@ -149,6 +179,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
                               entries={hourEntries}
                               loading={loading}
                               onEntryUpdated={() => refetch()}
+                              highlightEntryId={focusEntryId}
                             />
                           </Accordion.Body>
                         </Accordion.Panel>
