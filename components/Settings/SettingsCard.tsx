@@ -5,12 +5,14 @@ import { useTheme } from 'next-themes'
 import TimeRangeSettings from '../TimeRangeSettings'
 import { useEffect, useState } from 'react'
 import { useThemeSelection, getVariant } from '@/context/ThemeSelectionContext'
+import { usePerformanceMode } from '@/context/PerformanceModeContext'
 import {
   Gear,
   Bell,
   Sun,
   Moon,
   Paintbrush,
+  Thunderbolt,
   CircleInfo,
   ShieldKeyhole,
   ArrowUpRightFromSquare,
@@ -24,6 +26,7 @@ function SettingsCard() {
   const [autoBreakReminder, setAutoBreakReminder] = useState(true)
   const { resolvedTheme, setTheme } = useTheme()
   const { schemes, selectedScheme, selectScheme, clearScheme } = useThemeSelection()
+  const { performanceMode, setPerformanceMode } = usePerformanceMode()
 
   // next-themes only knows the real theme after mount (it reads from
   // localStorage/media query client-side), so the switch stays hidden
@@ -162,6 +165,29 @@ function SettingsCard() {
             </div>
           </div>
         )}
+
+        <div className="mt-3 flex items-center justify-between gap-4 rounded-lg bg-default-100 p-3">
+          <div>
+            <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <Thunderbolt className="size-4" /> Performance mode
+            </p>
+            <p className="text-xs text-foreground/60">
+              Turns off animated backgrounds and blur effects for a smoother, less CPU-intensive
+              experience on older devices.
+            </p>
+          </div>
+          <Switch
+            isSelected={performanceMode}
+            onChange={setPerformanceMode}
+            aria-label="Performance mode"
+          >
+            <Switch.Content>
+              <Switch.Control>
+                <Switch.Thumb />
+              </Switch.Control>
+            </Switch.Content>
+          </Switch>
+        </div>
       </Card>
 
       {/* Data & Privacy (mocked) */}

@@ -7,6 +7,7 @@ import { TimeRangeProvider } from "@/context/TimeRangeContext";
 import { SelectedWorkLogProvider } from "@/context/SelectedWorkLogContext";
 import { ThemeSelectionProvider } from "@/context/ThemeSelectionContext";
 import { TicketsProvider } from "@/context/TicketsContext";
+import { PerformanceModeProvider } from "@/context/PerformanceModeContext";
 import { ThemeProvider } from "next-themes";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -24,18 +25,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
           defaultTheme="light"
           enableSystem={false}
         >
-          <ThemeSelectionProvider>
-            <TicketsProvider>
-              <SidebarProvider>
-                <TimeRangeProvider>
-                  <SelectedWorkLogProvider>
-                    <DbThemeApplier />
-                    {children}
-                  </SelectedWorkLogProvider>
-                </TimeRangeProvider>
-              </SidebarProvider>
-            </TicketsProvider>
-          </ThemeSelectionProvider>
+          <PerformanceModeProvider>
+            <ThemeSelectionProvider>
+              <TicketsProvider>
+                <SidebarProvider>
+                  <TimeRangeProvider>
+                    <SelectedWorkLogProvider>
+                      <DbThemeApplier />
+                      {children}
+                    </SelectedWorkLogProvider>
+                  </TimeRangeProvider>
+                </SidebarProvider>
+              </TicketsProvider>
+            </ThemeSelectionProvider>
+          </PerformanceModeProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
