@@ -8,7 +8,7 @@ import { useSidebar } from "@/context/SideBarContext";
 
 import { useAuth } from "@/hooks/useAuth";
 import { loginWithGoogle, logout } from "@/lib/auth";
-import { SearchField } from "@heroui/react";
+import { GlobalSearch } from "@/components/Search/GlobalSearch";
 
 // ─────────────────────────────────────────────
 // Nav Links
@@ -105,15 +105,7 @@ export default function AppNavbar() {
                 </a>
               ))}
 
-              <SearchField name="search" aria-label="Search">
-                <SearchField.Group>
-                  <SearchField.SearchIcon />
-                  <SearchField.Input className="w-[280px]" placeholder="Search..." />
-                  <SearchField.ClearButton />
-                </SearchField.Group>
-              </SearchField>
-
-
+              {user && <GlobalSearch />}
             </nav>
           </div>
 

@@ -20,6 +20,11 @@ interface WorkLogTimeEntryCardTableProps {
     entries: WorkLogTimeEntry[];
     loading?: boolean;
     onEntryUpdated?: () => void;
+    // Set by a GlobalSearch result pick (see SelectedWorkLogContext.focusEntryId).
+    // Only acted on if the id belongs to one of this table's own entries —
+    // every hour's table receives the same value, but only the matching one
+    // scrolls/flashes.
+    highlightEntryId?: string | null;
 }
 
 type Drafts = Record<string, string>; // entryId -> description draft
@@ -39,12 +44,35 @@ function formatTime(isoDate: string) {
     });
 }
 
-export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: WorkLogTimeEntryCardTableProps) {
+export function WorkLogTimeEntryCardTable({
+    entries,
+    loading,
+    onEntryUpdated,
+    highlightEntryId,
+}: WorkLogTimeEntryCardTableProps) {
     const updateMutation = useUpdateTimeEntry();
     const clearTicketMutation = useUpdateTimeEntryClearTicket();
     const [drafts, setDrafts] = useState<Drafts>({});
     const [copiedEntryId, setCopiedEntryId] = useState<string | null>(null);
     const [dialogState, setDialogState] = useState<DialogState | null>(null);
+    const [flashedEntryId, setFlashedEntryId] = useState<string | null>(null);
+    const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
+
+    // Genuinely effectful: scrollIntoView is an imperative DOM action that
+    // can't happen during render, and this also schedules a timer.
+    useEffect(() => {
+        if (!highlightEntryId) return;
+        if (!entries.some((entry) => entry.id === highlightEntryId)) return;
+
+        rowRefs.current[highlightEntryId]?.scrollIntoView({ behavior: "smooth", block: "center" });
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setFlashedEntryId(highlightEntryId);
+        const timeout = setTimeout(
+            () => setFlashedEntryId((current) => (current === highlightEntryId ? null : current)),
+            1800
+        );
+        return () => clearTimeout(timeout);
+    }, [highlightEntryId, entries]);
 
     const handleCopyEntry = async (entry: WorkLogTimeEntry) => {
         try {
@@ -182,7 +210,15 @@ export function WorkLogTimeEntryCardTable({ entries, loading, onEntryUpdated }: 
 
                 <tbody>
                     {entries.map((entry) => (
-                        <tr key={entry.id}>
+                        <tr
+                            key={entry.id}
+                            ref={(el) => {
+                                rowRefs.current[entry.id] = el;
+                            }}
+                            className={`transition-colors duration-700 ${
+                                flashedEntryId === entry.id ? "bg-accent/20" : ""
+                            }`}
+                        >
                             <td className="border p-2 whitespace-nowrap">
                                 {formatTime(entry.startTime)} - {formatTime(entry.endTime)}
                             </td>
