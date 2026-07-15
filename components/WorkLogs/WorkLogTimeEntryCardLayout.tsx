@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Accordion, Card, Switch } from '@heroui/react'
 import { ChevronDown, ListUl, FileText, Copy, CopyCheck } from '@gravity-ui/icons'
 import ListBoxComponent from '../Utilities/ListBoxComponent'
@@ -68,6 +68,21 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
       console.error("Failed to copy hour summary", err);
     }
   };
+
+  // Grouped once per entries change (O(n)) instead of re-filtering the full
+  // entries array once per hour on every render (O(hours × entries)).
+  const entriesByHour = useMemo(() => {
+    const map = new Map<number, WorkLogTimeEntry[]>();
+    for (const entry of entries) {
+      const hour = new Date(entry.startTime).getHours();
+      const bucket = map.get(hour);
+      if (bucket) bucket.push(entry);
+      else map.set(hour, [entry]);
+    }
+    return map;
+  }, [entries]);
+
+  const handleEntryUpdated = useCallback(() => refetch(), [refetch]);
 
   return (
     <div className='flex h-full items-stretch overflow-hidden'>
@@ -142,9 +157,8 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
                   onExpandedChange={(keys) => setExpandedKeys(new Set(Array.from(keys, String)))}
                 >
                   {timeSlots.map((hour) => {
-                    const hourEntries = entries.filter(
-                      (entry) => new Date(entry.startTime).getHours() === hour
-                    );
+                    const hourEntries = entriesByHour.get(hour) ?? [];
+                    const isExpanded = expandedKeys.has(String(hour));
 
                     return (
                       <Accordion.Item key={hour} id={String(hour)}>
@@ -175,12 +189,22 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
                         </Accordion.Heading>
                         <Accordion.Panel>
                           <Accordion.Body>
-                            <WorkLogTimeEntryCardTable
-                              entries={hourEntries}
-                              loading={loading}
-                              onEntryUpdated={() => refetch()}
-                              highlightEntryId={focusEntryId}
-                            />
+                            {/*
+                              react-aria's Disclosure always renders panel children
+                              regardless of expanded state (only CSS-hides them), so
+                              without this every hour's table — up to 24 — would stay
+                              mounted at once. WorkLogTimeEntryCardTable flushes any
+                              pending debounced edit on unmount, so collapsing an hour
+                              here never drops in-progress work.
+                            */}
+                            {isExpanded && (
+                              <WorkLogTimeEntryCardTable
+                                entries={hourEntries}
+                                loading={loading}
+                                onEntryUpdated={handleEntryUpdated}
+                                highlightEntryId={focusEntryId}
+                              />
+                            )}
                           </Accordion.Body>
                         </Accordion.Panel>
                       </Accordion.Item>

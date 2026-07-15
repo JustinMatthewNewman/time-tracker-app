@@ -53,3 +53,14 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Performance mode (see context/PerformanceModeContext): strips CSS
+   transitions/animations and blur filters app-wide rather than patching
+   every component that uses them individually. AmbientBackground's own
+   animated blur is skipped entirely at the component level since it also
+   avoids mounting the SVG filter at all, not just animating it. */
+.perf-mode * {
+  transition: none !important;
+  animation: none !important;
+  backdrop-filter: none !important;
+}

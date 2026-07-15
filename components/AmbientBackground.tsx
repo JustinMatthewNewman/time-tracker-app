@@ -1,5 +1,7 @@
 "use client";
 
+import { usePerformanceMode } from "@/context/PerformanceModeContext";
+
 // Shared ambient blob/dot-grid layer used behind page content.
 // Only visible in dark mode, matching the landing page's original design.
 type AmbientBackgroundProps = {
@@ -8,6 +10,14 @@ type AmbientBackgroundProps = {
 };
 
 export default function AmbientBackground({ intensity = 1 }: AmbientBackgroundProps) {
+    const { performanceMode } = usePerformanceMode();
+
+    // The five orbs are continuously-animated SVG blur/turbulence filters —
+    // cheap on a real GPU but a steady compositing cost on low-end/software
+    // rendering, so performance mode skips mounting them entirely rather
+    // than just hiding them with CSS.
+    if (performanceMode) return null;
+
     return (
         <>
             <style>{`

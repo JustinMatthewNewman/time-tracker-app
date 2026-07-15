@@ -9,6 +9,7 @@ import { useSidebar } from "@/context/SideBarContext";
 import { useAuth } from "@/hooks/useAuth";
 import { loginWithGoogle, logout } from "@/lib/auth";
 import { GlobalSearch } from "@/components/Search/GlobalSearch";
+import { usePerformanceMode } from "@/context/PerformanceModeContext";
 
 // ─────────────────────────────────────────────
 // Nav Links
@@ -55,6 +56,7 @@ export default function AppNavbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { toggle } = useSidebar();
+  const { performanceMode } = usePerformanceMode();
   const showSidebarToggle = pathname === "/worklogs";
 
   const handleAction = async (key: string) => {
@@ -77,7 +79,15 @@ export default function AppNavbar() {
   });
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-divider bg-background/80 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-50 w-full border-b border-divider ${
+        // Translucent + blurred normally; performance mode drops the blur
+        // (expensive to composite continuously) but goes fully opaque
+        // instead of translucent, since a see-through header with no blur
+        // just looks like a rendering glitch.
+        performanceMode ? "bg-background" : "bg-background/80 backdrop-blur-md"
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
 

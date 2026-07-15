@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { QueryFetchPolicy } from "firebase/data-connect";
 import { useAuth } from "./useAuth";
 import { useMyTimeEntries } from "./useMyTimeEntries";
@@ -46,8 +46,17 @@ export function useSearchIndex() {
   // Exposed so the search bar can pull a fresh snapshot right as it opens
   // rather than relying on whatever was fetched when this hook first
   // mounted — otherwise a work log/entry created earlier in the same
-  // session wouldn't show up in search until a full page reload.
+  // session wouldn't show up in search until a full page reload. Throttled
+  // since GlobalSearch calls this on every input focus — without it,
+  // clicking in and out of the search box repeatedly re-fires both
+  // SERVER_ONLY fetches every time.
+  const REFRESH_THROTTLE_MS = 15_000;
+  const lastRefreshedAtRef = useRef(0);
+
   const refresh = useCallback(() => {
+    const now = Date.now();
+    if (now - lastRefreshedAtRef.current < REFRESH_THROTTLE_MS) return;
+    lastRefreshedAtRef.current = now;
     refetchWorkLogs();
     refetchEntries();
   }, [refetchWorkLogs, refetchEntries]);
