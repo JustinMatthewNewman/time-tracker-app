@@ -254,17 +254,17 @@ exports.listColorSchemes = function listColorSchemes(dcOrOptions, options) {
 }
 ;
 
-const listTicketsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+const listTicketsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListTickets');
+  return queryRef(dcInstance, 'ListTickets', inputVars);
 }
 listTicketsRef.operationName = 'ListTickets';
 exports.listTicketsRef = listTicketsRef;
 
-exports.listTickets = function listTickets(dcOrOptions, options) {
+exports.listTickets = function listTickets(dcOrVars, varsOrOptions, options) {
   
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
   return executeQuery(listTicketsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;
@@ -299,17 +299,17 @@ exports.getTimeEntry = function getTimeEntry(dcOrVars, varsOrOptions, options) {
 }
 ;
 
-const listWorkLogsRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+const listWorkLogsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListWorkLogs');
+  return queryRef(dcInstance, 'ListWorkLogs', inputVars);
 }
 listWorkLogsRef.operationName = 'ListWorkLogs';
 exports.listWorkLogsRef = listWorkLogsRef;
 
-exports.listWorkLogs = function listWorkLogs(dcOrOptions, options) {
+exports.listWorkLogs = function listWorkLogs(dcOrVars, varsOrOptions, options) {
   
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
   return executeQuery(listWorkLogsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;
@@ -329,17 +329,17 @@ exports.listTimeEntriesByWorkLog = function listTimeEntriesByWorkLog(dcOrVars, v
 }
 ;
 
-const listMyTimeEntriesRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+const listMyTimeEntriesRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListMyTimeEntries');
+  return queryRef(dcInstance, 'ListMyTimeEntries', inputVars);
 }
 listMyTimeEntriesRef.operationName = 'ListMyTimeEntries';
 exports.listMyTimeEntriesRef = listMyTimeEntriesRef;
 
-exports.listMyTimeEntries = function listMyTimeEntries(dcOrOptions, options) {
+exports.listMyTimeEntries = function listMyTimeEntries(dcOrVars, varsOrOptions, options) {
   
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, false);
   return executeQuery(listMyTimeEntriesRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;

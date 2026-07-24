@@ -3,20 +3,15 @@
 import { useMemo } from "react";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { groupByTicket, formatDuration, UNASSIGNED_TICKET } from "@/lib/timeTotals";
+import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "@/components/Dashboard/chartColor";
 import { DonutChart } from "./DonutChart";
 import { TicketBarChart } from "./TicketBarChart";
 
-// Derives a set of distinct slice colors from the theme's --accent token
-// (via hue-rotate, same trick AmbientBackground uses for its orbs) rather
-// than a hardcoded hex palette, so the chart always matches whichever color
-// scheme is active instead of clashing with it. "(No ticket)" always renders
-// as the theme's neutral --muted token instead of taking a rotation slot.
-const SLICE_HUE_ROTATIONS = [0, 45, 90, 135, 180, 225, 270, 315];
-
-function sliceStyle(ticket: string, colorIndex: number): { color: string; filter?: string } {
-  if (ticket === UNASSIGNED_TICKET) return { color: "var(--muted)" };
-  const rotation = SLICE_HUE_ROTATIONS[colorIndex % SLICE_HUE_ROTATIONS.length];
-  return { color: "var(--accent)", filter: rotation === 0 ? undefined : `hue-rotate(${rotation}deg)` };
+// "(No ticket)" always renders as the theme's neutral --muted token instead
+// of taking a categorical rotation slot.
+function sliceStyle(ticket: string, colorIndex: number): SeriesColor {
+  if (ticket === UNASSIGNED_TICKET) return NEUTRAL_SERIES_COLOR;
+  return getSeriesColor(colorIndex);
 }
 
 interface TicketBreakdownProps {

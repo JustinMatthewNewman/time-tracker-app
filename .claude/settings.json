@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx --yes -p playwright node /tmp/verify_dashboard.mjs)",
+      "Bash(node /tmp/verify_dashboard.mjs)",
+      "Bash(cp /tmp/verify_dashboard.mjs /Users/justinnewman/time_tracker_app/verify_dashboard.mjs.tmp.mjs)",
+      "Bash(node /Users/justinnewman/time_tracker_app/verify_dashboard.mjs.tmp.mjs)",
+      "Read(//tmp/screenshots/**)",
+      "Read(//private/tmp/screenshots/**)",
+      "Bash(node /Users/justinnewman/time_tracker_app/verify_dashboard.tmp.mjs)",
+      "Bash(tail -40 /tmp/nextdev.log; echo \"---\"; lsof -i :3000 2>/dev/null | grep LISTEN)",
+      "Read(//private/tmp/**)",
+      "Bash(rm -f /tmp/screenshots/*.png)",
+      "Bash(rm -f /tmp/screenshots/*.png *)",
+      "Bash(ls -la /tmp/screenshots/ 2>/dev/null)",
+      "Bash(curl -s \"http://127.0.0.1:9099/emulator/v1/projects/ecs-time-tracker-app/accounts\")",
+      "Bash(curl -si \"http://127.0.0.1:9099/emulator/v1/projects/ecs-time-tracker-app/accounts\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:9099/)",
+      "Bash(xargs -r kill)",
+      "Bash(ls -la /tmp/screenshots/)",
+      "Bash(node /Users/justinnewman/time_tracker_app/check_accounts.tmp.mjs)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(echo \"tsc exit: $?\")",
+      "Bash(:)",
+      "Bash(echo \"tsc: $?\")"
+    ],
+    "additionalDirectories": [
+      "/tmp",
+      "/private/tmp",
+      "/tmp/screenshots"
+    ]
+  }
+}

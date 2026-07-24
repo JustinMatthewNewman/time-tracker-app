@@ -388,22 +388,22 @@ executeQuery(ref).then((response) => {
 ## ListTickets
 You can execute the `ListTickets` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listTickets(options?: ExecuteQueryOptions): QueryPromise<ListTicketsData, undefined>;
+listTickets(vars?: ListTicketsVariables, options?: ExecuteQueryOptions): QueryPromise<ListTicketsData, ListTicketsVariables>;
 
 interface ListTicketsRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListTicketsData, undefined>;
+  (vars?: ListTicketsVariables): QueryRef<ListTicketsData, ListTicketsVariables>;
 }
 export const listTicketsRef: ListTicketsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listTickets(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListTicketsData, undefined>;
+listTickets(dc: DataConnect, vars?: ListTicketsVariables, options?: ExecuteQueryOptions): QueryPromise<ListTicketsData, ListTicketsVariables>;
 
 interface ListTicketsRef {
   ...
-  (dc: DataConnect): QueryRef<ListTicketsData, undefined>;
+  (dc: DataConnect, vars?: ListTicketsVariables): QueryRef<ListTicketsData, ListTicketsVariables>;
 }
 export const listTicketsRef: ListTicketsRef;
 ```
@@ -415,7 +415,14 @@ console.log(name);
 ```
 
 ### Variables
-The `ListTickets` query has no variables.
+The `ListTickets` query has an optional argument of type `ListTicketsVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ListTicketsVariables {
+  limit?: number | null;
+  offset?: number | null;
+}
+```
 ### Return Type
 Recall that executing the `ListTickets` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
@@ -435,21 +442,30 @@ export interface ListTicketsData {
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, listTickets } from '@dataconnect/generated';
+import { connectorConfig, listTickets, ListTicketsVariables } from '@dataconnect/generated';
 
+// The `ListTickets` query has an optional argument of type `ListTicketsVariables`:
+const listTicketsVars: ListTicketsVariables = {
+  limit: ..., // optional
+  offset: ..., // optional
+};
 
 // Call the `listTickets()` function to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listTickets(listTicketsVars);
+// Variables can be defined inline as well.
+const { data } = await listTickets({ limit: ..., offset: ..., });
+// Since all variables are optional for this query, you can omit the `ListTicketsVariables` argument.
 const { data } = await listTickets();
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await listTickets(dataConnect);
+const { data } = await listTickets(dataConnect, listTicketsVars);
 
 console.log(data.tickets);
 
 // Or, you can use the `Promise` API.
-listTickets().then((response) => {
+listTickets(listTicketsVars).then((response) => {
   const data = response.data;
   console.log(data.tickets);
 });
@@ -459,15 +475,24 @@ listTickets().then((response) => {
 
 ```typescript
 import { getDataConnect, executeQuery } from 'firebase/data-connect';
-import { connectorConfig, listTicketsRef } from '@dataconnect/generated';
+import { connectorConfig, listTicketsRef, ListTicketsVariables } from '@dataconnect/generated';
 
+// The `ListTickets` query has an optional argument of type `ListTicketsVariables`:
+const listTicketsVars: ListTicketsVariables = {
+  limit: ..., // optional
+  offset: ..., // optional
+};
 
 // Call the `listTicketsRef()` function to get a reference to the query.
+const ref = listTicketsRef(listTicketsVars);
+// Variables can be defined inline as well.
+const ref = listTicketsRef({ limit: ..., offset: ..., });
+// Since all variables are optional for this query, you can omit the `ListTicketsVariables` argument.
 const ref = listTicketsRef();
 
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = listTicketsRef(dataConnect);
+const ref = listTicketsRef(dataConnect, listTicketsVars);
 
 // Call `executeQuery()` on the reference to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
@@ -743,22 +768,22 @@ executeQuery(ref).then((response) => {
 ## ListWorkLogs
 You can execute the `ListWorkLogs` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listWorkLogs(options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, undefined>;
+listWorkLogs(vars?: ListWorkLogsVariables, options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, ListWorkLogsVariables>;
 
 interface ListWorkLogsRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListWorkLogsData, undefined>;
+  (vars?: ListWorkLogsVariables): QueryRef<ListWorkLogsData, ListWorkLogsVariables>;
 }
 export const listWorkLogsRef: ListWorkLogsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listWorkLogs(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, undefined>;
+listWorkLogs(dc: DataConnect, vars?: ListWorkLogsVariables, options?: ExecuteQueryOptions): QueryPromise<ListWorkLogsData, ListWorkLogsVariables>;
 
 interface ListWorkLogsRef {
   ...
-  (dc: DataConnect): QueryRef<ListWorkLogsData, undefined>;
+  (dc: DataConnect, vars?: ListWorkLogsVariables): QueryRef<ListWorkLogsData, ListWorkLogsVariables>;
 }
 export const listWorkLogsRef: ListWorkLogsRef;
 ```
@@ -770,7 +795,14 @@ console.log(name);
 ```
 
 ### Variables
-The `ListWorkLogs` query has no variables.
+The `ListWorkLogs` query has an optional argument of type `ListWorkLogsVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ListWorkLogsVariables {
+  limit?: number | null;
+  offset?: number | null;
+}
+```
 ### Return Type
 Recall that executing the `ListWorkLogs` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
@@ -790,21 +822,30 @@ export interface ListWorkLogsData {
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, listWorkLogs } from '@dataconnect/generated';
+import { connectorConfig, listWorkLogs, ListWorkLogsVariables } from '@dataconnect/generated';
 
+// The `ListWorkLogs` query has an optional argument of type `ListWorkLogsVariables`:
+const listWorkLogsVars: ListWorkLogsVariables = {
+  limit: ..., // optional
+  offset: ..., // optional
+};
 
 // Call the `listWorkLogs()` function to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listWorkLogs(listWorkLogsVars);
+// Variables can be defined inline as well.
+const { data } = await listWorkLogs({ limit: ..., offset: ..., });
+// Since all variables are optional for this query, you can omit the `ListWorkLogsVariables` argument.
 const { data } = await listWorkLogs();
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await listWorkLogs(dataConnect);
+const { data } = await listWorkLogs(dataConnect, listWorkLogsVars);
 
 console.log(data.workLogs);
 
 // Or, you can use the `Promise` API.
-listWorkLogs().then((response) => {
+listWorkLogs(listWorkLogsVars).then((response) => {
   const data = response.data;
   console.log(data.workLogs);
 });
@@ -814,15 +855,24 @@ listWorkLogs().then((response) => {
 
 ```typescript
 import { getDataConnect, executeQuery } from 'firebase/data-connect';
-import { connectorConfig, listWorkLogsRef } from '@dataconnect/generated';
+import { connectorConfig, listWorkLogsRef, ListWorkLogsVariables } from '@dataconnect/generated';
 
+// The `ListWorkLogs` query has an optional argument of type `ListWorkLogsVariables`:
+const listWorkLogsVars: ListWorkLogsVariables = {
+  limit: ..., // optional
+  offset: ..., // optional
+};
 
 // Call the `listWorkLogsRef()` function to get a reference to the query.
+const ref = listWorkLogsRef(listWorkLogsVars);
+// Variables can be defined inline as well.
+const ref = listWorkLogsRef({ limit: ..., offset: ..., });
+// Since all variables are optional for this query, you can omit the `ListWorkLogsVariables` argument.
 const ref = listWorkLogsRef();
 
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = listWorkLogsRef(dataConnect);
+const ref = listWorkLogsRef(dataConnect, listWorkLogsVars);
 
 // Call `executeQuery()` on the reference to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
@@ -964,22 +1014,22 @@ executeQuery(ref).then((response) => {
 ## ListMyTimeEntries
 You can execute the `ListMyTimeEntries` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listMyTimeEntries(options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, undefined>;
+listMyTimeEntries(vars?: ListMyTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
 
 interface ListMyTimeEntriesRef {
   ...
   /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListMyTimeEntriesData, undefined>;
+  (vars?: ListMyTimeEntriesVariables): QueryRef<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
 }
 export const listMyTimeEntriesRef: ListMyTimeEntriesRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listMyTimeEntries(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, undefined>;
+listMyTimeEntries(dc: DataConnect, vars?: ListMyTimeEntriesVariables, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
 
 interface ListMyTimeEntriesRef {
   ...
-  (dc: DataConnect): QueryRef<ListMyTimeEntriesData, undefined>;
+  (dc: DataConnect, vars?: ListMyTimeEntriesVariables): QueryRef<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
 }
 export const listMyTimeEntriesRef: ListMyTimeEntriesRef;
 ```
@@ -991,7 +1041,14 @@ console.log(name);
 ```
 
 ### Variables
-The `ListMyTimeEntries` query has no variables.
+The `ListMyTimeEntries` query has an optional argument of type `ListMyTimeEntriesVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ListMyTimeEntriesVariables {
+  limit?: number | null;
+  offset?: number | null;
+}
+```
 ### Return Type
 Recall that executing the `ListMyTimeEntries` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
@@ -1022,21 +1079,30 @@ export interface ListMyTimeEntriesData {
 
 ```typescript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig, listMyTimeEntries } from '@dataconnect/generated';
+import { connectorConfig, listMyTimeEntries, ListMyTimeEntriesVariables } from '@dataconnect/generated';
 
+// The `ListMyTimeEntries` query has an optional argument of type `ListMyTimeEntriesVariables`:
+const listMyTimeEntriesVars: ListMyTimeEntriesVariables = {
+  limit: ..., // optional
+  offset: ..., // optional
+};
 
 // Call the `listMyTimeEntries()` function to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listMyTimeEntries(listMyTimeEntriesVars);
+// Variables can be defined inline as well.
+const { data } = await listMyTimeEntries({ limit: ..., offset: ..., });
+// Since all variables are optional for this query, you can omit the `ListMyTimeEntriesVariables` argument.
 const { data } = await listMyTimeEntries();
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
-const { data } = await listMyTimeEntries(dataConnect);
+const { data } = await listMyTimeEntries(dataConnect, listMyTimeEntriesVars);
 
 console.log(data.timeEntries);
 
 // Or, you can use the `Promise` API.
-listMyTimeEntries().then((response) => {
+listMyTimeEntries(listMyTimeEntriesVars).then((response) => {
   const data = response.data;
   console.log(data.timeEntries);
 });
@@ -1046,15 +1112,24 @@ listMyTimeEntries().then((response) => {
 
 ```typescript
 import { getDataConnect, executeQuery } from 'firebase/data-connect';
-import { connectorConfig, listMyTimeEntriesRef } from '@dataconnect/generated';
+import { connectorConfig, listMyTimeEntriesRef, ListMyTimeEntriesVariables } from '@dataconnect/generated';
 
+// The `ListMyTimeEntries` query has an optional argument of type `ListMyTimeEntriesVariables`:
+const listMyTimeEntriesVars: ListMyTimeEntriesVariables = {
+  limit: ..., // optional
+  offset: ..., // optional
+};
 
 // Call the `listMyTimeEntriesRef()` function to get a reference to the query.
+const ref = listMyTimeEntriesRef(listMyTimeEntriesVars);
+// Variables can be defined inline as well.
+const ref = listMyTimeEntriesRef({ limit: ..., offset: ..., });
+// Since all variables are optional for this query, you can omit the `ListMyTimeEntriesVariables` argument.
 const ref = listMyTimeEntriesRef();
 
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
-const ref = listMyTimeEntriesRef(dataConnect);
+const ref = listMyTimeEntriesRef(dataConnect, listMyTimeEntriesVars);
 
 // Call `executeQuery()` on the reference to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
@@ -1106,6 +1181,8 @@ export interface ListTimeEntriesByDateRangeVariables {
   userId: UUIDString;
   startDate: DateString;
   endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
 }
 ```
 ### Return Type
@@ -1146,13 +1223,15 @@ const listTimeEntriesByDateRangeVars: ListTimeEntriesByDateRangeVariables = {
   userId: ..., 
   startDate: ..., 
   endDate: ..., 
+  limit: ..., // optional
+  offset: ..., // optional
 };
 
 // Call the `listTimeEntriesByDateRange()` function to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await listTimeEntriesByDateRange(listTimeEntriesByDateRangeVars);
 // Variables can be defined inline as well.
-const { data } = await listTimeEntriesByDateRange({ userId: ..., startDate: ..., endDate: ..., });
+const { data } = await listTimeEntriesByDateRange({ userId: ..., startDate: ..., endDate: ..., limit: ..., offset: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1178,12 +1257,14 @@ const listTimeEntriesByDateRangeVars: ListTimeEntriesByDateRangeVariables = {
   userId: ..., 
   startDate: ..., 
   endDate: ..., 
+  limit: ..., // optional
+  offset: ..., // optional
 };
 
 // Call the `listTimeEntriesByDateRangeRef()` function to get a reference to the query.
 const ref = listTimeEntriesByDateRangeRef(listTimeEntriesByDateRangeVars);
 // Variables can be defined inline as well.
-const ref = listTimeEntriesByDateRangeRef({ userId: ..., startDate: ..., endDate: ..., });
+const ref = listTimeEntriesByDateRangeRef({ userId: ..., startDate: ..., endDate: ..., limit: ..., offset: ..., });
 
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);

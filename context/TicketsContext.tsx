@@ -4,7 +4,13 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { QueryFetchPolicy } from "firebase/data-connect";
 import { useAuth } from "@/hooks/useAuth";
 import { listTickets, upsertTicket, updateTicket } from "@/src/dataconnect-generated";
-import type { UpsertTicketVariables, UpdateTicketVariables, ListTicketsData } from "@/src/dataconnect-generated";
+import type {
+  UpsertTicketVariables,
+  UpdateTicketVariables,
+  ListTicketsData,
+  ListTicketsVariables,
+} from "@/src/dataconnect-generated";
+import { fetchAllPages } from "@/lib/dataconnectPagination";
 
 export interface Ticket {
   id: string;
@@ -70,8 +76,11 @@ export function TicketsProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      const result = await listTickets({ fetchPolicy: QueryFetchPolicy.SERVER_ONLY });
-      const normalized = result.data.tickets.map(normalizeTicket);
+      const rows = await fetchAllPages<ListTicketsVariables, ListTicketsData["tickets"][number]>(
+        (vars) => listTickets(vars, { fetchPolicy: QueryFetchPolicy.SERVER_ONLY }).then((r) => r.data.tickets),
+        {}
+      );
+      const normalized = rows.map(normalizeTicket);
       setTickets(normalized);
       return normalized;
     } catch (err) {

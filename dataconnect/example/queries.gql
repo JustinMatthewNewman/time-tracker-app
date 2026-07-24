@@ -48,9 +48,11 @@ query ListColorSchemes @auth(level: USER) {
 
 # Full ticket list backing the Ticket autocomplete field — filtering happens
 # client-side (see TicketComboBox), so this returns everything rather than
-# taking a search term.
-query ListTickets @auth(level: USER) {
-  tickets(orderBy: [{ ticketNumber: ASC }]) {
+# taking a search term. $limit/$offset default so existing no-arg call sites
+# stay source-compatible; see lib/dataconnectPagination.ts for why callers
+# page through this instead of trusting a single large `limit`.
+query ListTickets($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
+  tickets(limit: $limit, offset: $offset, orderBy: [{ ticketNumber: ASC }]) {
     id
     ticketNumber
     office
@@ -110,8 +112,13 @@ query GetTimeEntry($entryId: UUID!) @auth(level: USER) {
   }
 }
 
-query ListWorkLogs @auth(level: USER) {
+# $limit/$offset default so existing no-arg call sites stay source-compatible;
+# see lib/dataconnectPagination.ts for why callers page through this instead
+# of trusting a single large `limit`.
+query ListWorkLogs($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
   workLogs(
+    limit: $limit
+    offset: $offset
     where: {
       _and: [
         { user: { googleUid: { eq_expr: "auth.uid" } } }
@@ -155,8 +162,13 @@ query ListTimeEntriesByWorkLog($workLogId: UUID!) @auth(level: USER) {
   }
 }
 
-query ListMyTimeEntries @auth(level: USER) {
+# $limit/$offset default so existing no-arg call sites stay source-compatible;
+# see lib/dataconnectPagination.ts for why callers page through this instead
+# of trusting a single large `limit`.
+query ListMyTimeEntries($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
   timeEntries(
+    limit: $limit
+    offset: $offset
     where: { user: { googleUid: { eq_expr: "auth.uid" } } }
     orderBy: [{ startTime: DESC }]
   ) {
@@ -179,9 +191,14 @@ query ListMyTimeEntries @auth(level: USER) {
   }
 }
 
-query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Date!) @auth(level: USER) {
+# $limit/$offset default so existing no-arg call sites stay source-compatible;
+# see lib/dataconnectPagination.ts for why callers page through this instead
+# of trusting a single large `limit`.
+query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Date!, $limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
   timeEntries(
-    where: { 
+    limit: $limit
+    offset: $offset
+    where: {
       _and: [
         { user: { id: { eq: $userId } } }
         { date: { ge: $startDate } }
