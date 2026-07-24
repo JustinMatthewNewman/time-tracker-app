@@ -3,48 +3,80 @@
 import { Avatar, Card, Chip, ProgressBar, Tooltip, Button } from '@heroui/react'
 import { useAuth } from "@/hooks/useAuth";
 import ProfileAuthSection from './ProfileAuthSection';
-import { useTimeEntries } from '@/hooks/useTimeEntries';
+import { useMyTimeEntries, type MyTimeEntry } from '@/hooks/useMyTimeEntries';
 import { useMemo } from 'react';
-import type { TimeEntry } from '@/lib/schemas';
-import { ListCheck, ClockFill, ChartLineArrowUp, Flame, PersonPencil } from '@gravity-ui/icons';
+import { minutesBetween } from '@/lib/timeTotals';
+import { startOfWeek } from '@/lib/weekBuckets';
+import { ListCheck, ClockFill, ChartLineArrowUp, Flame, PersonPencil, Medal } from '@gravity-ui/icons';
 
-// Weekly hour target used for the goal meter. No per-user goal setting exists
-// yet, so this is a fixed placeholder until that preference ships.
+// No per-user goal setting exists yet, so this is a fixed default until that
+// preference ships.
 const WEEKLY_GOAL_HOURS = 40;
 
-// Streak tracking doesn't exist yet — mocked so the achievements section has
-// something to show. Replace once daily-activity tracking is built.
-const MOCK_STREAK_DAYS = 4;
-const MOCK_ACHIEVEMENTS = [
-  { label: "4-day streak", icon: Flame, color: "warning" as const },
-  { label: "100+ hours logged", icon: ClockFill, color: "success" as const },
-  { label: "Early adopter", icon: PersonPencil, color: "accent" as const },
-];
+// Milestone thresholds for the achievements section, checked high to low.
+const HOUR_MILESTONES = [1000, 500, 100, 25, 10];
+const ENTRY_MILESTONE = 100;
 
-function calculateThisWeekHours(entries: TimeEntry[]) {
-  const now = new Date();
-  const weekStart = new Date(new Date(now).setDate(now.getDate() - now.getDay()));
-  const weekHours = entries
+function localDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+// Consecutive logged calendar days, walking back from today. Today itself
+// doesn't break the streak until it's over — an entry just hasn't been
+// logged yet — so the walk starts from yesterday when today has nothing.
+function calculateStreakDays(entries: MyTimeEntry[]): number {
+  const loggedDays = new Set(entries.map((e) => localDateKey(new Date(e.startTime))));
+  const cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+  if (!loggedDays.has(localDateKey(cursor))) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  let streak = 0;
+  while (loggedDays.has(localDateKey(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
+function calculateThisWeekMinutes(entries: MyTimeEntry[]): number {
+  const weekStart = startOfWeek(new Date());
+  return entries
     .filter((e) => new Date(e.startTime) >= weekStart)
-    .reduce((sum, entry) => sum + entry.duration, 0) / 60;
-  return parseFloat(weekHours.toFixed(2));
+    .reduce((sum, entry) => sum + minutesBetween(entry.startTime, entry.endTime), 0);
 }
 
 function ProfileCard() {
   const { user, loading } = useAuth();
-  const { entries } = useTimeEntries();
+  const { entries } = useMyTimeEntries();
 
   const stats = useMemo(() => {
-    if (entries.length === 0) {
-      return { totalEntries: 0, totalHours: 0, thisWeek: 0 };
-    }
-    const totalHours = entries.reduce((sum, entry) => sum + entry.duration, 0) / 60;
+    const totalMinutes = entries.reduce((sum, entry) => sum + minutesBetween(entry.startTime, entry.endTime), 0);
     return {
       totalEntries: entries.length,
-      totalHours: parseFloat(totalHours.toFixed(2)),
-      thisWeek: calculateThisWeekHours(entries),
+      totalHours: parseFloat((totalMinutes / 60).toFixed(2)),
+      thisWeek: parseFloat((calculateThisWeekMinutes(entries) / 60).toFixed(2)),
+      streakDays: calculateStreakDays(entries),
     };
   }, [entries]);
+
+  const achievements = useMemo(() => {
+    const list: { label: string; icon: typeof Flame; color: "warning" | "success" | "accent" }[] = [];
+    if (stats.streakDays >= 2) {
+      list.push({ label: `${stats.streakDays}-day streak`, icon: Flame, color: "warning" });
+    }
+    const milestone = HOUR_MILESTONES.find((m) => stats.totalHours >= m);
+    if (milestone) {
+      list.push({ label: `${milestone}+ hours logged`, icon: ClockFill, color: "success" });
+    }
+    if (stats.totalEntries >= ENTRY_MILESTONE) {
+      list.push({ label: `${stats.totalEntries}+ entries logged`, icon: Medal, color: "accent" });
+    }
+    return list;
+  }, [stats]);
 
   const initials = (user?.displayName ?? user?.email ?? "U")[0].toUpperCase();
 
@@ -52,7 +84,7 @@ function ProfileCard() {
     { label: "Total Entries", value: stats.totalEntries, icon: ListCheck, color: "text-blue-600 dark:text-blue-400" },
     { label: "Total Hours", value: `${stats.totalHours}h`, icon: ClockFill, color: "text-emerald-600 dark:text-emerald-400" },
     { label: "This Week", value: `${stats.thisWeek}h`, icon: ChartLineArrowUp, color: "text-purple-600 dark:text-purple-400" },
-    { label: "Day Streak", value: MOCK_STREAK_DAYS, icon: Flame, color: "text-orange-600 dark:text-orange-400" },
+    { label: "Day Streak", value: stats.streakDays, icon: Flame, color: "text-orange-600 dark:text-orange-400" },
   ];
 
   return (
@@ -127,18 +159,22 @@ function ProfileCard() {
         </Card>
       )}
 
-      {/* Achievements (mocked) */}
+      {/* Achievements */}
       {!loading && user && (
         <Card className="p-6">
           <h2 className="mb-4 text-lg font-semibold">Achievements</h2>
-          <div className="flex flex-wrap gap-2">
-            {MOCK_ACHIEVEMENTS.map(({ label, icon: Icon, color }) => (
-              <Chip key={label} color={color} variant="soft" size="lg">
-                <Icon className="size-3.5" />
-                <Chip.Label>{label}</Chip.Label>
-              </Chip>
-            ))}
-          </div>
+          {achievements.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {achievements.map(({ label, icon: Icon, color }) => (
+                <Chip key={label} color={color} variant="soft" size="lg">
+                  <Icon className="size-3.5" />
+                  <Chip.Label>{label}</Chip.Label>
+                </Chip>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-foreground/60">Log time to start earning achievements.</p>
+          )}
         </Card>
       )}
 
