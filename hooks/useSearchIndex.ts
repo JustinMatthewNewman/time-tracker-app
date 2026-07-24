@@ -5,6 +5,8 @@ import { QueryFetchPolicy } from "firebase/data-connect";
 import { useAuth } from "./useAuth";
 import { useMyTimeEntries } from "./useMyTimeEntries";
 import { listWorkLogs } from "@/src/dataconnect-generated";
+import type { ListWorkLogsData, ListWorkLogsVariables } from "@/src/dataconnect-generated";
+import { fetchAllPages } from "@/lib/dataconnectPagination";
 
 export interface SearchWorkLog {
   id: string;
@@ -29,10 +31,11 @@ export function useSearchIndex() {
     }
     setWorkLogsLoading(true);
     try {
-      const result = await listWorkLogs({ fetchPolicy: QueryFetchPolicy.SERVER_ONLY });
-      setWorkLogs(
-        result.data.workLogs.map((log) => ({ id: log.id, name: log.name, workLogDate: log.workLogDate }))
+      const logs = await fetchAllPages<ListWorkLogsVariables, ListWorkLogsData["workLogs"][number]>(
+        (vars) => listWorkLogs(vars, { fetchPolicy: QueryFetchPolicy.SERVER_ONLY }).then((r) => r.data.workLogs),
+        {}
       );
+      setWorkLogs(logs.map((log) => ({ id: log.id, name: log.name, workLogDate: log.workLogDate })));
     } finally {
       setWorkLogsLoading(false);
     }

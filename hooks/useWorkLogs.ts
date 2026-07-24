@@ -16,12 +16,14 @@ import {
 import { listWorkLogs } from "@/src/dataconnect-generated";
 import type {
   ListWorkLogsData,
+  ListWorkLogsVariables,
   CreateWorkLogVariables,
   CreateWorkLogOnlyVariables,
   CreateTimeEntryVariables,
   UpdateWorkLogVariables,
   DeleteWorkLogVariables,
 } from "@/src/dataconnect-generated";
+import { fetchAllPages } from "@/lib/dataconnectPagination";
 
 export interface WorkLogData {
   id: string;
@@ -78,8 +80,11 @@ export function useWorkLogs() {
     setLoading(true);
     setError(null);
     try {
-      const result = await listWorkLogs({ fetchPolicy: QueryFetchPolicy.SERVER_ONLY });
-      setWorkLogs(toWorkLogData(result.data.workLogs));
+      const logs = await fetchAllPages<ListWorkLogsVariables, ListWorkLogsData["workLogs"][number]>(
+        (vars) => listWorkLogs(vars, { fetchPolicy: QueryFetchPolicy.SERVER_ONLY }).then((r) => r.data.workLogs),
+        {}
+      );
+      setWorkLogs(toWorkLogData(logs));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load work logs");
     } finally {

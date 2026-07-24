@@ -10,6 +10,7 @@ import { useSidebar } from "../../context/SideBarContext";
 import { useSelectedWorkLog } from "../../context/SelectedWorkLogContext";
 import { useTimeEntriesByWorkLog, type WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { useWorkLogs } from "@/hooks/useWorkLogs";
+import { useMyTimeEntries } from "@/hooks/useMyTimeEntries";
 import { buildHourClipboardText } from "@/lib/entryClipboard";
 import { WorkLogTimeEntryCardTable } from './WorkLogTimeEntryCardTable';
 import TicketBreakdown from './TicketBreakdown';
@@ -29,6 +30,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
   const { selectedWorkLogId, focusEntryId, setFocusEntryId } = useSelectedWorkLog();
   const { entries, loading, error, refetch } = useTimeEntriesByWorkLog(selectedWorkLogId);
   const { workLogs, loading: workLogsLoading, error: workLogsError, createWorkLog, renameWorkLog, deleteWorkLog } = useWorkLogs();
+  const { entries: allEntries } = useMyTimeEntries();
   const selectedWorkLog = workLogs.find((log) => log.id === selectedWorkLogId) ?? null;
 
   const [copiedHour, setCopiedHour] = useState<number | null>(null);
@@ -101,6 +103,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
             createWorkLog={createWorkLog}
             renameWorkLog={renameWorkLog}
             deleteWorkLog={deleteWorkLog}
+            entries={allEntries}
           />
         </div>
       </aside>

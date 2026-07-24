@@ -1,5 +1,7 @@
 "use client";
 
+import { ChartTooltip, useChartTooltip } from "@/components/Dashboard/ChartTooltip";
+
 export interface TicketBarChartRow {
   label: string;
   entryCount: number;
@@ -18,11 +20,12 @@ interface TicketBarChartProps {
 // count and total time — growing rightward from a shared label. Each metric
 // is scaled against its own max since counts and minutes aren't comparable.
 export function TicketBarChart({ data, formatDuration }: TicketBarChartProps) {
+  const { tooltip, showAt, hide } = useChartTooltip<TicketBarChartRow>();
   const maxEntries = Math.max(1, ...data.map((d) => d.entryCount));
   const maxMinutes = Math.max(1, ...data.map((d) => d.totalMinutes));
 
   return (
-    <div className="w-full">
+    <div className="relative w-full">
       <div className="mb-3 flex items-center justify-center gap-4 text-[11px] text-foreground/50">
         <span className="flex items-center gap-1.5">
           <span className="size-2.5 rounded-sm bg-foreground/70" /> Entries
@@ -38,7 +41,12 @@ export function TicketBarChart({ data, formatDuration }: TicketBarChartProps) {
           const minutesPct = (row.totalMinutes / maxMinutes) * 100;
 
           return (
-            <div key={row.label} className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-x-2 gap-y-1">
+            <div
+              key={row.label}
+              className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-x-2 gap-y-1"
+              onPointerEnter={(e) => showAt(e, row)}
+              onPointerLeave={hide}
+            >
               <span
                 className="row-span-2 truncate text-right text-xs font-medium text-foreground"
                 title={row.label}
@@ -65,6 +73,15 @@ export function TicketBarChart({ data, formatDuration }: TicketBarChartProps) {
           );
         })}
       </div>
+
+      {tooltip && (
+        <ChartTooltip x={tooltip.x} y={tooltip.y}>
+          <div className="font-medium text-foreground">{tooltip.data.label}</div>
+          <div className="text-foreground/60">
+            {tooltip.data.entryCount} entries · {formatDuration(tooltip.data.totalMinutes)}
+          </div>
+        </ChartTooltip>
+      )}
     </div>
   );
 }

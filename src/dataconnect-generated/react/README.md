@@ -375,15 +375,22 @@ export default function ListColorSchemesComponent() {
 You can execute the `ListTickets` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
-useListTickets(dc: DataConnect, options?: useDataConnectQueryOptions<ListTicketsData>): UseDataConnectQueryResult<ListTicketsData, undefined>;
+useListTickets(dc: DataConnect, vars?: ListTicketsVariables, options?: useDataConnectQueryOptions<ListTicketsData>): UseDataConnectQueryResult<ListTicketsData, ListTicketsVariables>;
 ```
 You can also pass in a `DataConnect` instance to the Query hook function.
 ```javascript
-useListTickets(options?: useDataConnectQueryOptions<ListTicketsData>): UseDataConnectQueryResult<ListTicketsData, undefined>;
+useListTickets(vars?: ListTicketsVariables, options?: useDataConnectQueryOptions<ListTicketsData>): UseDataConnectQueryResult<ListTicketsData, ListTicketsVariables>;
 ```
 
 ### Variables
-The `ListTickets` Query has no variables.
+The `ListTickets` Query has an optional argument of type `ListTicketsVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface ListTicketsVariables {
+  limit?: number | null;
+  offset?: number | null;
+}
+```
 ### Return Type
 Recall that calling the `ListTickets` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
 
@@ -408,26 +415,40 @@ To learn more about the `UseQueryResult` object, see the [TanStack React Query d
 
 ```javascript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig } from '@dataconnect/generated';
+import { connectorConfig, ListTicketsVariables } from '@dataconnect/generated';
 import { useListTickets } from '@dataconnect/generated/react'
 
 export default function ListTicketsComponent() {
+  // The `useListTickets` Query hook has an optional argument of type `ListTicketsVariables`:
+  const listTicketsVars: ListTicketsVariables = {
+    limit: ..., // optional
+    offset: ..., // optional
+  };
+
   // You don't have to do anything to "execute" the Query.
   // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListTickets(listTicketsVars);
+  // Variables can be defined inline as well.
+  const query = useListTickets({ limit: ..., offset: ..., });
+  // Since all variables are optional for this Query, you can omit the `ListTicketsVariables` argument.
+  // (as long as you don't want to provide any `options`!)
   const query = useListTickets();
 
   // You can also pass in a `DataConnect` instance to the Query hook function.
   const dataConnect = getDataConnect(connectorConfig);
-  const query = useListTickets(dataConnect);
+  const query = useListTickets(dataConnect, listTicketsVars);
 
   // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
   const options = { staleTime: 5 * 1000 };
-  const query = useListTickets(options);
+  const query = useListTickets(listTicketsVars, options);
+  // If you'd like to provide options without providing any variables, you must
+  // pass `undefined` where you would normally pass the variables.
+  const query = useListTickets(undefined, options);
 
   // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
   const dataConnect = getDataConnect(connectorConfig);
   const options = { staleTime: 5 * 1000 };
-  const query = useListTickets(dataConnect, options);
+  const query = useListTickets(dataConnect, listTicketsVars /** or undefined */, options);
 
   // Then, you can render your component dynamically based on the status of the Query.
   if (query.isPending) {
@@ -654,15 +675,22 @@ export default function GetTimeEntryComponent() {
 You can execute the `ListWorkLogs` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
-useListWorkLogs(dc: DataConnect, options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, undefined>;
+useListWorkLogs(dc: DataConnect, vars?: ListWorkLogsVariables, options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, ListWorkLogsVariables>;
 ```
 You can also pass in a `DataConnect` instance to the Query hook function.
 ```javascript
-useListWorkLogs(options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, undefined>;
+useListWorkLogs(vars?: ListWorkLogsVariables, options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, ListWorkLogsVariables>;
 ```
 
 ### Variables
-The `ListWorkLogs` Query has no variables.
+The `ListWorkLogs` Query has an optional argument of type `ListWorkLogsVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface ListWorkLogsVariables {
+  limit?: number | null;
+  offset?: number | null;
+}
+```
 ### Return Type
 Recall that calling the `ListWorkLogs` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
 
@@ -687,26 +715,40 @@ To learn more about the `UseQueryResult` object, see the [TanStack React Query d
 
 ```javascript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig } from '@dataconnect/generated';
+import { connectorConfig, ListWorkLogsVariables } from '@dataconnect/generated';
 import { useListWorkLogs } from '@dataconnect/generated/react'
 
 export default function ListWorkLogsComponent() {
+  // The `useListWorkLogs` Query hook has an optional argument of type `ListWorkLogsVariables`:
+  const listWorkLogsVars: ListWorkLogsVariables = {
+    limit: ..., // optional
+    offset: ..., // optional
+  };
+
   // You don't have to do anything to "execute" the Query.
   // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListWorkLogs(listWorkLogsVars);
+  // Variables can be defined inline as well.
+  const query = useListWorkLogs({ limit: ..., offset: ..., });
+  // Since all variables are optional for this Query, you can omit the `ListWorkLogsVariables` argument.
+  // (as long as you don't want to provide any `options`!)
   const query = useListWorkLogs();
 
   // You can also pass in a `DataConnect` instance to the Query hook function.
   const dataConnect = getDataConnect(connectorConfig);
-  const query = useListWorkLogs(dataConnect);
+  const query = useListWorkLogs(dataConnect, listWorkLogsVars);
 
   // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
   const options = { staleTime: 5 * 1000 };
-  const query = useListWorkLogs(options);
+  const query = useListWorkLogs(listWorkLogsVars, options);
+  // If you'd like to provide options without providing any variables, you must
+  // pass `undefined` where you would normally pass the variables.
+  const query = useListWorkLogs(undefined, options);
 
   // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
   const dataConnect = getDataConnect(connectorConfig);
   const options = { staleTime: 5 * 1000 };
-  const query = useListWorkLogs(dataConnect, options);
+  const query = useListWorkLogs(dataConnect, listWorkLogsVars /** or undefined */, options);
 
   // Then, you can render your component dynamically based on the status of the Query.
   if (query.isPending) {
@@ -826,15 +868,22 @@ export default function ListTimeEntriesByWorkLogComponent() {
 You can execute the `ListMyTimeEntries` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
-useListMyTimeEntries(dc: DataConnect, options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, undefined>;
+useListMyTimeEntries(dc: DataConnect, vars?: ListMyTimeEntriesVariables, options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
 ```
 You can also pass in a `DataConnect` instance to the Query hook function.
 ```javascript
-useListMyTimeEntries(options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, undefined>;
+useListMyTimeEntries(vars?: ListMyTimeEntriesVariables, options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
 ```
 
 ### Variables
-The `ListMyTimeEntries` Query has no variables.
+The `ListMyTimeEntries` Query has an optional argument of type `ListMyTimeEntriesVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface ListMyTimeEntriesVariables {
+  limit?: number | null;
+  offset?: number | null;
+}
+```
 ### Return Type
 Recall that calling the `ListMyTimeEntries` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
 
@@ -870,26 +919,40 @@ To learn more about the `UseQueryResult` object, see the [TanStack React Query d
 
 ```javascript
 import { getDataConnect } from 'firebase/data-connect';
-import { connectorConfig } from '@dataconnect/generated';
+import { connectorConfig, ListMyTimeEntriesVariables } from '@dataconnect/generated';
 import { useListMyTimeEntries } from '@dataconnect/generated/react'
 
 export default function ListMyTimeEntriesComponent() {
+  // The `useListMyTimeEntries` Query hook has an optional argument of type `ListMyTimeEntriesVariables`:
+  const listMyTimeEntriesVars: ListMyTimeEntriesVariables = {
+    limit: ..., // optional
+    offset: ..., // optional
+  };
+
   // You don't have to do anything to "execute" the Query.
   // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListMyTimeEntries(listMyTimeEntriesVars);
+  // Variables can be defined inline as well.
+  const query = useListMyTimeEntries({ limit: ..., offset: ..., });
+  // Since all variables are optional for this Query, you can omit the `ListMyTimeEntriesVariables` argument.
+  // (as long as you don't want to provide any `options`!)
   const query = useListMyTimeEntries();
 
   // You can also pass in a `DataConnect` instance to the Query hook function.
   const dataConnect = getDataConnect(connectorConfig);
-  const query = useListMyTimeEntries(dataConnect);
+  const query = useListMyTimeEntries(dataConnect, listMyTimeEntriesVars);
 
   // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
   const options = { staleTime: 5 * 1000 };
-  const query = useListMyTimeEntries(options);
+  const query = useListMyTimeEntries(listMyTimeEntriesVars, options);
+  // If you'd like to provide options without providing any variables, you must
+  // pass `undefined` where you would normally pass the variables.
+  const query = useListMyTimeEntries(undefined, options);
 
   // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
   const dataConnect = getDataConnect(connectorConfig);
   const options = { staleTime: 5 * 1000 };
-  const query = useListMyTimeEntries(dataConnect, options);
+  const query = useListMyTimeEntries(dataConnect, listMyTimeEntriesVars /** or undefined */, options);
 
   // Then, you can render your component dynamically based on the status of the Query.
   if (query.isPending) {
@@ -927,6 +990,8 @@ export interface ListTimeEntriesByDateRangeVariables {
   userId: UUIDString;
   startDate: DateString;
   endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
 }
 ```
 ### Return Type
@@ -974,13 +1039,15 @@ export default function ListTimeEntriesByDateRangeComponent() {
     userId: ..., 
     startDate: ..., 
     endDate: ..., 
+    limit: ..., // optional
+    offset: ..., // optional
   };
 
   // You don't have to do anything to "execute" the Query.
   // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
   const query = useListTimeEntriesByDateRange(listTimeEntriesByDateRangeVars);
   // Variables can be defined inline as well.
-  const query = useListTimeEntriesByDateRange({ userId: ..., startDate: ..., endDate: ..., });
+  const query = useListTimeEntriesByDateRange({ userId: ..., startDate: ..., endDate: ..., limit: ..., offset: ..., });
 
   // You can also pass in a `DataConnect` instance to the Query hook function.
   const dataConnect = getDataConnect(connectorConfig);

@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { QueryFetchPolicy } from "firebase/data-connect";
 import { useAuth } from "./useAuth";
 import { listMyTimeEntries } from "@/src/dataconnect-generated";
+import type { ListMyTimeEntriesData, ListMyTimeEntriesVariables } from "@/src/dataconnect-generated";
+import { fetchAllPages } from "@/lib/dataconnectPagination";
 
 export interface MyTimeEntry {
   id: string;
@@ -35,9 +37,17 @@ export function useMyTimeEntries() {
       // See hooks/useTimeEntriesByWorkLog.ts: Data Connect's generated React
       // query hooks default to a "prefer cache" fetch policy that mutations
       // never invalidate. SERVER_ONLY guarantees fresh totals on every load.
-      const result = await listMyTimeEntries({ fetchPolicy: QueryFetchPolicy.SERVER_ONLY });
+      // fetchAllPages guards against the 500-row default cutting off entries
+      // beyond the first page (see lib/dataconnectPagination.ts).
+      const timeEntries = await fetchAllPages<
+        ListMyTimeEntriesVariables,
+        ListMyTimeEntriesData["timeEntries"][number]
+      >(
+        (vars) => listMyTimeEntries(vars, { fetchPolicy: QueryFetchPolicy.SERVER_ONLY }).then((r) => r.data.timeEntries),
+        {}
+      );
       setEntries(
-        result.data.timeEntries.map((entry) => ({
+        timeEntries.map((entry) => ({
           id: entry.id,
           startTime: entry.startTime,
           endTime: entry.endTime,
