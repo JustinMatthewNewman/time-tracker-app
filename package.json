@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:stress-test:dry-run": "node --env-file=.env.local scripts/seed-stress-test.mjs --dry-run",
+    "seed:stress-test": "node --env-file=.env.local scripts/seed-stress-test.mjs",
+    "seed:stress-test:reset": "node --env-file=.env.local scripts/seed-stress-test.mjs --reset"
   },
   "dependencies": {
     "@dataconnect/admin-generated": "file:src/dataconnect-admin-generated",
