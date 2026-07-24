@@ -13,6 +13,46 @@ firebase dataconnect:sdk:generate
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Local Google Sign-In (Auth Emulator)
+
+Google sign-in uses Firebase Authentication, and a successful sign-in immediately calls `/api/auth/sync-user` ([app/api/auth/sync-user/route.ts](app/api/auth/sync-user/route.ts)), which writes the user via Data Connect. So to develop the sign-in flow locally without hitting the real project, you need **both** the Auth emulator and the Data Connect emulator running, not just Auth — starting Auth alone gets you past the sign-in popup but then fails with `ECONNREFUSED 127.0.0.1:9399` when it tries to sync the user.
+
+1. Make sure the Firebase CLI is installed and you're logged in:
+
+   ```bash
+   npm install -g firebase-tools
+   firebase login
+   ```
+
+2. In `.env.local`, make sure these are set:
+
+   ```bash
+   NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true
+   FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
+   DATA_CONNECT_EMULATOR_HOST=127.0.0.1:9399
+   ```
+
+   - `NEXT_PUBLIC_USE_FIREBASE_EMULATOR` makes [lib/firebase.ts](lib/firebase.ts) and [lib/dataconnectEmulator.ts](lib/dataconnectEmulator.ts) point the *browser* client at the local Auth (`9099`) and Data Connect (`9399`) emulators instead of the live project.
+   - `FIREBASE_AUTH_EMULATOR_HOST` and `DATA_CONNECT_EMULATOR_HOST` do the same for the *server-side* Admin SDK calls in [lib/firebase-admin.ts](lib/firebase-admin.ts) and the generated Data Connect admin client used by `sync-user`.
+
+3. Start both emulators together (configured in [firebase.json](firebase.json)):
+
+   ```bash
+   firebase emulators:start --only auth,dataconnect
+   ```
+
+   Emulator UI: [http://127.0.0.1:4000](http://127.0.0.1:4000) (Auth at `/auth`; Data Connect runs a local Postgres instance backing `dataconnect/.dataconnect/pgliteData`, no UI panel).
+
+4. In another terminal, start the app as usual:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Click "Sign in with Google" in the app. The emulator intercepts the popup and shows its own sign-in dialog — no real Google account or OAuth credentials needed. You can type any name/email to create a fake test user, or pick one you've already created from the Emulator UI's **Authentication** tab. On success, the app calls `sync-user`, which creates/updates the row in the local emulated database.
+
+Set `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false` (or remove it, along with the two `*_EMULATOR_HOST` vars) to go back to signing in against the real Firebase project.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
