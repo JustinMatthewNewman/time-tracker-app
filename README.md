@@ -53,6 +53,29 @@ Google sign-in uses Firebase Authentication, and a successful sign-in immediatel
 
 Set `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=false` (or remove it, along with the two `*_EMULATOR_HOST` vars) to go back to signing in against the real Firebase project.
 
+## Seeding Stress-Test Data (Reports Development)
+
+[scripts/seed-stress-test.mjs](scripts/seed-stress-test.mjs) populates the local emulator with ~2 years of realistic weekday work logs (~500 work logs, ~10k time entries, 160 tickets) under one dedicated test account, so weekly/monthly/yearly report views have real volume to develop against. It talks straight to the Auth + Data Connect emulators via the Admin SDK — no browser involved — so it seeds in seconds. Generation is deterministic (fixed RNG seed), so re-running it is a no-op unless you change `SEED_RNG_SEED` or `SEED_YEARS`.
+
+With both emulators running (see above):
+
+```bash
+npm run seed:stress-test:dry-run   # generate + print counts only, no emulator calls — safe to run anytime
+npm run seed:stress-test           # actually seed (idempotent, safe to re-run)
+npm run seed:stress-test:reset     # wipe this account's work logs/entries first, then reseed
+```
+
+It refuses to run unless `FIREBASE_AUTH_EMULATOR_HOST` and `DATA_CONNECT_EMULATOR_HOST` both point at `localhost`/`127.0.0.1`, so there's no path to it touching the real project.
+
+When it finishes, it prints a login for the seeded account:
+
+```
+email:    stress.test@local.dev
+password: stress-test-password-123
+```
+
+Sign in with that via the emulator's Google sign-in popup (pick it from the existing-accounts list, or just retype the email) to see the generated data in the app.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
