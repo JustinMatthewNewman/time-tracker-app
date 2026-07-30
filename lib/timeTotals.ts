@@ -48,3 +48,8 @@ export function formatDuration(minutes: number): string {
   if (mins === 0) return `${hours}h`;
   return `${hours}h ${mins}m`;
 }
+
+// e.g. 90 minutes -> "1.5"
+export function formatDecimalHours(minutes: number): string {
+  return (Math.round((minutes / 60) * 100) / 100).toString();
+}
