@@ -1,13 +1,13 @@
 "use client";
 
-import { Avatar, Card, Chip, ProgressBar, Tooltip, Button } from '@heroui/react'
+import { Avatar, Card, Chip, ProgressBar } from '@heroui/react'
 import { useAuth } from "@/hooks/useAuth";
 import ProfileAuthSection from './ProfileAuthSection';
 import { useMyTimeEntries, type MyTimeEntry } from '@/hooks/useMyTimeEntries';
 import { useMemo } from 'react';
 import { minutesBetween } from '@/lib/timeTotals';
 import { startOfWeek } from '@/lib/weekBuckets';
-import { ListCheck, ClockFill, ChartLineArrowUp, Flame, PersonPencil, Medal } from '@gravity-ui/icons';
+import { ListCheck, ClockFill, ChartLineArrowUp, Flame, Medal } from '@gravity-ui/icons';
 
 // No per-user goal setting exists yet, so this is a fixed default until that
 // preference ships.
@@ -116,14 +116,6 @@ function ProfileCard() {
                   <Chip.Label>Google</Chip.Label>
                 </Chip>
               )}
-              <Tooltip>
-                <Tooltip.Trigger>
-                  <Button variant="outline" size="sm">
-                    <PersonPencil /> Edit profile
-                  </Button>
-                </Tooltip.Trigger>
-                <Tooltip.Content>Coming soon</Tooltip.Content>
-              </Tooltip>
             </div>
           </div>
         </Card.Content>

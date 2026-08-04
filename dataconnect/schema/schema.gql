@@ -4,6 +4,7 @@ type User @table {
   username: String!
   email: String
   colorScheme: ColorScheme
+  performanceMode: Boolean @default(expr: "false")
   createdAt: Timestamp!
 }
 

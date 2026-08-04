@@ -1647,6 +1647,14 @@ input User_Data {
   """
   googleUid_expr: String_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `User`.`performanceMode` of type `Boolean`
+  """
+  performanceMode: Boolean
+  """
+  ✨ `_expr` server value variant of `performanceMode` (✨ Generated from Field `User`.`performanceMode` of type `Boolean`)
+  """
+  performanceMode_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `User`.`username` of type `String!`
   """
   username: String
@@ -1703,6 +1711,10 @@ input User_Filter {
   ✨ Generated from Field `User`.`googleUid` of type `String!`
   """
   googleUid: String_Filter
+  """
+  ✨ Generated from Field `User`.`performanceMode` of type `Boolean`
+  """
+  performanceMode: Boolean_Filter
   """
   ✨ Generated from Field `User`.`username` of type `String!`
   """
@@ -1774,6 +1786,10 @@ input User_Having {
   """
   id_count: Int_Filter
   """
+  ✨ Generated from Field `User`.`performanceMode_count` of type `Int!`
+  """
+  performanceMode_count: Int_Filter
+  """
   ✨ Generated from Field `User`.`username_count` of type `Int!`
   """
   username_count: Int_Filter
@@ -1841,6 +1857,10 @@ input User_Order {
   """
   googleUid: OrderDirection
   """
+  ✨ Generated from Field `User`.`performanceMode` of type `Boolean`
+  """
+  performanceMode: OrderDirection
+  """
   ✨ Generated from Field `User`.`username` of type `String!`
   """
   username: OrderDirection
@@ -1868,6 +1888,10 @@ input User_Order {
   ✨ Generated from Field `User`.`id_count` of type `Int!`
   """
   id_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`performanceMode_count` of type `Int!`
+  """
+  performanceMode_count: OrderDirection
   """
   ✨ Generated from Field `User`.`username_count` of type `Int!`
   """

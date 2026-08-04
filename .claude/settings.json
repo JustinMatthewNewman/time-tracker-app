@@ -50,7 +50,13 @@
       "Bash(pkill -f \"node_modules/.bin/next dev\")",
       "Bash(ps aux | grep -iE \"dataconnect-emulator|firebase emulators|next-server\" | grep -v grep *)",
       "Bash(curl -s http://127.0.0.1:9399)",
-      "Bash(node --env-file=.env.local -e ' *)"
+      "Bash(node --env-file=.env.local -e ' *)",
+      "Bash(xargs ls)",
+      "Bash(xargs -I{} sh -c 'echo === {} ===; cat {}')",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('package.json'\\)\\); print\\('\\\\n'.join\\(f'{k}: {v}' for k,v in d.get\\('scripts',{}\\).items\\(\\)\\)\\)\")",
+      "Bash(ls -la ~/.cache/firebase/emulators/ 2>/dev/null | grep -i dataconnect; echo ---; lsof -i :4500 -i :4400 -i :9399 -i :9099 2>/dev/null; echo ---; ps aux | grep -iE \"dataconnect|postgres|pg_\" | grep -v grep)",
+      "Read(//Users/justinnewman/.cache/firebase/emulators/**)",
+      "Bash(kill 67041)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
