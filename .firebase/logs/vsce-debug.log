@@ -1048,3 +1048,13 @@ Generated sources: index.d.ts [25470B] esm/index.esm.js [8849B] esm/package.json
 [debug] [2026-08-04T22:59:57.129Z] I0804 18:59:57.129670   67041 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation
 I0804 18:59:57.129681   67041 load.go:109] Finished reloading
  {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0804 18:59:57.129670   67041 installsdk.go:55] Package @dataconnect/admin-generated is already installed. Skipping installation\nI0804 18:59:57.129681   67041 load.go:109] Finished reloading\n"}}
+[debug] [2026-08-04T23:05:08.584Z] [Firebase Plugin] Received emulators started notification. Running detection.
+[debug] [2026-08-04T23:05:08.585Z] Found emulator hub locator: {"version":"15.20.0","origins":["http://127.0.0.1:4400","http://[::1]:4400"],"pid":67928}
+[debug] [2026-08-04T23:05:08.585Z] >>> [apiv2][query] GET http://127.0.0.1:4400/emulators [none]
+[debug] [2026-08-04T23:05:08.599Z] <<< [apiv2][status] GET http://127.0.0.1:4400/emulators 200
+[debug] [2026-08-04T23:05:08.600Z] <<< [apiv2][body] GET http://127.0.0.1:4400/emulators {"hub":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"name":"hub","host":"127.0.0.1","port":4400},"ui":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"name":"ui","host":"127.0.0.1","port":4000},"logging":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"name":"logging","host":"127.0.0.1","port":4500},"auth":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":9099}],"name":"auth","host":"127.0.0.1","port":9099},"dataconnect":{"listen":[{"address":"127.0.0.1","family":"IPv4","port":9399},{"address":"::1","family":"IPv6","port":9399}],"name":"dataconnect","host":"127.0.0.1","port":9399,"pid":67961,"timeout":10000}}
+[debug] [2026-08-04T23:05:08.719Z] I0804 19:05:08.718968   67041 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service ef02] ExecuteGraphqlRead query IntrospectionQuery: succeeded. 
+ {"metadata":{"emulator":{"name":"dataconnect"},"message":"I0804 19:05:08.718968   67041 engine.go:209] [projects/emulator/locations/emulator/services/ecs-time-tracker-app-service ef02] ExecuteGraphqlRead query IntrospectionQuery: succeeded. \n"}}
+[debug] [2026-08-04T23:07:19.276Z] [Firebase Plugin] Received emulators shutdown notification.
+[debug] [2026-08-04T23:07:19.277Z] [Firebase Plugin] Received emulators shutdown notification.
+[warn] ⚠  SQL Connect Emulator has exited upon receiving signal: SIGTERM 
