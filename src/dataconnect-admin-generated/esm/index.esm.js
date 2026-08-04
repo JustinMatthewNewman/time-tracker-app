@@ -66,6 +66,12 @@ export function clearMyColorScheme(dcOrOptions, options) {
   return dcInstance.executeMutation('ClearMyColorScheme', undefined, inputOpts);
 }
 
+export function selectMyPerformanceMode(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SelectMyPerformanceMode', inputVars, inputOpts);
+}
+
 export function updateWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);

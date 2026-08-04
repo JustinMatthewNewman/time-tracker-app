@@ -122,6 +122,7 @@ export interface GetMyUserData {
       id: UUIDString;
       name: string;
     } & ColorScheme_Key;
+    performanceMode?: boolean | null;
   } & User_Key;
 }
 
@@ -358,6 +359,14 @@ export interface SelectMyColorSchemeVariables {
   colorSchemeId: UUIDString;
 }
 
+export interface SelectMyPerformanceModeData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyPerformanceModeVariables {
+  performanceMode: boolean;
+}
+
 export interface Theme_Key {
   id: UUIDString;
   __typename?: 'Theme_Key';
@@ -482,6 +491,11 @@ export function selectMyColorScheme(vars: SelectMyColorSchemeVariables, options?
 export function clearMyColorScheme(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ClearMyColorSchemeData>>;
 /** Generated Node Admin SDK operation action function for the 'ClearMyColorScheme' Mutation. Allow users to pass in custom DataConnect instances. */
 export function clearMyColorScheme(options?: OperationOptions): Promise<ExecuteOperationResponse<ClearMyColorSchemeData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SelectMyPerformanceMode' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyPerformanceMode(dc: DataConnect, vars: SelectMyPerformanceModeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyPerformanceModeData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyPerformanceMode' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyPerformanceMode(vars: SelectMyPerformanceModeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyPerformanceModeData>>;
 
 /** Generated Node Admin SDK operation action function for the 'UpdateWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
 export function updateWorkLog(dc: DataConnect, vars: UpdateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateWorkLogData>>;

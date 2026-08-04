@@ -13,6 +13,7 @@ import { WeeklyTrendChart } from "./WeeklyTrendChart";
 import { CalendarHeatmap } from "./CalendarHeatmap";
 import { TicketBreakdownWeekly } from "./TicketBreakdownWeekly";
 import { MonthlyHoursBar } from "./MonthlyHoursBar";
+import AmbientBackground from "@/components/AmbientBackground";
 
 const UNTITLED_WORK_LOG = "(Untitled work log)";
 const TOP_N_ALL_TIME = 25;
@@ -75,44 +76,48 @@ export function AnalyticsDashboard() {
   if (!user) return null; // redirect in flight
 
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+    <div className="relative flex flex-col gap-4 p-4">
+      <AmbientBackground intensity={0.85} />
 
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">
-          {error}
+      <div className="relative z-10 flex flex-col gap-4">
+        <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
+        <WeeklyStatTiles />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <WeeklyTrendChart />
+          <CalendarHeatmap />
         </div>
-      )}
 
-      <WeeklyStatTiles />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <TicketBreakdownWeekly />
+          <MonthlyHoursBar />
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <WeeklyTrendChart />
-        <CalendarHeatmap />
-      </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <StatTile label="Total hours logged" value={loading ? "…" : formatDuration(totalMinutes)} />
+          <StatTile label="Total time entries" value={loading ? "…" : String(entries.length)} />
+          <StatTile label="Total work logs" value={String(workLogs.length)} />
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <TicketBreakdownWeekly />
-        <MonthlyHoursBar />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <StatTile label="Total hours logged" value={loading ? "…" : formatDuration(totalMinutes)} />
-        <StatTile label="Total time entries" value={loading ? "…" : String(entries.length)} />
-        <StatTile label="Total work logs" value={String(workLogs.length)} />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <HoursBarChart
-          title={`Hours by ticket (all time, top ${TOP_N_ALL_TIME})`}
-          data={byTicket.map((t) => ({ label: t.ticket, totalMinutes: t.totalMinutes }))}
-          emptyMessage={loading ? "Loading..." : "No time entries yet."}
-        />
-        <HoursBarChart
-          title={`Hours by work log (all time, top ${TOP_N_ALL_TIME})`}
-          data={byWorkLog}
-          emptyMessage={loading ? "Loading..." : "No time entries yet."}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <HoursBarChart
+            title={`Hours by ticket (all time, top ${TOP_N_ALL_TIME})`}
+            data={byTicket.map((t) => ({ label: t.ticket, totalMinutes: t.totalMinutes }))}
+            emptyMessage={loading ? "Loading..." : "No time entries yet."}
+          />
+          <HoursBarChart
+            title={`Hours by work log (all time, top ${TOP_N_ALL_TIME})`}
+            data={byWorkLog}
+            emptyMessage={loading ? "Loading..." : "No time entries yet."}
+          />
+        </div>
       </div>
     </div>
   );

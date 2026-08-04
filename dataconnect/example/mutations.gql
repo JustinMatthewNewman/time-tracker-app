@@ -166,6 +166,17 @@ mutation ClearMyColorScheme @auth(level: USER) {
   )
 }
 
+# Persists the signed-in user's performance-mode preference so it follows
+# them across devices instead of living only in localStorage. Mirrors
+# SelectMyColorScheme above; unlike that field this one's a plain scalar,
+# not a relation, so there's no FK/nested-key gotcha to work around.
+mutation SelectMyPerformanceMode($performanceMode: Boolean!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { performanceMode: $performanceMode }
+  )
+}
+
 mutation UpdateWorkLog($workLogId: UUID!, $name: String!) @auth(level: USER) @transaction {
   query @redact {
     workLog(key: { id: $workLogId }) {

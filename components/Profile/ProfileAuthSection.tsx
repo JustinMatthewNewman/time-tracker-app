@@ -4,8 +4,6 @@ import {
     Card,
     Skeleton,
     Button,
-    Switch,
-    Tooltip,
 } from "@heroui/react";
 import { useState } from "react";
 import type { User } from "firebase/auth";
@@ -17,7 +15,6 @@ import {
     ClockArrowRotateLeft,
     Bell,
     ArrowRightFromSquare,
-    ArrowUpRightFromSquare,
 } from "@gravity-ui/icons";
 
 // ─────────────────────────────────────────────
@@ -146,14 +143,6 @@ function ProfileAuthSection({
                 >
                     <ArrowRightFromSquare /> Logout
                 </Button>
-                <Tooltip>
-                    <Tooltip.Trigger>
-                        <Button variant="outline">
-                            <ArrowUpRightFromSquare /> Export data
-                        </Button>
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>Coming soon</Tooltip.Content>
-                </Tooltip>
             </div>
         </Card>
     );

@@ -32,6 +32,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*UpdateTicket*](#updateticket)
   - [*SelectMyColorScheme*](#selectmycolorscheme)
   - [*ClearMyColorScheme*](#clearmycolorscheme)
+  - [*SelectMyPerformanceMode*](#selectmyperformancemode)
   - [*UpdateWorkLog*](#updateworklog)
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
@@ -221,6 +222,7 @@ export interface GetMyUserData {
       id: UUIDString;
       name: string;
     } & ColorScheme_Key;
+    performanceMode?: boolean | null;
   } & User_Key;
 }
 ```
@@ -2546,6 +2548,115 @@ const ref = clearMyColorSchemeRef();
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = clearMyColorSchemeRef(dataConnect);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMyPerformanceMode
+You can execute the `SelectMyPerformanceMode` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyPerformanceMode(vars: SelectMyPerformanceModeVariables): MutationPromise<SelectMyPerformanceModeData, SelectMyPerformanceModeVariables>;
+
+interface SelectMyPerformanceModeRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyPerformanceModeVariables): MutationRef<SelectMyPerformanceModeData, SelectMyPerformanceModeVariables>;
+}
+export const selectMyPerformanceModeRef: SelectMyPerformanceModeRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyPerformanceMode(dc: DataConnect, vars: SelectMyPerformanceModeVariables): MutationPromise<SelectMyPerformanceModeData, SelectMyPerformanceModeVariables>;
+
+interface SelectMyPerformanceModeRef {
+  ...
+  (dc: DataConnect, vars: SelectMyPerformanceModeVariables): MutationRef<SelectMyPerformanceModeData, SelectMyPerformanceModeVariables>;
+}
+export const selectMyPerformanceModeRef: SelectMyPerformanceModeRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyPerformanceModeRef:
+```typescript
+const name = selectMyPerformanceModeRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyPerformanceMode` mutation requires an argument of type `SelectMyPerformanceModeVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyPerformanceModeVariables {
+  performanceMode: boolean;
+}
+```
+### Return Type
+Recall that executing the `SelectMyPerformanceMode` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyPerformanceModeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyPerformanceModeData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyPerformanceMode`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyPerformanceMode, SelectMyPerformanceModeVariables } from '@dataconnect/generated';
+
+// The `SelectMyPerformanceMode` mutation requires an argument of type `SelectMyPerformanceModeVariables`:
+const selectMyPerformanceModeVars: SelectMyPerformanceModeVariables = {
+  performanceMode: ..., 
+};
+
+// Call the `selectMyPerformanceMode()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyPerformanceMode(selectMyPerformanceModeVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyPerformanceMode({ performanceMode: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyPerformanceMode(dataConnect, selectMyPerformanceModeVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyPerformanceMode(selectMyPerformanceModeVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyPerformanceMode`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyPerformanceModeRef, SelectMyPerformanceModeVariables } from '@dataconnect/generated';
+
+// The `SelectMyPerformanceMode` mutation requires an argument of type `SelectMyPerformanceModeVariables`:
+const selectMyPerformanceModeVars: SelectMyPerformanceModeVariables = {
+  performanceMode: ..., 
+};
+
+// Call the `selectMyPerformanceModeRef()` function to get a reference to the mutation.
+const ref = selectMyPerformanceModeRef(selectMyPerformanceModeVars);
+// Variables can be defined inline as well.
+const ref = selectMyPerformanceModeRef({ performanceMode: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyPerformanceModeRef(dataConnect, selectMyPerformanceModeVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.

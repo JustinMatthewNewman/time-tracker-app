@@ -16,6 +16,7 @@ query GetMyUser @auth(level: USER) {
       id
       name
     }
+    performanceMode
   }
 }
 

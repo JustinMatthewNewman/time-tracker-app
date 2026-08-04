@@ -50,7 +50,10 @@
       "Bash(pkill -f \"node_modules/.bin/next dev\")",
       "Bash(ps aux | grep -iE \"dataconnect-emulator|firebase emulators|next-server\" | grep -v grep *)",
       "Bash(curl -s http://127.0.0.1:9399)",
-      "Bash(node --env-file=.env.local -e ' *)"
+      "Bash(node --env-file=.env.local -e ' *)",
+      "Bash(xargs ls)",
+      "Bash(xargs -I{} sh -c 'echo === {} ===; cat {}')",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('package.json'\\)\\); print\\('\\\\n'.join\\(f'{k}: {v}' for k,v in d.get\\('scripts',{}\\).items\\(\\)\\)\\)\")"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
