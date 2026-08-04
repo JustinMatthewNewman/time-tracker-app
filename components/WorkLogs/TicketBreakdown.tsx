@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
-import { groupByTicket, formatDuration, UNASSIGNED_TICKET } from "@/lib/timeTotals";
+import { groupByTicket, formatDuration, formatDecimalHours, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "@/components/Dashboard/chartColor";
+import { Copy, CopyCheck } from "@gravity-ui/icons";
 import { DonutChart } from "./DonutChart";
 import { TicketBarChart } from "./TicketBarChart";
 
@@ -26,6 +27,17 @@ interface TicketBreakdownProps {
 // table view, behind the same sticky header.
 export function TicketBreakdown({ hasSelection, entries, loading, error }: TicketBreakdownProps) {
   const totals = useMemo(() => groupByTicket(entries), [entries]);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const handleCopy = async (key: string, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey((current) => (current === key ? null : current)), 1500);
+    } catch (err) {
+      console.error("Failed to copy", err);
+    }
+  };
 
   if (!hasSelection) {
     return (
@@ -73,40 +85,75 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
               <th className="border p-2 text-left">Ticket</th>
               <th className="w-24 border p-2 text-left">Entries</th>
               <th className="w-32 border p-2 text-left">Total Time</th>
+              <th className="w-24 border p-2 text-left">Hours</th>
             </tr>
           </thead>
 
           <tbody>
-            {totals.map((t) => (
-              <tr key={t.ticket}>
-                <td className="border p-2">
-                  <span className="flex items-center gap-2">
-                    <span
-                      className="size-2.5 shrink-0 rounded-full"
-                      style={{
-                        backgroundColor: styleByTicket.get(t.ticket)?.color,
-                        filter: styleByTicket.get(t.ticket)?.filter,
-                      }}
-                      aria-hidden
-                    />
-                    {t.ticketLink ? (
-                      <a
-                        href={t.ticketLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary underline"
+            {totals.map((t) => {
+              const hoursKey = `${t.ticket}-hours`;
+              return (
+                <tr key={t.ticket}>
+                  <td className="border p-2">
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="flex min-w-0 items-center gap-2">
+                        <span
+                          className="size-2.5 shrink-0 rounded-full"
+                          style={{
+                            backgroundColor: styleByTicket.get(t.ticket)?.color,
+                            filter: styleByTicket.get(t.ticket)?.filter,
+                          }}
+                          aria-hidden
+                        />
+                        {t.ticketLink ? (
+                          <a
+                            href={t.ticketLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary underline"
+                          >
+                            {t.ticket}
+                          </a>
+                        ) : (
+                          t.ticket
+                        )}
+                      </span>
+                      <button
+                        type="button"
+                        aria-label={`Copy ticket ${t.ticket}`}
+                        onClick={() => handleCopy(t.ticket, t.ticket)}
+                        className="shrink-0 rounded p-1 text-foreground/50 hover:bg-default hover:text-foreground"
                       >
-                        {t.ticket}
-                      </a>
-                    ) : (
-                      t.ticket
-                    )}
-                  </span>
-                </td>
-                <td className="border p-2">{t.entryCount}</td>
-                <td className="border p-2">{formatDuration(t.totalMinutes)}</td>
-              </tr>
-            ))}
+                        {copiedKey === t.ticket ? (
+                          <CopyCheck className="size-3.5" />
+                        ) : (
+                          <Copy className="size-3.5" />
+                        )}
+                      </button>
+                    </span>
+                  </td>
+                  <td className="border p-2">{t.entryCount}</td>
+                  <td className="border p-2">{formatDuration(t.totalMinutes)}</td>
+                  <td className="border p-2">
+                    <span className="flex items-center justify-between gap-2">
+                      {formatDecimalHours(t.totalMinutes)}
+                      <button
+                        type="button"
+                        aria-label={`Copy hours for ticket ${t.ticket}`}
+                        onClick={() => handleCopy(hoursKey, formatDecimalHours(t.totalMinutes))}
+                        className="shrink-0 rounded p-1 text-foreground/50 hover:bg-default hover:text-foreground"
+                      >
+                        {copiedKey === hoursKey ? (
+                          <CopyCheck className="size-3.5" />
+                        ) : (
+                          <Copy className="size-3.5" />
+                        )}
+                      </button>
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
 
           <tfoot>
@@ -114,6 +161,7 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
               <td className="border p-2">Total</td>
               <td className="border p-2">{entries.length}</td>
               <td className="border p-2">{formatDuration(grandTotalMinutes)}</td>
+              <td className="border p-2">{formatDecimalHours(grandTotalMinutes)}</td>
             </tr>
           </tfoot>
         </table>
