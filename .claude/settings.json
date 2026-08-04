@@ -25,7 +25,8 @@
       "Bash(echo \"tsc: $?\")",
       "Bash(npx eslint *)",
       "Bash(ls /private/tmp/claude-501/-Users-justinnewman-time-tracker-app/*/scratchpad/ 2>/dev/null; ls /private/tmp/claude-501/-Users-justinnewman-time-tracker-app/15e139b3-31cb-43a2-a0b7-0863b162d0f6/scratchpad/ 2>/dev/null)",
-      "Read(//private/tmp/claude-501/-Users-justinnewman-time-tracker-app/**)"
+      "Read(//private/tmp/claude-501/-Users-justinnewman-time-tracker-app/**)",
+      "Bash(git -C /Users/justinnewman/time_tracker_app rm -q components/Dashboard/PredictedActualScatter.tsx)"
     ],
     "additionalDirectories": [
       "/tmp",
