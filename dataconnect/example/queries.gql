@@ -162,6 +162,35 @@ query ListTimeEntriesByWorkLog($workLogId: UUID!) @auth(level: USER) {
   }
 }
 
+# Backs the ticket breakdown page (/ticket/[ticket_number]) — every time entry
+# linked to this ticket, across all of the caller's work logs. Scoped to
+# user.googleUid like ListTimeEntriesByWorkLog rather than returning every
+# user's entries for the ticket, since Ticket is a shared lookup row but
+# TimeEntry ownership (and everything else this app shows per-entry) is
+# per-user.
+query ListTimeEntriesByTicket($ticketNumber: Int!) @auth(level: USER) {
+  timeEntries(
+    where: {
+      _and: [
+        { ticket: { ticketNumber: { eq: $ticketNumber } } }
+        { user: { googleUid: { eq_expr: "auth.uid" } } }
+      ]
+    }
+    orderBy: [{ startTime: DESC }]
+  ) {
+    id
+    startTime
+    endTime
+    date
+    description
+    workLog {
+      id
+      name
+    }
+    createdAt
+  }
+}
+
 # $limit/$offset default so existing no-arg call sites stay source-compatible;
 # see lib/dataconnectPagination.ts for why callers page through this instead
 # of trusting a single large `limit`.

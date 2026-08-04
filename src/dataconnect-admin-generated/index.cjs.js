@@ -161,6 +161,13 @@ function listTimeEntriesByWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
 }
 exports.listTimeEntriesByWorkLog = listTimeEntriesByWorkLog;
 
+function listTimeEntriesByTicket(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTimeEntriesByTicket', inputVars, inputOpts);
+}
+exports.listTimeEntriesByTicket = listTimeEntriesByTicket;
+
 function listMyTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
   dcInstance.useGen(true);

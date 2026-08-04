@@ -138,6 +138,12 @@ export function listTimeEntriesByWorkLog(dcOrVarsOrOptions, varsOrOptions, optio
   return dcInstance.executeQuery('ListTimeEntriesByWorkLog', inputVars, inputOpts);
 }
 
+export function listTimeEntriesByTicket(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTimeEntriesByTicket', inputVars, inputOpts);
+}
+
 export function listMyTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
   dcInstance.useGen(true);

@@ -248,6 +248,25 @@ export interface ListTimeEntriesByDateRangeVariables {
   offset?: number | null;
 }
 
+export interface ListTimeEntriesByTicketData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    workLog?: {
+      id: UUIDString;
+      name: string;
+    } & WorkLog_Key;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+
+export interface ListTimeEntriesByTicketVariables {
+  ticketNumber: number;
+}
+
 export interface ListTimeEntriesByWorkLogData {
   timeEntries: ({
     id: UUIDString;
@@ -523,6 +542,11 @@ export function listWorkLogs(vars?: ListWorkLogsVariables, options?: OperationOp
 export function listTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
 /** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByWorkLog' Query. Allow users to pass in custom DataConnect instances. */
 export function listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByTicket' Query. Allow users to execute without passing in DataConnect. */
+export function listTimeEntriesByTicket(dc: DataConnect, vars: ListTimeEntriesByTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByTicketData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByTicket' Query. Allow users to pass in custom DataConnect instances. */
+export function listTimeEntriesByTicket(vars: ListTimeEntriesByTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByTicketData>>;
 
 /** Generated Node Admin SDK operation action function for the 'ListMyTimeEntries' Query. Allow users to execute without passing in DataConnect. */
 export function listMyTimeEntries(dc: DataConnect, vars?: ListMyTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesData>>;

@@ -25,6 +25,7 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*GetTimeEntry*](#gettimeentry)
   - [*ListWorkLogs*](#listworklogs)
   - [*ListTimeEntriesByWorkLog*](#listtimeentriesbyworklog)
+  - [*ListTimeEntriesByTicket*](#listtimeentriesbyticket)
   - [*ListMyTimeEntries*](#listmytimeentries)
   - [*ListTimeEntriesByDateRange*](#listtimeentriesbydaterange)
 - [**Mutations**](#mutations)
@@ -846,6 +847,99 @@ export default function ListTimeEntriesByWorkLogComponent() {
   const dataConnect = getDataConnect(connectorConfig);
   const options = { staleTime: 5 * 1000 };
   const query = useListTimeEntriesByWorkLog(dataConnect, listTimeEntriesByWorkLogVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.timeEntries);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## ListTimeEntriesByTicket
+You can execute the `ListTimeEntriesByTicket` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useListTimeEntriesByTicket(dc: DataConnect, vars: ListTimeEntriesByTicketVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByTicketData>): UseDataConnectQueryResult<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useListTimeEntriesByTicket(vars: ListTimeEntriesByTicketVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByTicketData>): UseDataConnectQueryResult<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
+```
+
+### Variables
+The `ListTimeEntriesByTicket` Query requires an argument of type `ListTimeEntriesByTicketVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface ListTimeEntriesByTicketVariables {
+  ticketNumber: number;
+}
+```
+### Return Type
+Recall that calling the `ListTimeEntriesByTicket` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListTimeEntriesByTicket` Query is of type `ListTimeEntriesByTicketData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListTimeEntriesByTicketData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    workLog?: {
+      id: UUIDString;
+      name: string;
+    } & WorkLog_Key;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `ListTimeEntriesByTicket`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, ListTimeEntriesByTicketVariables } from '@dataconnect/generated';
+import { useListTimeEntriesByTicket } from '@dataconnect/generated/react'
+
+export default function ListTimeEntriesByTicketComponent() {
+  // The `useListTimeEntriesByTicket` Query hook requires an argument of type `ListTimeEntriesByTicketVariables`:
+  const listTimeEntriesByTicketVars: ListTimeEntriesByTicketVariables = {
+    ticketNumber: ..., 
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListTimeEntriesByTicket(listTimeEntriesByTicketVars);
+  // Variables can be defined inline as well.
+  const query = useListTimeEntriesByTicket({ ticketNumber: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useListTimeEntriesByTicket(dataConnect, listTimeEntriesByTicketVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useListTimeEntriesByTicket(listTimeEntriesByTicketVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useListTimeEntriesByTicket(dataConnect, listTimeEntriesByTicketVars, options);
 
   // Then, you can render your component dynamically based on the status of the Query.
   if (query.isPending) {

@@ -30,12 +30,35 @@
       "Bash(git -C /Users/justinnewman/time_tracker_app status --short)",
       "Bash(git -C /Users/justinnewman/time_tracker_app status)",
       "Bash(git -C /Users/justinnewman/time_tracker_app log --oneline -5)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(sort -t: -k2 -u)",
+      "Bash(ls breadcrumbs *)",
+      "Bash(ls field *)",
+      "Bash(ls text-field *)",
+      "Bash(ls label *)",
+      "Bash(ls empty-state *)",
+      "WebFetch(domain:heroui.com)",
+      "Bash(firebase --version)",
+      "Bash(mkdir -p /Users/justinnewman/time_tracker_app/app/ticket/\\\\[ticket_number\\\\] /Users/justinnewman/time_tracker_app/components/Ticket)",
+      "Bash(xargs -n1 basename)",
+      "Bash(rm -f /private/tmp/claude-501/-Users-justinnewman-time-tracker-app/b919f38a-2a1a-4864-8d78-735ef038acb4/scratchpad/*.mjs)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(pkill -f \"dataconnect-emulator\")",
+      "Bash(pkill -f \"firebase emulators:start\")",
+      "Bash(pkill -f \"next-server\")",
+      "Bash(pkill -f \"node_modules/.bin/next dev\")",
+      "Bash(ps aux | grep -iE \"dataconnect-emulator|firebase emulators|next-server\" | grep -v grep *)",
+      "Bash(curl -s http://127.0.0.1:9399)",
+      "Bash(node --env-file=.env.local -e ' *)"
     ],
+    "defaultMode": "bypassPermissions",
     "additionalDirectories": [
       "/tmp",
       "/private/tmp",
-      "/tmp/screenshots"
+      "/tmp/screenshots",
+      "/Users/justinnewman/time_tracker_app/app/ticket",
+      "/private/tmp/claude-501/-Users-justinnewman-time-tracker-app/b919f38a-2a1a-4864-8d78-735ef038acb4/scratchpad"
     ]
   }
 }
