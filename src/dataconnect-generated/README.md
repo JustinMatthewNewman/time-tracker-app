@@ -18,6 +18,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*GetTimeEntry*](#gettimeentry)
   - [*ListWorkLogs*](#listworklogs)
   - [*ListTimeEntriesByWorkLog*](#listtimeentriesbyworklog)
+  - [*ListTimeEntriesByTicket*](#listtimeentriesbyticket)
   - [*ListMyTimeEntries*](#listmytimeentries)
   - [*ListTimeEntriesByDateRange*](#listtimeentriesbydaterange)
 - [**Mutations**](#mutations)
@@ -997,6 +998,126 @@ const ref = listTimeEntriesByWorkLogRef({ workLogId: ..., });
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = listTimeEntriesByWorkLogRef(dataConnect, listTimeEntriesByWorkLogVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.timeEntries);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntries);
+});
+```
+
+## ListTimeEntriesByTicket
+You can execute the `ListTimeEntriesByTicket` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listTimeEntriesByTicket(vars: ListTimeEntriesByTicketVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
+
+interface ListTimeEntriesByTicketRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListTimeEntriesByTicketVariables): QueryRef<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
+}
+export const listTimeEntriesByTicketRef: ListTimeEntriesByTicketRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listTimeEntriesByTicket(dc: DataConnect, vars: ListTimeEntriesByTicketVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
+
+interface ListTimeEntriesByTicketRef {
+  ...
+  (dc: DataConnect, vars: ListTimeEntriesByTicketVariables): QueryRef<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
+}
+export const listTimeEntriesByTicketRef: ListTimeEntriesByTicketRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listTimeEntriesByTicketRef:
+```typescript
+const name = listTimeEntriesByTicketRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListTimeEntriesByTicket` query requires an argument of type `ListTimeEntriesByTicketVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ListTimeEntriesByTicketVariables {
+  ticketNumber: number;
+}
+```
+### Return Type
+Recall that executing the `ListTimeEntriesByTicket` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListTimeEntriesByTicketData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListTimeEntriesByTicketData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    workLog?: {
+      id: UUIDString;
+      name: string;
+    } & WorkLog_Key;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+```
+### Using `ListTimeEntriesByTicket`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listTimeEntriesByTicket, ListTimeEntriesByTicketVariables } from '@dataconnect/generated';
+
+// The `ListTimeEntriesByTicket` query requires an argument of type `ListTimeEntriesByTicketVariables`:
+const listTimeEntriesByTicketVars: ListTimeEntriesByTicketVariables = {
+  ticketNumber: ..., 
+};
+
+// Call the `listTimeEntriesByTicket()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listTimeEntriesByTicket(listTimeEntriesByTicketVars);
+// Variables can be defined inline as well.
+const { data } = await listTimeEntriesByTicket({ ticketNumber: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listTimeEntriesByTicket(dataConnect, listTimeEntriesByTicketVars);
+
+console.log(data.timeEntries);
+
+// Or, you can use the `Promise` API.
+listTimeEntriesByTicket(listTimeEntriesByTicketVars).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntries);
+});
+```
+
+### Using `ListTimeEntriesByTicket`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listTimeEntriesByTicketRef, ListTimeEntriesByTicketVariables } from '@dataconnect/generated';
+
+// The `ListTimeEntriesByTicket` query requires an argument of type `ListTimeEntriesByTicketVariables`:
+const listTimeEntriesByTicketVars: ListTimeEntriesByTicketVariables = {
+  ticketNumber: ..., 
+};
+
+// Call the `listTimeEntriesByTicketRef()` function to get a reference to the query.
+const ref = listTimeEntriesByTicketRef(listTimeEntriesByTicketVars);
+// Variables can be defined inline as well.
+const ref = listTimeEntriesByTicketRef({ ticketNumber: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listTimeEntriesByTicketRef(dataConnect, listTimeEntriesByTicketVars);
 
 // Call `executeQuery()` on the reference to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.

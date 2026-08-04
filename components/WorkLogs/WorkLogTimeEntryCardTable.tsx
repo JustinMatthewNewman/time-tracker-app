@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Copy, CopyCheck, Pencil } from "@gravity-ui/icons";
+import { useRouter } from "next/navigation";
+import { ArrowUpRightFromSquare, Copy, CopyCheck, Pencil } from "@gravity-ui/icons";
 import {
     useUpdateTimeEntry,
     useUpdateTimeEntryClearTicket,
@@ -50,6 +51,7 @@ export function WorkLogTimeEntryCardTable({
     onEntryUpdated,
     highlightEntryId,
 }: WorkLogTimeEntryCardTableProps) {
+    const router = useRouter();
     const updateMutation = useUpdateTimeEntry();
     const clearTicketMutation = useUpdateTimeEntryClearTicket();
     const [drafts, setDrafts] = useState<Drafts>({});
@@ -224,19 +226,33 @@ export function WorkLogTimeEntryCardTable({
                             </td>
 
                             <td className="border p-2">
-                                <TicketComboBox
-                                    ticket={entry.ticket ?? null}
-                                    onSelect={(ticket) => handleSelectTicket(entry, ticket)}
-                                    onClear={() => handleClearTicket(entry)}
-                                    onRequestCreate={(ticketNumberText) => {
-                                        const parsed = Number(ticketNumberText);
-                                        setDialogState({
-                                            mode: "create",
-                                            entryId: entry.id,
-                                            initialTicketNumber: Number.isInteger(parsed) ? parsed : undefined,
-                                        });
-                                    }}
-                                />
+                                <div className="flex items-center gap-2">
+                                    <div className="min-w-0 flex-1">
+                                        <TicketComboBox
+                                            ticket={entry.ticket ?? null}
+                                            onSelect={(ticket) => handleSelectTicket(entry, ticket)}
+                                            onClear={() => handleClearTicket(entry)}
+                                            onRequestCreate={(ticketNumberText) => {
+                                                const parsed = Number(ticketNumberText);
+                                                setDialogState({
+                                                    mode: "create",
+                                                    entryId: entry.id,
+                                                    initialTicketNumber: Number.isInteger(parsed) ? parsed : undefined,
+                                                });
+                                            }}
+                                        />
+                                    </div>
+                                    {entry.ticket && (
+                                        <button
+                                            type="button"
+                                            aria-label={`View breakdown for ticket ${entry.ticket.ticketNumber}`}
+                                            onClick={() => router.push(`/ticket/${entry.ticket!.ticketNumber}`)}
+                                            className="shrink-0 rounded p-1 text-foreground/40 hover:bg-default hover:text-foreground"
+                                        >
+                                            <ArrowUpRightFromSquare className="size-3.5" />
+                                        </button>
+                                    )}
+                                </div>
                             </td>
 
                             <td className="border p-2">

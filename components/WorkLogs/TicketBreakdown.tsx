@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { groupByTicket, formatDuration, formatDecimalHours, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "@/components/Dashboard/chartColor";
-import { Copy, CopyCheck } from "@gravity-ui/icons";
+import { ArrowUpRightFromSquare, Copy, CopyCheck } from "@gravity-ui/icons";
 import { DonutChart } from "./DonutChart";
 import { TicketBarChart } from "./TicketBarChart";
 
@@ -105,17 +106,23 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
                           }}
                           aria-hidden
                         />
-                        {t.ticketLink ? (
+                        {t.ticket !== UNASSIGNED_TICKET ? (
+                          <Link href={`/ticket/${t.ticket}`} className="text-primary underline">
+                            {t.ticket}
+                          </Link>
+                        ) : (
+                          t.ticket
+                        )}
+                        {t.ticketLink && (
                           <a
                             href={t.ticketLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary underline"
+                            aria-label={`Open external link for ticket ${t.ticket}`}
+                            className="shrink-0 text-foreground/40 hover:text-foreground"
                           >
-                            {t.ticket}
+                            <ArrowUpRightFromSquare className="size-3" />
                           </a>
-                        ) : (
-                          t.ticket
                         )}
                       </span>
                       <button
@@ -181,7 +188,15 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
                 style={{ backgroundColor: d.color, filter: d.filter }}
                 aria-hidden
               />
-              <span className="min-w-0 flex-1 truncate text-foreground/80">{d.label}</span>
+              <span className="min-w-0 flex-1 truncate text-foreground/80">
+                {d.label !== UNASSIGNED_TICKET ? (
+                  <Link href={`/ticket/${d.label}`} className="hover:underline">
+                    {d.label}
+                  </Link>
+                ) : (
+                  d.label
+                )}
+              </span>
               <span className="text-foreground/50">
                 {grandTotalMinutes > 0 ? Math.round((d.value / grandTotalMinutes) * 100) : 0}%
               </span>
