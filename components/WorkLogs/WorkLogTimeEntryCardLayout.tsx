@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Accordion, Card, Switch } from '@heroui/react'
-import { ChevronDown, ListUl, FileText, Copy, CopyCheck } from '@gravity-ui/icons'
+import { Accordion, Card, ToggleButton, ToggleButtonGroup } from '@heroui/react'
+import { Bars, ChevronDown, FileText, Copy, CopyCheck } from '@gravity-ui/icons'
 import ListBoxComponent from '../Utilities/ListBoxComponent'
 import { useTimeRange } from '../../context/TimeRangeContext'
 import { formatHour } from '../TimeRangeSettings'
@@ -27,7 +27,7 @@ function formatWorkLogDate(isoDate: string) {
 
 function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }: WorkLogTimeEntryCardLayoutProps) {
   const { timeSlots } = useTimeRange()
-  const { isOpen } = useSidebar();
+  const { isOpen, toggle: toggleSidebar } = useSidebar();
   const { bordersEnabled } = useBorders();
   const { selectedWorkLogId, focusEntryId, setFocusEntryId } = useSelectedWorkLog();
   const { entries, loading, error, refetch } = useTimeEntriesByWorkLog(selectedWorkLogId);
@@ -88,6 +88,16 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
 
   const handleEntryUpdated = useCallback(() => refetch(), [refetch]);
 
+  // Drives the header's ToggleButtonGroup — sidebar-open and show-breakdown
+  // are independent booleans, not mutually exclusive options, hence multiple
+  // selection rather than single.
+  const viewControlKeys = useMemo(() => {
+    const keys: string[] = [];
+    if (isOpen) keys.push("sidebar");
+    if (showBreakdown) keys.push("breakdown");
+    return keys;
+  }, [isOpen, showBreakdown]);
+
   return (
     <div className='flex h-full items-stretch overflow-hidden'>
       {/* Sidebar */}
@@ -135,23 +145,23 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
                   bordersEnabled ? "border-b border-default-200" : ""
                 }`}
               >
-                <Switch
-                  isSelected={showBreakdown}
-                  onChange={(value) => onToggleBreakdown?.(value)}
-                  aria-label="Show ticket breakdown"
+                <ToggleButtonGroup
+                  aria-label="Worklog view controls"
+                  selectionMode="multiple"
+                  selectedKeys={viewControlKeys}
+                  onSelectionChange={(keys) => {
+                    const nextSidebarOpen = keys.has("sidebar");
+                    if (nextSidebarOpen !== isOpen) toggleSidebar();
+                    onToggleBreakdown?.(keys.has("breakdown"));
+                  }}
                 >
-                  <Switch.Content>
-                    <Switch.Control>
-                      <Switch.Thumb />
-                    </Switch.Control>
-                  </Switch.Content>
-                </Switch>
-                {/* Swaps between a "text" list glyph and a report-paper glyph to mirror the toggle. */}
-                {showBreakdown ? (
-                  <FileText className="size-4 text-foreground/70" aria-hidden />
-                ) : (
-                  <ListUl className="size-4 text-foreground/70" aria-hidden />
-                )}
+                  <ToggleButton id="sidebar" isIconOnly variant="ghost" aria-label="Toggle sidebar">
+                    <Bars className="size-4" aria-hidden />
+                  </ToggleButton>
+                  <ToggleButton id="breakdown" isIconOnly variant="ghost" aria-label="Show ticket breakdown">
+                    <FileText className="size-4" aria-hidden />
+                  </ToggleButton>
+                </ToggleButtonGroup>
                 <span className="font-medium text-foreground">{selectedWorkLog.name}</span>
                 <span className="text-sm text-gray-500">{formatWorkLogDate(selectedWorkLog.workLogDate)}</span>
               </div>

@@ -12,28 +12,28 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useListUsers, useGetMyUser, useListColorSchemes, useListTickets, useListTimeEntries, useGetTimeEntry, useListWorkLogs, useListTimeEntriesByWorkLog, useListTimeEntriesByTicket, useListMyTimeEntries } from '@dataconnect/generated/react';
+import { useCreateUserFromGoogle, useCreateTimeEntry, useCreateWorkLogOnly, useUpdateTimeEntry, useUpdateTimeEntryClearTicket, useDeleteTimeEntry, useUpsertTicket, useUpdateTicket, useSelectMyColorScheme, useClearMyColorScheme } from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
 
-const { data, isPending, isSuccess, isError, error } = useListUsers();
+const { data, isPending, isSuccess, isError, error } = useCreateUserFromGoogle(createUserFromGoogleVars);
 
-const { data, isPending, isSuccess, isError, error } = useGetMyUser();
+const { data, isPending, isSuccess, isError, error } = useCreateTimeEntry(createTimeEntryVars);
 
-const { data, isPending, isSuccess, isError, error } = useListColorSchemes();
+const { data, isPending, isSuccess, isError, error } = useCreateWorkLogOnly(createWorkLogOnlyVars);
 
-const { data, isPending, isSuccess, isError, error } = useListTickets(listTicketsVars);
+const { data, isPending, isSuccess, isError, error } = useUpdateTimeEntry(updateTimeEntryVars);
 
-const { data, isPending, isSuccess, isError, error } = useListTimeEntries(listTimeEntriesVars);
+const { data, isPending, isSuccess, isError, error } = useUpdateTimeEntryClearTicket(updateTimeEntryClearTicketVars);
 
-const { data, isPending, isSuccess, isError, error } = useGetTimeEntry(getTimeEntryVars);
+const { data, isPending, isSuccess, isError, error } = useDeleteTimeEntry(deleteTimeEntryVars);
 
-const { data, isPending, isSuccess, isError, error } = useListWorkLogs(listWorkLogsVars);
+const { data, isPending, isSuccess, isError, error } = useUpsertTicket(upsertTicketVars);
 
-const { data, isPending, isSuccess, isError, error } = useListTimeEntriesByWorkLog(listTimeEntriesByWorkLogVars);
+const { data, isPending, isSuccess, isError, error } = useUpdateTicket(updateTicketVars);
 
-const { data, isPending, isSuccess, isError, error } = useListTimeEntriesByTicket(listTimeEntriesByTicketVars);
+const { data, isPending, isSuccess, isError, error } = useSelectMyColorScheme(selectMyColorSchemeVars);
 
-const { data, isPending, isSuccess, isError, error } = useListMyTimeEntries(listMyTimeEntriesVars);
+const { data, isPending, isSuccess, isError, error } = useClearMyColorScheme();
 
 ```
 
@@ -72,38 +72,38 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { listUsers, getMyUser, listColorSchemes, listTickets, listTimeEntries, getTimeEntry, listWorkLogs, listTimeEntriesByWorkLog, listTimeEntriesByTicket, listMyTimeEntries } from '@dataconnect/generated';
+import { createUserFromGoogle, createTimeEntry, createWorkLogOnly, updateTimeEntry, updateTimeEntryClearTicket, deleteTimeEntry, upsertTicket, updateTicket, selectMyColorScheme, clearMyColorScheme } from '@dataconnect/generated';
 
 
-// Operation ListUsers: 
-const { data } = await ListUsers(dataConnect);
+// Operation CreateUserFromGoogle:  For variables, look at type CreateUserFromGoogleVars in ../index.d.ts
+const { data } = await CreateUserFromGoogle(dataConnect, createUserFromGoogleVars);
 
-// Operation GetMyUser: 
-const { data } = await GetMyUser(dataConnect);
+// Operation CreateTimeEntry:  For variables, look at type CreateTimeEntryVars in ../index.d.ts
+const { data } = await CreateTimeEntry(dataConnect, createTimeEntryVars);
 
-// Operation ListColorSchemes: 
-const { data } = await ListColorSchemes(dataConnect);
+// Operation CreateWorkLogOnly:  For variables, look at type CreateWorkLogOnlyVars in ../index.d.ts
+const { data } = await CreateWorkLogOnly(dataConnect, createWorkLogOnlyVars);
 
-// Operation ListTickets:  For variables, look at type ListTicketsVars in ../index.d.ts
-const { data } = await ListTickets(dataConnect, listTicketsVars);
+// Operation UpdateTimeEntry:  For variables, look at type UpdateTimeEntryVars in ../index.d.ts
+const { data } = await UpdateTimeEntry(dataConnect, updateTimeEntryVars);
 
-// Operation ListTimeEntries:  For variables, look at type ListTimeEntriesVars in ../index.d.ts
-const { data } = await ListTimeEntries(dataConnect, listTimeEntriesVars);
+// Operation UpdateTimeEntryClearTicket:  For variables, look at type UpdateTimeEntryClearTicketVars in ../index.d.ts
+const { data } = await UpdateTimeEntryClearTicket(dataConnect, updateTimeEntryClearTicketVars);
 
-// Operation GetTimeEntry:  For variables, look at type GetTimeEntryVars in ../index.d.ts
-const { data } = await GetTimeEntry(dataConnect, getTimeEntryVars);
+// Operation DeleteTimeEntry:  For variables, look at type DeleteTimeEntryVars in ../index.d.ts
+const { data } = await DeleteTimeEntry(dataConnect, deleteTimeEntryVars);
 
-// Operation ListWorkLogs:  For variables, look at type ListWorkLogsVars in ../index.d.ts
-const { data } = await ListWorkLogs(dataConnect, listWorkLogsVars);
+// Operation UpsertTicket:  For variables, look at type UpsertTicketVars in ../index.d.ts
+const { data } = await UpsertTicket(dataConnect, upsertTicketVars);
 
-// Operation ListTimeEntriesByWorkLog:  For variables, look at type ListTimeEntriesByWorkLogVars in ../index.d.ts
-const { data } = await ListTimeEntriesByWorkLog(dataConnect, listTimeEntriesByWorkLogVars);
+// Operation UpdateTicket:  For variables, look at type UpdateTicketVars in ../index.d.ts
+const { data } = await UpdateTicket(dataConnect, updateTicketVars);
 
-// Operation ListTimeEntriesByTicket:  For variables, look at type ListTimeEntriesByTicketVars in ../index.d.ts
-const { data } = await ListTimeEntriesByTicket(dataConnect, listTimeEntriesByTicketVars);
+// Operation SelectMyColorScheme:  For variables, look at type SelectMyColorSchemeVars in ../index.d.ts
+const { data } = await SelectMyColorScheme(dataConnect, selectMyColorSchemeVars);
 
-// Operation ListMyTimeEntries:  For variables, look at type ListMyTimeEntriesVars in ../index.d.ts
-const { data } = await ListMyTimeEntries(dataConnect, listMyTimeEntriesVars);
+// Operation ClearMyColorScheme: 
+const { data } = await ClearMyColorScheme(dataConnect);
 
 
 ```
