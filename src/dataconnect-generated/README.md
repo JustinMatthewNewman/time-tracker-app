@@ -33,6 +33,10 @@ This README will guide you through the process of using the generated JavaScript
   - [*SelectMyColorScheme*](#selectmycolorscheme)
   - [*ClearMyColorScheme*](#clearmycolorscheme)
   - [*SelectMyPerformanceMode*](#selectmyperformancemode)
+  - [*SelectMyBackgroundOpacity*](#selectmybackgroundopacity)
+  - [*SelectMyExternalTicketLinkTemplate*](#selectmyexternalticketlinktemplate)
+  - [*SelectMyCardStyle*](#selectmycardstyle)
+  - [*SelectMyBordersEnabled*](#selectmybordersenabled)
   - [*UpdateWorkLog*](#updateworklog)
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
@@ -223,6 +227,11 @@ export interface GetMyUserData {
       name: string;
     } & ColorScheme_Key;
     performanceMode?: boolean | null;
+    backgroundOpacity?: number | null;
+    externalTicketLinkTemplate?: string | null;
+    cardOpacity?: number | null;
+    cardBlur?: number | null;
+    bordersEnabled?: boolean | null;
   } & User_Key;
 }
 ```
@@ -2657,6 +2666,449 @@ const ref = selectMyPerformanceModeRef({ performanceMode: ..., });
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = selectMyPerformanceModeRef(dataConnect, selectMyPerformanceModeVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMyBackgroundOpacity
+You can execute the `SelectMyBackgroundOpacity` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyBackgroundOpacity(vars: SelectMyBackgroundOpacityVariables): MutationPromise<SelectMyBackgroundOpacityData, SelectMyBackgroundOpacityVariables>;
+
+interface SelectMyBackgroundOpacityRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyBackgroundOpacityVariables): MutationRef<SelectMyBackgroundOpacityData, SelectMyBackgroundOpacityVariables>;
+}
+export const selectMyBackgroundOpacityRef: SelectMyBackgroundOpacityRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyBackgroundOpacity(dc: DataConnect, vars: SelectMyBackgroundOpacityVariables): MutationPromise<SelectMyBackgroundOpacityData, SelectMyBackgroundOpacityVariables>;
+
+interface SelectMyBackgroundOpacityRef {
+  ...
+  (dc: DataConnect, vars: SelectMyBackgroundOpacityVariables): MutationRef<SelectMyBackgroundOpacityData, SelectMyBackgroundOpacityVariables>;
+}
+export const selectMyBackgroundOpacityRef: SelectMyBackgroundOpacityRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyBackgroundOpacityRef:
+```typescript
+const name = selectMyBackgroundOpacityRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyBackgroundOpacity` mutation requires an argument of type `SelectMyBackgroundOpacityVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyBackgroundOpacityVariables {
+  backgroundOpacity: number;
+}
+```
+### Return Type
+Recall that executing the `SelectMyBackgroundOpacity` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyBackgroundOpacityData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyBackgroundOpacityData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyBackgroundOpacity`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyBackgroundOpacity, SelectMyBackgroundOpacityVariables } from '@dataconnect/generated';
+
+// The `SelectMyBackgroundOpacity` mutation requires an argument of type `SelectMyBackgroundOpacityVariables`:
+const selectMyBackgroundOpacityVars: SelectMyBackgroundOpacityVariables = {
+  backgroundOpacity: ..., 
+};
+
+// Call the `selectMyBackgroundOpacity()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyBackgroundOpacity(selectMyBackgroundOpacityVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyBackgroundOpacity({ backgroundOpacity: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyBackgroundOpacity(dataConnect, selectMyBackgroundOpacityVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyBackgroundOpacity(selectMyBackgroundOpacityVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyBackgroundOpacity`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyBackgroundOpacityRef, SelectMyBackgroundOpacityVariables } from '@dataconnect/generated';
+
+// The `SelectMyBackgroundOpacity` mutation requires an argument of type `SelectMyBackgroundOpacityVariables`:
+const selectMyBackgroundOpacityVars: SelectMyBackgroundOpacityVariables = {
+  backgroundOpacity: ..., 
+};
+
+// Call the `selectMyBackgroundOpacityRef()` function to get a reference to the mutation.
+const ref = selectMyBackgroundOpacityRef(selectMyBackgroundOpacityVars);
+// Variables can be defined inline as well.
+const ref = selectMyBackgroundOpacityRef({ backgroundOpacity: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyBackgroundOpacityRef(dataConnect, selectMyBackgroundOpacityVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMyExternalTicketLinkTemplate
+You can execute the `SelectMyExternalTicketLinkTemplate` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyExternalTicketLinkTemplate(vars?: SelectMyExternalTicketLinkTemplateVariables): MutationPromise<SelectMyExternalTicketLinkTemplateData, SelectMyExternalTicketLinkTemplateVariables>;
+
+interface SelectMyExternalTicketLinkTemplateRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars?: SelectMyExternalTicketLinkTemplateVariables): MutationRef<SelectMyExternalTicketLinkTemplateData, SelectMyExternalTicketLinkTemplateVariables>;
+}
+export const selectMyExternalTicketLinkTemplateRef: SelectMyExternalTicketLinkTemplateRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyExternalTicketLinkTemplate(dc: DataConnect, vars?: SelectMyExternalTicketLinkTemplateVariables): MutationPromise<SelectMyExternalTicketLinkTemplateData, SelectMyExternalTicketLinkTemplateVariables>;
+
+interface SelectMyExternalTicketLinkTemplateRef {
+  ...
+  (dc: DataConnect, vars?: SelectMyExternalTicketLinkTemplateVariables): MutationRef<SelectMyExternalTicketLinkTemplateData, SelectMyExternalTicketLinkTemplateVariables>;
+}
+export const selectMyExternalTicketLinkTemplateRef: SelectMyExternalTicketLinkTemplateRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyExternalTicketLinkTemplateRef:
+```typescript
+const name = selectMyExternalTicketLinkTemplateRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyExternalTicketLinkTemplate` mutation has an optional argument of type `SelectMyExternalTicketLinkTemplateVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyExternalTicketLinkTemplateVariables {
+  externalTicketLinkTemplate?: string | null;
+}
+```
+### Return Type
+Recall that executing the `SelectMyExternalTicketLinkTemplate` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyExternalTicketLinkTemplateData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyExternalTicketLinkTemplateData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyExternalTicketLinkTemplate`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyExternalTicketLinkTemplate, SelectMyExternalTicketLinkTemplateVariables } from '@dataconnect/generated';
+
+// The `SelectMyExternalTicketLinkTemplate` mutation has an optional argument of type `SelectMyExternalTicketLinkTemplateVariables`:
+const selectMyExternalTicketLinkTemplateVars: SelectMyExternalTicketLinkTemplateVariables = {
+  externalTicketLinkTemplate: ..., // optional
+};
+
+// Call the `selectMyExternalTicketLinkTemplate()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyExternalTicketLinkTemplate(selectMyExternalTicketLinkTemplateVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyExternalTicketLinkTemplate({ externalTicketLinkTemplate: ..., });
+// Since all variables are optional for this mutation, you can omit the `SelectMyExternalTicketLinkTemplateVariables` argument.
+const { data } = await selectMyExternalTicketLinkTemplate();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyExternalTicketLinkTemplate(dataConnect, selectMyExternalTicketLinkTemplateVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyExternalTicketLinkTemplate(selectMyExternalTicketLinkTemplateVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyExternalTicketLinkTemplate`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyExternalTicketLinkTemplateRef, SelectMyExternalTicketLinkTemplateVariables } from '@dataconnect/generated';
+
+// The `SelectMyExternalTicketLinkTemplate` mutation has an optional argument of type `SelectMyExternalTicketLinkTemplateVariables`:
+const selectMyExternalTicketLinkTemplateVars: SelectMyExternalTicketLinkTemplateVariables = {
+  externalTicketLinkTemplate: ..., // optional
+};
+
+// Call the `selectMyExternalTicketLinkTemplateRef()` function to get a reference to the mutation.
+const ref = selectMyExternalTicketLinkTemplateRef(selectMyExternalTicketLinkTemplateVars);
+// Variables can be defined inline as well.
+const ref = selectMyExternalTicketLinkTemplateRef({ externalTicketLinkTemplate: ..., });
+// Since all variables are optional for this mutation, you can omit the `SelectMyExternalTicketLinkTemplateVariables` argument.
+const ref = selectMyExternalTicketLinkTemplateRef();
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyExternalTicketLinkTemplateRef(dataConnect, selectMyExternalTicketLinkTemplateVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMyCardStyle
+You can execute the `SelectMyCardStyle` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyCardStyle(vars: SelectMyCardStyleVariables): MutationPromise<SelectMyCardStyleData, SelectMyCardStyleVariables>;
+
+interface SelectMyCardStyleRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyCardStyleVariables): MutationRef<SelectMyCardStyleData, SelectMyCardStyleVariables>;
+}
+export const selectMyCardStyleRef: SelectMyCardStyleRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyCardStyle(dc: DataConnect, vars: SelectMyCardStyleVariables): MutationPromise<SelectMyCardStyleData, SelectMyCardStyleVariables>;
+
+interface SelectMyCardStyleRef {
+  ...
+  (dc: DataConnect, vars: SelectMyCardStyleVariables): MutationRef<SelectMyCardStyleData, SelectMyCardStyleVariables>;
+}
+export const selectMyCardStyleRef: SelectMyCardStyleRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyCardStyleRef:
+```typescript
+const name = selectMyCardStyleRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyCardStyle` mutation requires an argument of type `SelectMyCardStyleVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyCardStyleVariables {
+  cardOpacity: number;
+  cardBlur: number;
+}
+```
+### Return Type
+Recall that executing the `SelectMyCardStyle` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyCardStyleData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyCardStyleData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyCardStyle`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyCardStyle, SelectMyCardStyleVariables } from '@dataconnect/generated';
+
+// The `SelectMyCardStyle` mutation requires an argument of type `SelectMyCardStyleVariables`:
+const selectMyCardStyleVars: SelectMyCardStyleVariables = {
+  cardOpacity: ..., 
+  cardBlur: ..., 
+};
+
+// Call the `selectMyCardStyle()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyCardStyle(selectMyCardStyleVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyCardStyle({ cardOpacity: ..., cardBlur: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyCardStyle(dataConnect, selectMyCardStyleVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyCardStyle(selectMyCardStyleVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyCardStyle`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyCardStyleRef, SelectMyCardStyleVariables } from '@dataconnect/generated';
+
+// The `SelectMyCardStyle` mutation requires an argument of type `SelectMyCardStyleVariables`:
+const selectMyCardStyleVars: SelectMyCardStyleVariables = {
+  cardOpacity: ..., 
+  cardBlur: ..., 
+};
+
+// Call the `selectMyCardStyleRef()` function to get a reference to the mutation.
+const ref = selectMyCardStyleRef(selectMyCardStyleVars);
+// Variables can be defined inline as well.
+const ref = selectMyCardStyleRef({ cardOpacity: ..., cardBlur: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyCardStyleRef(dataConnect, selectMyCardStyleVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMyBordersEnabled
+You can execute the `SelectMyBordersEnabled` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyBordersEnabled(vars: SelectMyBordersEnabledVariables): MutationPromise<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
+
+interface SelectMyBordersEnabledRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyBordersEnabledVariables): MutationRef<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
+}
+export const selectMyBordersEnabledRef: SelectMyBordersEnabledRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyBordersEnabled(dc: DataConnect, vars: SelectMyBordersEnabledVariables): MutationPromise<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
+
+interface SelectMyBordersEnabledRef {
+  ...
+  (dc: DataConnect, vars: SelectMyBordersEnabledVariables): MutationRef<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
+}
+export const selectMyBordersEnabledRef: SelectMyBordersEnabledRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyBordersEnabledRef:
+```typescript
+const name = selectMyBordersEnabledRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyBordersEnabled` mutation requires an argument of type `SelectMyBordersEnabledVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyBordersEnabledVariables {
+  bordersEnabled: boolean;
+}
+```
+### Return Type
+Recall that executing the `SelectMyBordersEnabled` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyBordersEnabledData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyBordersEnabledData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyBordersEnabled`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyBordersEnabled, SelectMyBordersEnabledVariables } from '@dataconnect/generated';
+
+// The `SelectMyBordersEnabled` mutation requires an argument of type `SelectMyBordersEnabledVariables`:
+const selectMyBordersEnabledVars: SelectMyBordersEnabledVariables = {
+  bordersEnabled: ..., 
+};
+
+// Call the `selectMyBordersEnabled()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyBordersEnabled(selectMyBordersEnabledVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyBordersEnabled({ bordersEnabled: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyBordersEnabled(dataConnect, selectMyBordersEnabledVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyBordersEnabled(selectMyBordersEnabledVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyBordersEnabled`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyBordersEnabledRef, SelectMyBordersEnabledVariables } from '@dataconnect/generated';
+
+// The `SelectMyBordersEnabled` mutation requires an argument of type `SelectMyBordersEnabledVariables`:
+const selectMyBordersEnabledVars: SelectMyBordersEnabledVariables = {
+  bordersEnabled: ..., 
+};
+
+// Call the `selectMyBordersEnabledRef()` function to get a reference to the mutation.
+const ref = selectMyBordersEnabledRef(selectMyBordersEnabledVars);
+// Variables can be defined inline as well.
+const ref = selectMyBordersEnabledRef({ bordersEnabled: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyBordersEnabledRef(dataConnect, selectMyBordersEnabledVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.

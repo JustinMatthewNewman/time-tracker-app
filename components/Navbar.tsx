@@ -59,6 +59,11 @@ export default function AppNavbar() {
   const { performanceMode } = usePerformanceMode();
   const showSidebarToggle = pathname === "/worklogs";
 
+  const handleLogin = async () => {
+    await loginWithGoogle();
+    router.push("/worklogs");
+  };
+
   const handleAction = async (key: string) => {
     if (key === "logout") return logout();
 
@@ -80,12 +85,16 @@ export default function AppNavbar() {
 
   return (
     <header
+      data-glass={performanceMode ? undefined : "surface"}
       className={`sticky top-0 z-50 w-full border-b border-divider ${
-        // Translucent + blurred normally; performance mode drops the blur
-        // (expensive to composite continuously) but goes fully opaque
-        // instead of translucent, since a see-through header with no blur
-        // just looks like a rendering glitch.
-        performanceMode ? "bg-background" : "bg-background/80 backdrop-blur-md"
+        // Translucent + blurred normally, driven by the Settings page's
+        // card opacity/blur sliders via data-glass (see globals.css).
+        // Performance mode drops both instead — a see-through header with
+        // no blur just looks like a rendering glitch — by omitting
+        // data-glass entirely rather than relying on backdrop-filter's
+        // perf-mode override alone, which only zeroes the blur, not the
+        // translucency.
+        performanceMode ? "bg-background" : ""
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -126,7 +135,7 @@ export default function AppNavbar() {
             <AuthSection
               user={user}
               loading={loading}
-              onLogin={loginWithGoogle}
+              onLogin={handleLogin}
               onAction={handleAction}
             />
 

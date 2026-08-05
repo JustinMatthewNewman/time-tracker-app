@@ -1,5 +1,7 @@
 "use client";
 
+import { useBorders } from "@/context/BordersContext";
+
 export interface DonutChartSlice {
   label: string;
   value: number;
@@ -53,13 +55,17 @@ function describeDonutSlice(
 // Hand-rolled SVG donut rather than pulling in a charting library for one
 // chart — matches AmbientBackground's existing pattern of raw SVG elsewhere
 // in this app.
-export function DonutChart({ data, size = 140, thickness = 22, centerLabel, centerSubLabel }: DonutChartProps) {
+export function DonutChart({ data, size = 140, thickness = 30, centerLabel, centerSubLabel }: DonutChartProps) {
+  const { bordersEnabled } = useBorders();
   const total = data.reduce((sum, d) => sum + d.value, 0);
   const outerRadius = size / 2;
   const innerRadius = outerRadius - thickness;
   const cx = size / 2;
   const cy = size / 2;
-  const borderWidth = 1;
+  // Slice outlines are an SVG stroke, not a CSS `border`, so the global
+  // .no-borders rules (which target the `border` property) can't reach
+  // them — this has to gate the stroke itself.
+  const borderWidth = bordersEnabled ? 3 : 0;
 
   const visibleSlices = data.filter((d) => d.value > 0);
 

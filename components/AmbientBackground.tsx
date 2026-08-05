@@ -1,6 +1,7 @@
 "use client";
 
 import { usePerformanceMode } from "@/context/PerformanceModeContext";
+import { useBackgroundOpacity } from "@/context/BackgroundOpacityContext";
 
 // Shared ambient blob/dot-grid layer used behind page content.
 // Only visible in dark mode, matching the landing page's original design.
@@ -11,12 +12,18 @@ type AmbientBackgroundProps = {
 
 export default function AmbientBackground({ intensity = 1 }: AmbientBackgroundProps) {
     const { performanceMode } = usePerformanceMode();
+    const { backgroundOpacity } = useBackgroundOpacity();
 
     // The five orbs are continuously-animated SVG blur/turbulence filters —
     // cheap on a real GPU but a steady compositing cost on low-end/software
     // rendering, so performance mode skips mounting them entirely rather
     // than just hiding them with CSS.
     if (performanceMode) return null;
+
+    // The Settings page's opacity slider (0-100) further scales this
+    // page's own base intensity rather than replacing it, so pages keep
+    // their relative intensities while the user can dim everything at once.
+    const effectiveIntensity = intensity * (backgroundOpacity / 100);
 
     return (
         <>
@@ -74,7 +81,7 @@ export default function AmbientBackground({ intensity = 1 }: AmbientBackgroundPr
             <div
                 className="pointer-events-none ambient-bg fixed inset-0 z-0"
                 aria-hidden="true"
-                style={{ "--intensity": intensity } as React.CSSProperties}
+                style={{ "--intensity": effectiveIntensity } as React.CSSProperties}
             >
                 <svg
                     className="absolute inset-0 w-full h-full"

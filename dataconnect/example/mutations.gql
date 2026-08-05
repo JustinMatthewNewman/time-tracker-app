@@ -177,6 +177,44 @@ mutation SelectMyPerformanceMode($performanceMode: Boolean!) @auth(level: USER) 
   )
 }
 
+# Percentage multiplier for AmbientBackground's intensity (see schema.gql).
+mutation SelectMyBackgroundOpacity($backgroundOpacity: Int!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { backgroundOpacity: $backgroundOpacity }
+  )
+}
+
+# $externalTicketLinkTemplate is nullable (unlike SelectMyPerformanceMode's
+# required Boolean), so a single mutation covers both setting and clearing
+# the template — no separate Clear variant needed like ClearMyColorScheme.
+mutation SelectMyExternalTicketLinkTemplate($externalTicketLinkTemplate: String) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { externalTicketLinkTemplate: $externalTicketLinkTemplate }
+  )
+}
+
+# Card opacity and blur are edited together in the same Settings section
+# (CardStyleContext debounces both into one write), so one mutation covers
+# both fields rather than mirroring SelectMyBackgroundOpacity's single-field
+# pattern.
+mutation SelectMyCardStyle($cardOpacity: Int!, $cardBlur: Int!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { cardOpacity: $cardOpacity, cardBlur: $cardBlur }
+  )
+}
+
+# Toggles the Card/table border outline (see globals.css). Mirrors
+# SelectMyPerformanceMode — a plain instant boolean, no debounce needed.
+mutation SelectMyBordersEnabled($bordersEnabled: Boolean!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { bordersEnabled: $bordersEnabled }
+  )
+}
+
 mutation UpdateWorkLog($workLogId: UUID!, $name: String!) @auth(level: USER) @transaction {
   query @redact {
     workLog(key: { id: $workLogId }) {

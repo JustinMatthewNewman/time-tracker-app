@@ -17,6 +17,11 @@ query GetMyUser @auth(level: USER) {
       name
     }
     performanceMode
+    backgroundOpacity
+    externalTicketLinkTemplate
+    cardOpacity
+    cardBlur
+    bordersEnabled
   }
 }
 

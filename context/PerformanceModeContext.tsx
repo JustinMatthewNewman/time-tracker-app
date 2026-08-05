@@ -1,10 +1,9 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { QueryFetchPolicy } from "firebase/data-connect";
 import { useAuth } from "@/hooks/useAuth";
 import { useSelectMyPerformanceMode } from "@/src/dataconnect-generated/react";
-import { getMyUser } from "@/src/dataconnect-generated";
+import { useUserSettings } from "./UserSettingsContext";
 
 const STORAGE_KEY = "performanceMode";
 
@@ -18,9 +17,11 @@ const PerformanceModeContext = createContext<PerformanceModeContextType | null>(
 // Persisted per-account on the User table (like colorScheme, see
 // ThemeSelectionContext) so it follows the signed-in user across devices.
 // Still mirrored to localStorage as an instant paint before the DB value
-// loads and as the only source for the signed-out landing page.
+// loads (via UserSettingsContext's shared fetch) and as the only source for
+// the signed-out landing page.
 export function PerformanceModeProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
+  const { performanceMode: dbPerformanceMode, refetch } = useUserSettings();
   const [performanceMode, setPerformanceModeState] = useState(false);
   const selectMutation = useSelectMyPerformanceMode();
 
@@ -30,24 +31,11 @@ export function PerformanceModeProvider({ children }: { children: React.ReactNod
   }, []);
 
   useEffect(() => {
-    if (!user?.uid) return;
-    let cancelled = false;
-
-    // SERVER_ONLY, not the default cache-preferring policy, since a stale
-    // cached read here would silently override the value just set below.
-    getMyUser({ fetchPolicy: QueryFetchPolicy.SERVER_ONLY }).then((result) => {
-      if (cancelled) return;
-      const dbValue = result.data.user?.performanceMode;
-      if (dbValue != null) {
-        setPerformanceModeState(dbValue);
-        window.localStorage.setItem(STORAGE_KEY, String(dbValue));
-      }
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [user?.uid]);
+    if (dbPerformanceMode == null) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPerformanceModeState(dbPerformanceMode);
+    window.localStorage.setItem(STORAGE_KEY, String(dbPerformanceMode));
+  }, [dbPerformanceMode]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("perf-mode", performanceMode);
@@ -57,11 +45,13 @@ export function PerformanceModeProvider({ children }: { children: React.ReactNod
     (value: boolean) => {
       setPerformanceModeState(value);
       window.localStorage.setItem(STORAGE_KEY, String(value));
+      // Fire-and-forget: the UI already reflects the change from local
+      // state above, so the mutation doesn't need to block the toggle.
       if (user?.uid) {
-        selectMutation.mutate({ performanceMode: value });
+        selectMutation.mutate({ performanceMode: value }, { onSuccess: () => refetch() });
       }
     },
-    [user?.uid, selectMutation]
+    [user?.uid, selectMutation, refetch]
   );
 
   return (

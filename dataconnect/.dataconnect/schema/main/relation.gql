@@ -666,6 +666,42 @@ extend type User {
   """
   _count: Int! @fdc_generated(from: "User.", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `User` table where the `backgroundOpacity` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  backgroundOpacity_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.backgroundOpacity", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `bordersEnabled` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  bordersEnabled_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.bordersEnabled", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `cardBlur` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  cardBlur_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.cardBlur", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `cardOpacity` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  cardOpacity_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.cardOpacity", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `User` table where the `colorSchemeId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   colorSchemeId_count(
@@ -692,6 +728,15 @@ extend type User {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "User.email", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `User` table where the `externalTicketLinkTemplate` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  externalTicketLinkTemplate_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.externalTicketLinkTemplate", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `User` table where the `googleUid` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
@@ -729,9 +774,87 @@ extend type User {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "User.username", purpose: QUERY_COUNT)
   """
+  ✨ Sum the `backgroundOpacity` field in the `User` table.
+  """
+  backgroundOpacity_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "User.backgroundOpacity", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `cardBlur` field in the `User` table.
+  """
+  cardBlur_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "User.cardBlur", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `cardOpacity` field in the `User` table.
+  """
+  cardOpacity_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "User.cardOpacity", purpose: QUERY_SUM)
+  """
+  ✨ Average the `backgroundOpacity` field in the `User` table.
+  """
+  backgroundOpacity_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "User.backgroundOpacity", purpose: QUERY_AVG)
+  """
+  ✨ Average the `cardBlur` field in the `User` table.
+  """
+  cardBlur_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "User.cardBlur", purpose: QUERY_AVG)
+  """
+  ✨ Average the `cardOpacity` field in the `User` table.
+  """
+  cardOpacity_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "User.cardOpacity", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `backgroundOpacity` field in the `User` table.
+  """
+  backgroundOpacity_min: Int @fdc_generated(from: "User.backgroundOpacity", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `cardBlur` field in the `User` table.
+  """
+  cardBlur_min: Int @fdc_generated(from: "User.cardBlur", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `cardOpacity` field in the `User` table.
+  """
+  cardOpacity_min: Int @fdc_generated(from: "User.cardOpacity", purpose: QUERY_MIN)
+  """
   ✨ Minimum of the `createdAt` field in the `User` table.
   """
   createdAt_min: Timestamp @fdc_generated(from: "User.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `backgroundOpacity` field in the `User` table.
+  """
+  backgroundOpacity_max: Int @fdc_generated(from: "User.backgroundOpacity", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `cardBlur` field in the `User` table.
+  """
+  cardBlur_max: Int @fdc_generated(from: "User.cardBlur", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `cardOpacity` field in the `User` table.
+  """
+  cardOpacity_max: Int @fdc_generated(from: "User.cardOpacity", purpose: QUERY_MAX)
   """
   ✨ Maximum of the `createdAt` field in the `User` table.
   """

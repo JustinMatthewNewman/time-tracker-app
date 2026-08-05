@@ -40,6 +40,10 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*SelectMyColorScheme*](#selectmycolorscheme)
   - [*ClearMyColorScheme*](#clearmycolorscheme)
   - [*SelectMyPerformanceMode*](#selectmyperformancemode)
+  - [*SelectMyBackgroundOpacity*](#selectmybackgroundopacity)
+  - [*SelectMyExternalTicketLinkTemplate*](#selectmyexternalticketlinktemplate)
+  - [*SelectMyCardStyle*](#selectmycardstyle)
+  - [*SelectMyBordersEnabled*](#selectmybordersenabled)
   - [*UpdateWorkLog*](#updateworklog)
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
@@ -237,6 +241,11 @@ export interface GetMyUserData {
       name: string;
     } & ColorScheme_Key;
     performanceMode?: boolean | null;
+    backgroundOpacity?: number | null;
+    externalTicketLinkTemplate?: string | null;
+    cardOpacity?: number | null;
+    cardBlur?: number | null;
+    bordersEnabled?: boolean | null;
   } & User_Key;
 }
 ```
@@ -2251,6 +2260,388 @@ export default function SelectMyPerformanceModeComponent() {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
   mutation.mutate(selectMyPerformanceModeVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.user_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## SelectMyBackgroundOpacity
+You can execute the `SelectMyBackgroundOpacity` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useSelectMyBackgroundOpacity(options?: useDataConnectMutationOptions<SelectMyBackgroundOpacityData, FirebaseError, SelectMyBackgroundOpacityVariables>): UseDataConnectMutationResult<SelectMyBackgroundOpacityData, SelectMyBackgroundOpacityVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useSelectMyBackgroundOpacity(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyBackgroundOpacityData, FirebaseError, SelectMyBackgroundOpacityVariables>): UseDataConnectMutationResult<SelectMyBackgroundOpacityData, SelectMyBackgroundOpacityVariables>;
+```
+
+### Variables
+The `SelectMyBackgroundOpacity` Mutation requires an argument of type `SelectMyBackgroundOpacityVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface SelectMyBackgroundOpacityVariables {
+  backgroundOpacity: number;
+}
+```
+### Return Type
+Recall that calling the `SelectMyBackgroundOpacity` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SelectMyBackgroundOpacity` Mutation is of type `SelectMyBackgroundOpacityData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface SelectMyBackgroundOpacityData {
+  user_update?: User_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `SelectMyBackgroundOpacity`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, SelectMyBackgroundOpacityVariables } from '@dataconnect/generated';
+import { useSelectMyBackgroundOpacity } from '@dataconnect/generated/react'
+
+export default function SelectMyBackgroundOpacityComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useSelectMyBackgroundOpacity();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useSelectMyBackgroundOpacity(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyBackgroundOpacity(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyBackgroundOpacity(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useSelectMyBackgroundOpacity` Mutation requires an argument of type `SelectMyBackgroundOpacityVariables`:
+  const selectMyBackgroundOpacityVars: SelectMyBackgroundOpacityVariables = {
+    backgroundOpacity: ..., 
+  };
+  mutation.mutate(selectMyBackgroundOpacityVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ backgroundOpacity: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(selectMyBackgroundOpacityVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.user_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## SelectMyExternalTicketLinkTemplate
+You can execute the `SelectMyExternalTicketLinkTemplate` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useSelectMyExternalTicketLinkTemplate(options?: useDataConnectMutationOptions<SelectMyExternalTicketLinkTemplateData, FirebaseError, SelectMyExternalTicketLinkTemplateVariables | void>): UseDataConnectMutationResult<SelectMyExternalTicketLinkTemplateData, SelectMyExternalTicketLinkTemplateVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useSelectMyExternalTicketLinkTemplate(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyExternalTicketLinkTemplateData, FirebaseError, SelectMyExternalTicketLinkTemplateVariables | void>): UseDataConnectMutationResult<SelectMyExternalTicketLinkTemplateData, SelectMyExternalTicketLinkTemplateVariables>;
+```
+
+### Variables
+The `SelectMyExternalTicketLinkTemplate` Mutation has an optional argument of type `SelectMyExternalTicketLinkTemplateVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface SelectMyExternalTicketLinkTemplateVariables {
+  externalTicketLinkTemplate?: string | null;
+}
+```
+### Return Type
+Recall that calling the `SelectMyExternalTicketLinkTemplate` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SelectMyExternalTicketLinkTemplate` Mutation is of type `SelectMyExternalTicketLinkTemplateData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface SelectMyExternalTicketLinkTemplateData {
+  user_update?: User_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `SelectMyExternalTicketLinkTemplate`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, SelectMyExternalTicketLinkTemplateVariables } from '@dataconnect/generated';
+import { useSelectMyExternalTicketLinkTemplate } from '@dataconnect/generated/react'
+
+export default function SelectMyExternalTicketLinkTemplateComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useSelectMyExternalTicketLinkTemplate();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useSelectMyExternalTicketLinkTemplate(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyExternalTicketLinkTemplate(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyExternalTicketLinkTemplate(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useSelectMyExternalTicketLinkTemplate` Mutation has an optional argument of type `SelectMyExternalTicketLinkTemplateVariables`:
+  const selectMyExternalTicketLinkTemplateVars: SelectMyExternalTicketLinkTemplateVariables = {
+    externalTicketLinkTemplate: ..., // optional
+  };
+  mutation.mutate(selectMyExternalTicketLinkTemplateVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ externalTicketLinkTemplate: ..., });
+  // Since all variables are optional for this Mutation, you can omit the `SelectMyExternalTicketLinkTemplateVariables` argument.
+  mutation.mutate();
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  // Since all variables are optional for this Mutation, you can provide options without providing any variables.
+  // To do so, you must pass `undefined` where you would normally pass the variables.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(selectMyExternalTicketLinkTemplateVars /** or undefined */, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.user_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## SelectMyCardStyle
+You can execute the `SelectMyCardStyle` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useSelectMyCardStyle(options?: useDataConnectMutationOptions<SelectMyCardStyleData, FirebaseError, SelectMyCardStyleVariables>): UseDataConnectMutationResult<SelectMyCardStyleData, SelectMyCardStyleVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useSelectMyCardStyle(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyCardStyleData, FirebaseError, SelectMyCardStyleVariables>): UseDataConnectMutationResult<SelectMyCardStyleData, SelectMyCardStyleVariables>;
+```
+
+### Variables
+The `SelectMyCardStyle` Mutation requires an argument of type `SelectMyCardStyleVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface SelectMyCardStyleVariables {
+  cardOpacity: number;
+  cardBlur: number;
+}
+```
+### Return Type
+Recall that calling the `SelectMyCardStyle` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SelectMyCardStyle` Mutation is of type `SelectMyCardStyleData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface SelectMyCardStyleData {
+  user_update?: User_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `SelectMyCardStyle`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, SelectMyCardStyleVariables } from '@dataconnect/generated';
+import { useSelectMyCardStyle } from '@dataconnect/generated/react'
+
+export default function SelectMyCardStyleComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useSelectMyCardStyle();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useSelectMyCardStyle(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyCardStyle(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyCardStyle(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useSelectMyCardStyle` Mutation requires an argument of type `SelectMyCardStyleVariables`:
+  const selectMyCardStyleVars: SelectMyCardStyleVariables = {
+    cardOpacity: ..., 
+    cardBlur: ..., 
+  };
+  mutation.mutate(selectMyCardStyleVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ cardOpacity: ..., cardBlur: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(selectMyCardStyleVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.user_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## SelectMyBordersEnabled
+You can execute the `SelectMyBordersEnabled` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useSelectMyBordersEnabled(options?: useDataConnectMutationOptions<SelectMyBordersEnabledData, FirebaseError, SelectMyBordersEnabledVariables>): UseDataConnectMutationResult<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useSelectMyBordersEnabled(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyBordersEnabledData, FirebaseError, SelectMyBordersEnabledVariables>): UseDataConnectMutationResult<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
+```
+
+### Variables
+The `SelectMyBordersEnabled` Mutation requires an argument of type `SelectMyBordersEnabledVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface SelectMyBordersEnabledVariables {
+  bordersEnabled: boolean;
+}
+```
+### Return Type
+Recall that calling the `SelectMyBordersEnabled` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SelectMyBordersEnabled` Mutation is of type `SelectMyBordersEnabledData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface SelectMyBordersEnabledData {
+  user_update?: User_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `SelectMyBordersEnabled`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, SelectMyBordersEnabledVariables } from '@dataconnect/generated';
+import { useSelectMyBordersEnabled } from '@dataconnect/generated/react'
+
+export default function SelectMyBordersEnabledComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useSelectMyBordersEnabled();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useSelectMyBordersEnabled(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyBordersEnabled(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyBordersEnabled(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useSelectMyBordersEnabled` Mutation requires an argument of type `SelectMyBordersEnabledVariables`:
+  const selectMyBordersEnabledVars: SelectMyBordersEnabledVariables = {
+    bordersEnabled: ..., 
+  };
+  mutation.mutate(selectMyBordersEnabledVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ bordersEnabled: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(selectMyBordersEnabledVars, options);
 
   // Then, you can render your component dynamically based on the status of the Mutation.
   if (mutation.isPending) {
