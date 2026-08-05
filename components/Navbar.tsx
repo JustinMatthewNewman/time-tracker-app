@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import AuthSection from "./AuthSection";
-import { useSidebar } from "@/context/SideBarContext";
 
 import { useAuth } from "@/hooks/useAuth";
 import { loginWithGoogle, logout } from "@/lib/auth";
@@ -24,6 +23,7 @@ interface NavLink {
 const NAV_LINKS: NavLink[] = [
   { label: "Dashboard", href: "/dashboard", authRequired: true },
   { label: "Work Logs", href: "/worklogs", authRequired: true },
+  { label: "Tickets", href: "/tickets", authRequired: true },
   { label: "Profile", href: "/profile", authRequired: true },
   { label: "Settings", href: "/settings", authRequired: true },
 ];
@@ -54,10 +54,7 @@ export default function AppNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, loading } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
-  const { toggle } = useSidebar();
   const { performanceMode } = usePerformanceMode();
-  const showSidebarToggle = pathname === "/worklogs";
 
   const handleLogin = async () => {
     await loginWithGoogle();
@@ -100,18 +97,8 @@ export default function AppNavbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
 
-          {/* Left Side: Sidebar Toggle & Desktop Navigation */}
+          {/* Left Side: Desktop Navigation */}
           <div className="flex items-center gap-3">
-
-            {showSidebarToggle && (
-              <button
-                onClick={toggle}
-                className="rounded-md p-2 hover:bg-default-100 transition"
-                aria-label="Toggle Sidebar"
-              >
-                ☰
-              </button>
-            )}
 
             <nav className="hidden md:flex gap-7 items-center">
               {filteredLinks.map((link) => (

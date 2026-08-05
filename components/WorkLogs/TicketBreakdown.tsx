@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { groupByTicket, formatDuration, formatDecimalHours, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "@/components/Dashboard/chartColor";
 import { ArrowUpRightFromSquare, Copy, CopyCheck } from "@gravity-ui/icons";
@@ -17,17 +16,36 @@ function sliceStyle(ticket: string, colorIndex: number): SeriesColor {
   return getSeriesColor(colorIndex);
 }
 
+// Minimal shape groupByTicket actually needs — kept structural (rather than
+// importing WorkLogTimeEntry) so callers with a differently-shaped entry
+// (e.g. useMyTimeEntries' MyTimeEntry, for the all-tickets page) can pass
+// their entries straight through without an adapter.
+export interface TicketBreakdownEntry {
+  ticket?: { ticketNumber: number; ticketLink?: string | null } | null;
+  startTime: string;
+  endTime: string;
+}
+
 interface TicketBreakdownProps {
   hasSelection: boolean;
-  entries: WorkLogTimeEntry[];
+  entries: TicketBreakdownEntry[];
   loading?: boolean;
   error?: string | null;
+  loadingMessage?: string;
+  emptyMessage?: string;
 }
 
 // Renders as plain content rather than its own Card — it's shown nested
 // inside WorkLogTimeEntryCardLayout's shared card, alongside the entries
 // table view, behind the same sticky header.
-export function TicketBreakdown({ hasSelection, entries, loading, error }: TicketBreakdownProps) {
+export function TicketBreakdown({
+  hasSelection,
+  entries,
+  loading,
+  error,
+  loadingMessage = "Loading ticket breakdown...",
+  emptyMessage = "No time entries for this work log.",
+}: TicketBreakdownProps) {
   const { bordersEnabled } = useBorders();
   const totals = useMemo(() => groupByTicket(entries), [entries]);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -61,7 +79,7 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
   if (loading) {
     return (
       <div className="p-8 text-center">
-        <p className="text-foreground/60">Loading ticket breakdown...</p>
+        <p className="text-foreground/60">{loadingMessage}</p>
       </div>
     );
   }
@@ -69,7 +87,7 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
   if (totals.length === 0) {
     return (
       <div className="p-8 text-center">
-        <p className="text-foreground/60">No time entries for this work log.</p>
+        <p className="text-foreground/60">{emptyMessage}</p>
       </div>
     );
   }

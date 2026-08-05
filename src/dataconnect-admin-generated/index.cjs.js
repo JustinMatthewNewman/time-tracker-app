@@ -7,83 +7,6 @@ const connectorConfig = {
 };
 exports.connectorConfig = connectorConfig;
 
-function listUsers(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListUsers', undefined, inputOpts);
-}
-exports.listUsers = listUsers;
-
-function getMyUser(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('GetMyUser', undefined, inputOpts);
-}
-exports.getMyUser = getMyUser;
-
-function listColorSchemes(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListColorSchemes', undefined, inputOpts);
-}
-exports.listColorSchemes = listColorSchemes;
-
-function listTickets(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListTickets', inputVars, inputOpts);
-}
-exports.listTickets = listTickets;
-
-function listTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListTimeEntries', inputVars, inputOpts);
-}
-exports.listTimeEntries = listTimeEntries;
-
-function getTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('GetTimeEntry', inputVars, inputOpts);
-}
-exports.getTimeEntry = getTimeEntry;
-
-function listWorkLogs(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListWorkLogs', inputVars, inputOpts);
-}
-exports.listWorkLogs = listWorkLogs;
-
-function listTimeEntriesByWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListTimeEntriesByWorkLog', inputVars, inputOpts);
-}
-exports.listTimeEntriesByWorkLog = listTimeEntriesByWorkLog;
-
-function listTimeEntriesByTicket(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListTimeEntriesByTicket', inputVars, inputOpts);
-}
-exports.listTimeEntriesByTicket = listTimeEntriesByTicket;
-
-function listMyTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListMyTimeEntries', inputVars, inputOpts);
-}
-exports.listMyTimeEntries = listMyTimeEntries;
-
-function listTimeEntriesByDateRange(dcOrVarsOrOptions, varsOrOptions, options) {
-  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListTimeEntriesByDateRange', inputVars, inputOpts);
-}
-exports.listTimeEntriesByDateRange = listTimeEntriesByDateRange;
-
 function createUserFromGoogle(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
@@ -216,4 +139,81 @@ function createWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
   return dcInstance.executeMutation('CreateWorkLog', inputVars, inputOpts);
 }
 exports.createWorkLog = createWorkLog;
+
+function listUsers(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListUsers', undefined, inputOpts);
+}
+exports.listUsers = listUsers;
+
+function getMyUser(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('GetMyUser', undefined, inputOpts);
+}
+exports.getMyUser = getMyUser;
+
+function listColorSchemes(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListColorSchemes', undefined, inputOpts);
+}
+exports.listColorSchemes = listColorSchemes;
+
+function listTickets(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTickets', inputVars, inputOpts);
+}
+exports.listTickets = listTickets;
+
+function listTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTimeEntries', inputVars, inputOpts);
+}
+exports.listTimeEntries = listTimeEntries;
+
+function getTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('GetTimeEntry', inputVars, inputOpts);
+}
+exports.getTimeEntry = getTimeEntry;
+
+function listWorkLogs(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListWorkLogs', inputVars, inputOpts);
+}
+exports.listWorkLogs = listWorkLogs;
+
+function listTimeEntriesByWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTimeEntriesByWorkLog', inputVars, inputOpts);
+}
+exports.listTimeEntriesByWorkLog = listTimeEntriesByWorkLog;
+
+function listTimeEntriesByTicket(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTimeEntriesByTicket', inputVars, inputOpts);
+}
+exports.listTimeEntriesByTicket = listTimeEntriesByTicket;
+
+function listMyTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListMyTimeEntries', inputVars, inputOpts);
+}
+exports.listMyTimeEntries = listMyTimeEntries;
+
+function listTimeEntriesByDateRange(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTimeEntriesByDateRange', inputVars, inputOpts);
+}
+exports.listTimeEntriesByDateRange = listTimeEntriesByDateRange;
 
