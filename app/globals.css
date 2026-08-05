@@ -54,6 +54,124 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Card opacity/blur (see context/CardStyleContext): a user-adjustable
+   "frosted glass" look applied to every HeroUI Card, driven by the
+   --card-opacity/--card-blur custom properties CardStyleContext sets on
+   :root. Keyed off [data-slot="card"] — the attribute HeroUI's CardRoot
+   stamps on its root element regardless of variant or any className a
+   consumer passes (see node_modules/@heroui/react .../card/card.js) —
+   rather than the card--* modifier classes alone, so this can't silently
+   stop covering a card just because it's passed an overriding className
+   (e.g. TimeEntryList's error-state `bg-red-50` Card) or a variant this
+   comment didn't anticipate. Declared unlayered (not @layer
+   components/utilities) so it beats @heroui/styles' own layered rules,
+   and any consumer's Tailwind utility classes, regardless of source order
+   or specificity — see https://developer.mozilla.org/en-US/docs/Web/CSS/@layer.
+   Falls back to fully opaque/no blur so cards look unchanged before
+   CardStyleContext's effect runs (e.g. signed-out visitors, first paint). */
+[data-slot="card"].card--default {
+  background-color: color-mix(in srgb, var(--color-surface) var(--card-opacity, 100%), transparent);
+}
+[data-slot="card"].card--secondary {
+  background-color: color-mix(in srgb, var(--color-surface-secondary) var(--card-opacity, 100%), transparent);
+}
+[data-slot="card"].card--tertiary {
+  background-color: color-mix(in srgb, var(--color-surface-tertiary) var(--card-opacity, 100%), transparent);
+}
+/* Blur applies even to the transparent variant (no background-color rule
+   above for it) — with nothing behind it to fade, opacity has nothing to
+   act on, but blurring whatever shows through still reads as glass. */
+[data-slot="card"] {
+  /* No !important: performance mode's `backdrop-filter: none !important`
+     below must keep winning over this so blur stays off in perf mode. */
+  backdrop-filter: blur(var(--card-blur, 0px));
+}
+
+/* Same glass effect as Card above, for other surfaces that sit alongside
+   Cards but aren't one: HeroUI's own floating panels — Dropdown menus,
+   ComboBox/Select/Autocomplete listboxes — via [data-slot$="popover"].
+   NOT a shared `.popover` class: each of these compounds its own scoped
+   class instead (.combo-box__popover, .dropdown__popover, .select__popover,
+   .autocomplete__popover — see their respective @heroui/styles component
+   CSS), so a `.popover` selector alone silently matches none of them. Their
+   root element's data-slot does consistently end in "-popover" though
+   (combo-box-popover, dropdown-popover, select-popover,
+   autocomplete-popover — see each component's .js in @heroui/react), which
+   is what this keys off instead. Plus a few plain divs that render their
+   own opaque background instead of inheriting a parent Card's (worklog
+   sidebar tab list, worklog card's sticky header, the navbar) — those opt
+   in explicitly via data-glass="surface" since a blanket
+   `.bg-surface`/`.bg-default-50` selector would also catch places that
+   deliberately keep a fixed, non-user-adjustable opacity (e.g.
+   ChartTooltip's `bg-surface/95`). */
+[data-slot$="popover"] {
+  background-color: color-mix(in srgb, var(--color-overlay) var(--card-opacity, 100%), transparent);
+  backdrop-filter: blur(var(--card-blur, 0px));
+}
+[data-glass="surface"] {
+  background-color: color-mix(in srgb, var(--color-surface) var(--card-opacity, 100%), transparent);
+  backdrop-filter: blur(var(--card-blur, 0px));
+}
+
+/* Same glass effect again, for form fields (text inputs, and — since
+   ComboBox/Select's trigger is just an Input under the hood — the always-
+   visible "closed" box of the Ticket combobox etc., as distinct from its
+   [data-slot$="popover"] dropdown above). HeroUI's Input sets
+   data-slot="input" on every text field app-wide (see .../input/input.js),
+   so this is app-wide too rather than needing a per-instance opt-in like
+   data-glass="surface" above. [data-slot="search-field-group"] covers the
+   navbar search bar specifically — SearchField is structured differently
+   from a plain Input: the visible background lives on its wrapping "group"
+   element (search-field.css .search-field__group), with the actual
+   data-slot="search-field-input" element itself left bg-transparent, so
+   the plain [data-slot="input"] selector alone doesn't reach it. Only the
+   resting background is overridden — :not(:focus/:hover) — so fields still
+   go solid on hover/focus (.input's own --field-hover/--field-focus
+   rules), preserving that interaction feedback instead of this unlayered
+   rule flattening it. */
+[data-slot="input"]:not(:focus):not([data-focused="true"]):not(:hover):not([data-hovered="true"]),
+[data-slot="search-field-group"]:not(:focus-within):not([data-focus-within="true"]):not(:hover):not([data-hovered="true"]) {
+  background-color: color-mix(in srgb, var(--color-field) var(--card-opacity, 100%), transparent);
+  backdrop-filter: blur(var(--card-blur, 0px));
+}
+
+/* Borders toggle (see context/BordersContext): strips the outer border from
+   Cards and tables when off, leaving background/shadow untouched. Scoped to
+   [data-slot="card"] itself (not descendants) so internal section dividers
+   like ProfileAuthSection's `border-t` separator aren't affected — this is
+   specifically "the card's own border", not every border-* utility inside
+   one. !important (unlike the card glass rules above, nothing needs to
+   override this back on) since being unlayered alone wasn't reliably
+   beating table/td/th's `border` utility class in practice. */
+.no-borders [data-slot="card"] {
+  border: none !important;
+}
+.no-borders table,
+.no-borders th,
+.no-borders td {
+  border: none !important;
+}
+/* Accordion item separators (worklogs page's per-hour groups) aren't a
+   `border` at all — HeroUI draws them as a `.accordion__item::after`
+   pseudo-element line (see @heroui/styles accordion.css) — so the rules
+   above don't touch them. HeroUI already supports hiding it per-item via a
+   data-hide-separator="true" prop; this reuses that same ::after rule but
+   keyed off .no-borders instead, so every item hides at once without
+   threading the prop through. */
+.no-borders .accordion__item::after {
+  display: none;
+}
+/* Vertical tabs (worklogs sidebar) per-tab dividers: also not a `border` —
+   HeroUI draws each as a `.tabs__separator` div positioned at the top of
+   the tab below it, toggled via opacity rather than display (see
+   @heroui/styles tabs.css), hidden only for the selected tab and the one
+   right after it. Force every one to 0 regardless of selection so none are
+   left showing (e.g. the last tab's, which sits below the lowest selected
+   item and was never covered by either of those two rules). */
+.no-borders .tabs__separator {
+  opacity: 0 !important;
+}
+
 /* Performance mode (see context/PerformanceModeContext): strips CSS
    transitions/animations and blur filters app-wide rather than patching
    every component that uses them individually. AmbientBackground's own

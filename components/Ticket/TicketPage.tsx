@@ -2,14 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, ChevronDown, Pencil, Ticket as TicketIcon, Xmark } from "@gravity-ui/icons";
+import { ArrowLeft, ArrowUpRightFromSquare, Check, ChevronDown, Pencil, Ticket as TicketIcon, Xmark } from "@gravity-ui/icons";
 import { Accordion, Button, Card, EmptyState, Input, Label, Spinner, TextField } from "@heroui/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTickets } from "@/context/TicketsContext";
 import { useTimeEntriesByTicket, type TicketTimeEntry } from "@/hooks/useTimeEntriesByTicket";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
+import { useUserSettings } from "@/context/UserSettingsContext";
 import { TicketDayEntriesTable } from "./TicketDayEntriesTable";
 import AmbientBackground from "@/components/AmbientBackground";
+
+const TICKET_ID_PLACEHOLDER = "{ticket_id}";
 
 interface TicketPageProps {
   ticketNumberParam: string;
@@ -29,10 +32,16 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
   const router = useRouter();
   const { tickets, loading: ticketsLoading, updateTicketDetails } = useTickets();
   const { setSelectedWorkLogId, setFocusEntryId } = useSelectedWorkLog();
+  const { externalTicketLinkTemplate } = useUserSettings();
 
   const ticketNumber = Number(ticketNumberParam);
   const isValidTicketNumber = Number.isInteger(ticketNumber);
   const ticket = isValidTicketNumber ? tickets.find((t) => t.ticketNumber === ticketNumber) : undefined;
+
+  const externalTicketLink =
+    ticket && externalTicketLinkTemplate?.includes(TICKET_ID_PLACEHOLDER)
+      ? externalTicketLinkTemplate.replace(TICKET_ID_PLACEHOLDER, String(ticket.ticketNumber))
+      : null;
 
   const { entries, loading: entriesLoading, refetch: refetchEntries } = useTimeEntriesByTicket(
     isValidTicketNumber ? ticketNumber : null
@@ -159,6 +168,17 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
                     )}
                   </div>
                 </div>
+
+                {externalTicketLink && (
+                  <a
+                    href={externalTicketLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-fit items-center gap-1.5 text-sm text-accent hover:underline"
+                  >
+                    <ArrowUpRightFromSquare className="size-3.5" /> View in external system
+                  </a>
+                )}
               </div>
 
               <div className="mt-6 max-w-xs">

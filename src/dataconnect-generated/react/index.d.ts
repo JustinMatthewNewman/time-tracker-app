@@ -1,9 +1,42 @@
-import { CreateUserFromGoogleData, CreateUserFromGoogleVariables, CreateTimeEntryData, CreateTimeEntryVariables, CreateWorkLogOnlyData, CreateWorkLogOnlyVariables, UpdateTimeEntryData, UpdateTimeEntryVariables, UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables, DeleteTimeEntryData, DeleteTimeEntryVariables, UpsertTicketData, UpsertTicketVariables, UpdateTicketData, UpdateTicketVariables, SelectMyColorSchemeData, SelectMyColorSchemeVariables, ClearMyColorSchemeData, SelectMyPerformanceModeData, SelectMyPerformanceModeVariables, UpdateWorkLogData, UpdateWorkLogVariables, DeleteWorkLogData, DeleteWorkLogVariables, RestoreWorkLogData, RestoreWorkLogVariables, CreateWorkLogData, CreateWorkLogVariables, ListUsersData, GetMyUserData, ListColorSchemesData, ListTicketsData, ListTicketsVariables, ListTimeEntriesData, ListTimeEntriesVariables, GetTimeEntryData, GetTimeEntryVariables, ListWorkLogsData, ListWorkLogsVariables, ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables, ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables, ListMyTimeEntriesData, ListMyTimeEntriesVariables, ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables } from '../';
+import { ListUsersData, GetMyUserData, ListColorSchemesData, ListTicketsData, ListTicketsVariables, ListTimeEntriesData, ListTimeEntriesVariables, GetTimeEntryData, GetTimeEntryVariables, ListWorkLogsData, ListWorkLogsVariables, ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables, ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables, ListMyTimeEntriesData, ListMyTimeEntriesVariables, ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables, CreateUserFromGoogleData, CreateUserFromGoogleVariables, CreateTimeEntryData, CreateTimeEntryVariables, CreateWorkLogOnlyData, CreateWorkLogOnlyVariables, UpdateTimeEntryData, UpdateTimeEntryVariables, UpdateTimeEntryClearTicketData, UpdateTimeEntryClearTicketVariables, DeleteTimeEntryData, DeleteTimeEntryVariables, UpsertTicketData, UpsertTicketVariables, UpdateTicketData, UpdateTicketVariables, SelectMyColorSchemeData, SelectMyColorSchemeVariables, ClearMyColorSchemeData, SelectMyPerformanceModeData, SelectMyPerformanceModeVariables, SelectMyBackgroundOpacityData, SelectMyBackgroundOpacityVariables, SelectMyExternalTicketLinkTemplateData, SelectMyExternalTicketLinkTemplateVariables, SelectMyCardStyleData, SelectMyCardStyleVariables, SelectMyBordersEnabledData, SelectMyBordersEnabledVariables, UpdateWorkLogData, UpdateWorkLogVariables, DeleteWorkLogData, DeleteWorkLogVariables, RestoreWorkLogData, RestoreWorkLogVariables, CreateWorkLogData, CreateWorkLogVariables } from '../';
 import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
 import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
 import { FirebaseError } from 'firebase/app';
 
+
+export function useListUsers(options?: useDataConnectQueryOptions<ListUsersData>): UseDataConnectQueryResult<ListUsersData, undefined>;
+export function useListUsers(dc: DataConnect, options?: useDataConnectQueryOptions<ListUsersData>): UseDataConnectQueryResult<ListUsersData, undefined>;
+
+export function useGetMyUser(options?: useDataConnectQueryOptions<GetMyUserData>): UseDataConnectQueryResult<GetMyUserData, undefined>;
+export function useGetMyUser(dc: DataConnect, options?: useDataConnectQueryOptions<GetMyUserData>): UseDataConnectQueryResult<GetMyUserData, undefined>;
+
+export function useListColorSchemes(options?: useDataConnectQueryOptions<ListColorSchemesData>): UseDataConnectQueryResult<ListColorSchemesData, undefined>;
+export function useListColorSchemes(dc: DataConnect, options?: useDataConnectQueryOptions<ListColorSchemesData>): UseDataConnectQueryResult<ListColorSchemesData, undefined>;
+
+export function useListTickets(vars?: ListTicketsVariables, options?: useDataConnectQueryOptions<ListTicketsData>): UseDataConnectQueryResult<ListTicketsData, ListTicketsVariables>;
+export function useListTickets(dc: DataConnect, vars?: ListTicketsVariables, options?: useDataConnectQueryOptions<ListTicketsData>): UseDataConnectQueryResult<ListTicketsData, ListTicketsVariables>;
+
+export function useListTimeEntries(vars: ListTimeEntriesVariables, options?: useDataConnectQueryOptions<ListTimeEntriesData>): UseDataConnectQueryResult<ListTimeEntriesData, ListTimeEntriesVariables>;
+export function useListTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: useDataConnectQueryOptions<ListTimeEntriesData>): UseDataConnectQueryResult<ListTimeEntriesData, ListTimeEntriesVariables>;
+
+export function useGetTimeEntry(vars: GetTimeEntryVariables, options?: useDataConnectQueryOptions<GetTimeEntryData>): UseDataConnectQueryResult<GetTimeEntryData, GetTimeEntryVariables>;
+export function useGetTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: useDataConnectQueryOptions<GetTimeEntryData>): UseDataConnectQueryResult<GetTimeEntryData, GetTimeEntryVariables>;
+
+export function useListWorkLogs(vars?: ListWorkLogsVariables, options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, ListWorkLogsVariables>;
+export function useListWorkLogs(dc: DataConnect, vars?: ListWorkLogsVariables, options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, ListWorkLogsVariables>;
+
+export function useListTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByWorkLogData>): UseDataConnectQueryResult<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+export function useListTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByWorkLogData>): UseDataConnectQueryResult<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
+
+export function useListTimeEntriesByTicket(vars: ListTimeEntriesByTicketVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByTicketData>): UseDataConnectQueryResult<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
+export function useListTimeEntriesByTicket(dc: DataConnect, vars: ListTimeEntriesByTicketVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByTicketData>): UseDataConnectQueryResult<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
+
+export function useListMyTimeEntries(vars?: ListMyTimeEntriesVariables, options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
+export function useListMyTimeEntries(dc: DataConnect, vars?: ListMyTimeEntriesVariables, options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
+
+export function useListTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByDateRangeData>): UseDataConnectQueryResult<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
+export function useListTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByDateRangeData>): UseDataConnectQueryResult<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
 
 export function useCreateUserFromGoogle(options?: useDataConnectMutationOptions<CreateUserFromGoogleData, FirebaseError, CreateUserFromGoogleVariables>): UseDataConnectMutationResult<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
 export function useCreateUserFromGoogle(dc: DataConnect, options?: useDataConnectMutationOptions<CreateUserFromGoogleData, FirebaseError, CreateUserFromGoogleVariables>): UseDataConnectMutationResult<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
@@ -38,6 +71,18 @@ export function useClearMyColorScheme(dc: DataConnect, options?: useDataConnectM
 export function useSelectMyPerformanceMode(options?: useDataConnectMutationOptions<SelectMyPerformanceModeData, FirebaseError, SelectMyPerformanceModeVariables>): UseDataConnectMutationResult<SelectMyPerformanceModeData, SelectMyPerformanceModeVariables>;
 export function useSelectMyPerformanceMode(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyPerformanceModeData, FirebaseError, SelectMyPerformanceModeVariables>): UseDataConnectMutationResult<SelectMyPerformanceModeData, SelectMyPerformanceModeVariables>;
 
+export function useSelectMyBackgroundOpacity(options?: useDataConnectMutationOptions<SelectMyBackgroundOpacityData, FirebaseError, SelectMyBackgroundOpacityVariables>): UseDataConnectMutationResult<SelectMyBackgroundOpacityData, SelectMyBackgroundOpacityVariables>;
+export function useSelectMyBackgroundOpacity(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyBackgroundOpacityData, FirebaseError, SelectMyBackgroundOpacityVariables>): UseDataConnectMutationResult<SelectMyBackgroundOpacityData, SelectMyBackgroundOpacityVariables>;
+
+export function useSelectMyExternalTicketLinkTemplate(options?: useDataConnectMutationOptions<SelectMyExternalTicketLinkTemplateData, FirebaseError, SelectMyExternalTicketLinkTemplateVariables | void>): UseDataConnectMutationResult<SelectMyExternalTicketLinkTemplateData, SelectMyExternalTicketLinkTemplateVariables>;
+export function useSelectMyExternalTicketLinkTemplate(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyExternalTicketLinkTemplateData, FirebaseError, SelectMyExternalTicketLinkTemplateVariables | void>): UseDataConnectMutationResult<SelectMyExternalTicketLinkTemplateData, SelectMyExternalTicketLinkTemplateVariables>;
+
+export function useSelectMyCardStyle(options?: useDataConnectMutationOptions<SelectMyCardStyleData, FirebaseError, SelectMyCardStyleVariables>): UseDataConnectMutationResult<SelectMyCardStyleData, SelectMyCardStyleVariables>;
+export function useSelectMyCardStyle(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyCardStyleData, FirebaseError, SelectMyCardStyleVariables>): UseDataConnectMutationResult<SelectMyCardStyleData, SelectMyCardStyleVariables>;
+
+export function useSelectMyBordersEnabled(options?: useDataConnectMutationOptions<SelectMyBordersEnabledData, FirebaseError, SelectMyBordersEnabledVariables>): UseDataConnectMutationResult<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
+export function useSelectMyBordersEnabled(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyBordersEnabledData, FirebaseError, SelectMyBordersEnabledVariables>): UseDataConnectMutationResult<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
+
 export function useUpdateWorkLog(options?: useDataConnectMutationOptions<UpdateWorkLogData, FirebaseError, UpdateWorkLogVariables>): UseDataConnectMutationResult<UpdateWorkLogData, UpdateWorkLogVariables>;
 export function useUpdateWorkLog(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateWorkLogData, FirebaseError, UpdateWorkLogVariables>): UseDataConnectMutationResult<UpdateWorkLogData, UpdateWorkLogVariables>;
 
@@ -49,36 +94,3 @@ export function useRestoreWorkLog(dc: DataConnect, options?: useDataConnectMutat
 
 export function useCreateWorkLog(options?: useDataConnectMutationOptions<CreateWorkLogData, FirebaseError, CreateWorkLogVariables>): UseDataConnectMutationResult<CreateWorkLogData, CreateWorkLogVariables>;
 export function useCreateWorkLog(dc: DataConnect, options?: useDataConnectMutationOptions<CreateWorkLogData, FirebaseError, CreateWorkLogVariables>): UseDataConnectMutationResult<CreateWorkLogData, CreateWorkLogVariables>;
-
-export function useListUsers(options?: useDataConnectQueryOptions<ListUsersData>): UseDataConnectQueryResult<ListUsersData, undefined>;
-export function useListUsers(dc: DataConnect, options?: useDataConnectQueryOptions<ListUsersData>): UseDataConnectQueryResult<ListUsersData, undefined>;
-
-export function useGetMyUser(options?: useDataConnectQueryOptions<GetMyUserData>): UseDataConnectQueryResult<GetMyUserData, undefined>;
-export function useGetMyUser(dc: DataConnect, options?: useDataConnectQueryOptions<GetMyUserData>): UseDataConnectQueryResult<GetMyUserData, undefined>;
-
-export function useListColorSchemes(options?: useDataConnectQueryOptions<ListColorSchemesData>): UseDataConnectQueryResult<ListColorSchemesData, undefined>;
-export function useListColorSchemes(dc: DataConnect, options?: useDataConnectQueryOptions<ListColorSchemesData>): UseDataConnectQueryResult<ListColorSchemesData, undefined>;
-
-export function useListTickets(vars?: ListTicketsVariables, options?: useDataConnectQueryOptions<ListTicketsData>): UseDataConnectQueryResult<ListTicketsData, ListTicketsVariables>;
-export function useListTickets(dc: DataConnect, vars?: ListTicketsVariables, options?: useDataConnectQueryOptions<ListTicketsData>): UseDataConnectQueryResult<ListTicketsData, ListTicketsVariables>;
-
-export function useListTimeEntries(vars: ListTimeEntriesVariables, options?: useDataConnectQueryOptions<ListTimeEntriesData>): UseDataConnectQueryResult<ListTimeEntriesData, ListTimeEntriesVariables>;
-export function useListTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: useDataConnectQueryOptions<ListTimeEntriesData>): UseDataConnectQueryResult<ListTimeEntriesData, ListTimeEntriesVariables>;
-
-export function useGetTimeEntry(vars: GetTimeEntryVariables, options?: useDataConnectQueryOptions<GetTimeEntryData>): UseDataConnectQueryResult<GetTimeEntryData, GetTimeEntryVariables>;
-export function useGetTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: useDataConnectQueryOptions<GetTimeEntryData>): UseDataConnectQueryResult<GetTimeEntryData, GetTimeEntryVariables>;
-
-export function useListWorkLogs(vars?: ListWorkLogsVariables, options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, ListWorkLogsVariables>;
-export function useListWorkLogs(dc: DataConnect, vars?: ListWorkLogsVariables, options?: useDataConnectQueryOptions<ListWorkLogsData>): UseDataConnectQueryResult<ListWorkLogsData, ListWorkLogsVariables>;
-
-export function useListTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByWorkLogData>): UseDataConnectQueryResult<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
-export function useListTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByWorkLogData>): UseDataConnectQueryResult<ListTimeEntriesByWorkLogData, ListTimeEntriesByWorkLogVariables>;
-
-export function useListTimeEntriesByTicket(vars: ListTimeEntriesByTicketVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByTicketData>): UseDataConnectQueryResult<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
-export function useListTimeEntriesByTicket(dc: DataConnect, vars: ListTimeEntriesByTicketVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByTicketData>): UseDataConnectQueryResult<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
-
-export function useListMyTimeEntries(vars?: ListMyTimeEntriesVariables, options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
-export function useListMyTimeEntries(dc: DataConnect, vars?: ListMyTimeEntriesVariables, options?: useDataConnectQueryOptions<ListMyTimeEntriesData>): UseDataConnectQueryResult<ListMyTimeEntriesData, ListMyTimeEntriesVariables>;
-
-export function useListTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByDateRangeData>): UseDataConnectQueryResult<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
-export function useListTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: useDataConnectQueryOptions<ListTimeEntriesByDateRangeData>): UseDataConnectQueryResult<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;

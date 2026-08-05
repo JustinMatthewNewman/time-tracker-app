@@ -56,7 +56,12 @@
       "Bash(python3 -c \"import json; d=json.load\\(open\\('package.json'\\)\\); print\\('\\\\n'.join\\(f'{k}: {v}' for k,v in d.get\\('scripts',{}\\).items\\(\\)\\)\\)\")",
       "Bash(ls -la ~/.cache/firebase/emulators/ 2>/dev/null | grep -i dataconnect; echo ---; lsof -i :4500 -i :4400 -i :9399 -i :9099 2>/dev/null; echo ---; ps aux | grep -iE \"dataconnect|postgres|pg_\" | grep -v grep)",
       "Read(//Users/justinnewman/.cache/firebase/emulators/**)",
-      "Bash(kill 67041)"
+      "Bash(kill 67041)",
+      "Bash(tail -80 /tmp/emu.log)",
+      "Bash(timeout 120 npx next build)",
+      "Bash(npx next *)",
+      "Bash(xargs -I{} echo {})",
+      "Bash(grep -iE \"square$|frame$|border\")"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [

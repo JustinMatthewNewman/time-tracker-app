@@ -15,6 +15,7 @@ export default function LandingPage() {
             router.push("/dashboard");
         } else {
             await loginWithGoogle();
+            router.push("/worklogs");
         }
     };
 
@@ -243,10 +244,7 @@ export default function LandingPage() {
 
                 <div className="fade-up fade-up-4 mt-10 flex flex-wrap gap-3 justify-center">
                     {loading ? (
-                        <>
-                            <div className="skeleton w-44 h-12" />
-                            <div className="skeleton w-32 h-12" />
-                        </>
+                        <div className="skeleton w-44 h-12" />
                     ) : (
                         <>
                             <Button
@@ -256,11 +254,6 @@ export default function LandingPage() {
                             >
                                 {user ? "Go to Dashboard →" : "Get Started Free"}
                             </Button>
-                            {!user && (
-                                <Button size="lg" className="btn-ghost px-8">
-                                    See Demo
-                                </Button>
-                            )}
                         </>
                     )}
                 </div>

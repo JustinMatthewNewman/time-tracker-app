@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@heroui/react";
+import { Card, Button } from "@heroui/react";
 
 interface DeleteWorkLogDialogProps {
   isOpen: boolean;
@@ -47,22 +47,12 @@ export function DeleteWorkLogDialog({ isOpen, workLogName, onClose, onDelete }: 
           )}
 
           <div className="flex gap-2 pt-6">
-            <button
-              type="button"
-              className="flex-1 bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-              onClick={onClose}
-              disabled={loading}
-            >
+            <Button type="button" variant="outline" className="flex-1" onClick={onClose} isDisabled={loading}>
               Cancel
-            </button>
-            <button
-              type="button"
-              className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
-              onClick={handleDelete}
-              disabled={loading}
-            >
+            </Button>
+            <Button type="button" variant="danger" className="flex-1" onClick={handleDelete} isDisabled={loading}>
               {loading ? "Deleting..." : "Delete"}
-            </button>
+            </Button>
           </div>
         </div>
       </Card>

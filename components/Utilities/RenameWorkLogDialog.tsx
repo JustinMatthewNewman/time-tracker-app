@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@heroui/react";
+import { Card, Button } from "@heroui/react";
 
 interface RenameWorkLogDialogProps {
   isOpen: boolean;
@@ -71,21 +71,12 @@ export function RenameWorkLogDialog({ isOpen, initialName, onClose, onRename }: 
             </div>
 
             <div className="flex gap-2 pt-4">
-              <button
-                type="button"
-                className="flex-1 bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 disabled:opacity-50"
-                onClick={onClose}
-                disabled={loading}
-              >
+              <Button type="button" variant="outline" className="flex-1" onClick={onClose} isDisabled={loading}>
                 Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                disabled={loading || !name.trim()}
-              >
+              </Button>
+              <Button type="submit" className="flex-1" isDisabled={loading || !name.trim()}>
                 {loading ? "Saving..." : "Save"}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

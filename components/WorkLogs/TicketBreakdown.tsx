@@ -6,6 +6,7 @@ import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { groupByTicket, formatDuration, formatDecimalHours, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "@/components/Dashboard/chartColor";
 import { ArrowUpRightFromSquare, Copy, CopyCheck } from "@gravity-ui/icons";
+import { useBorders } from "@/context/BordersContext";
 import { DonutChart } from "./DonutChart";
 import { TicketBarChart } from "./TicketBarChart";
 
@@ -27,6 +28,7 @@ interface TicketBreakdownProps {
 // inside WorkLogTimeEntryCardLayout's shared card, alongside the entries
 // table view, behind the same sticky header.
 export function TicketBreakdown({ hasSelection, entries, loading, error }: TicketBreakdownProps) {
+  const { bordersEnabled } = useBorders();
   const totals = useMemo(() => groupByTicket(entries), [entries]);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
@@ -96,16 +98,23 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
               return (
                 <tr key={t.ticket}>
                   <td className="border p-2">
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="flex min-w-0 items-center gap-2">
-                        <span
-                          className="size-2.5 shrink-0 rounded-full"
-                          style={{
-                            backgroundColor: styleByTicket.get(t.ticket)?.color,
-                            filter: styleByTicket.get(t.ticket)?.filter,
-                          }}
-                          aria-hidden
-                        />
+                    {/* Every item in this row shares the same fixed h-5 box
+                        (content centered inside via its own flex), rather
+                        than relying on the row's items-center to line up
+                        boxes of different intrinsic heights — a <button>'s
+                        default sizing isn't as predictable as a plain
+                        <span>/<a>'s, which was throwing off the row's
+                        vertical alignment. */}
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span
+                        className="size-2.5 shrink-0 rounded-full"
+                        style={{
+                          backgroundColor: styleByTicket.get(t.ticket)?.color,
+                          filter: styleByTicket.get(t.ticket)?.filter,
+                        }}
+                        aria-hidden
+                      />
+                      <span className="flex h-5 min-w-0 items-center">
                         {t.ticket !== UNASSIGNED_TICKET ? (
                           <Link href={`/ticket/${t.ticket}`} className="text-primary underline">
                             {t.ticket}
@@ -113,23 +122,23 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
                         ) : (
                           t.ticket
                         )}
-                        {t.ticketLink && (
-                          <a
-                            href={t.ticketLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`Open external link for ticket ${t.ticket}`}
-                            className="shrink-0 text-foreground/40 hover:text-foreground"
-                          >
-                            <ArrowUpRightFromSquare className="size-3" />
-                          </a>
-                        )}
                       </span>
+                      {t.ticketLink && (
+                        <a
+                          href={t.ticketLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Open external link for ticket ${t.ticket}`}
+                          className="flex size-5 shrink-0 items-center justify-center text-foreground/40 hover:text-foreground"
+                        >
+                          <ArrowUpRightFromSquare className="size-3" />
+                        </a>
+                      )}
                       <button
                         type="button"
                         aria-label={`Copy ticket ${t.ticket}`}
                         onClick={() => handleCopy(t.ticket, t.ticket)}
-                        className="shrink-0 rounded p-1 text-foreground/50 hover:bg-default hover:text-foreground"
+                        className="flex size-5 shrink-0 items-center justify-center rounded text-foreground/50 hover:bg-default hover:text-foreground"
                       >
                         {copiedKey === t.ticket ? (
                           <CopyCheck className="size-3.5" />
@@ -143,12 +152,12 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
                   <td className="border p-2">{formatDuration(t.totalMinutes)}</td>
                   <td className="border p-2">
                     <span className="flex items-center justify-between gap-2">
-                      {formatDecimalHours(t.totalMinutes)}
+                      <span className="flex h-5 items-center">{formatDecimalHours(t.totalMinutes)}</span>
                       <button
                         type="button"
                         aria-label={`Copy hours for ticket ${t.ticket}`}
                         onClick={() => handleCopy(hoursKey, formatDecimalHours(t.totalMinutes))}
-                        className="shrink-0 rounded p-1 text-foreground/50 hover:bg-default hover:text-foreground"
+                        className="flex size-5 shrink-0 items-center justify-center rounded text-foreground/50 hover:bg-default hover:text-foreground"
                       >
                         {copiedKey === hoursKey ? (
                           <CopyCheck className="size-3.5" />
@@ -174,7 +183,11 @@ export function TicketBreakdown({ hasSelection, entries, loading, error }: Ticke
         </table>
       </div>
 
-      <div className="flex flex-1 flex-col items-center gap-4 rounded-lg border border-default-200 p-4 md:max-w-[33%]">
+      <div
+        className={`flex flex-1 flex-col items-center gap-4 rounded-lg p-4 md:max-w-[33%] ${
+          bordersEnabled ? "border border-default-200" : ""
+        }`}
+      >
         <DonutChart
           data={chartData}
           centerLabel={formatDuration(grandTotalMinutes)}

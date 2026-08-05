@@ -7,6 +7,7 @@ import ListBoxComponent from '../Utilities/ListBoxComponent'
 import { useTimeRange } from '../../context/TimeRangeContext'
 import { formatHour } from '../TimeRangeSettings'
 import { useSidebar } from "../../context/SideBarContext";
+import { useBorders } from "@/context/BordersContext";
 import { useSelectedWorkLog } from "../../context/SelectedWorkLogContext";
 import { useTimeEntriesByWorkLog, type WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { useWorkLogs } from "@/hooks/useWorkLogs";
@@ -27,6 +28,7 @@ function formatWorkLogDate(isoDate: string) {
 function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }: WorkLogTimeEntryCardLayoutProps) {
   const { timeSlots } = useTimeRange()
   const { isOpen } = useSidebar();
+  const { bordersEnabled } = useBorders();
   const { selectedWorkLogId, focusEntryId, setFocusEntryId } = useSelectedWorkLog();
   const { entries, loading, error, refetch } = useTimeEntriesByWorkLog(selectedWorkLogId);
   const { workLogs, loading: workLogsLoading, error: workLogsError, createWorkLog, renameWorkLog, deleteWorkLog } = useWorkLogs();
@@ -110,7 +112,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
 
       <div
         className={`flex h-full min-w-0 flex-1 min-h-0 flex-col text-foreground p-4 border-l transition-colors duration-300
-          ${isOpen ? "border-default-200" : "border-transparent"}`}
+          ${isOpen && bordersEnabled ? "border-default-200" : "border-transparent"}`}
       >
         {!selectedWorkLogId && (
           <div className="text-sm text-gray-500 p-4">
@@ -125,8 +127,14 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
         {selectedWorkLogId && !error && selectedWorkLog && (
           <div className='grid h-full min-h-0 grid-cols-1 lg:grid-cols-1 gap-4'>
             <Card className="flex h-full min-h-0 flex-col overflow-hidden border border-default-200">
-              {/* Sticky header: stays fixed while the entries/breakdown body below scrolls. */}
-              <div className="sticky top-0 z-10 flex shrink-0 items-center gap-3 border-b border-default-200 bg-surface p-3">
+              {/* Sticky header: stays fixed while the entries/breakdown body below scrolls.
+                  No background of its own — inherits the parent Card's (translucent when
+                  Settings' card opacity/blur are dialed down) rather than re-opaquing itself. */}
+              <div
+                className={`sticky top-0 z-10 flex shrink-0 items-center gap-3 p-3 ${
+                  bordersEnabled ? "border-b border-default-200" : ""
+                }`}
+              >
                 <Switch
                   isSelected={showBreakdown}
                   onChange={(value) => onToggleBreakdown?.(value)}

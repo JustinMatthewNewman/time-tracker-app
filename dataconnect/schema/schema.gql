@@ -5,6 +5,26 @@ type User @table {
   email: String
   colorScheme: ColorScheme
   performanceMode: Boolean @default(expr: "false")
+  # Percentage (0-100) multiplier applied on top of each page's own
+  # AmbientBackground intensity prop (see components/AmbientBackground.tsx).
+  backgroundOpacity: Int @default(expr: "100")
+  # URL template for linking out to an external ticket tracker, e.g.
+  # "https://www.some-random.link.com/ticket/{ticket_id}". The literal
+  # "{ticket_id}" placeholder is substituted with the ticket's number when
+  # rendering the link on the Ticket page.
+  externalTicketLinkTemplate: String
+  # Percentage (0-100) applied to Card backgrounds app-wide (see
+  # .card--default/.card--secondary/.card--tertiary in globals.css) —
+  # lower values let whatever's behind a card (AmbientBackground, page
+  # background) show through.
+  cardOpacity: Int @default(expr: "100")
+  # Gaussian blur radius in pixels applied behind Card backgrounds
+  # (backdrop-filter: blur(...)), for a frosted-glass look. 0 = no blur.
+  cardBlur: Int @default(expr: "0")
+  # Whether Cards and tables render their outer border (see [data-slot="card"]
+  # and table/th/td rules in globals.css). Off strips just the border, not
+  # the background/shadow, so cards stay visually distinct.
+  bordersEnabled: Boolean @default(expr: "true")
   createdAt: Timestamp!
 }
 

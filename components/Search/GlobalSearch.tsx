@@ -171,7 +171,10 @@ export function GlobalSearch() {
       </SearchField>
 
       {isOpen && query.trim() && (
-        <div className="absolute left-0 top-full z-50 mt-2 max-h-96 w-[420px] overflow-y-auto rounded-lg border border-default-200 bg-overlay p-1 shadow-lg">
+        <div
+          data-slot="global-search-popover"
+          className="absolute left-0 top-full z-50 mt-2 max-h-96 w-[420px] overflow-y-auto rounded-lg border border-default-200 bg-overlay p-1 shadow-lg"
+        >
           {results.length === 0 ? (
             <div className="p-3 text-sm text-foreground/60">No matches for &quot;{query}&quot;</div>
           ) : (

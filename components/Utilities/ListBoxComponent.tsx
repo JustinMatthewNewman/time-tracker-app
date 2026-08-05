@@ -7,6 +7,7 @@ import type { Key } from "react-aria-components";
 import type { useWorkLogs } from "@/hooks/useWorkLogs";
 import type { MyTimeEntry } from "@/hooks/useMyTimeEntries";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
+import { useBorders } from "@/context/BordersContext";
 import { minutesBetween, formatDuration } from "@/lib/timeTotals";
 import { weekKey, weekLabel, groupByWeek } from "@/lib/weekBuckets";
 import { NewWorkLogDialog } from "./NewWorkLogDialog";
@@ -58,6 +59,7 @@ export function WorkLogListBox({
   entries,
 }: WorkLogListBoxProps) {
   const { selectedWorkLogId, setSelectedWorkLogId } = useSelectedWorkLog();
+  const { bordersEnabled } = useBorders();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -181,7 +183,10 @@ export function WorkLogListBox({
             <Tabs.ListContainer className="h-full w-full min-w-0">
               <Tabs.List
                 aria-label="Work Logs"
-                className="h-full w-full min-w-0 overflow-hidden border border-default-200 bg-surface"
+                className={`h-full w-full min-w-0 overflow-hidden bg-surface ${
+                  bordersEnabled ? "border border-default-200" : ""
+                }`}
+                data-glass="surface"
               >
                 {weekItems.map((item) => (
                   <Tabs.Tab
@@ -211,7 +216,9 @@ export function WorkLogListBox({
       <Card className="flex shrink-0 flex-col gap-3 p-3">
         {weekSections.length > 0 && (
           <Pagination size="sm">
-            <Pagination.Content className="flex w-full items-center justify-between gap-2 rounded-md bg-surface px-2 py-1.5">
+            {/* No bg-surface: the parent Card above already provides it (and
+                stays translucent under the card opacity/blur settings). */}
+            <Pagination.Content className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5">
               <Pagination.Item>
                 <Pagination.Previous isDisabled={atOldest} onPress={goOlder} aria-label="Older week">
                   <Pagination.PreviousIcon>

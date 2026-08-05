@@ -123,6 +123,11 @@ export interface GetMyUserData {
       name: string;
     } & ColorScheme_Key;
     performanceMode?: boolean | null;
+    backgroundOpacity?: number | null;
+    externalTicketLinkTemplate?: string | null;
+    cardOpacity?: number | null;
+    cardBlur?: number | null;
+    bordersEnabled?: boolean | null;
   } & User_Key;
 }
 
@@ -351,12 +356,45 @@ export interface RestoreWorkLogVariables {
   workLogId: UUIDString;
 }
 
+export interface SelectMyBackgroundOpacityData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyBackgroundOpacityVariables {
+  backgroundOpacity: number;
+}
+
+export interface SelectMyBordersEnabledData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyBordersEnabledVariables {
+  bordersEnabled: boolean;
+}
+
+export interface SelectMyCardStyleData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyCardStyleVariables {
+  cardOpacity: number;
+  cardBlur: number;
+}
+
 export interface SelectMyColorSchemeData {
   user_update?: User_Key | null;
 }
 
 export interface SelectMyColorSchemeVariables {
   colorSchemeId: UUIDString;
+}
+
+export interface SelectMyExternalTicketLinkTemplateData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyExternalTicketLinkTemplateVariables {
+  externalTicketLinkTemplate?: string | null;
 }
 
 export interface SelectMyPerformanceModeData {
@@ -442,6 +480,61 @@ export interface WorkLog_Key {
   __typename?: 'WorkLog_Key';
 }
 
+/** Generated Node Admin SDK operation action function for the 'ListUsers' Query. Allow users to execute without passing in DataConnect. */
+export function listUsers(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListUsersData>>;
+/** Generated Node Admin SDK operation action function for the 'ListUsers' Query. Allow users to pass in custom DataConnect instances. */
+export function listUsers(options?: OperationOptions): Promise<ExecuteOperationResponse<ListUsersData>>;
+
+/** Generated Node Admin SDK operation action function for the 'GetMyUser' Query. Allow users to execute without passing in DataConnect. */
+export function getMyUser(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<GetMyUserData>>;
+/** Generated Node Admin SDK operation action function for the 'GetMyUser' Query. Allow users to pass in custom DataConnect instances. */
+export function getMyUser(options?: OperationOptions): Promise<ExecuteOperationResponse<GetMyUserData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListColorSchemes' Query. Allow users to execute without passing in DataConnect. */
+export function listColorSchemes(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListColorSchemesData>>;
+/** Generated Node Admin SDK operation action function for the 'ListColorSchemes' Query. Allow users to pass in custom DataConnect instances. */
+export function listColorSchemes(options?: OperationOptions): Promise<ExecuteOperationResponse<ListColorSchemesData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTickets' Query. Allow users to execute without passing in DataConnect. */
+export function listTickets(dc: DataConnect, vars?: ListTicketsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTicketsData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTickets' Query. Allow users to pass in custom DataConnect instances. */
+export function listTickets(vars?: ListTicketsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTicketsData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntries' Query. Allow users to execute without passing in DataConnect. */
+export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntries' Query. Allow users to pass in custom DataConnect instances. */
+export function listTimeEntries(vars: ListTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesData>>;
+
+/** Generated Node Admin SDK operation action function for the 'GetTimeEntry' Query. Allow users to execute without passing in DataConnect. */
+export function getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetTimeEntryData>>;
+/** Generated Node Admin SDK operation action function for the 'GetTimeEntry' Query. Allow users to pass in custom DataConnect instances. */
+export function getTimeEntry(vars: GetTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetTimeEntryData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListWorkLogs' Query. Allow users to execute without passing in DataConnect. */
+export function listWorkLogs(dc: DataConnect, vars?: ListWorkLogsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListWorkLogsData>>;
+/** Generated Node Admin SDK operation action function for the 'ListWorkLogs' Query. Allow users to pass in custom DataConnect instances. */
+export function listWorkLogs(vars?: ListWorkLogsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListWorkLogsData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByWorkLog' Query. Allow users to execute without passing in DataConnect. */
+export function listTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByWorkLog' Query. Allow users to pass in custom DataConnect instances. */
+export function listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByTicket' Query. Allow users to execute without passing in DataConnect. */
+export function listTimeEntriesByTicket(dc: DataConnect, vars: ListTimeEntriesByTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByTicketData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByTicket' Query. Allow users to pass in custom DataConnect instances. */
+export function listTimeEntriesByTicket(vars: ListTimeEntriesByTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByTicketData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntries' Query. Allow users to execute without passing in DataConnect. */
+export function listMyTimeEntries(dc: DataConnect, vars?: ListMyTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesData>>;
+/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntries' Query. Allow users to pass in custom DataConnect instances. */
+export function listMyTimeEntries(vars?: ListMyTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByDateRange' Query. Allow users to execute without passing in DataConnect. */
+export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByDateRange' Query. Allow users to pass in custom DataConnect instances. */
+export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;
+
 /** Generated Node Admin SDK operation action function for the 'CreateUserFromGoogle' Mutation. Allow users to execute without passing in DataConnect. */
 export function createUserFromGoogle(dc: DataConnect, vars: CreateUserFromGoogleVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateUserFromGoogleData>>;
 /** Generated Node Admin SDK operation action function for the 'CreateUserFromGoogle' Mutation. Allow users to pass in custom DataConnect instances. */
@@ -497,6 +590,26 @@ export function selectMyPerformanceMode(dc: DataConnect, vars: SelectMyPerforman
 /** Generated Node Admin SDK operation action function for the 'SelectMyPerformanceMode' Mutation. Allow users to pass in custom DataConnect instances. */
 export function selectMyPerformanceMode(vars: SelectMyPerformanceModeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyPerformanceModeData>>;
 
+/** Generated Node Admin SDK operation action function for the 'SelectMyBackgroundOpacity' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyBackgroundOpacity(dc: DataConnect, vars: SelectMyBackgroundOpacityVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBackgroundOpacityData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyBackgroundOpacity' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyBackgroundOpacity(vars: SelectMyBackgroundOpacityVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBackgroundOpacityData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SelectMyExternalTicketLinkTemplate' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyExternalTicketLinkTemplate(dc: DataConnect, vars?: SelectMyExternalTicketLinkTemplateVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyExternalTicketLinkTemplateData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyExternalTicketLinkTemplate' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyExternalTicketLinkTemplate(vars?: SelectMyExternalTicketLinkTemplateVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyExternalTicketLinkTemplateData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SelectMyCardStyle' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyCardStyle(dc: DataConnect, vars: SelectMyCardStyleVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyCardStyleData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyCardStyle' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyCardStyle(vars: SelectMyCardStyleVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyCardStyleData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SelectMyBordersEnabled' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyBordersEnabled(dc: DataConnect, vars: SelectMyBordersEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBordersEnabledData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyBordersEnabled' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyBordersEnabled(vars: SelectMyBordersEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBordersEnabledData>>;
+
 /** Generated Node Admin SDK operation action function for the 'UpdateWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
 export function updateWorkLog(dc: DataConnect, vars: UpdateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateWorkLogData>>;
 /** Generated Node Admin SDK operation action function for the 'UpdateWorkLog' Mutation. Allow users to pass in custom DataConnect instances. */
@@ -516,59 +629,4 @@ export function restoreWorkLog(vars: RestoreWorkLogVariables, options?: Operatio
 export function createWorkLog(dc: DataConnect, vars: CreateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateWorkLogData>>;
 /** Generated Node Admin SDK operation action function for the 'CreateWorkLog' Mutation. Allow users to pass in custom DataConnect instances. */
 export function createWorkLog(vars: CreateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateWorkLogData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListUsers' Query. Allow users to execute without passing in DataConnect. */
-export function listUsers(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListUsersData>>;
-/** Generated Node Admin SDK operation action function for the 'ListUsers' Query. Allow users to pass in custom DataConnect instances. */
-export function listUsers(options?: OperationOptions): Promise<ExecuteOperationResponse<ListUsersData>>;
-
-/** Generated Node Admin SDK operation action function for the 'GetMyUser' Query. Allow users to execute without passing in DataConnect. */
-export function getMyUser(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<GetMyUserData>>;
-/** Generated Node Admin SDK operation action function for the 'GetMyUser' Query. Allow users to pass in custom DataConnect instances. */
-export function getMyUser(options?: OperationOptions): Promise<ExecuteOperationResponse<GetMyUserData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListColorSchemes' Query. Allow users to execute without passing in DataConnect. */
-export function listColorSchemes(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListColorSchemesData>>;
-/** Generated Node Admin SDK operation action function for the 'ListColorSchemes' Query. Allow users to pass in custom DataConnect instances. */
-export function listColorSchemes(options?: OperationOptions): Promise<ExecuteOperationResponse<ListColorSchemesData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListTickets' Query. Allow users to execute without passing in DataConnect. */
-export function listTickets(dc: DataConnect, vars?: ListTicketsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTicketsData>>;
-/** Generated Node Admin SDK operation action function for the 'ListTickets' Query. Allow users to pass in custom DataConnect instances. */
-export function listTickets(vars?: ListTicketsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTicketsData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListTimeEntries' Query. Allow users to execute without passing in DataConnect. */
-export function listTimeEntries(dc: DataConnect, vars: ListTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesData>>;
-/** Generated Node Admin SDK operation action function for the 'ListTimeEntries' Query. Allow users to pass in custom DataConnect instances. */
-export function listTimeEntries(vars: ListTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesData>>;
-
-/** Generated Node Admin SDK operation action function for the 'GetTimeEntry' Query. Allow users to execute without passing in DataConnect. */
-export function getTimeEntry(dc: DataConnect, vars: GetTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetTimeEntryData>>;
-/** Generated Node Admin SDK operation action function for the 'GetTimeEntry' Query. Allow users to pass in custom DataConnect instances. */
-export function getTimeEntry(vars: GetTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetTimeEntryData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListWorkLogs' Query. Allow users to execute without passing in DataConnect. */
-export function listWorkLogs(dc: DataConnect, vars?: ListWorkLogsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListWorkLogsData>>;
-/** Generated Node Admin SDK operation action function for the 'ListWorkLogs' Query. Allow users to pass in custom DataConnect instances. */
-export function listWorkLogs(vars?: ListWorkLogsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListWorkLogsData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByWorkLog' Query. Allow users to execute without passing in DataConnect. */
-export function listTimeEntriesByWorkLog(dc: DataConnect, vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
-/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByWorkLog' Query. Allow users to pass in custom DataConnect instances. */
-export function listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByWorkLogData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByTicket' Query. Allow users to execute without passing in DataConnect. */
-export function listTimeEntriesByTicket(dc: DataConnect, vars: ListTimeEntriesByTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByTicketData>>;
-/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByTicket' Query. Allow users to pass in custom DataConnect instances. */
-export function listTimeEntriesByTicket(vars: ListTimeEntriesByTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByTicketData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntries' Query. Allow users to execute without passing in DataConnect. */
-export function listMyTimeEntries(dc: DataConnect, vars?: ListMyTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesData>>;
-/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntries' Query. Allow users to pass in custom DataConnect instances. */
-export function listMyTimeEntries(vars?: ListMyTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByDateRange' Query. Allow users to execute without passing in DataConnect. */
-export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;
-/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByDateRange' Query. Allow users to pass in custom DataConnect instances. */
-export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;
 
