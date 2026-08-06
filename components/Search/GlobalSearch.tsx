@@ -1,11 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { SearchField } from "@heroui/react";
+import { Kbd, SearchField } from "@heroui/react";
 import { useSearchIndex } from "@/hooks/useSearchIndex";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
 import { fuzzyMatch, splitByMatch } from "@/lib/fuzzyMatch";
+
+// No real store to subscribe to — the platform never changes mid-session —
+// so this only exists to give useSyncExternalStore a distinct snapshot for
+// server (assume Mac, matching this app's primary audience) vs client.
+const noopSubscribe = () => () => {};
+const getIsMacSnapshot = () => /mac/i.test(navigator.platform);
+const getIsMacServerSnapshot = () => true;
 
 type SearchResult =
   | {
@@ -62,6 +69,20 @@ export function GlobalSearch() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const isMac = useSyncExternalStore(noopSubscribe, getIsMacSnapshot, getIsMacServerSnapshot);
+
+  // Global ⌘K / Ctrl+K shortcut, matching the hint shown in the search bar.
+  useEffect(() => {
+    const handleShortcut = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handleShortcut);
+    return () => document.removeEventListener("keydown", handleShortcut);
+  }, []);
 
   const results = useMemo<SearchResult[]>(() => {
     if (!query.trim()) return [];
@@ -158,6 +179,7 @@ export function GlobalSearch() {
         <SearchField.Group>
           <SearchField.SearchIcon />
           <SearchField.Input
+            ref={inputRef}
             className="w-[280px]"
             placeholder="Search work logs and entries..."
             onFocus={() => {
@@ -166,14 +188,20 @@ export function GlobalSearch() {
             }}
             onKeyDown={handleKeyDown}
           />
-          <SearchField.ClearButton />
+          {query ? (
+            <SearchField.ClearButton />
+          ) : (
+            <Kbd className="mr-1 shrink-0">
+              <Kbd.Abbr keyValue={isMac ? "command" : "ctrl"} />K
+            </Kbd>
+          )}
         </SearchField.Group>
       </SearchField>
 
       {isOpen && query.trim() && (
         <div
           data-slot="global-search-popover"
-          className="absolute left-0 top-full z-50 mt-2 max-h-96 w-[420px] overflow-y-auto rounded-lg border border-default-200 bg-overlay p-1 shadow-lg"
+          className="absolute left-0 top-full z-50 mt-2 max-h-96 w-[420px] overflow-y-auto rounded-lg border border-border bg-overlay p-1 shadow-lg"
         >
           {results.length === 0 ? (
             <div className="p-3 text-sm text-foreground/60">No matches for &quot;{query}&quot;</div>
