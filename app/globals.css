@@ -193,3 +193,30 @@ body {
   animation: none !important;
   backdrop-filter: none !important;
 }
+
+/* Continuous glistening text animation for gold award ratings */
+@keyframes glisten {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.glisten-text {
+  background: linear-gradient(
+    110deg,
+    #d97706 0%,
+    #f59e0b 20%,
+    #fef08a 40%,
+    #ffffff 50%,
+    #fef08a 60%,
+    #f59e0b 80%,
+    #d97706 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glisten 4s linear infinite;
+}
