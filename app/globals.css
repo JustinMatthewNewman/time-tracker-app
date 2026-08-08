@@ -193,3 +193,30 @@ body {
   animation: none !important;
   backdrop-filter: none !important;
 }
+
+/* Continuous glistening text animation for Platinum award ratings */
+@keyframes glisten {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.glisten-text {
+  background: linear-gradient(
+    110deg,
+    #94a3b8 0%,
+    #cbd5e1 20%,
+    #f1f5f9 40%,
+    #ffffff 50%,
+    #f1f5f9 60%,
+    #cbd5e1 80%,
+    #94a3b8 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glisten 3.5s linear infinite;
+}

@@ -23,6 +23,38 @@ function GoogleIcon() {
     );
 }
 
+// ─────────────────────────────────────────────
+// Award Badges Icons (Platinum Metallic Gradient)
+// ─────────────────────────────────────────────
+
+function PlatinumDefs() {
+    return (
+        <svg width="0" height="0" className="absolute pointer-events-none opacity-0">
+            <defs>
+                <linearGradient id="plat-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#94a3b8" />
+                    <stop offset="30%" stopColor="#e2e8f0" />
+                    <stop offset="50%" stopColor="#ffffff" />
+                    <stop offset="70%" stopColor="#cbd5e1" />
+                    <stop offset="100%" stopColor="#64748b" />
+                </linearGradient>
+            </defs>
+        </svg>
+    );
+}
+
+function LaurelStarsIcon() {
+    return (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 drop-shadow-[0_0_6px_rgba(255,255,255,0.3)]">
+            <path d="M12 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L12 2z" fill="url(#plat-grad)" />
+            <path d="M5 14c-1.5 2-1 5 1 7M19 14c1.5 2 1 5-1 7" stroke="url(#plat-grad)" strokeWidth="1.5" strokeLinecap="round" />
+            <circle cx="5" cy="12" r="1.5" fill="url(#plat-grad)" />
+            <circle cx="19" cy="12" r="1.5" fill="url(#plat-grad)" />
+        </svg>
+    );
+}
+
+
 export default function LandingPage() {
     const { user, loading } = useAuth();
     const router = useRouter();
@@ -102,11 +134,27 @@ export default function LandingPage() {
             </section>
 
             {/* ── Footer ── */}
-            <footer className="border-t border-border">
-                <div className="mx-auto flex max-w-7xl flex-col items-center gap-2 px-6 py-8 text-center sm:flex-row sm:justify-between sm:text-left">
-                    <span className="text-sm font-semibold text-foreground">
-                        Time Tracker <span className="text-foreground/50">Pro</span>
-                    </span>
+            <footer className="border-t border-border py-4">
+                <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 text-center md:flex-row md:text-left">
+                    {/* ── Award Ratings Badges in Footer (All Platinum) ── */}
+                    <div className="flex flex-wrap items-center justify-center gap-6 md:justify-start">
+                        <PlatinumDefs />
+                        {/* Badge 1 */}
+                        <div className="flex items-center gap-2">
+                            <LaurelStarsIcon />
+                            <div className="text-left">
+                                <div className="flex items-center gap-1">
+
+                                    <span className="glisten-text text-[11px] font-bold tracking-tight">5.0 RATING</span>
+                                    <span className="glisten-text text-[9px]">★★★★★</span>
+                                </div>
+                                <p className="glisten-text text-[9px] font-semibold uppercase tracking-wider">Top Rated Work Logger</p>
+                            </div>
+                        </div>
+
+
+                    </div>
+
                     <div className="flex items-center gap-3">
                         <a
                             href="https://github.com/JustinMatthewNewman/time-tracker-app"
