@@ -24,38 +24,36 @@ function GoogleIcon() {
 }
 
 // ─────────────────────────────────────────────
-// Award Badges Icons (Gold/Amber accents)
+// Award Badges Icons (Platinum Metallic Gradient)
 // ─────────────────────────────────────────────
+
+function PlatinumDefs() {
+    return (
+        <svg width="0" height="0" className="absolute pointer-events-none opacity-0">
+            <defs>
+                <linearGradient id="plat-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#94a3b8" />
+                    <stop offset="30%" stopColor="#e2e8f0" />
+                    <stop offset="50%" stopColor="#ffffff" />
+                    <stop offset="70%" stopColor="#cbd5e1" />
+                    <stop offset="100%" stopColor="#64748b" />
+                </linearGradient>
+            </defs>
+        </svg>
+    );
+}
 
 function LaurelStarsIcon() {
     return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="text-amber-500 shrink-0">
-            <path d="M12 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L12 2z" fill="currentColor" />
-            <path d="M5 14c-1.5 2-1 5 1 7M19 14c1.5 2 1 5-1 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            <circle cx="5" cy="12" r="1.5" fill="currentColor" />
-            <circle cx="19" cy="12" r="1.5" fill="currentColor" />
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 drop-shadow-[0_0_6px_rgba(255,255,255,0.3)]">
+            <path d="M12 2l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L12 2z" fill="url(#plat-grad)" />
+            <path d="M5 14c-1.5 2-1 5 1 7M19 14c1.5 2 1 5-1 7" stroke="url(#plat-grad)" strokeWidth="1.5" strokeLinecap="round" />
+            <circle cx="5" cy="12" r="1.5" fill="url(#plat-grad)" />
+            <circle cx="19" cy="12" r="1.5" fill="url(#plat-grad)" />
         </svg>
     );
 }
 
-function TrophyBadgeIcon() {
-    return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="text-amber-500 shrink-0">
-            <path d="M7 4h10v4a5 5 0 01-10 0V4z" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M5 5h2v3H5a2 2 0 01-2-2V5zm14 0h-2v3h2a2 2 0 002-2V5z" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M12 13v4M9 20h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-    );
-}
-
-function ShieldSealIcon() {
-    return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="text-amber-500 shrink-0">
-            <path d="M12 2L4 5v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V5l-8-3z" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M12 7l1.2 2.4 2.6.4-1.9 1.8.4 2.6-2.3-1.2-2.3 1.2.4-2.6-1.9-1.8 2.6-.4L12 7z" fill="currentColor" />
-        </svg>
-    );
-}
 
 export default function LandingPage() {
     const { user, loading } = useAuth();
@@ -138,37 +136,23 @@ export default function LandingPage() {
             {/* ── Footer ── */}
             <footer className="border-t border-border py-4">
                 <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 text-center md:flex-row md:text-left">
-                    {/* ── Award Ratings Badges in Footer (Left Aligned) ── */}
+                    {/* ── Award Ratings Badges in Footer (All Platinum) ── */}
                     <div className="flex flex-wrap items-center justify-center gap-6 md:justify-start">
+                        <PlatinumDefs />
                         {/* Badge 1 */}
                         <div className="flex items-center gap-2">
                             <LaurelStarsIcon />
                             <div className="text-left">
                                 <div className="flex items-center gap-1">
+
                                     <span className="glisten-text text-[11px] font-bold tracking-tight">5.0 RATING</span>
-                                    <span className="text-[9px] text-amber-400">★★★★★</span>
+                                    <span className="glisten-text text-[9px]">★★★★★</span>
                                 </div>
-                                <p className="text-[9px] font-medium text-foreground/50 uppercase tracking-wider">Top Rated Work Logger</p>
+                                <p className="glisten-text text-[9px] font-semibold uppercase tracking-wider">Top Rated Work Logger</p>
                             </div>
                         </div>
 
-                        {/* Badge 2 */}
-                        <div className="flex items-center gap-2">
-                            <TrophyBadgeIcon />
-                            <div className="text-left">
-                                <span className="glisten-text text-[11px] font-bold tracking-tight">#1 GOLD AWARD</span>
-                                <p className="text-[9px] font-medium text-foreground/50 uppercase tracking-wider">Best Productivity 2026</p>
-                            </div>
-                        </div>
 
-                        {/* Badge 3 */}
-                        <div className="flex items-center gap-2">
-                            <ShieldSealIcon />
-                            <div className="text-left">
-                                <span className="glisten-text text-[11px] font-bold tracking-tight">VERIFIED SECURE</span>
-                                <p className="text-[9px] font-medium text-foreground/50 uppercase tracking-wider">Enterprise Security</p>
-                            </div>
-                        </div>
                     </div>
 
                     <div className="flex items-center gap-3">
