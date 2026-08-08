@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@heroui/react";
 import { LogoGithub } from "@gravity-ui/icons";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,9 +26,12 @@ function GoogleIcon() {
 export default function LandingPage() {
     const { user, loading } = useAuth();
     const router = useRouter();
+    const [isWarping, setIsWarping] = useState(false);
 
     const handlePrimaryCTA = async () => {
+        setIsWarping(true);
         if (user) {
+            await new Promise((resolve) => setTimeout(resolve, 850));
             router.push("/dashboard");
             return;
         }
@@ -44,7 +48,7 @@ export default function LandingPage() {
         <main className="flex h-[calc(100vh-3.5rem)] flex-col overflow-hidden bg-background text-foreground">
             {/* ── Hero ── */}
             <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
-                <ParticleBlob />
+                <ParticleBlob isWarping={isWarping} />
 
                 {/* pointer-events-none so this text doesn't block ParticleBlob's
                     hover-stir interaction underneath it — re-enabled below just
