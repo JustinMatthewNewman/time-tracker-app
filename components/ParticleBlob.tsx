@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTheme } from "next-themes";
 import * as THREE from "three";
 import { usePerformanceMode } from "@/context/PerformanceModeContext";
@@ -28,12 +28,6 @@ interface Palette {
   colorAccent: number;
   blending: THREE.Blending;
   minFade: number;
-  // Additive blending (dark) never needs this turned down — overlapping glow
-  // is the whole point. Normal blending (light) paints an opaque-ish disc per
-  // particle, so at full strength a dense cluster reads as a solid dark inkblot
-  // that wrecks contrast for anything sitting behind it (the hero's muted
-  // subtext was nearly unreadable before this was added) — turned down well
-  // below 1 so it stays a light sprinkle instead.
   alphaScale: number;
   backgroundGradient: string;
 }
@@ -59,26 +53,6 @@ const PALETTES: Record<"dark" | "light", Palette> = {
     alphaScale: 0.3,
     backgroundGradient: "radial-gradient(90% 90% at 50% 45%, rgba(14,165,233,0.08) 0%, rgba(255,255,255,0) 60%)",
   },
-};
-
-interface ColorPreset {
-  colorLow: number;
-  colorHigh: number;
-  colorAccent: number;
-}
-
-const COLOR_PRESETS: Record<"dark" | "light", ColorPreset[]> = {
-  dark: [
-    { colorLow: 0x3320a8, colorHigh: 0x22d3ee, colorAccent: 0xf5d0fe }, // Indigo / Cyan / Pink
-    { colorLow: 0x581c87, colorHigh: 0xf43f5e, colorAccent: 0xfef08a }, // Purple / Rose / Amber
-    { colorLow: 0x064e3b, colorHigh: 0x10b981, colorAccent: 0x6ee7b7 }, // Emerald / Teal / Mint
-    { colorLow: 0x701a75, colorHigh: 0xfb923c, colorAccent: 0xfde68a }, // Magenta / Warm Orange / Yellow
-  ],
-  light: [
-    { colorLow: 0x0ea5e9, colorHigh: 0x7dd3fc, colorAccent: 0x22d3ee }, // Sky / Cyan / Light Cyan
-    { colorLow: 0x7c3aed, colorHigh: 0xc084fc, colorAccent: 0xf472b6 }, // Purple / Lavender / Pink
-    { colorLow: 0x0d9488, colorHigh: 0x34d399, colorAccent: 0x38bdf8 }, // Teal / Mint / Sky
-  ],
 };
 
 const noiseGLSL = /* glsl */ `
@@ -141,6 +115,9 @@ const vertexShader = /* glsl */ `
   uniform float uMinFade;
   uniform float uCenterFadeWidth;
   uniform float uCenterFadeStrength;
+  uniform float uWarp; // 0.0 = Organic Blob, 1.0 = 3D Crystal Prism Pyramid
+
+  attribute vec3 aPyramidPosition;
 
   varying vec3  vColor;
   varying float vFade;
@@ -169,12 +146,29 @@ const vertexShader = /* glsl */ `
     float ripple = sin(a * 10.0 - uTime * 4.0) * exp(-a * 3.2) * uMouseStrength * 0.15;
     vec3 pos = nr * (uRadius * (1.0 + disp + infl * 0.12 + ripple));
 
-    // colour follows the bulges + intense glowing pop at vortex center
+    // Converge into 3D Crystal Prism Pyramid on sign in
+    float morph = pow(clamp(uWarp, 0.0, 1.0), 2.2);
+    pos = mix(pos, aPyramidPosition, morph);
+
+    // Push top and bottom in vertically for a wider, sleek oblate profile when idle
+    pos.y *= (1.0 - morph * 0.22) * 0.78 + morph * 0.22;
+
+    // colour follows bulges + crystal prism illumination
     float hi = smoothstep(-0.3, 0.5, disp);
     vec3 col = mix(uColorLow, uColorHigh, hi);
     float coreGlow = clamp(infl * 1.3, 0.0, 1.0);
     col = mix(col, uColorAccent, coreGlow);
     col += uColorAccent * (infl * 0.35); // extra glow pop under cursor
+
+    if (uWarp > 0.005) {
+      vec3 prismCyan = vec3(0.15, 0.9, 1.0);
+      vec3 prismGold = vec3(1.0, 0.85, 0.4);
+      float heightGlow = sin(aPyramidPosition.y * 1.5 - uTime * 6.0) * 0.5 + 0.5;
+      vec3 crystalCol = mix(prismCyan, prismGold, heightGlow);
+
+      col = mix(col, crystalCol, morph * 0.9);
+      col += vec3(1.0, 1.0, 1.0) * (morph * heightGlow * 0.45);
+    }
     vColor = col;
 
     // depth fade so the front hemisphere reads over the back
@@ -208,24 +202,21 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
-function ParticleBlobScene({ mount, palette, theme }: { mount: HTMLDivElement; palette: Palette; theme: "dark" | "light" }) {
+function ParticleBlobScene({ mount, palette, theme, isWarping = false }: { mount: HTMLDivElement; palette: Palette; theme: "dark" | "light"; isWarping?: boolean }) {
+  const isWarpingRef = useRef(isWarping);
+  useEffect(() => {
+    isWarpingRef.current = isWarping;
+  }, [isWarping]);
+
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const R = 8;
+    const R = 9.8;
 
     // ---- scene / camera / renderer ---------------------------------------
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(palette.fogColor, 0.012);
 
-    // Widens the whole render horizontally to better fill the hero's width
-    // on wide viewports, by under-reporting the camera's aspect ratio (a
-    // deliberate anamorphic-style distortion at the projection level) rather
-    // than non-uniformly scaling the sphere itself — scaling the object
-    // would get rotated along with its own slow spin animation below,
-    // periodically looking narrow instead of staying consistently wide.
-    // Raycasting uses this same camera, so pointer interaction automatically
-    // lines up with the stretched shape too.
     const WIDTH_STRETCH = 1.45;
     const camera = new THREE.PerspectiveCamera(55, mount.clientWidth / mount.clientHeight / WIDTH_STRETCH, 0.1, 200);
     camera.position.set(0, 0, 26);
@@ -253,6 +244,41 @@ function ParticleBlobScene({ mount, palette, theme }: { mount: HTMLDivElement; p
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
+    // ---- 3D Prism / Pyramid Point Cloud Attribute -------------------------
+    const pyramidPositions = new Float32Array(count * 3);
+    const H = 13.0; // Pyramid height
+    const B = 7.5;  // Base half-width
+    const apex = new THREE.Vector3(0, H / 2, 0);
+    const baseCorners = [
+      new THREE.Vector3(-B, -H / 2, -B),
+      new THREE.Vector3( B, -H / 2, -B),
+      new THREE.Vector3( B, -H / 2,  B),
+      new THREE.Vector3(-B, -H / 2,  B),
+    ];
+
+    for (let k = 0; k < count; k++) {
+      const faceIndex = k % 4; // 4 triangular faces
+      const v1 = baseCorners[faceIndex];
+      const v2 = baseCorners[(faceIndex + 1) % 4];
+
+      let r1 = Math.random();
+      let r2 = Math.random();
+      if (r1 + r2 > 1.0) {
+        r1 = 1.0 - r1;
+        r2 = 1.0 - r2;
+      }
+
+      const px = apex.x + r1 * (v1.x - apex.x) + r2 * (v2.x - apex.x);
+      const py = apex.y + r1 * (v1.y - apex.y) + r2 * (v2.y - apex.y);
+      const pz = apex.z + r1 * (v1.z - apex.z) + r2 * (v2.z - apex.z);
+
+      pyramidPositions[k * 3] = px;
+      pyramidPositions[k * 3 + 1] = py;
+      pyramidPositions[k * 3 + 2] = pz;
+    }
+
+    geometry.setAttribute("aPyramidPosition", new THREE.BufferAttribute(pyramidPositions, 3));
+
     // ---- shader material --------------------------------------------------
     const uniforms = {
       uTime: { value: 0 },
@@ -260,19 +286,15 @@ function ParticleBlobScene({ mount, palette, theme }: { mount: HTMLDivElement; p
       uMouseStrength: { value: 0 },
       uSize: { value: 32.0 * Math.min(window.devicePixelRatio, 2) },
       uRadius: { value: R },
-      uFalloff: { value: 6.5 }, // tighter -> smaller, subtler swirl
+      uFalloff: { value: 6.5 },
       uColorLow: { value: new THREE.Color(palette.colorLow) },
       uColorHigh: { value: new THREE.Color(palette.colorHigh) },
       uColorAccent: { value: new THREE.Color(palette.colorAccent) },
       uMinFade: { value: palette.minFade },
       uAlphaScale: { value: palette.alphaScale },
-      // Fades particles within the central ~34% of the viewport width (in
-      // NDC, so this scales with the container regardless of size) down to
-      // 40% of their normal opacity, tapering back to full strength outside
-      // that band — keeps the hero's centered text legible without a hard
-      // "text-shaped hole" cut out of the blob.
       uCenterFadeWidth: { value: 0.34 },
       uCenterFadeStrength: { value: 0.6 },
+      uWarp: { value: 0.0 },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -284,10 +306,6 @@ function ParticleBlobScene({ mount, palette, theme }: { mount: HTMLDivElement; p
       blending: palette.blending,
     });
 
-    // Shifted down (in world space, not just visually) so the blob's centre
-    // sits behind the "Sign in with Google" button instead of the headline —
-    // the button sits well below the hero's vertical midpoint, which is
-    // where the origin-centred sphere would otherwise land.
     const CENTER_Y_OFFSET = 0;
 
     const points = new THREE.Points(geometry, material);
@@ -295,9 +313,6 @@ function ParticleBlobScene({ mount, palette, theme }: { mount: HTMLDivElement; p
     scene.add(points);
 
     // ---- pointer -> sphere raycast ---------------------------------------
-    // Bound sphere's centre matches the points' offset above — raycasting
-    // happens in world space, so this has to track wherever the mesh
-    // actually is, not the origin.
     const raycaster = new THREE.Raycaster();
     const bound = new THREE.Sphere(new THREE.Vector3(0, CENTER_Y_OFFSET, 0), R * 1.35);
     const ndc = new THREE.Vector2();
@@ -311,7 +326,7 @@ function ParticleBlobScene({ mount, palette, theme }: { mount: HTMLDivElement; p
       ndc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(ndc, camera);
       const p = raycaster.ray.intersectSphere(bound, worldHit);
-      targetStrength = p ? 0.4 : 0; // gentle peak strength
+      targetStrength = p ? 0.4 : 0;
     }
     function onPointerLeave() {
       targetStrength = 0;
@@ -334,48 +349,26 @@ function ParticleBlobScene({ mount, palette, theme }: { mount: HTMLDivElement; p
     const clock = new THREE.Clock();
     let raf: number;
 
-    // Temporary THREE.Color instances reused per frame to avoid allocation
-    const tmpLow = new THREE.Color();
-    const tmpNextLow = new THREE.Color();
-    const tmpHigh = new THREE.Color();
-    const tmpNextHigh = new THREE.Color();
-    const tmpAccent = new THREE.Color();
-    const tmpNextAccent = new THREE.Color();
-
     function tick() {
       const t = reduceMotion ? 0 : clock.getElapsedTime();
       uniforms.uTime.value = t;
 
+      // Ramp uWarp: 0 (Organic Blob) -> 1 (3D Crystal Prism Pyramid)
+      const targetWarp = isWarpingRef.current ? 1.0 : 0.0;
+      uniforms.uWarp.value += (targetWarp - uniforms.uWarp.value) * 0.05;
+
       if (!reduceMotion) {
-        points.rotation.y = t * 0.07;
-        points.rotation.x = Math.sin(t * 0.05) * 0.2;
+        const warp = uniforms.uWarp.value;
+        const targetRotY = t * 0.07 + warp * 1.5;
+        const targetRotX = THREE.MathUtils.lerp(Math.sin(t * 0.05) * 0.2, 0.28, warp);
 
-        // Smoothly fade between dynamic color gradient presets over time
-        const presets = COLOR_PRESETS[theme] || COLOR_PRESETS.dark;
-        const CYCLE_DURATION = 10; // seconds per gradient morph
-        const totalDuration = presets.length * CYCLE_DURATION;
-        const progress = (t % totalDuration) / CYCLE_DURATION;
-        const idx = Math.floor(progress);
-        const nextIdx = (idx + 1) % presets.length;
-        const rawFactor = progress - idx;
-        const factor = 0.5 - 0.5 * Math.cos(rawFactor * Math.PI); // Cosine ease
-
-        const currentP = presets[idx];
-        const nextP = presets[nextIdx];
-
-        tmpLow.setHex(currentP.colorLow).lerp(tmpNextLow.setHex(nextP.colorLow), factor);
-        tmpHigh.setHex(currentP.colorHigh).lerp(tmpNextHigh.setHex(nextP.colorHigh), factor);
-        tmpAccent.setHex(currentP.colorAccent).lerp(tmpNextAccent.setHex(nextP.colorAccent), factor);
-
-        uniforms.uColorLow.value.copy(tmpLow);
-        uniforms.uColorHigh.value.copy(tmpHigh);
-        uniforms.uColorAccent.value.copy(tmpAccent);
+        points.rotation.x = targetRotX;
+        points.rotation.y = targetRotY;
       }
       points.updateMatrixWorld();
 
       localHit.copy(worldHit);
       points.worldToLocal(localHit);
-      // Fluid spring/inertia trail following mouse movement smoothly
       uniforms.uMouse.value.lerp(localHit, 0.08);
 
       uniforms.uMouseStrength.value += (targetStrength - uniforms.uMouseStrength.value) * 0.03;
@@ -403,16 +396,12 @@ function ParticleBlobScene({ mount, palette, theme }: { mount: HTMLDivElement; p
   return null;
 }
 
-export default function ParticleBlob() {
+export default function ParticleBlob({ isWarping = false }: { isWarping?: boolean }) {
   const [mountEl, setMountEl] = useState<HTMLDivElement | null>(null);
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
   const { performanceMode } = usePerformanceMode();
 
-  // Same "wait for client mount before reading the theme" gate as
-  // Navbar's ThemeToggle — resolvedTheme is undefined on the server/first
-  // render, so deciding whether to render off it any earlier would mismatch
-  // during hydration.
   useEffect(() => setMounted(true), []);
 
   if (!mounted || performanceMode) return null;
@@ -428,10 +417,7 @@ export default function ParticleBlob() {
         className="pointer-events-auto absolute inset-0"
         style={{ filter: "blur(4px)" }}
       />
-      {/* Keyed by theme so toggling dark/light fully tears down and rebuilds
-          the WebGL scene with the new palette/blending mode, rather than
-          trying to hot-swap material state on a live renderer. */}
-      {mountEl && <ParticleBlobScene key={isDark ? "dark" : "light"} mount={mountEl} palette={palette} theme={isDark ? "dark" : "light"} />}
+      {mountEl && <ParticleBlobScene key={isDark ? "dark" : "light"} mount={mountEl} palette={palette} theme={isDark ? "dark" : "light"} isWarping={isWarping} />}
     </div>
   );
 }
