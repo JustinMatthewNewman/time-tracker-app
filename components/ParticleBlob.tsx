@@ -61,6 +61,26 @@ const PALETTES: Record<"dark" | "light", Palette> = {
   },
 };
 
+interface ColorPreset {
+  colorLow: number;
+  colorHigh: number;
+  colorAccent: number;
+}
+
+const COLOR_PRESETS: Record<"dark" | "light", ColorPreset[]> = {
+  dark: [
+    { colorLow: 0x3320a8, colorHigh: 0x22d3ee, colorAccent: 0xf5d0fe }, // Indigo / Cyan / Pink
+    { colorLow: 0x581c87, colorHigh: 0xf43f5e, colorAccent: 0xfef08a }, // Purple / Rose / Amber
+    { colorLow: 0x064e3b, colorHigh: 0x10b981, colorAccent: 0x6ee7b7 }, // Emerald / Teal / Mint
+    { colorLow: 0x701a75, colorHigh: 0xfb923c, colorAccent: 0xfde68a }, // Magenta / Warm Orange / Yellow
+  ],
+  light: [
+    { colorLow: 0x0ea5e9, colorHigh: 0x7dd3fc, colorAccent: 0x22d3ee }, // Sky / Cyan / Light Cyan
+    { colorLow: 0x7c3aed, colorHigh: 0xc084fc, colorAccent: 0xf472b6 }, // Purple / Lavender / Pink
+    { colorLow: 0x0d9488, colorHigh: 0x34d399, colorAccent: 0x38bdf8 }, // Teal / Mint / Sky
+  ],
+};
+
 const noiseGLSL = /* glsl */ `
   vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
   vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
@@ -144,12 +164,17 @@ const vertexShader = /* glsl */ `
         snoise(nr * 1.1 + vec3(0.0, 0.0, tN))      * 0.42
       + snoise(nr * 2.7 + vec3(tN * 1.3, tN, 0.0)) * 0.16
       + snoise(nr * 5.0 - vec3(tN * 0.7))          * 0.06;
-    vec3 pos = nr * (uRadius * (1.0 + disp + infl * 0.10));
 
-    // colour follows the bulges + a soft glow at the vortex
+    // magnetic ripple radiating from cursor
+    float ripple = sin(a * 10.0 - uTime * 4.0) * exp(-a * 3.2) * uMouseStrength * 0.15;
+    vec3 pos = nr * (uRadius * (1.0 + disp + infl * 0.12 + ripple));
+
+    // colour follows the bulges + intense glowing pop at vortex center
     float hi = smoothstep(-0.3, 0.5, disp);
     vec3 col = mix(uColorLow, uColorHigh, hi);
-    col = mix(col, uColorAccent, clamp(infl * 0.9, 0.0, 1.0));
+    float coreGlow = clamp(infl * 1.3, 0.0, 1.0);
+    col = mix(col, uColorAccent, coreGlow);
+    col += uColorAccent * (infl * 0.35); // extra glow pop under cursor
     vColor = col;
 
     // depth fade so the front hemisphere reads over the back
@@ -159,15 +184,14 @@ const vertexShader = /* glsl */ `
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
     gl_Position = projectionMatrix * mv;
 
-    // Extra dimming for whatever lands behind the centered hero text column,
-    // on top of (not instead of) the depth fade above — measured in final
-    // normalized device coordinates (after the width-stretched projection)
-    // so it tracks actual screen position rather than object space.
+    // Extra dimming for whatever lands behind the centered hero text column
     float ndcX = gl_Position.x / gl_Position.w;
     float centerFade = 1.0 - uCenterFadeStrength * smoothstep(uCenterFadeWidth, 0.0, abs(ndcX));
     vFade = depthFade * centerFade;
 
-    gl_PointSize = uSize * (1.0 + infl * 0.6 + hi * 0.25) * (12.0 / -mv.z);
+    // Subtle micro-pulse sparkle per particle + size burst on hover
+    float sparkle = sin(uTime * 2.5 + position.x * 15.0 + position.y * 9.0) * 0.08 + 0.92;
+    gl_PointSize = uSize * sparkle * (1.0 + infl * 0.8 + hi * 0.25) * (12.0 / -mv.z);
   }
 `;
 
@@ -184,7 +208,7 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
-function ParticleBlobScene({ mount, palette }: { mount: HTMLDivElement; palette: Palette }) {
+function ParticleBlobScene({ mount, palette, theme }: { mount: HTMLDivElement; palette: Palette; theme: "dark" | "light" }) {
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -310,6 +334,14 @@ function ParticleBlobScene({ mount, palette }: { mount: HTMLDivElement; palette:
     const clock = new THREE.Clock();
     let raf: number;
 
+    // Temporary THREE.Color instances reused per frame to avoid allocation
+    const tmpLow = new THREE.Color();
+    const tmpNextLow = new THREE.Color();
+    const tmpHigh = new THREE.Color();
+    const tmpNextHigh = new THREE.Color();
+    const tmpAccent = new THREE.Color();
+    const tmpNextAccent = new THREE.Color();
+
     function tick() {
       const t = reduceMotion ? 0 : clock.getElapsedTime();
       uniforms.uTime.value = t;
@@ -317,12 +349,34 @@ function ParticleBlobScene({ mount, palette }: { mount: HTMLDivElement; palette:
       if (!reduceMotion) {
         points.rotation.y = t * 0.07;
         points.rotation.x = Math.sin(t * 0.05) * 0.2;
+
+        // Smoothly fade between dynamic color gradient presets over time
+        const presets = COLOR_PRESETS[theme] || COLOR_PRESETS.dark;
+        const CYCLE_DURATION = 10; // seconds per gradient morph
+        const totalDuration = presets.length * CYCLE_DURATION;
+        const progress = (t % totalDuration) / CYCLE_DURATION;
+        const idx = Math.floor(progress);
+        const nextIdx = (idx + 1) % presets.length;
+        const rawFactor = progress - idx;
+        const factor = 0.5 - 0.5 * Math.cos(rawFactor * Math.PI); // Cosine ease
+
+        const currentP = presets[idx];
+        const nextP = presets[nextIdx];
+
+        tmpLow.setHex(currentP.colorLow).lerp(tmpNextLow.setHex(nextP.colorLow), factor);
+        tmpHigh.setHex(currentP.colorHigh).lerp(tmpNextHigh.setHex(nextP.colorHigh), factor);
+        tmpAccent.setHex(currentP.colorAccent).lerp(tmpNextAccent.setHex(nextP.colorAccent), factor);
+
+        uniforms.uColorLow.value.copy(tmpLow);
+        uniforms.uColorHigh.value.copy(tmpHigh);
+        uniforms.uColorAccent.value.copy(tmpAccent);
       }
       points.updateMatrixWorld();
 
       localHit.copy(worldHit);
       points.worldToLocal(localHit);
-      uniforms.uMouse.value.copy(localHit);
+      // Fluid spring/inertia trail following mouse movement smoothly
+      uniforms.uMouse.value.lerp(localHit, 0.08);
 
       uniforms.uMouseStrength.value += (targetStrength - uniforms.uMouseStrength.value) * 0.03;
 
@@ -344,7 +398,7 @@ function ParticleBlobScene({ mount, palette }: { mount: HTMLDivElement; palette:
         mount.removeChild(renderer.domElement);
       }
     };
-  }, [mount, palette]);
+  }, [mount, palette, theme]);
 
   return null;
 }
@@ -377,7 +431,7 @@ export default function ParticleBlob() {
       {/* Keyed by theme so toggling dark/light fully tears down and rebuilds
           the WebGL scene with the new palette/blending mode, rather than
           trying to hot-swap material state on a live renderer. */}
-      {mountEl && <ParticleBlobScene key={isDark ? "dark" : "light"} mount={mountEl} palette={palette} />}
+      {mountEl && <ParticleBlobScene key={isDark ? "dark" : "light"} mount={mountEl} palette={palette} theme={isDark ? "dark" : "light"} />}
     </div>
   );
 }
