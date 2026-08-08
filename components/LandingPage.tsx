@@ -1,9 +1,11 @@
 "use client";
 
 import { Button } from "@heroui/react";
+import { LogoGithub } from "@gravity-ui/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { loginWithGoogle } from "@/lib/auth";
 import { useRouter } from "next/navigation";
+import ParticleBlob from "@/components/ParticleBlob";
 
 // ─────────────────────────────────────────────
 // Google "G" mark, for the sign-in CTA
@@ -33,27 +35,65 @@ export default function LandingPage() {
         router.push("/worklogs");
     };
 
+    // h-[calc(100vh-3.5rem)] rather than min-h-screen: the signed-out header
+    // above this is a fixed h-14 (3.5rem) row living outside this <main>, so
+    // min-h-screen here would make header + main add up to more than one
+    // viewport and force a page scrollbar. Subtracting the header's height
+    // keeps hero + footer pinned to exactly one screen.
     return (
-        <main className="flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
+        <main className="flex h-[calc(100vh-3.5rem)] flex-col overflow-hidden bg-background text-foreground">
             {/* ── Hero ── */}
-            <section className="flex flex-1 flex-col items-center justify-center px-6 py-24 text-center">
-                <h1 className="max-w-3xl text-4xl leading-[1.15] font-medium tracking-tight sm:text-5xl md:text-6xl">
-                    Track time with precision and simplicity.
-                </h1>
+            <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
+                <ParticleBlob />
 
-                <p className="mt-6 max-w-md text-base text-foreground/60">
-                    Built for developers who want to capture every billable minute without the usual admin friction.
-                </p>
+                {/* pointer-events-none so this text doesn't block ParticleBlob's
+                    hover-stir interaction underneath it — re-enabled below just
+                    on the CTA button so it still stays clickable. */}
+                <div className="relative z-10 flex pointer-events-none flex-col items-center">
+                    <h1 className="max-w-3xl text-4xl leading-[1.15] tracking-tighter sm:text-5xl md:text-6xl">
+                        <span className="font-extralight">TimeTracker</span>{" "}
+                        <span className="font-[950] [-webkit-text-stroke:1.5px_currentColor]">Pro</span>
+                    </h1>
 
-                <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-                    {loading ? (
-                        <div className="h-10 w-44 animate-pulse rounded-3xl bg-default" />
-                    ) : (
-                        <Button size="lg" variant="primary" className="gap-2 px-6" onClick={handlePrimaryCTA}>
-                            {!user && <GoogleIcon />}
-                            {user ? "Go to dashboard" : "Sign in with Google"}
-                        </Button>
-                    )}
+                    <p className="text-xs text-foreground/50 mt-4">No credit card required.</p>
+
+
+                    <div className="pointer-events-auto mt-10 flex flex-wrap items-center justify-center gap-3">
+                        {loading ? (
+                            <div className="h-10 w-44 animate-pulse rounded-3xl bg-default" />
+                        ) : (
+                            <Button
+                                size="lg"
+                                variant="primary"
+                                className="group gap-2 overflow-hidden border border-border px-6 transition-opacity hover:opacity-90"
+                                style={{
+                                    "--button-bg": "var(--foreground)",
+                                    "--button-bg-hover": "var(--foreground)",
+                                    "--button-bg-pressed": "var(--foreground)",
+                                    "--button-fg": "var(--background)",
+                                } as React.CSSProperties}
+                                onClick={handlePrimaryCTA}
+                            >
+                                {/* Shimmer sweep: sits off-canvas at rest, slides fully
+                                    across on hover. mix-blend-overlay (rather than a
+                                    fixed light/dark color) reads on both the black
+                                    (light mode) and near-white (dark mode) button fill
+                                    without needing to branch on theme. */}
+                                <span
+                                    aria-hidden
+                                    className="pointer-events-none absolute inset-0 -translate-x-full transition-transform duration-700 ease-out mix-blend-overlay group-hover:translate-x-full"
+                                    style={{
+                                        background:
+                                            "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.7) 50%, transparent 70%)",
+                                    }}
+                                />
+                                {!user && <GoogleIcon />}
+                                {user ? "Go to dashboard" : "Sign in with Google"}
+                            </Button>
+                        )}
+
+
+                    </div>
                 </div>
             </section>
 
@@ -63,9 +103,20 @@ export default function LandingPage() {
                     <span className="text-sm font-semibold text-foreground">
                         Time Tracker <span className="text-foreground/50">Pro</span>
                     </span>
-                    <span className="text-xs text-foreground/50">
-                        © {new Date().getFullYear()} Time Tracker Pro. All rights reserved.
-                    </span>
+                    <div className="flex items-center gap-3">
+                        <a
+                            href="https://github.com/JustinMatthewNewman/time-tracker-app"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="View source on GitHub"
+                            className="text-foreground/50 transition hover:text-foreground"
+                        >
+                            <LogoGithub className="size-5" aria-hidden />
+                        </a>
+                        <span className="text-xs text-foreground/50">
+                            © {new Date().getFullYear()} Time Tracker Pro. All rights reserved.
+                        </span>
+                    </div>
                 </div>
             </footer>
         </main>

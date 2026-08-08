@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { useRouter, usePathname } from "next/navigation";
-import { Button } from "@heroui/react";
+import { Button, ToggleButtonGroup, ToggleButton } from "@heroui/react";
 import {
   House,
   ClockFill,
@@ -51,16 +51,16 @@ const NAV_LINKS: NavLink[] = [
 // Icons
 // ─────────────────────────────────────────────
 
-const SunIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+const SunIcon = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor">
     <circle cx="12" cy="12" r="5" />
     <line x1="12" y1="1" x2="12" y2="3" />
     <line x1="12" y1="21" x2="12" y2="23" />
   </svg>
 );
 
-const MoonIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+const MoonIcon = ({ size = 18 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor">
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </svg>
 );
@@ -333,7 +333,7 @@ function MarketingNav({ onSignIn }: { onSignIn: () => void }) {
 function Brand({ href, className = "" }: { href: string; className?: string }) {
   return (
     <a href={href} className={`flex items-center gap-2 ${className}`}>
-      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-foreground text-background">
         <ClockFill className="size-4" aria-hidden />
       </span>
       <span className="flex items-baseline gap-1.5">
@@ -553,21 +553,30 @@ export default function AppNavbar() {
 // ─────────────────────────────────────────────
 
 function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
-  const isDark = resolvedTheme === "dark" || theme === "dark";
-
   return (
-    <button
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="rounded-full p-2 text-foreground/70 transition hover:bg-default hover:text-foreground"
-      aria-label="Toggle Theme"
+    <ToggleButtonGroup
+      selectionMode="single"
+      disallowEmptySelection
+      selectedKeys={[resolvedTheme ?? "light"]}
+      onSelectionChange={(keys) => {
+        const next = Array.from(keys)[0];
+        if (typeof next === "string") setTheme(next);
+      }}
+      size="sm"
+      aria-label="Theme"
     >
-      {isDark ? <SunIcon /> : <MoonIcon />}
-    </button>
+      <ToggleButton id="light" isIconOnly aria-label="Light theme">
+        <SunIcon size={14} />
+      </ToggleButton>
+      <ToggleButton id="dark" isIconOnly aria-label="Dark theme">
+        <MoonIcon size={14} />
+      </ToggleButton>
+    </ToggleButtonGroup>
   );
 }
