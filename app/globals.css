@@ -11,6 +11,17 @@
 .dark {
   --background: #0a0a0a;
   --foreground: #ededed;
+
+  /* HeroUI's own dark variables.css sets --surface/--overlay to a
+     lighter grey (oklch ~21%) than our --background above, so anything
+     using those tokens (the navbar's data-glass="surface" fill, Cards,
+     Dropdown/mega-menu popovers) read as a visibly different shade from
+     plain-background areas like the footer. Pin them to --background so
+     every component surface is the same solid black. */
+  --surface: var(--background);
+  --surface-secondary: var(--background);
+  --surface-tertiary: var(--background);
+  --overlay: var(--background);
 }
 
 @theme inline {

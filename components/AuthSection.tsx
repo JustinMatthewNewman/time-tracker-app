@@ -26,12 +26,7 @@ function AuthSection({
   if (!user) {
     return (
       <div className="flex gap-2">
-        <Button size="sm" onPress={onLogin}>
-          Sign in
-        </Button>
-        <Button size="sm" onPress={onLogin}>
-          Get started
-        </Button>
+
       </div>
     );
   }
