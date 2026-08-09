@@ -9,7 +9,9 @@
     "lint": "eslint",
     "seed:stress-test:dry-run": "node --env-file=.env.local scripts/seed-stress-test.mjs --dry-run",
     "seed:stress-test": "node --env-file=.env.local scripts/seed-stress-test.mjs",
-    "seed:stress-test:reset": "node --env-file=.env.local scripts/seed-stress-test.mjs --reset"
+    "seed:stress-test:reset": "node --env-file=.env.local scripts/seed-stress-test.mjs --reset",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@dataconnect/admin-generated": "file:src/dataconnect-admin-generated",
@@ -50,7 +52,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4.3.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   },
   "overrides": {
     "jwks-rsa": {

@@ -42,8 +42,12 @@ export function groupByTicket<T extends EntryLike>(entries: T[]): TicketTotal[] 
 }
 
 export function formatDuration(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const mins = Math.round(minutes % 60);
+  // Round the total first, then split — rounding the hours/remainder
+  // independently (e.g. floor(479.6/60)=7, round(479.6%60)=60) can produce
+  // a nonsensical "7h 60m" instead of rolling over to "8h 0m".
+  const total = Math.round(minutes);
+  const hours = Math.floor(total / 60);
+  const mins = total % 60;
   if (hours === 0) return `${mins}m`;
   if (mins === 0) return `${hours}h`;
   return `${hours}h ${mins}m`;
