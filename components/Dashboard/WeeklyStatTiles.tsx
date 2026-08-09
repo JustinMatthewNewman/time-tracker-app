@@ -21,14 +21,17 @@ function delta(current: number, previous: number): { value: string; direction: D
   return { value: `${Math.abs(pct)}%`, direction: pct > 0 ? "up" : "down" };
 }
 
-export function WeeklyStatTiles() {
-  const today = new Date();
-  const currentWeekStart = startOfWeek(today);
+interface WeeklyStatTilesProps {
+  weekStart: Date;
+}
+
+export function WeeklyStatTiles({ weekStart }: WeeklyStatTilesProps) {
+  const currentWeekStart = startOfWeek(weekStart);
   const previousWeekStart = new Date(currentWeekStart);
   previousWeekStart.setDate(previousWeekStart.getDate() - 7);
 
   const startDate = isoLocalMidnight(previousWeekStart);
-  const endDate = isoLocalMidnight(endOfWeek(today));
+  const endDate = isoLocalMidnight(endOfWeek(currentWeekStart));
 
   const { entries, loading } = useTimeEntriesByDateRange(startDate, endDate);
 
@@ -48,7 +51,7 @@ export function WeeklyStatTiles() {
       entryCount: { current: currentEntries.length, delta: delta(currentEntries.length, previousEntries.length) },
       tickets: { current: currentTickets.size, delta: delta(currentTickets.size, previousTickets.size) },
     };
-    // currentWeekStart is derived from `today`, stable for the component's lifetime.
+    // currentWeekStart is derived from `weekStart`, which already drives `entries`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entries]);
 

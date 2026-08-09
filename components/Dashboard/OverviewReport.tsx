@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useMyTimeEntries } from "@/hooks/useMyTimeEntries";
 import { minutesBetween, formatDuration } from "@/lib/timeTotals";
+import { startOfWeek } from "@/lib/weekBuckets";
 import { StatTile } from "./StatTile";
+import { WeekSelector } from "./WeekSelector";
 import { WeeklyStatTiles } from "./WeeklyStatTiles";
 import { WeeklyTrendChart } from "./WeeklyTrendChart";
 import { CalendarHeatmap } from "./CalendarHeatmap";
@@ -11,6 +13,7 @@ import { MonthlyHoursBar } from "./MonthlyHoursBar";
 
 export function OverviewReport() {
   const { entries, loading, error } = useMyTimeEntries();
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
 
   const totalMinutes = useMemo(
     () => entries.reduce((sum, e) => sum + minutesBetween(e.startTime, e.endTime), 0),
@@ -25,7 +28,11 @@ export function OverviewReport() {
         </div>
       )}
 
-      <WeeklyStatTiles />
+      <div className="flex items-center justify-end">
+        <WeekSelector weekStart={weekStart} onChange={setWeekStart} />
+      </div>
+
+      <WeeklyStatTiles weekStart={weekStart} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <WeeklyTrendChart />
