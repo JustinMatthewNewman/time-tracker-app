@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Card, Tabs } from "@heroui/react";
+import { Card, Skeleton, Tabs } from "@heroui/react";
 import { useTimeEntriesByDateRange } from "@/hooks/useTimeEntriesByDateRange";
 import { groupByTicket, formatDuration, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { startOfWeek, endOfWeek } from "@/lib/weekBuckets";
@@ -92,7 +92,19 @@ export function TicketBreakdownWeekly() {
         </Tabs>
       </div>
 
-      {!loading && totals.length === 0 ? (
+      {loading ? (
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+          <Skeleton className="size-40 shrink-0 rounded-full" />
+          <div className="flex w-full flex-1 flex-col gap-2">
+            {[100, 70, 45].map((widthPct, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <Skeleton className="h-4 w-24 shrink-0 rounded" />
+                <Skeleton className="h-4 flex-1 rounded-r-[4px]" style={{ maxWidth: `${widthPct}%` }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : totals.length === 0 ? (
         <p className="py-10 text-center text-sm text-foreground/60">No time entries in this window yet.</p>
       ) : (
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">

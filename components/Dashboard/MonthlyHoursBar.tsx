@@ -34,8 +34,9 @@ export function MonthlyHoursBar() {
     <HoursBarChart
       title={`${year} by month`}
       data={data}
-      emptyMessage={loading ? "Loading..." : "No time entries yet."}
+      emptyMessage="No time entries yet."
       sortByValue={false}
+      loading={loading}
     />
   );
 }

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { Skeleton } from "@heroui/react";
 import { groupByTicket, formatDuration, formatDecimalHours, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "@/components/Dashboard/chartColor";
 import { ArrowUpRightFromSquare, Copy, CopyCheck } from "@gravity-ui/icons";
@@ -31,7 +32,6 @@ interface TicketBreakdownProps {
   entries: TicketBreakdownEntry[];
   loading?: boolean;
   error?: string | null;
-  loadingMessage?: string;
   emptyMessage?: string;
 }
 
@@ -43,7 +43,6 @@ export function TicketBreakdown({
   entries,
   loading,
   error,
-  loadingMessage = "Loading ticket breakdown...",
   emptyMessage = "No time entries for this work log.",
 }: TicketBreakdownProps) {
   const { bordersEnabled } = useBorders();
@@ -78,8 +77,24 @@ export function TicketBreakdown({
 
   if (loading) {
     return (
-      <div className="p-8 text-center">
-        <p className="text-foreground/60">{loadingMessage}</p>
+      <div className="flex flex-col gap-4 p-4 md:flex-row md:items-start">
+        <div className="min-w-0 flex-[2] space-y-2">
+          {[0, 1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-8 w-full rounded" />
+          ))}
+        </div>
+        <div
+          className={`flex flex-1 flex-col items-center gap-4 rounded-lg p-4 md:max-w-[33%] ${
+            bordersEnabled ? "border border-default-200" : ""
+          }`}
+        >
+          <Skeleton className="size-32 shrink-0 rounded-full" />
+          <div className="w-full space-y-2">
+            {[0, 1, 2].map((i) => (
+              <Skeleton key={i} className="h-3 w-full rounded" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

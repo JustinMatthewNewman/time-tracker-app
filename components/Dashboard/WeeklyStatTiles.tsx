@@ -56,18 +56,21 @@ export function WeeklyStatTiles() {
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       <StatTile
         label="Hours this week"
-        value={loading ? "…" : formatDuration(stats.hours.current)}
-        delta={loading ? undefined : stats.hours.delta}
+        value={formatDuration(stats.hours.current)}
+        delta={stats.hours.delta}
+        loading={loading}
       />
       <StatTile
         label="Time entries this week"
-        value={loading ? "…" : String(stats.entryCount.current)}
-        delta={loading ? undefined : stats.entryCount.delta}
+        value={String(stats.entryCount.current)}
+        delta={stats.entryCount.delta}
+        loading={loading}
       />
       <StatTile
         label="Active tickets this week"
-        value={loading ? "…" : String(stats.tickets.current)}
-        delta={loading ? undefined : stats.tickets.delta}
+        value={String(stats.tickets.current)}
+        delta={stats.tickets.delta}
+        loading={loading}
       />
     </div>
   );

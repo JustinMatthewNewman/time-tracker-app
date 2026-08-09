@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Card, Chip, ProgressBar } from '@heroui/react'
+import { Avatar, Card, Chip, ProgressBar, Skeleton } from '@heroui/react'
 import { useAuth } from "@/hooks/useAuth";
 import ProfileAuthSection from './ProfileAuthSection';
 import { useMyTimeEntries, type MyTimeEntry } from '@/hooks/useMyTimeEntries';
@@ -51,7 +51,7 @@ function calculateThisWeekMinutes(entries: MyTimeEntry[]): number {
 
 function ProfileCard() {
   const { user, loading } = useAuth();
-  const { entries } = useMyTimeEntries();
+  const { entries, loading: entriesLoading } = useMyTimeEntries();
 
   const stats = useMemo(() => {
     const totalMinutes = entries.reduce((sum, entry) => sum + minutesBetween(entry.startTime, entry.endTime), 0);
@@ -124,30 +124,45 @@ function ProfileCard() {
       {/* Stats */}
       {!loading && user && (
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {statCards.map(({ label, value, icon: Icon, color }) => (
-            <Card key={label} variant="secondary" className="gap-2">
-              <Icon className={`size-5 ${color}`} />
-              <p className="text-2xl font-bold">{value}</p>
-              <p className="text-xs uppercase tracking-wider text-foreground/60">{label}</p>
-            </Card>
-          ))}
+          {entriesLoading
+            ? statCards.map(({ label }) => (
+                <Card key={label} variant="secondary" className="gap-2">
+                  <Skeleton className="size-5 rounded" />
+                  <Skeleton className="h-7 w-12 rounded" />
+                  <Skeleton className="h-3 w-16 rounded" />
+                </Card>
+              ))
+            : statCards.map(({ label, value, icon: Icon, color }) => (
+                <Card key={label} variant="secondary" className="gap-2">
+                  <Icon className={`size-5 ${color}`} />
+                  <p className="text-2xl font-bold">{value}</p>
+                  <p className="text-xs uppercase tracking-wider text-foreground/60">{label}</p>
+                </Card>
+              ))}
         </div>
       )}
 
       {/* Weekly goal */}
       {!loading && user && (
         <Card className="p-6">
-          <ProgressBar
-            value={Math.min(stats.thisWeek, WEEKLY_GOAL_HOURS)}
-            minValue={0}
-            maxValue={WEEKLY_GOAL_HOURS}
-          >
-            <span data-slot="label">Weekly goal</span>
-            <ProgressBar.Output>{`${stats.thisWeek}h / ${WEEKLY_GOAL_HOURS}h`}</ProgressBar.Output>
-            <ProgressBar.Track>
-              <ProgressBar.Fill />
-            </ProgressBar.Track>
-          </ProgressBar>
+          {entriesLoading ? (
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-4 w-24 rounded" />
+              <Skeleton className="h-2 w-full rounded-full" />
+            </div>
+          ) : (
+            <ProgressBar
+              value={Math.min(stats.thisWeek, WEEKLY_GOAL_HOURS)}
+              minValue={0}
+              maxValue={WEEKLY_GOAL_HOURS}
+            >
+              <span data-slot="label">Weekly goal</span>
+              <ProgressBar.Output>{`${stats.thisWeek}h / ${WEEKLY_GOAL_HOURS}h`}</ProgressBar.Output>
+              <ProgressBar.Track>
+                <ProgressBar.Fill />
+              </ProgressBar.Track>
+            </ProgressBar>
+          )}
         </Card>
       )}
 
@@ -155,7 +170,12 @@ function ProfileCard() {
       {!loading && user && (
         <Card className="p-6">
           <h2 className="mb-4 text-lg font-semibold">Achievements</h2>
-          {achievements.length > 0 ? (
+          {entriesLoading ? (
+            <div className="flex flex-wrap gap-2">
+              <Skeleton className="h-8 w-32 rounded-full" />
+              <Skeleton className="h-8 w-40 rounded-full" />
+            </div>
+          ) : achievements.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {achievements.map(({ label, icon: Icon, color }) => (
                 <Chip key={label} color={color} variant="soft" size="lg">
