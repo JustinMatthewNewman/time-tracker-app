@@ -1,11 +1,11 @@
-import AnalyticsDashboard from "@/components/Dashboard/AnalyticsDashboard";
+import Dashboard from "@/components/Dashboard/Dashboard";
 
-function Dashboard() {
+function DashboardRoute() {
   return (
     <div>
-      <AnalyticsDashboard />
+      <Dashboard />
     </div>
   )
 }
 
-export default Dashboard;
+export default DashboardRoute;
