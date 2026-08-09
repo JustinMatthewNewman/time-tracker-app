@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Accordion, Card, ToggleButton, ToggleButtonGroup } from '@heroui/react'
-import { Bars, ChevronDown, FileText, Copy, CopyCheck } from '@gravity-ui/icons'
+import { Bars, ChevronDown, ChevronLeft, ChevronRight, FileText, Copy, CopyCheck } from '@gravity-ui/icons'
 import ListBoxComponent from '../Utilities/ListBoxComponent'
 import { useTimeRange } from '../../context/TimeRangeContext'
 import { formatHour } from '../TimeRangeSettings'
@@ -99,15 +99,33 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
   }, [isOpen, showBreakdown]);
 
   return (
-    <div className='flex h-full items-stretch overflow-hidden'>
+    <div className='relative flex h-full flex-col overflow-hidden'>
+      {/* Mobile view switcher: on narrow screens the sidebar and main content
+          below become mutually-exclusive full-width panels (see the aside's
+          responsive width) instead of side-by-side, so the header's small
+          icon-only sidebar toggle has no room to double as the primary way
+          to switch between them. This floating arrow is that dedicated
+          control instead — anchored to the corner so it never crowds either
+          panel's own header, and it flips direction to reflect which panel
+          a tap will reveal next. */}
+      <button
+        type="button"
+        onClick={toggleSidebar}
+        aria-label={isOpen ? "Show work log" : "Show tabs"}
+        className="absolute right-4 bottom-4 z-20 flex size-12 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg transition hover:bg-accent-hover active:scale-95 md:hidden"
+      >
+        {isOpen ? <ChevronRight className="size-5" aria-hidden /> : <ChevronLeft className="size-5" aria-hidden />}
+      </button>
+
+      <div className='flex h-full min-h-0 flex-1 items-stretch overflow-hidden'>
       {/* Sidebar */}
       <aside
         className={`
           transition-all duration-300 overflow-hidden
-          ${isOpen ? "w-88" : "w-0"}
+          ${isOpen ? "w-full md:w-88" : "w-0"}
         `}
       >
-        <div className="w-88 h-full bg-default-50 p-4">
+        <div className="w-full md:w-88 h-full bg-default-50 p-4">
           <ListBoxComponent
             workLogs={workLogs}
             loading={workLogsLoading}
@@ -155,7 +173,17 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
                     onToggleBreakdown?.(keys.has("breakdown"));
                   }}
                 >
-                  <ToggleButton id="sidebar" isIconOnly variant="ghost" aria-label="Toggle sidebar">
+                  {/* Redundant with the mobile view switcher above (which
+                      also drives `isOpen`) once the sidebar goes full-width
+                      on mobile — kept for desktop, where the sidebar merely
+                      collapses alongside the still-visible main content. */}
+                  <ToggleButton
+                    id="sidebar"
+                    isIconOnly
+                    variant="ghost"
+                    aria-label="Toggle sidebar"
+                    className="hidden md:inline-flex"
+                  >
                     <Bars className="size-4" aria-hidden />
                   </ToggleButton>
                   <ToggleButton id="breakdown" isIconOnly variant="ghost" aria-label="Show ticket breakdown">
@@ -245,6 +273,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
             </Card>
           </div>
         )}
+      </div>
       </div>
     </div>
   )

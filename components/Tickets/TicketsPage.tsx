@@ -34,11 +34,6 @@ export function TicketsPage() {
     <div className="relative h-[calc(100vh-4rem)] overflow-y-auto p-4 sm:p-6">
       <AmbientBackground intensity={0.85} />
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-6 pb-8">
-        <div className="flex items-center gap-3">
-          <TicketIcon className="size-6 text-accent" />
-          <h1 className="text-2xl font-bold">Tickets</h1>
-        </div>
-
         <Card className="p-4">
           <TicketBreakdown
             hasSelection

@@ -394,6 +394,16 @@ export default function AppNavbar() {
   // empty tab strip.
   const hasNavLinks = filteredLinks.length > 0;
 
+  // Signing out (or in) flips `hasNavLinks`, swapping which branch below
+  // renders the header. The mobile menu block further down is a sibling of
+  // that branch gated only by `menuOpen`, so leaving it open across the flip
+  // left a stale copy on screen alongside the newly-rendered branch's own
+  // controls — doubling up ThemeToggle/AuthSection until manually closed.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMenuOpen(false);
+  }, [hasNavLinks]);
+
   return (
     <header
       data-glass={performanceMode ? undefined : "surface"}
