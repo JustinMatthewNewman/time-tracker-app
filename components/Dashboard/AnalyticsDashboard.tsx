@@ -43,7 +43,7 @@ export function AnalyticsDashboard() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { entries, loading, error } = useMyTimeEntries();
-  const { workLogs } = useWorkLogs();
+  const { workLogs, loading: workLogsLoading } = useWorkLogs();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -100,21 +100,23 @@ export function AnalyticsDashboard() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatTile label="Total hours logged" value={loading ? "…" : formatDuration(totalMinutes)} />
-          <StatTile label="Total time entries" value={loading ? "…" : String(entries.length)} />
-          <StatTile label="Total work logs" value={String(workLogs.length)} />
+          <StatTile label="Total hours logged" value={formatDuration(totalMinutes)} loading={loading} />
+          <StatTile label="Total time entries" value={String(entries.length)} loading={loading} />
+          <StatTile label="Total work logs" value={String(workLogs.length)} loading={workLogsLoading} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <HoursBarChart
             title={`Hours by ticket (all time, top ${TOP_N_ALL_TIME})`}
             data={byTicket.map((t) => ({ label: t.ticket, totalMinutes: t.totalMinutes }))}
-            emptyMessage={loading ? "Loading..." : "No time entries yet."}
+            emptyMessage="No time entries yet."
+            loading={loading}
           />
           <HoursBarChart
             title={`Hours by work log (all time, top ${TOP_N_ALL_TIME})`}
             data={byWorkLog}
-            emptyMessage={loading ? "Loading..." : "No time entries yet."}
+            emptyMessage="No time entries yet."
+            loading={loading}
           />
         </div>
       </div>

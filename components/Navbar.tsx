@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useRouter, usePathname } from "next/navigation";
 import { Button, ToggleButtonGroup, ToggleButton } from "@heroui/react";
@@ -332,7 +333,7 @@ function MarketingNav({ onSignIn }: { onSignIn: () => void }) {
 
 function Brand({ href, className = "" }: { href: string; className?: string }) {
   return (
-    <a href={href} className={`flex items-center gap-2 ${className}`}>
+    <Link href={href} className={`flex items-center gap-2 ${className}`}>
       <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-foreground text-background">
         <ClockFill className="size-4" aria-hidden />
       </span>
@@ -340,7 +341,7 @@ function Brand({ href, className = "" }: { href: string; className?: string }) {
         <span className="font-semibold text-foreground">Time Tracker</span>
         <span className="text-xs text-foreground/50">Pro</span>
       </span>
-    </a>
+    </Link>
   );
 }
 
@@ -419,7 +420,25 @@ export default function AppNavbar() {
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {!hasNavLinks ? (
+        {loading ? (
+          // Auth hasn't resolved yet — render a neutral shell instead of
+          // committing to either the signed-out marketing header or the
+          // authenticated tab strip. Picking either one here is what causes
+          // the wrong nav to flash before flipping once `user` is known.
+          <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-4">
+            <Brand href="/" />
+            <div />
+            <div className="flex shrink-0 items-center gap-3">
+              <ThemeToggle />
+              <AuthSection
+                user={user}
+                loading={loading}
+                onLogin={handleLogin}
+                onAction={handleAction}
+              />
+            </div>
+          </div>
+        ) : !hasNavLinks ? (
           <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-4">
             <Brand href="/" />
             <div className="hidden self-stretch md:block">
@@ -466,7 +485,7 @@ export default function AppNavbar() {
               const Icon = link.icon;
               const active = isLinkActive(link.href);
               return (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
@@ -478,7 +497,7 @@ export default function AppNavbar() {
                 >
                   <Icon className="size-4" aria-hidden />
                   {link.label}
-                </a>
+                </Link>
               );
             })}
           </nav>
@@ -528,17 +547,18 @@ export default function AppNavbar() {
               const Icon = link.icon;
               const active = isLinkActive(link.href);
               return (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
+                  onClick={() => setMenuOpen(false)}
                   className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-default ${
                     active ? "text-foreground" : "text-foreground/70"
                   }`}
                 >
                   <Icon className="size-4" aria-hidden />
                   {link.label}
-                </a>
+                </Link>
               );
             })}
           </nav>

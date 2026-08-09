@@ -22,6 +22,26 @@
   --surface-secondary: var(--background);
   --surface-tertiary: var(--background);
   --overlay: var(--background);
+
+  /* Skeleton (see @heroui/styles skeleton.css) fills itself with plain
+     --surface-tertiary, which we just pinned to --background above — so
+     against that same background it's invisible. Give it its own
+     theme-derived tint instead of touching surface-tertiary itself (that'd
+     undo the Card/Dropdown unification above): mixing in a slice of
+     --foreground keeps it correct if either color ever changes, rather
+     than a hardcoded grey that'd drift from the palette. */
+  --skeleton-fill: color-mix(in oklab, var(--foreground) 12%, var(--background));
+}
+
+/* Overrides skeleton.css's own --surface-tertiary-based fill (both the base
+   background and the shimmer sweep's middle stop) with the token above.
+   Selector specificity alone (two classes vs. @heroui/styles' one) wins
+   regardless of import order, so no !important needed. */
+.dark .skeleton {
+  background-color: var(--skeleton-fill);
+}
+.dark .skeleton--shimmer::after {
+  background-image: linear-gradient(to right, transparent, var(--skeleton-fill), transparent);
 }
 
 @theme inline {

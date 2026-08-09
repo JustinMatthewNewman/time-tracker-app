@@ -1,4 +1,4 @@
-import { Card } from "@heroui/react";
+import { Card, Skeleton } from "@heroui/react";
 import { formatDuration } from "@/lib/timeTotals";
 import { ChartTooltip, useChartTooltip } from "./ChartTooltip";
 
@@ -14,9 +14,10 @@ interface HoursBarChartProps {
   // Ranking views (hours by ticket/work log) want largest-first; chronological
   // views (hours by month) need to keep the caller's own order instead.
   sortByValue?: boolean;
+  loading?: boolean;
 }
 
-export function HoursBarChart({ title, data, emptyMessage = "No data yet.", sortByValue = true }: HoursBarChartProps) {
+export function HoursBarChart({ title, data, emptyMessage = "No data yet.", sortByValue = true, loading }: HoursBarChartProps) {
   const { tooltip, showAt, hide } = useChartTooltip<HoursBarDatum>();
   const ordered = sortByValue ? [...data].sort((a, b) => b.totalMinutes - a.totalMinutes) : data;
   const max = Math.max(0, ...ordered.map((d) => d.totalMinutes));
@@ -25,7 +26,17 @@ export function HoursBarChart({ title, data, emptyMessage = "No data yet.", sort
     <Card className="p-4">
       <h2 className="text-lg font-semibold mb-4">{title}</h2>
 
-      {ordered.length === 0 ? (
+      {loading ? (
+        <div className="flex flex-col gap-2">
+          {[100, 80, 60, 40].map((widthPct, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="h-4 w-32 shrink-0 rounded" />
+              <Skeleton className="h-4 flex-1 rounded-r-[4px]" style={{ maxWidth: `${widthPct}%` }} />
+              <Skeleton className="h-4 w-16 shrink-0 rounded" />
+            </div>
+          ))}
+        </div>
+      ) : ordered.length === 0 ? (
         <p className="text-sm text-foreground/60">{emptyMessage}</p>
       ) : (
         <div className="relative flex flex-col gap-2">

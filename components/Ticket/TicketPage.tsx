@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowUpRightFromSquare, Check, ChevronDown, Pencil, Ticket as TicketIcon, Xmark } from "@gravity-ui/icons";
-import { Accordion, Button, Card, EmptyState, Input, Label, Spinner, TextField } from "@heroui/react";
+import { Accordion, Button, Card, EmptyState, Input, Label, Skeleton, Spinner, TextField } from "@heroui/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTickets } from "@/context/TicketsContext";
 import { useTimeEntriesByTicket, type TicketTimeEntry } from "@/hooks/useTimeEntriesByTicket";
@@ -144,9 +144,16 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
             </p>
           </Card>
         ) : ticketsLoading && !ticket ? (
-          <div className="flex items-center justify-center p-12">
-            <Spinner aria-label="Loading ticket" />
-          </div>
+          <Card className="p-6">
+            <div className="flex items-center gap-3">
+              <Skeleton className="size-6 rounded" />
+              <Skeleton className="h-7 w-40 rounded" />
+            </div>
+            <div className="mt-6 max-w-xs space-y-2">
+              <Skeleton className="h-3 w-16 rounded" />
+              <Skeleton className="h-5 w-24 rounded" />
+            </div>
+          </Card>
         ) : !ticket ? (
           <EmptyState className="p-12">
             <TicketIcon className="size-8 text-foreground/40" />
@@ -233,8 +240,10 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
               <h2 className="mb-4 px-2 text-lg font-semibold">Time entries</h2>
 
               {entriesLoading ? (
-                <div className="flex items-center justify-center p-8">
-                  <Spinner aria-label="Loading time entries" />
+                <div className="flex flex-col gap-2 p-2">
+                  <Skeleton className="h-10 w-full rounded" />
+                  <Skeleton className="h-10 w-full rounded" />
+                  <Skeleton className="h-10 w-full rounded" />
                 </div>
               ) : entries.length === 0 ? (
                 <EmptyState className="p-8">

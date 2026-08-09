@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Card } from "@heroui/react";
+import { Card, Skeleton } from "@heroui/react";
 import { useTimeEntriesByDateRange } from "@/hooks/useTimeEntriesByDateRange";
 import { minutesBetween, formatDuration } from "@/lib/timeTotals";
 import { weekKey } from "@/lib/weekBuckets";
@@ -123,7 +123,9 @@ export function CalendarHeatmap() {
         )}
       </div>
 
-      {!hasAnyData && !loading ? (
+      {loading ? (
+        <Skeleton className="h-28 w-full rounded-lg" />
+      ) : !hasAnyData ? (
         <p className="py-10 text-center text-sm text-foreground/60">No time entries logged yet this year.</p>
       ) : (
         <div className="relative w-full">

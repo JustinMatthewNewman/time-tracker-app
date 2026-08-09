@@ -1,4 +1,4 @@
-import { Card } from "@heroui/react";
+import { Card, Skeleton } from "@heroui/react";
 import { deltaColorClass, type DeltaDirection } from "./chartColor";
 
 interface StatTileDelta {
@@ -11,11 +11,21 @@ interface StatTileProps {
   label: string;
   value: string;
   delta?: StatTileDelta;
+  loading?: boolean;
 }
 
 const DELTA_GLYPH: Record<DeltaDirection, string> = { up: "▲", down: "▼", flat: "—" };
 
-export function StatTile({ label, value, delta }: StatTileProps) {
+export function StatTile({ label, value, delta, loading }: StatTileProps) {
+  if (loading) {
+    return (
+      <Card className="p-4">
+        <Skeleton className="h-3.5 w-24 rounded" />
+        <Skeleton className="mt-2 h-7 w-16 rounded" />
+      </Card>
+    );
+  }
+
   return (
     <Card className="p-4">
       <p className="text-sm text-foreground/60">{label}</p>

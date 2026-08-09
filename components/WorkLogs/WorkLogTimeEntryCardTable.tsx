@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@heroui/react";
 import { ArrowUpRightFromSquare, Copy, CopyCheck, Pencil } from "@gravity-ui/icons";
 import {
     useUpdateTimeEntry,
@@ -190,7 +191,12 @@ export function WorkLogTimeEntryCardTable({
     };
 
     if (loading) {
-        return <div className="p-4 text-sm text-gray-500">Loading time entries...</div>;
+        return (
+            <div className="flex flex-col gap-2 p-4">
+                <Skeleton className="h-8 w-full rounded" />
+                <Skeleton className="h-8 w-full rounded" />
+            </div>
+        );
     }
 
     if (entries.length === 0) {

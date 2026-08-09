@@ -40,7 +40,6 @@ export function TicketsPage() {
             entries={entries}
             loading={loading}
             error={error}
-            loadingMessage="Loading tickets..."
             emptyMessage="No time entries yet — tickets will show up here once you log time against one."
           />
         </Card>

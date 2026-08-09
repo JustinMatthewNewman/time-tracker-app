@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Card, Tabs } from "@heroui/react";
+import { Card, Skeleton, Tabs } from "@heroui/react";
 import { scaleLinear, scalePoint } from "d3-scale";
 import { line as d3line, area as d3area, curveMonotoneX } from "d3-shape";
 import { useTimeEntriesByDateRange } from "@/hooks/useTimeEntriesByDateRange";
@@ -124,7 +124,9 @@ export function WeeklyTrendChart() {
         </Tabs>
       </div>
 
-      {points.every((p) => p.totalMinutes === 0) && !loading ? (
+      {loading ? (
+        <Skeleton className="h-[220px] w-full rounded-lg" />
+      ) : points.every((p) => p.totalMinutes === 0) ? (
         <p className="py-10 text-center text-sm text-foreground/60">No time entries in this window yet.</p>
       ) : (
         <div className="relative w-full overflow-x-auto">
