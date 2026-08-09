@@ -183,22 +183,26 @@ export function WorkLogListBox({
             <Tabs.ListContainer className="h-full w-full min-w-0">
               <Tabs.List
                 aria-label="Work Logs"
-                className={`h-full w-full min-w-0 overflow-hidden bg-surface ${
-                  bordersEnabled ? "border border-default-200" : ""
-                }`}
+                className={`h-full w-full min-w-0 overflow-hidden bg-surface ${bordersEnabled ? "border border-default-200" : ""
+                  }`}
                 data-glass="surface"
               >
                 {weekItems.map((item) => (
                   <Tabs.Tab
                     key={item.id}
                     id={item.id}
-                    className="h-auto w-full min-w-0 justify-start px-3 py-2 text-left"
+                    // No Tabs.Indicator: react-aria's FLIP-animated overlay
+                    // was measuring/sizing itself independently of the tab
+                    // (rendering as a small mis-sized blob at the left edge
+                    // instead of spanning the tab) — painting the selected
+                    // fill directly on the tab itself guarantees it's always
+                    // sized exactly to the tab's own box.
+                    className="h-auto w-full min-w-0 justify-start border-l-2 border-transparent px-3 py-2 text-left text-foreground/60 data-[selected=true]:border-accent data-[selected=true]:bg-accent-soft data-[selected=true]:text-foreground"
                   >
                     <div className="flex min-w-0 flex-1 flex-col">
                       <Label className="truncate font-medium">{item.label}</Label>
                       <span className="truncate text-sm text-gray-500">{formatDate(item.date)}</span>
                     </div>
-                    <Tabs.Indicator />
                   </Tabs.Tab>
                 ))}
               </Tabs.List>

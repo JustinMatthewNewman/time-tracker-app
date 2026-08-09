@@ -79,13 +79,7 @@ function SettingsCard() {
 
   return (
     <div className="flex w-full flex-col gap-6">
-      {/* Header */}
-      <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold">
-          <Gear className="size-6" /> Settings
-        </h1>
-        <p className="mt-1 text-sm text-foreground/60">Customize your time tracking experience</p>
-      </div>
+
 
       {/* Working Hours
       <TimeRangeSettings /> */}

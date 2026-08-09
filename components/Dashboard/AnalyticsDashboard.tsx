@@ -80,7 +80,6 @@ export function AnalyticsDashboard() {
       <AmbientBackground intensity={0.85} />
 
       <div className="relative z-10 flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
 
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">

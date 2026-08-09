@@ -1,3 +1,4 @@
+import { Card } from "@heroui/react";
 import { deltaColorClass, type DeltaDirection } from "./chartColor";
 
 interface StatTileDelta {
@@ -16,7 +17,7 @@ const DELTA_GLYPH: Record<DeltaDirection, string> = { up: "▲", down: "▼", fl
 
 export function StatTile({ label, value, delta }: StatTileProps) {
   return (
-    <div className="rounded-lg border border-default-200 bg-default-50 p-4">
+    <Card className="p-4">
       <p className="text-sm text-foreground/60">{label}</p>
       <div className="mt-1 flex items-baseline gap-2">
         <p className="text-2xl font-semibold text-foreground tabular-nums">{value}</p>
@@ -27,7 +28,7 @@ export function StatTile({ label, value, delta }: StatTileProps) {
           </span>
         )}
       </div>
-    </div>
+    </Card>
   );
 }
 
