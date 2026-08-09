@@ -121,7 +121,7 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
 
   if (authLoading) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+      <div className="flex h-full items-center justify-center">
         <Spinner aria-label="Loading" />
       </div>
     );
@@ -130,10 +130,10 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
   if (!user) return null; // redirect in flight
 
   return (
-    <div className="relative h-[calc(100vh-4rem)] overflow-y-auto p-4 sm:p-6">
+    <div className="relative flex h-full flex-col overflow-hidden p-4 sm:p-6">
       <AmbientBackground intensity={0.85} />
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col gap-6 pb-8">
-        <Button variant="ghost" size="sm" className="w-fit" onClick={() => router.push("/worklogs")}>
+      <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-4xl flex-col gap-6">
+        <Button variant="ghost" size="sm" className="w-fit shrink-0" onClick={() => router.push("/worklogs")}>
           <ArrowLeft className="size-4" /> Back to work logs
         </Button>
 
@@ -164,7 +164,7 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
           </EmptyState>
         ) : (
           <>
-            <Card className="p-6">
+            <Card className="shrink-0 p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-3">
                   <TicketIcon className="size-6 text-accent" />
@@ -236,59 +236,61 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
               </div>
             </Card>
 
-            <Card className="p-4">
-              <h2 className="mb-4 px-2 text-lg font-semibold">Time entries</h2>
+            <Card className="flex h-full min-h-0 flex-1 flex-col overflow-hidden p-4">
+              <h2 className="mb-4 shrink-0 px-2 text-lg font-semibold">Time entries</h2>
 
-              {entriesLoading ? (
-                <div className="flex flex-col gap-2 p-2">
-                  <Skeleton className="h-10 w-full rounded" />
-                  <Skeleton className="h-10 w-full rounded" />
-                  <Skeleton className="h-10 w-full rounded" />
-                </div>
-              ) : entries.length === 0 ? (
-                <EmptyState className="p-8">
-                  <p className="text-sm text-foreground/60">No time entries reference this ticket yet.</p>
-                </EmptyState>
-              ) : (
-                <Accordion
-                  className="w-full"
-                  expandedKeys={expandedDays}
-                  onExpandedChange={(keys) => setExpandedDays(new Set(Array.from(keys, String)))}
-                >
-                  {days.map((day) => {
-                    const dayEntries = entriesByDay.get(day) ?? [];
-                    const isExpanded = expandedDays.has(day);
+              <div className="min-h-0 flex-1 overflow-y-auto">
+                {entriesLoading ? (
+                  <div className="flex flex-col gap-2 p-2">
+                    <Skeleton className="h-10 w-full rounded" />
+                    <Skeleton className="h-10 w-full rounded" />
+                    <Skeleton className="h-10 w-full rounded" />
+                  </div>
+                ) : entries.length === 0 ? (
+                  <EmptyState className="p-8">
+                    <p className="text-sm text-foreground/60">No time entries reference this ticket yet.</p>
+                  </EmptyState>
+                ) : (
+                  <Accordion
+                    className="w-full"
+                    expandedKeys={expandedDays}
+                    onExpandedChange={(keys) => setExpandedDays(new Set(Array.from(keys, String)))}
+                  >
+                    {days.map((day) => {
+                      const dayEntries = entriesByDay.get(day) ?? [];
+                      const isExpanded = expandedDays.has(day);
 
-                    return (
-                      <Accordion.Item key={day} id={day}>
-                        <Accordion.Heading>
-                          <Accordion.Trigger>
-                            <span className="text-sm text-gray-500">{formatDayHeading(day)}</span>
-                            <Accordion.Indicator>
-                              <ChevronDown />
-                            </Accordion.Indicator>
-                          </Accordion.Trigger>
-                        </Accordion.Heading>
-                        <Accordion.Panel>
-                          <Accordion.Body>
-                            {/* Same lazy-mount-on-expand rationale as WorkLogTimeEntryCardLayout:
-                                react-aria's Disclosure always renders panel children regardless of
-                                expanded state, so without this every day would stay mounted at once. */}
-                            {isExpanded && (
-                              <TicketDayEntriesTable
-                                entries={dayEntries}
-                                ticketNumber={ticket.ticketNumber}
-                                onEntryUpdated={refetchEntries}
-                                onViewWorkLog={goToEntryWorkLog}
-                              />
-                            )}
-                          </Accordion.Body>
-                        </Accordion.Panel>
-                      </Accordion.Item>
-                    );
-                  })}
-                </Accordion>
-              )}
+                      return (
+                        <Accordion.Item key={day} id={day}>
+                          <Accordion.Heading>
+                            <Accordion.Trigger>
+                              <span className="text-sm text-gray-500">{formatDayHeading(day)}</span>
+                              <Accordion.Indicator>
+                                <ChevronDown />
+                              </Accordion.Indicator>
+                            </Accordion.Trigger>
+                          </Accordion.Heading>
+                          <Accordion.Panel>
+                            <Accordion.Body>
+                              {/* Same lazy-mount-on-expand rationale as WorkLogTimeEntryCardLayout:
+                                  react-aria's Disclosure always renders panel children regardless of
+                                  expanded state, so without this every day would stay mounted at once. */}
+                              {isExpanded && (
+                                <TicketDayEntriesTable
+                                  entries={dayEntries}
+                                  ticketNumber={ticket.ticketNumber}
+                                  onEntryUpdated={refetchEntries}
+                                  onViewWorkLog={goToEntryWorkLog}
+                                />
+                              )}
+                            </Accordion.Body>
+                          </Accordion.Panel>
+                        </Accordion.Item>
+                      );
+                    })}
+                  </Accordion>
+                )}
+              </div>
             </Card>
           </>
         )}

@@ -1,11 +1,7 @@
 import WorkLogs from "@/components/WorkLogs/WorkLogs";
 
 function WorkLogsRoute() {
-  return (
-    <div>
-      <WorkLogs />
-    </div>
-  )
+  return <WorkLogs />;
 }
 
 export default WorkLogsRoute;

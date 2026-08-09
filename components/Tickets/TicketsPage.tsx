@@ -22,7 +22,7 @@ export function TicketsPage() {
 
   if (authLoading) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+      <div className="flex h-full items-center justify-center">
         <Spinner aria-label="Loading" />
       </div>
     );
@@ -31,17 +31,19 @@ export function TicketsPage() {
   if (!user) return null; // redirect in flight
 
   return (
-    <div className="relative h-[calc(100vh-4rem)] overflow-y-auto p-4 sm:p-6">
+    <div className="relative flex h-full flex-col overflow-hidden p-4 sm:p-6">
       <AmbientBackground intensity={0.85} />
-      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-6 pb-8">
-        <Card className="p-4">
-          <TicketBreakdown
-            hasSelection
-            entries={entries}
-            loading={loading}
-            error={error}
-            emptyMessage="No time entries yet — tickets will show up here once you log time against one."
-          />
+      <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-5xl flex-col gap-6">
+        <Card className="flex h-full min-h-0 flex-1 flex-col overflow-hidden p-4">
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <TicketBreakdown
+              hasSelection
+              entries={entries}
+              loading={loading}
+              error={error}
+              emptyMessage="No time entries yet — tickets will show up here once you log time against one."
+            />
+          </div>
         </Card>
       </div>
     </div>

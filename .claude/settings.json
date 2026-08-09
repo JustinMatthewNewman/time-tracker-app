@@ -68,7 +68,15 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/)",
       "Bash(lsof -ti:3000 -ti:3001)",
       "Bash(node verify-dashboard2.mjs)",
-      "Bash(sips -g pixelHeight -g pixelWidth overview-v2.png tickets-v2.png worklogs-v2.png)"
+      "Bash(sips -g pixelHeight -g pixelWidth overview-v2.png tickets-v2.png worklogs-v2.png)",
+      "Bash(grep -rnE \"flex-1[^\\\\`]*overflow\" components app --include=\"*.tsx\" --include=\"*.ts\")",
+      "Bash(npx firebase *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:9099)",
+      "Bash(node /private/tmp/claude-501/-Users-justinnewman-time-tracker-app/e56debca-fc97-4157-8898-240d2dafc89c/scratchpad/diag-worklogs.mjs)",
+      "Bash(NODE_PATH=\"/Users/justinnewman/time_tracker_app/node_modules\" node /private/tmp/claude-501/-Users-justinnewman-time-tracker-app/e56debca-fc97-4157-8898-240d2dafc89c/scratchpad/diag-worklogs.mjs)",
+      "Bash(node .scratch-diag-worklogs.mjs)",
+      "Bash(node .scratch-diag-allpages.mjs)",
+      "Bash(rm -f .scratch-diag-worklogs.mjs .scratch-diag-allpages.mjs .scratch-storage-state.json .scratch-shot_*.png .scratch-wl-all-expanded.png && git status --porcelain)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
@@ -76,7 +84,8 @@
       "/private/tmp",
       "/tmp/screenshots",
       "/Users/justinnewman/time_tracker_app/app/ticket",
-      "/private/tmp/claude-501/-Users-justinnewman-time-tracker-app/b919f38a-2a1a-4864-8d78-735ef038acb4/scratchpad"
+      "/private/tmp/claude-501/-Users-justinnewman-time-tracker-app/b919f38a-2a1a-4864-8d78-735ef038acb4/scratchpad",
+      "/Users/justinnewman/time_tracker_app"
     ]
   }
 }

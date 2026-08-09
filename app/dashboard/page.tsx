@@ -1,11 +1,7 @@
 import Dashboard from "@/components/Dashboard/Dashboard";
 
 function DashboardRoute() {
-  return (
-    <div>
-      <Dashboard />
-    </div>
-  )
+  return <Dashboard />;
 }
 
 export default DashboardRoute;
