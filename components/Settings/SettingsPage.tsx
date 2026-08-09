@@ -20,7 +20,7 @@ function SettingsPage() {
 
     if (loading) {
         return (
-            <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+            <div className="flex h-full items-center justify-center">
                 <Spinner aria-label="Loading settings" />
             </div>
         );
@@ -29,9 +29,9 @@ function SettingsPage() {
     if (!user) return null; // redirect in flight
 
     return (
-        <div className="relative h-[calc(100vh-4rem)] overflow-y-auto p-4 sm:p-6">
+        <div className="relative flex h-full flex-col overflow-hidden p-4 sm:p-6">
             <AmbientBackground intensity={0.85} />
-            <div className="relative z-10 mx-auto w-full max-w-4xl pb-8">
+            <div className="relative z-10 mx-auto min-h-0 w-full max-w-4xl flex-1 overflow-y-auto pb-8">
                 <SettingsCard />
             </div>
         </div>

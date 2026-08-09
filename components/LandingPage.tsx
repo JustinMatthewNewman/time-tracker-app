@@ -71,13 +71,12 @@ export default function LandingPage() {
         router.push("/worklogs");
     };
 
-    // h-[calc(100vh-3.5rem)] rather than min-h-screen: the signed-out header
-    // above this is a fixed h-14 (3.5rem) row living outside this <main>, so
-    // min-h-screen here would make header + main add up to more than one
-    // viewport and force a page scrollbar. Subtracting the header's height
-    // keeps hero + footer pinned to exactly one screen.
+    // h-full rather than min-h-screen: the root layout already sizes this
+    // page's slot to exactly "viewport minus navbar" via its own flex
+    // layout, so filling that slot (instead of re-deriving the navbar's
+    // height here) keeps hero + footer pinned to exactly one screen.
     return (
-        <main className="flex h-[calc(100vh-3.5rem)] flex-col overflow-hidden bg-background text-foreground">
+        <div className="flex h-full flex-col overflow-hidden bg-background text-foreground">
             {/* ── Hero ── */}
             <section className="relative flex flex-1 flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
                 <ParticleBlob isWarping={isWarping} />
@@ -171,6 +170,6 @@ export default function LandingPage() {
                     </div>
                 </div>
             </footer>
-        </main>
+        </div>
     );
 }

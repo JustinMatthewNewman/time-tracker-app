@@ -1,11 +1,7 @@
 import ProfilePage from "@/components/Profile/ProfilePage";
 
 function Profile() {
-  return (
-    <div>
-      <ProfilePage />
-    </div>
-  )
+  return <ProfilePage />;
 }
 
 export default Profile;

@@ -408,7 +408,7 @@ export default function AppNavbar() {
   return (
     <header
       data-glass={performanceMode ? undefined : "surface"}
-      className={`sticky top-0 z-50 w-full border-b border-border ${
+      className={`sticky top-0 z-50 w-full shrink-0 border-b border-border ${
         // Translucent + blurred normally, driven by the Settings page's
         // card opacity/blur sliders via data-glass (see globals.css).
         // Performance mode drops both instead — a see-through header with
