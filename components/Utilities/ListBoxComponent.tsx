@@ -27,7 +27,7 @@ function formatDate(isoDate: string) {
 // similarly the parent's own useMyTimeEntries() call, reused here purely to
 // compute per-week hour subtotals (a WorkLog carries no duration itself —
 // only its child TimeEntrys do); useMyTimeEntries() is already known-safe to
-// call from a second location (AnalyticsDashboard.tsx does), unlike useWorkLogs().
+// call from a second location (OverviewReport.tsx does), unlike useWorkLogs().
 type WorkLogListBoxProps = Pick<
   ReturnType<typeof useWorkLogs>,
   "workLogs" | "loading" | "error" | "createWorkLog" | "renameWorkLog" | "deleteWorkLog"

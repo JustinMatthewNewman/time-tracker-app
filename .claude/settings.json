@@ -61,7 +61,14 @@
       "Bash(timeout 120 npx next build)",
       "Bash(npx next *)",
       "Bash(xargs -I{} echo {})",
-      "Bash(grep -iE \"square$|frame$|border\")"
+      "Bash(grep -iE \"square$|frame$|border\")",
+      "Bash(curl -s \"http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0cbk-n2._.css\")",
+      "Bash(git -C /Users/justinnewman/time_tracker_app status --short app/globals.css)",
+      "Bash(git -C /Users/justinnewman/time_tracker_app diff HEAD -- app/globals.css)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(lsof -ti:3000 -ti:3001)",
+      "Bash(node verify-dashboard2.mjs)",
+      "Bash(sips -g pixelHeight -g pixelWidth overview-v2.png tickets-v2.png worklogs-v2.png)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
