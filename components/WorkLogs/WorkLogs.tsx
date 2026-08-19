@@ -12,7 +12,10 @@ function WorkLogs() {
     const { user, loading } = useAuth();
     const router = useRouter();
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [showBreakdown, setShowBreakdown] = useState(false);
+    // Opens on the ticket breakdown rather than the hour-by-hour entry list —
+    // the per-ticket totals are what the page is usually opened to read. The
+    // header's ToggleButtonGroup switches back to the list.
+    const [showBreakdown, setShowBreakdown] = useState(true);
 
     useEffect(() => {
         if (!loading && !user) {
