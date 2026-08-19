@@ -765,6 +765,15 @@ extend type User {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "User.performanceMode", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `User` table where the `userTypeName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userTypeName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.userTypeName", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `User` table where the `username` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   username_count(
@@ -863,6 +872,89 @@ extend type User {
   A generated field that is used for caching results in SDKs.
   """
   _id: ID! @fdc_generated(from: "User.id", purpose: ENTITY_ID)
+}
+extend type UserType {
+  """
+  ✨ List `User` objects in a one-to-many relationship (where `User`.`userType` is this object).
+  """
+  users_on_userType(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: User_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [User_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: User_Having
+  ): [User!]! @fdc_generated(from: "User.userType", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "UserType", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `UserType` table.
+  """
+  _count: Int! @fdc_generated(from: "UserType.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserType` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserType.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserType` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserType.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserType` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserType.name", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `UserType` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "UserType.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `UserType` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "UserType.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "UserType.name", purpose: ENTITY_ID)
 }
 extend type WorkLog {
   """

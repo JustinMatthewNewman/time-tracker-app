@@ -44,6 +44,7 @@ export interface CreateUserFromGoogleVariables {
   username: string;
   email: string;
   createdAt: TimestampString;
+  userTypeName?: string;
 }
 
 export interface CreateWorkLogData {
@@ -121,6 +122,9 @@ export interface DeleteWorkLogVariables {
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
+    userType: {
+      name: string;
+    } & UserType_Key;
     colorScheme?: {
       id: UUIDString;
       name: string;
@@ -327,11 +331,22 @@ export interface ListTimeEntriesVariables {
   userId: UUIDString;
 }
 
+export interface ListUserTypesData {
+  userTypes: ({
+    id: UUIDString;
+    name: string;
+  } & UserType_Key)[];
+}
+
 export interface ListUsersData {
   users: ({
     id: UUIDString;
     username: string;
     email?: string | null;
+    userType: {
+      id: UUIDString;
+      name: string;
+    } & UserType_Key;
     createdAt: TimestampString;
   } & User_Key)[];
 }
@@ -408,6 +423,15 @@ export interface SelectMyPerformanceModeVariables {
   performanceMode: boolean;
 }
 
+export interface SetUserTypeData {
+  user_update?: User_Key | null;
+}
+
+export interface SetUserTypeVariables {
+  userId: UUIDString;
+  userTypeName: string;
+}
+
 export interface Theme_Key {
   id: UUIDString;
   __typename?: 'Theme_Key';
@@ -473,6 +497,11 @@ export interface UpsertTicketVariables {
   ticketLink?: string | null;
 }
 
+export interface UserType_Key {
+  name: string;
+  __typename?: 'UserType_Key';
+}
+
 export interface User_Key {
   id: UUIDString;
   __typename?: 'User_Key';
@@ -494,6 +523,18 @@ export const createUserFromGoogleRef: CreateUserFromGoogleRef;
 
 export function createUserFromGoogle(vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
 export function createUserFromGoogle(dc: DataConnect, vars: CreateUserFromGoogleVariables): MutationPromise<CreateUserFromGoogleData, CreateUserFromGoogleVariables>;
+
+interface SetUserTypeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SetUserTypeVariables): MutationRef<SetUserTypeData, SetUserTypeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SetUserTypeVariables): MutationRef<SetUserTypeData, SetUserTypeVariables>;
+  operationName: string;
+}
+export const setUserTypeRef: SetUserTypeRef;
+
+export function setUserType(vars: SetUserTypeVariables): MutationPromise<SetUserTypeData, SetUserTypeVariables>;
+export function setUserType(dc: DataConnect, vars: SetUserTypeVariables): MutationPromise<SetUserTypeData, SetUserTypeVariables>;
 
 interface CreateTimeEntryRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -842,4 +883,16 @@ export const listTimeEntriesByDateRangeRef: ListTimeEntriesByDateRangeRef;
 
 export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
 export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByDateRangeData, ListTimeEntriesByDateRangeVariables>;
+
+interface ListUserTypesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListUserTypesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListUserTypesData, undefined>;
+  operationName: string;
+}
+export const listUserTypesRef: ListUserTypesRef;
+
+export function listUserTypes(options?: ExecuteQueryOptions): QueryPromise<ListUserTypesData, undefined>;
+export function listUserTypes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUserTypesData, undefined>;
 

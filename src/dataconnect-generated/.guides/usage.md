@@ -12,10 +12,12 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useCreateUserFromGoogle, useCreateTimeEntry, useCreateWorkLogOnly, useUpdateTimeEntry, useUpdateTimeEntryClearTicket, useDeleteTimeEntry, useUpsertTicket, useUpdateTicket, useSelectMyColorScheme, useClearMyColorScheme } from '@dataconnect/generated/react';
+import { useCreateUserFromGoogle, useSetUserType, useCreateTimeEntry, useCreateWorkLogOnly, useUpdateTimeEntry, useUpdateTimeEntryClearTicket, useDeleteTimeEntry, useUpsertTicket, useUpdateTicket, useSelectMyColorScheme } from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
 
 const { data, isPending, isSuccess, isError, error } = useCreateUserFromGoogle(createUserFromGoogleVars);
+
+const { data, isPending, isSuccess, isError, error } = useSetUserType(setUserTypeVars);
 
 const { data, isPending, isSuccess, isError, error } = useCreateTimeEntry(createTimeEntryVars);
 
@@ -32,8 +34,6 @@ const { data, isPending, isSuccess, isError, error } = useUpsertTicket(upsertTic
 const { data, isPending, isSuccess, isError, error } = useUpdateTicket(updateTicketVars);
 
 const { data, isPending, isSuccess, isError, error } = useSelectMyColorScheme(selectMyColorSchemeVars);
-
-const { data, isPending, isSuccess, isError, error } = useClearMyColorScheme();
 
 ```
 
@@ -72,11 +72,14 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { createUserFromGoogle, createTimeEntry, createWorkLogOnly, updateTimeEntry, updateTimeEntryClearTicket, deleteTimeEntry, upsertTicket, updateTicket, selectMyColorScheme, clearMyColorScheme } from '@dataconnect/generated';
+import { createUserFromGoogle, setUserType, createTimeEntry, createWorkLogOnly, updateTimeEntry, updateTimeEntryClearTicket, deleteTimeEntry, upsertTicket, updateTicket, selectMyColorScheme } from '@dataconnect/generated';
 
 
 // Operation CreateUserFromGoogle:  For variables, look at type CreateUserFromGoogleVars in ../index.d.ts
 const { data } = await CreateUserFromGoogle(dataConnect, createUserFromGoogleVars);
+
+// Operation SetUserType:  For variables, look at type SetUserTypeVars in ../index.d.ts
+const { data } = await SetUserType(dataConnect, setUserTypeVars);
 
 // Operation CreateTimeEntry:  For variables, look at type CreateTimeEntryVars in ../index.d.ts
 const { data } = await CreateTimeEntry(dataConnect, createTimeEntryVars);
@@ -101,9 +104,6 @@ const { data } = await UpdateTicket(dataConnect, updateTicketVars);
 
 // Operation SelectMyColorScheme:  For variables, look at type SelectMyColorSchemeVars in ../index.d.ts
 const { data } = await SelectMyColorScheme(dataConnect, selectMyColorSchemeVars);
-
-// Operation ClearMyColorScheme: 
-const { data } = await ClearMyColorScheme(dataConnect);
 
 
 ```

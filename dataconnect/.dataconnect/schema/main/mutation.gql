@@ -45,6 +45,15 @@ extend type Mutation {
     data: User_Data!
   ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `UserType` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userType_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: UserType_Data!
+  ): UserType_KeyOutput! @fdc_generated(from: "UserType", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `WorkLog` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   workLog_insert(
@@ -98,6 +107,15 @@ extend type Mutation {
     """
     data: [User_Data!]!
   ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `UserType` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userType_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [UserType_Data!]!
+  ): [UserType_KeyOutput!]! @fdc_generated(from: "UserType", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `WorkLog` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -153,6 +171,15 @@ extend type Mutation {
     data: User_Data!
   ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update a single `UserType` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserType`.
+  """
+  userType_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: UserType_Data!
+  ): UserType_KeyOutput! @fdc_generated(from: "UserType", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `WorkLog` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `WorkLog`.
   """
   workLog_upsert(
@@ -206,6 +233,15 @@ extend type Mutation {
     """
     data: [User_Data!]!
   ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `UserType` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserType`.
+  """
+  userType_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [UserType_Data!]!
+  ): [UserType_KeyOutput!]! @fdc_generated(from: "UserType", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `WorkLog` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `WorkLog`.
   """
@@ -331,6 +367,25 @@ extend type Mutation {
     data: User_Data!
   ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
   """
+  ✨ Update a single `UserType` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `UserType` or `null` if not found.
+  """
+  userType_update(
+    """
+    The key used to identify the object.
+    """
+    key: UserType_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserType_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: UserType_Data!
+  ): UserType_KeyOutput @fdc_generated(from: "UserType", purpose: UPDATE_SINGLE)
+  """
   ✨ Update a single `WorkLog` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `WorkLog` or `null` if not found.
   """
   workLog_update(
@@ -450,6 +505,25 @@ extend type Mutation {
     data: User_Data!
   ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Update `UserType` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  userType_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: UserType_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: UserType_Data!
+  ): Int! @fdc_generated(from: "UserType", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `WorkLog` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   workLog_updateMany(
@@ -559,6 +633,20 @@ extend type Mutation {
     first: User_FirstRow
   ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
   """
+  ✨ Delete a single `UserType` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  userType_delete(
+    """
+    The key used to identify the object.
+    """
+    key: UserType_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserType_FirstRow
+  ): UserType_KeyOutput @fdc_generated(from: "UserType", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `WorkLog` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   workLog_delete(
@@ -647,6 +735,20 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `UserType` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  userType_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: UserType_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "UserType", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `WorkLog` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

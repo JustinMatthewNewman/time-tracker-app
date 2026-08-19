@@ -173,3 +173,32 @@ mutation SeedColorSchemes @transaction {
     ]
   })
 }
+
+# The five account tiers referenced by User.userType.
+#
+# ORDERING — these rows must exist BEFORE the migration that adds
+# User.userTypeName, not after. Data Connect emits that migration as a single
+# statement:
+#
+#   ALTER TABLE "user" ADD COLUMN "user_type_name" text NOT NULL DEFAULT 'Regular',
+#     ADD CONSTRAINT ... FOREIGN KEY ("user_type_name") REFERENCES "user_type" ("name")
+#
+# so on a database that already has users, every existing row is backfilled to
+# 'Regular' and the FK is validated in the same breath. If "Regular" isn't in
+# user_type yet the whole migration aborts with a foreign key violation and the
+# column is never added (observed exactly this on the local emulator).
+#
+# Rolling this out against a non-empty database is therefore two-phase:
+#   1. Land the UserType table alone (no User.userType field yet) and migrate.
+#   2. Run this mutation to populate the five tiers.
+#   3. Add User.userType + userTypeName to the schema and migrate again.
+# A fresh/empty database is unaffected — no user rows means nothing to validate.
+#
+# Idempotent — userType_upsert matches on `name`, this table's key.
+mutation SeedUserTypes @transaction {
+  admin: userType_upsert(data: { name: "Admin" })
+  guest: userType_upsert(data: { name: "Guest" })
+  regular: userType_upsert(data: { name: "Regular" })
+  elevated: userType_upsert(data: { name: "Elevated" })
+  premium: userType_upsert(data: { name: "Premium" })
+}
