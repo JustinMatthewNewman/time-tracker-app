@@ -9,22 +9,15 @@ import { useTickets } from "@/context/TicketsContext";
 import { useTimeEntriesByTicket, type TicketTimeEntry } from "@/hooks/useTimeEntriesByTicket";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
 import { useUserSettings } from "@/context/UserSettingsContext";
+import { formatDayKey, normalizeDayKey, type DayKey } from "@/lib/dayKeys";
 import { TicketDayEntriesTable } from "./TicketDayEntriesTable";
+import { TicketTotals } from "./TicketTotals";
 import AmbientBackground from "@/components/AmbientBackground";
 
 const TICKET_ID_PLACEHOLDER = "{ticket_id}";
 
 interface TicketPageProps {
   ticketNumberParam: string;
-}
-
-function formatDayHeading(isoDate: string) {
-  return new Date(isoDate).toLocaleDateString([], {
-    weekday: "long",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 }
 
 export function TicketPage({ ticketNumberParam }: TicketPageProps) {
@@ -55,11 +48,12 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
   // Grouped once per entries change (O(n)) rather than re-filtering on every
   // render — same approach as WorkLogTimeEntryCardLayout's entriesByHour.
   const entriesByDay = useMemo(() => {
-    const map = new Map<string, TicketTimeEntry[]>();
+    const map = new Map<DayKey, TicketTimeEntry[]>();
     for (const entry of entries) {
-      const bucket = map.get(entry.date);
+      const day = normalizeDayKey(entry.date);
+      const bucket = map.get(day);
       if (bucket) bucket.push(entry);
-      else map.set(entry.date, [entry]);
+      else map.set(day, [entry]);
     }
     for (const bucket of map.values()) {
       bucket.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
@@ -188,51 +182,58 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
                 )}
               </div>
 
-              <div className="mt-6 max-w-xs">
-                {isEditingOffice ? (
-                  <div className="flex flex-col gap-2">
-                    <TextField
-                      value={officeDraft}
-                      onChange={setOfficeDraft}
-                      isDisabled={saving}
-                      autoFocus
-                    >
-                      <Label>Office</Label>
-                      <Input placeholder="e.g. PRODAppX" />
-                    </TextField>
-                    {saveError && <p className="text-sm text-danger">{saveError}</p>}
-                    <div className="flex gap-2">
-                      <Button size="sm" onClick={handleSaveOffice} isDisabled={saving}>
-                        <Check className="size-4" /> {saving ? "Saving..." : "Save"}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setIsEditingOffice(false)}
+              {/* Office stays left; the time totals sit opposite it on the
+                  right. items-start keeps both aligned to the same top edge
+                  while the office field grows into its editing form. */}
+              <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-10">
+                <div className="max-w-xs">
+                  {isEditingOffice ? (
+                    <div className="flex flex-col gap-2">
+                      <TextField
+                        value={officeDraft}
+                        onChange={setOfficeDraft}
                         isDisabled={saving}
+                        autoFocus
                       >
-                        <Xmark className="size-4" /> Cancel
-                      </Button>
+                        <Label>Office</Label>
+                        <Input placeholder="e.g. PRODAppX" />
+                      </TextField>
+                      {saveError && <p className="text-sm text-danger">{saveError}</p>}
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={handleSaveOffice} isDisabled={saving}>
+                          <Check className="size-4" /> {saving ? "Saving..." : "Save"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setIsEditingOffice(false)}
+                          isDisabled={saving}
+                        >
+                          <Xmark className="size-4" /> Cancel
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-medium uppercase tracking-wide text-foreground/50">
-                      Office
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-base">{ticket.office ?? "—"}</span>
-                      <button
-                        type="button"
-                        aria-label="Edit office"
-                        onClick={startEditingOffice}
-                        className="rounded p-1 text-foreground/40 hover:bg-default hover:text-foreground"
-                      >
-                        <Pencil className="size-3.5" />
-                      </button>
+                  ) : (
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs font-medium uppercase tracking-wide text-foreground/50">
+                        Office
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">{ticket.office ?? "—"}</span>
+                        <button
+                          type="button"
+                          aria-label="Edit office"
+                          onClick={startEditingOffice}
+                          className="rounded p-1 text-foreground/40 hover:bg-default hover:text-foreground"
+                        >
+                          <Pencil className="size-3.5" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
+
+                <TicketTotals entriesByDay={entriesByDay} days={days} loading={entriesLoading} />
               </div>
             </Card>
 
@@ -264,7 +265,7 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
                         <Accordion.Item key={day} id={day}>
                           <Accordion.Heading>
                             <Accordion.Trigger>
-                              <span className="text-sm text-gray-500">{formatDayHeading(day)}</span>
+                              <span className="text-sm text-gray-500">{formatDayKey(day)}</span>
                               <Accordion.Indicator>
                                 <ChevronDown />
                               </Accordion.Indicator>
