@@ -115,6 +115,307 @@ extend type ColorScheme {
   """
   _id: ID! @fdc_generated(from: "ColorScheme.id", purpose: ENTITY_ID)
 }
+extend type Feature {
+  """
+  ✨ List `UserTypeFeature` objects in a one-to-many relationship (where `UserTypeFeature`.`feature` is this object).
+  """
+  userTypeFeatures_on_feature(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserTypeFeature_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserTypeFeature_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserTypeFeature_Having
+  ): [UserTypeFeature!]! @fdc_generated(from: "UserTypeFeature.feature", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `UserType` objects using `UserTypeFeature` as the join table (a `UserTypeFeature` object exists where its `feature` is this and its `userType` is that).
+  """
+  userTypes_via_UserTypeFeature(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserTypeFeature_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserTypeFeature_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserTypeFeature_Having
+  ): [UserType!]! @fdc_generated(from: "UserTypeFeature", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Feature", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Feature` table.
+  """
+  _count: Int! @fdc_generated(from: "Feature.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Feature` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Feature.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Feature` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Feature.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Feature` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Feature.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Feature` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Feature.name", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `Feature` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "Feature.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `Feature` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "Feature.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Feature.name", purpose: ENTITY_ID)
+}
+extend type Team {
+  """
+  ✨ List `TeamMember` objects in a one-to-many relationship (where `TeamMember`.`team` is this object).
+  """
+  teamMembers_on_team(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: TeamMember_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [TeamMember_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: TeamMember_Having
+  ): [TeamMember!]! @fdc_generated(from: "TeamMember.team", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `User` objects using `TeamMember` as the join table (a `TeamMember` object exists where its `team` is this and its `user` is that).
+  """
+  users_via_TeamMember(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: TeamMember_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [TeamMember_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: TeamMember_Having
+  ): [User!]! @fdc_generated(from: "TeamMember", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Team", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Team` table.
+  """
+  _count: Int! @fdc_generated(from: "Team.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Team` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Team.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Team` table where the `description` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  description_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Team.description", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Team` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Team.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Team` table where the `name` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  name_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Team.name", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `Team` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "Team.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `Team` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "Team.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Team.id", purpose: ENTITY_ID)
+}
+extend type TeamMember {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "TeamMember", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `TeamMember` table.
+  """
+  _count: Int! @fdc_generated(from: "TeamMember.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TeamMember` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TeamMember.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TeamMember` table where the `teamId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  teamId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TeamMember.teamId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `TeamMember` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "TeamMember.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `TeamMember` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "TeamMember.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `TeamMember` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "TeamMember.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "TeamMember.teamId,userId", purpose: ENTITY_ID)
+}
 extend type Theme {
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
@@ -590,6 +891,40 @@ extend type TimeEntry {
 }
 extend type User {
   """
+  ✨ List `TeamMember` objects in a one-to-many relationship (where `TeamMember`.`user` is this object).
+  """
+  teamMembers_on_user(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: TeamMember_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [TeamMember_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: TeamMember_Having
+  ): [TeamMember!]! @fdc_generated(from: "TeamMember.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
   ✨ List `TimeEntry` objects in a one-to-many relationship (where `TimeEntry`.`user` is this object).
   """
   timeEntries_on_user(
@@ -657,6 +992,40 @@ extend type User {
     """
     having: WorkLog_Having
   ): [WorkLog!]! @fdc_generated(from: "WorkLog.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `Team` objects using `TeamMember` as the join table (a `TeamMember` object exists where its `user` is this and its `team` is that).
+  """
+  teams_via_TeamMember(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: TeamMember_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [TeamMember_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: TeamMember_Having
+  ): [Team!]! @fdc_generated(from: "TeamMember", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
@@ -909,6 +1278,74 @@ extend type UserType {
     having: User_Having
   ): [User!]! @fdc_generated(from: "User.userType", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
   """
+  ✨ List `UserTypeFeature` objects in a one-to-many relationship (where `UserTypeFeature`.`userType` is this object).
+  """
+  userTypeFeatures_on_userType(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserTypeFeature_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserTypeFeature_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserTypeFeature_Having
+  ): [UserTypeFeature!]! @fdc_generated(from: "UserTypeFeature.userType", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `Feature` objects using `UserTypeFeature` as the join table (a `UserTypeFeature` object exists where its `userType` is this and its `feature` is that).
+  """
+  features_via_UserTypeFeature(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserTypeFeature_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserTypeFeature_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserTypeFeature_Having
+  ): [Feature!]! @fdc_generated(from: "UserTypeFeature", purpose: QUERY_MULTIPLE_MANY_TO_MANY)
+  """
   Implicit metadata field that cannot be written. It provides extra information about query results.
   """
   _metadata: _Metadata @fdc_generated(from: "UserType", purpose: METADATA_FIELD)
@@ -955,6 +1392,55 @@ extend type UserType {
   A generated field that is used for caching results in SDKs.
   """
   _id: ID! @fdc_generated(from: "UserType.name", purpose: ENTITY_ID)
+}
+extend type UserTypeFeature {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "UserTypeFeature", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `UserTypeFeature` table.
+  """
+  _count: Int! @fdc_generated(from: "UserTypeFeature.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserTypeFeature` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  createdAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserTypeFeature.createdAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserTypeFeature` table where the `featureName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  featureName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserTypeFeature.featureName", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserTypeFeature` table where the `userTypeName` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userTypeName_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserTypeFeature.userTypeName", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `createdAt` field in the `UserTypeFeature` table.
+  """
+  createdAt_min: Timestamp @fdc_generated(from: "UserTypeFeature.createdAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `createdAt` field in the `UserTypeFeature` table.
+  """
+  createdAt_max: Timestamp @fdc_generated(from: "UserTypeFeature.createdAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "UserTypeFeature.userTypeName,featureName", purpose: ENTITY_ID)
 }
 extend type WorkLog {
   """

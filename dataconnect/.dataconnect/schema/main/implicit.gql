@@ -1,3 +1,13 @@
+extend type TeamMember {
+  """
+  ✨ Implicit foreign key field based on `TeamMember`.`team`. It must match the value of `Team`.`id`. See `@ref` for how to customize it.
+  """
+  teamId: UUID! @fdc_generated(from: "TeamMember.team", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `TeamMember`.`user`. It must match the value of `User`.`id`. See `@ref` for how to customize it.
+  """
+  userId: UUID! @fdc_generated(from: "TeamMember.user", purpose: IMPLICIT_REF_FIELD)
+}
 extend type Theme {
   """
   ✨ Implicit foreign key field based on `Theme`.`colorScheme`. It must match the value of `ColorScheme`.`id`. See `@ref` for how to customize it.
@@ -27,6 +37,16 @@ extend type User {
   ✨ Implicit foreign key field based on `User`.`colorScheme`. It must match the value of `ColorScheme`.`id`. See `@ref` for how to customize it.
   """
   colorSchemeId: UUID @fdc_generated(from: "User.colorScheme", purpose: IMPLICIT_REF_FIELD)
+}
+extend type UserTypeFeature {
+  """
+  ✨ Implicit foreign key field based on `UserTypeFeature`.`userType`. It must match the value of `UserType`.`name`. See `@ref` for how to customize it.
+  """
+  userTypeName: String! @fdc_generated(from: "UserTypeFeature.userType", purpose: IMPLICIT_REF_FIELD)
+  """
+  ✨ Implicit foreign key field based on `UserTypeFeature`.`feature`. It must match the value of `Feature`.`name`. See `@ref` for how to customize it.
+  """
+  featureName: String! @fdc_generated(from: "UserTypeFeature.feature", purpose: IMPLICIT_REF_FIELD)
 }
 extend type WorkLog {
   """

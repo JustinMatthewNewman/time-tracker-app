@@ -9,6 +9,33 @@ extend type Mutation {
     data: ColorScheme_Data!
   ): ColorScheme_KeyOutput! @fdc_generated(from: "ColorScheme", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `Feature` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  feature_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Feature_Data!
+  ): Feature_KeyOutput! @fdc_generated(from: "Feature", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Team` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  team_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Team_Data!
+  ): Team_KeyOutput! @fdc_generated(from: "Team", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `TeamMember` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  teamMember_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: TeamMember_Data!
+  ): TeamMember_KeyOutput! @fdc_generated(from: "TeamMember", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Theme` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   theme_insert(
@@ -54,6 +81,15 @@ extend type Mutation {
     data: UserType_Data!
   ): UserType_KeyOutput! @fdc_generated(from: "UserType", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `UserTypeFeature` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userTypeFeature_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: UserTypeFeature_Data!
+  ): UserTypeFeature_KeyOutput! @fdc_generated(from: "UserTypeFeature", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `WorkLog` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   workLog_insert(
@@ -71,6 +107,33 @@ extend type Mutation {
     """
     data: [ColorScheme_Data!]!
   ): [ColorScheme_KeyOutput!]! @fdc_generated(from: "ColorScheme", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Feature` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  feature_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Feature_Data!]!
+  ): [Feature_KeyOutput!]! @fdc_generated(from: "Feature", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Team` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  team_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Team_Data!]!
+  ): [Team_KeyOutput!]! @fdc_generated(from: "Team", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `TeamMember` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  teamMember_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [TeamMember_Data!]!
+  ): [TeamMember_KeyOutput!]! @fdc_generated(from: "TeamMember", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `Theme` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -117,6 +180,15 @@ extend type Mutation {
     data: [UserType_Data!]!
   ): [UserType_KeyOutput!]! @fdc_generated(from: "UserType", purpose: INSERT_MULTIPLE)
   """
+  ✨ Insert `UserTypeFeature` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userTypeFeature_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [UserTypeFeature_Data!]!
+  ): [UserTypeFeature_KeyOutput!]! @fdc_generated(from: "UserTypeFeature", purpose: INSERT_MULTIPLE)
+  """
   ✨ Insert `WorkLog` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   workLog_insertMany(
@@ -134,6 +206,33 @@ extend type Mutation {
     """
     data: ColorScheme_Data!
   ): ColorScheme_KeyOutput! @fdc_generated(from: "ColorScheme", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Feature` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Feature`.
+  """
+  feature_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Feature_Data!
+  ): Feature_KeyOutput! @fdc_generated(from: "Feature", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Team` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Team`.
+  """
+  team_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Team_Data!
+  ): Team_KeyOutput! @fdc_generated(from: "Team", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `TeamMember` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `TeamMember`.
+  """
+  teamMember_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: TeamMember_Data!
+  ): TeamMember_KeyOutput! @fdc_generated(from: "TeamMember", purpose: UPSERT_SINGLE)
   """
   ✨ Insert or update a single `Theme` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Theme`.
   """
@@ -180,6 +279,15 @@ extend type Mutation {
     data: UserType_Data!
   ): UserType_KeyOutput! @fdc_generated(from: "UserType", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update a single `UserTypeFeature` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserTypeFeature`.
+  """
+  userTypeFeature_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: UserTypeFeature_Data!
+  ): UserTypeFeature_KeyOutput! @fdc_generated(from: "UserTypeFeature", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `WorkLog` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `WorkLog`.
   """
   workLog_upsert(
@@ -197,6 +305,33 @@ extend type Mutation {
     """
     data: [ColorScheme_Data!]!
   ): [ColorScheme_KeyOutput!]! @fdc_generated(from: "ColorScheme", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Feature` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Feature`.
+  """
+  feature_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Feature_Data!]!
+  ): [Feature_KeyOutput!]! @fdc_generated(from: "Feature", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Team` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Team`.
+  """
+  team_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Team_Data!]!
+  ): [Team_KeyOutput!]! @fdc_generated(from: "Team", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `TeamMember` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `TeamMember`.
+  """
+  teamMember_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [TeamMember_Data!]!
+  ): [TeamMember_KeyOutput!]! @fdc_generated(from: "TeamMember", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `Theme` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Theme`.
   """
@@ -243,6 +378,15 @@ extend type Mutation {
     data: [UserType_Data!]!
   ): [UserType_KeyOutput!]! @fdc_generated(from: "UserType", purpose: UPSERT_MULTIPLE)
   """
+  ✨ Insert or update `UserTypeFeature` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserTypeFeature`.
+  """
+  userTypeFeature_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [UserTypeFeature_Data!]!
+  ): [UserTypeFeature_KeyOutput!]! @fdc_generated(from: "UserTypeFeature", purpose: UPSERT_MULTIPLE)
+  """
   ✨ Insert or update `WorkLog` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `WorkLog`.
   """
   workLog_upsertMany(
@@ -275,6 +419,68 @@ extend type Mutation {
     """
     data: ColorScheme_Data!
   ): ColorScheme_KeyOutput @fdc_generated(from: "ColorScheme", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Feature` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Feature` or `null` if not found.
+  """
+  feature_update(
+    """
+    The key used to identify the object.
+    """
+    key: Feature_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Feature_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Feature_Data!
+  ): Feature_KeyOutput @fdc_generated(from: "Feature", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Team` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Team` or `null` if not found.
+  """
+  team_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Team_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Team_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Team_Data!
+  ): Team_KeyOutput @fdc_generated(from: "Team", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `TeamMember` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `TeamMember` or `null` if not found.
+  """
+  teamMember_update(
+    """
+    The key used to identify the object.
+    """
+    key: TeamMember_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: TeamMember_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: TeamMember_Data!
+  ): TeamMember_KeyOutput @fdc_generated(from: "TeamMember", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Theme` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Theme` or `null` if not found.
   """
@@ -386,6 +592,25 @@ extend type Mutation {
     data: UserType_Data!
   ): UserType_KeyOutput @fdc_generated(from: "UserType", purpose: UPDATE_SINGLE)
   """
+  ✨ Update a single `UserTypeFeature` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `UserTypeFeature` or `null` if not found.
+  """
+  userTypeFeature_update(
+    """
+    The key used to identify the object.
+    """
+    key: UserTypeFeature_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserTypeFeature_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: UserTypeFeature_Data!
+  ): UserTypeFeature_KeyOutput @fdc_generated(from: "UserTypeFeature", purpose: UPDATE_SINGLE)
+  """
   ✨ Update a single `WorkLog` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `WorkLog` or `null` if not found.
   """
   workLog_update(
@@ -428,6 +653,63 @@ extend type Mutation {
     """
     data: ColorScheme_Data!
   ): Int! @fdc_generated(from: "ColorScheme", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Feature` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  feature_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Feature_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Feature_Data!
+  ): Int! @fdc_generated(from: "Feature", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Team` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  team_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Team_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Team_Data!
+  ): Int! @fdc_generated(from: "Team", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `TeamMember` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  teamMember_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: TeamMember_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: TeamMember_Data!
+  ): Int! @fdc_generated(from: "TeamMember", purpose: UPDATE_MULTIPLE)
   """
   ✨ Update `Theme` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
@@ -524,6 +806,25 @@ extend type Mutation {
     data: UserType_Data!
   ): Int! @fdc_generated(from: "UserType", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Update `UserTypeFeature` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  userTypeFeature_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: UserTypeFeature_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: UserTypeFeature_Data!
+  ): Int! @fdc_generated(from: "UserTypeFeature", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `WorkLog` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   workLog_updateMany(
@@ -561,6 +862,53 @@ extend type Mutation {
     """
     first: ColorScheme_FirstRow
   ): ColorScheme_KeyOutput @fdc_generated(from: "ColorScheme", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Feature` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  feature_delete(
+    """
+    The key used to identify the object.
+    """
+    key: Feature_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Feature_FirstRow
+  ): Feature_KeyOutput @fdc_generated(from: "Feature", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Team` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  team_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Team_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Team_FirstRow
+  ): Team_KeyOutput @fdc_generated(from: "Team", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `TeamMember` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  teamMember_delete(
+    """
+    The key used to identify the object.
+    """
+    key: TeamMember_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: TeamMember_FirstRow
+  ): TeamMember_KeyOutput @fdc_generated(from: "TeamMember", purpose: DELETE_SINGLE)
   """
   ✨ Delete a single `Theme` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
@@ -647,6 +995,20 @@ extend type Mutation {
     first: UserType_FirstRow
   ): UserType_KeyOutput @fdc_generated(from: "UserType", purpose: DELETE_SINGLE)
   """
+  ✨ Delete a single `UserTypeFeature` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  userTypeFeature_delete(
+    """
+    The key used to identify the object.
+    """
+    key: UserTypeFeature_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserTypeFeature_FirstRow
+  ): UserTypeFeature_KeyOutput @fdc_generated(from: "UserTypeFeature", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `WorkLog` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   workLog_delete(
@@ -679,6 +1041,48 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "ColorScheme", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Feature` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  feature_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Feature_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Feature", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Team` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  team_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Team_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Team", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `TeamMember` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  teamMember_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: TeamMember_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "TeamMember", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `Theme` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """
@@ -749,6 +1153,20 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "UserType", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `UserTypeFeature` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  userTypeFeature_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: UserTypeFeature_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "UserTypeFeature", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `WorkLog` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

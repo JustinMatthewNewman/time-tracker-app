@@ -8,6 +8,71 @@ export type Int64String = string;
 export type DateString = string;
 
 
+export interface AdminGetUserData {
+  user?: {
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    userType: {
+      name: string;
+    } & UserType_Key;
+  } & User_Key;
+}
+
+export interface AdminGetUserVariables {
+  userId: UUIDString;
+}
+
+export interface AdminListFeaturesData {
+  features: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+  } & Feature_Key)[];
+}
+
+export interface AdminListTeamsData {
+  teams: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    createdAt: TimestampString;
+    members: ({
+      user: {
+        id: UUIDString;
+        username: string;
+        email?: string | null;
+        userType: {
+          name: string;
+        } & UserType_Key;
+      } & User_Key;
+    })[];
+  } & Team_Key)[];
+}
+
+export interface AdminListUserTypesData {
+  userTypes: ({
+    id: UUIDString;
+    name: string;
+    features: ({
+      name: string;
+      description?: string | null;
+    } & Feature_Key)[];
+  } & UserType_Key)[];
+}
+
+export interface AdminListUsersData {
+  users: ({
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    createdAt: TimestampString;
+    userType: {
+      name: string;
+    } & UserType_Key;
+  } & User_Key)[];
+}
+
 export interface ClearMyColorSchemeData {
   user_update?: User_Key | null;
 }
@@ -116,11 +181,19 @@ export interface DeleteWorkLogVariables {
   workLogId: UUIDString;
 }
 
+export interface Feature_Key {
+  name: string;
+  __typename?: 'Feature_Key';
+}
+
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
     userType: {
       name: string;
+      features: ({
+        name: string;
+      } & Feature_Key)[];
     } & UserType_Key;
     colorScheme?: {
       id: UUIDString;
@@ -161,6 +234,24 @@ export interface GetTimeEntryData {
 
 export interface GetTimeEntryVariables {
   entryId: UUIDString;
+}
+
+export interface GetUserAccessByGoogleUidData {
+  user?: {
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    userType: {
+      name: string;
+      features: ({
+        name: string;
+      } & Feature_Key)[];
+    } & UserType_Key;
+  } & User_Key;
+}
+
+export interface GetUserAccessByGoogleUidVariables {
+  googleUid: string;
 }
 
 export interface ListColorSchemesData {
@@ -429,6 +520,17 @@ export interface SetUserTypeVariables {
   userTypeName: string;
 }
 
+export interface TeamMember_Key {
+  teamId: UUIDString;
+  userId: UUIDString;
+  __typename?: 'TeamMember_Key';
+}
+
+export interface Team_Key {
+  id: UUIDString;
+  __typename?: 'Team_Key';
+}
+
 export interface Theme_Key {
   id: UUIDString;
   __typename?: 'Theme_Key';
@@ -492,6 +594,12 @@ export interface UpsertTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+}
+
+export interface UserTypeFeature_Key {
+  userTypeName: string;
+  featureName: string;
+  __typename?: 'UserTypeFeature_Key';
 }
 
 export interface UserType_Key {
@@ -668,4 +776,34 @@ export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVaria
 export function listUserTypes(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListUserTypesData>>;
 /** Generated Node Admin SDK operation action function for the 'ListUserTypes' Query. Allow users to pass in custom DataConnect instances. */
 export function listUserTypes(options?: OperationOptions): Promise<ExecuteOperationResponse<ListUserTypesData>>;
+
+/** Generated Node Admin SDK operation action function for the 'GetUserAccessByGoogleUid' Query. Allow users to execute without passing in DataConnect. */
+export function getUserAccessByGoogleUid(dc: DataConnect, vars: GetUserAccessByGoogleUidVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetUserAccessByGoogleUidData>>;
+/** Generated Node Admin SDK operation action function for the 'GetUserAccessByGoogleUid' Query. Allow users to pass in custom DataConnect instances. */
+export function getUserAccessByGoogleUid(vars: GetUserAccessByGoogleUidVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetUserAccessByGoogleUidData>>;
+
+/** Generated Node Admin SDK operation action function for the 'AdminListUsers' Query. Allow users to execute without passing in DataConnect. */
+export function adminListUsers(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListUsersData>>;
+/** Generated Node Admin SDK operation action function for the 'AdminListUsers' Query. Allow users to pass in custom DataConnect instances. */
+export function adminListUsers(options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListUsersData>>;
+
+/** Generated Node Admin SDK operation action function for the 'AdminListUserTypes' Query. Allow users to execute without passing in DataConnect. */
+export function adminListUserTypes(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListUserTypesData>>;
+/** Generated Node Admin SDK operation action function for the 'AdminListUserTypes' Query. Allow users to pass in custom DataConnect instances. */
+export function adminListUserTypes(options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListUserTypesData>>;
+
+/** Generated Node Admin SDK operation action function for the 'AdminListFeatures' Query. Allow users to execute without passing in DataConnect. */
+export function adminListFeatures(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListFeaturesData>>;
+/** Generated Node Admin SDK operation action function for the 'AdminListFeatures' Query. Allow users to pass in custom DataConnect instances. */
+export function adminListFeatures(options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListFeaturesData>>;
+
+/** Generated Node Admin SDK operation action function for the 'AdminGetUser' Query. Allow users to execute without passing in DataConnect. */
+export function adminGetUser(dc: DataConnect, vars: AdminGetUserVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminGetUserData>>;
+/** Generated Node Admin SDK operation action function for the 'AdminGetUser' Query. Allow users to pass in custom DataConnect instances. */
+export function adminGetUser(vars: AdminGetUserVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminGetUserData>>;
+
+/** Generated Node Admin SDK operation action function for the 'AdminListTeams' Query. Allow users to execute without passing in DataConnect. */
+export function adminListTeams(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListTeamsData>>;
+/** Generated Node Admin SDK operation action function for the 'AdminListTeams' Query. Allow users to pass in custom DataConnect instances. */
+export function adminListTeams(options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListTeamsData>>;
 

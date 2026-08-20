@@ -231,3 +231,45 @@ function listUserTypes(dcOrOptions, options) {
 }
 exports.listUserTypes = listUserTypes;
 
+function getUserAccessByGoogleUid(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('GetUserAccessByGoogleUid', inputVars, inputOpts);
+}
+exports.getUserAccessByGoogleUid = getUserAccessByGoogleUid;
+
+function adminListUsers(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('AdminListUsers', undefined, inputOpts);
+}
+exports.adminListUsers = adminListUsers;
+
+function adminListUserTypes(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('AdminListUserTypes', undefined, inputOpts);
+}
+exports.adminListUserTypes = adminListUserTypes;
+
+function adminListFeatures(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('AdminListFeatures', undefined, inputOpts);
+}
+exports.adminListFeatures = adminListFeatures;
+
+function adminGetUser(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('AdminGetUser', inputVars, inputOpts);
+}
+exports.adminGetUser = adminGetUser;
+
+function adminListTeams(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('AdminListTeams', undefined, inputOpts);
+}
+exports.adminListTeams = adminListTeams;
+

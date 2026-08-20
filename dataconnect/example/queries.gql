@@ -16,11 +16,19 @@ query ListUsers @auth(level: NO_ACCESS) {
 query GetMyUser @auth(level: USER) {
   user(first: { where: { googleUid: { eq_expr: "auth.uid" } } }) {
     id
-    # Non-null in the schema, so this is always present — feature gating can
-    # switch on userType.name without a null check. Read-only to the client:
-    # changing it goes through SetUserType, which is NO_ACCESS (see mutations).
+    # Non-null in the schema, so this is always present. Read-only to the
+    # client: changing it goes through SetUserType, which is NO_ACCESS.
+    #
+    # `features` comes along nested rather than as a second query, so the whole
+    # capability set arrives with the user record every context already fetches.
+    # NOTE: this drives what the UI *renders* only — it is not a security
+    # boundary. Anything actually privileged must be re-checked server-side
+    # (see app/api/admin/*), since a client can trivially lie about this.
     userType {
       name
+      features: features_via_UserTypeFeature {
+        name
+      }
     }
     colorScheme {
       id
@@ -277,5 +285,100 @@ query ListUserTypes @auth(level: USER, insecureReason: "Tiers are non-sensitive 
   userTypes(orderBy: [{ name: ASC }]) {
     id
     name
+  }
+}
+
+# Server-side authorization lookup: resolves a caller's tier and granted
+# features from a Firebase UID.
+#
+# NO_ACCESS is deliberate and load-bearing. This takes the uid as a plain
+# parameter, so a USER-level version would let any signed-in user read anyone
+# else's permissions. Only trusted server code that has already *verified* an
+# ID token may ask this — see lib/featureAccess.ts, which is the only caller.
+query GetUserAccessByGoogleUid($googleUid: String!) @auth(level: NO_ACCESS) {
+  user(first: { where: { googleUid: { eq: $googleUid } } }) {
+    id
+    username
+    email
+    userType {
+      name
+      features: features_via_UserTypeFeature {
+        name
+      }
+    }
+  }
+}
+
+# Backs the admin dashboard's user list. NO_ACCESS for the same reason: the
+# route handler in app/api/admin/users authorizes the caller first, then calls
+# this with admin credentials.
+query AdminListUsers @auth(level: NO_ACCESS) {
+  users(orderBy: [{ createdAt: DESC }]) {
+    id
+    username
+    email
+    createdAt
+    userType {
+      name
+    }
+  }
+}
+
+# Backs the admin dashboard's "User Types" tab: every tier with the features
+# granted to it. NO_ACCESS for the same reason as AdminListUsers — the route
+# handler authorizes the caller, then calls this with admin credentials.
+query AdminListUserTypes @auth(level: NO_ACCESS) {
+  userTypes(orderBy: [{ name: ASC }]) {
+    id
+    name
+    features: features_via_UserTypeFeature {
+      name
+      description
+    }
+  }
+}
+
+# The full feature catalogue, so the User Types tab can show which capabilities
+# exist but are *not* granted to a tier — a grant list alone can't distinguish
+# "no such feature" from "feature exists, tier doesn't have it".
+query AdminListFeatures @auth(level: NO_ACCESS) {
+  features(orderBy: [{ name: ASC }]) {
+    id
+    name
+    description
+  }
+}
+
+# Existence/identity check before an admin mutation. NO_ACCESS — called only
+# from trusted server code that has already authorized the caller.
+query AdminGetUser($userId: UUID!) @auth(level: NO_ACCESS) {
+  user(id: $userId) {
+    id
+    username
+    email
+    userType {
+      name
+    }
+  }
+}
+
+# Backs the admin page's Teams tab: every team with its members. NO_ACCESS —
+# the route handler authorizes the caller (AdminDashboard feature) first.
+query AdminListTeams @auth(level: NO_ACCESS) {
+  teams(orderBy: [{ name: ASC }]) {
+    id
+    name
+    description
+    createdAt
+    members: teamMembers_on_team {
+      user {
+        id
+        username
+        email
+        userType {
+          name
+        }
+      }
+    }
   }
 }

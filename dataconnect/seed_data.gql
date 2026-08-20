@@ -202,3 +202,63 @@ mutation SeedUserTypes @transaction {
   elevated: userType_upsert(data: { name: "Elevated" })
   premium: userType_upsert(data: { name: "Premium" })
 }
+
+# Application features and the tiers they're granted to.
+#
+# Unlike SeedUserTypes there's no migration-ordering hazard here — Feature and
+# UserTypeFeature are new tables, so nothing pre-existing references them.
+# Just needs the UserType rows to already exist (SeedUserTypes above).
+#
+# Idempotent: feature_upsert matches on `name`, and userTypeFeature_upsert on
+# its (userType, feature) composite key.
+# RENAMING A FEATURE is a data migration, not an edit. Feature is keyed on
+# `name` and UserTypeFeature's FK references it with ON UPDATE NO ACTION, so
+# changing a name in place fails while grants point at it. Replace instead:
+#   1. feature_upsert the new name
+#   2. userTypeFeature_upsert the same grants against the new name
+#   3. feature_delete the old name — its grants CASCADE away with it
+# (AdminDashboard -> AdminPage went through exactly that.)
+mutation SeedFeatures @transaction {
+  adminPage: feature_upsert(data: {
+    name: "AdminPage"
+    description: "Access to the admin page and its APIs."
+  })
+  userTypeControl: feature_upsert(data: {
+    name: "UserTypeControl"
+    description: "Change which tier a user belongs to."
+  })
+  adminDashboard: feature_upsert(data: {
+    name: "AdminDashboard"
+    description: "View teams and their members on the admin page."
+  })
+  dashboard: feature_upsert(data: {
+    name: "Dashboard"
+    description: "Access to the dashboard tab and its reports."
+  })
+
+  # Only Admin holds AdminPage. Granting it to another tier is an INSERT here,
+  # not a code change — that's the whole point of the xref.
+  adminPageForAdmin: userTypeFeature_upsert(data: {
+    userTypeName: "Admin"
+    featureName: "AdminPage"
+  })
+  userTypeControlForAdmin: userTypeFeature_upsert(data: {
+    userTypeName: "Admin"
+    featureName: "UserTypeControl"
+  })
+  adminDashboardForAdmin: userTypeFeature_upsert(data: {
+    userTypeName: "Admin"
+    featureName: "AdminDashboard"
+  })
+
+  # Dashboard goes to every tier. Bringing an already-shipped page under
+  # feature control has to start from "everyone keeps what they had" —
+  # granting it to all five preserves today's behaviour exactly, and revoking
+  # from a tier later is a deliberate product decision rather than an
+  # accidental regression on rollout day.
+  dashboardForAdmin: userTypeFeature_upsert(data: { userTypeName: "Admin", featureName: "Dashboard" })
+  dashboardForRegular: userTypeFeature_upsert(data: { userTypeName: "Regular", featureName: "Dashboard" })
+  dashboardForElevated: userTypeFeature_upsert(data: { userTypeName: "Elevated", featureName: "Dashboard" })
+  dashboardForPremium: userTypeFeature_upsert(data: { userTypeName: "Premium", featureName: "Dashboard" })
+  dashboardForGuest: userTypeFeature_upsert(data: { userTypeName: "Guest", featureName: "Dashboard" })
+}

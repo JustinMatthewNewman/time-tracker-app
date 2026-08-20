@@ -1,39 +1,22 @@
 "use client";
 
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
 import AmbientBackground from "@/components/AmbientBackground";
+import FeatureGate from "@/components/FeatureGate";
 import DashboardLayout from "./DashboardLayout";
 
 function Dashboard() {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/");
-    }
-  }, [user, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <span className="text-sm text-gray-400">Loading...</span>
-      </div>
-    );
-  }
-
-  if (!user) return null; // redirect in flight
-
+  // FeatureGate absorbs the auth-loading/redirect handling this component used
+  // to do itself, and adds the Dashboard grant check on top.
   return (
-    <div className="relative flex h-full flex-col gap-4 overflow-hidden p-4">
-      <AmbientBackground intensity={0.85} />
+    <FeatureGate feature="Dashboard" label="the dashboard">
+      <div className="relative flex h-full flex-col gap-4 overflow-hidden p-4">
+        <AmbientBackground intensity={0.85} />
 
-      <div className="relative z-10 flex h-full min-h-0 flex-col gap-4 overflow-hidden">
-        <DashboardLayout />
+        <div className="relative z-10 flex h-full min-h-0 flex-col gap-4 overflow-hidden">
+          <DashboardLayout />
+        </div>
       </div>
-    </div>
+    </FeatureGate>
   );
 }
 

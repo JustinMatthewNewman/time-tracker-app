@@ -19,7 +19,8 @@
 // DATA_CONNECT_EMULATOR_HOST both point at localhost — see assertLocalOnly().
 
 import { v5 as uuidv5 } from "uuid";
-import { USER_TYPE_NAMES, DEFAULT_USER_TYPE } from "../lib/userTypes.ts";
+import { USER_TYPE_NAMES } from "../lib/userTypes.ts";
+import { FEATURE_NAMES, FEATURE_DEFINITIONS } from "../lib/features.ts";
 
 const args = new Set(process.argv.slice(2));
 const DRY_RUN = args.has("--dry-run");
@@ -35,6 +36,13 @@ const TEST_USER_UID = "stress-test-local-uid";
 const TEST_USER_EMAIL = "stress.test@local.dev";
 const TEST_USER_PASSWORD = "stress-test-password-123";
 const TEST_USER_NAME = "Stress Test User";
+
+// Admin rather than the "Regular" default every real signup gets: this is the
+// one account local development runs as, so it needs to reach the admin page
+// and any other tier-gated feature without a manual promotion step after each
+// reset. Only ever applied to this hardcoded local-emulator uid — see
+// assertLocalOnly(), which refuses to run against anything but localhost.
+const TEST_USER_TYPE = "Admin";
 
 // Fixed, arbitrary namespace UUID used to derive stable ids from human-readable
 // keys (uuidv5), so re-running this script upserts the exact same rows instead
@@ -357,19 +365,59 @@ async function main() {
   );
   console.log(`UserTypes: ${USER_TYPE_NAMES.length} rows`);
 
-  // 4. User row (upsert by id, so reruns are no-ops).
+  // 4. Features, then the tier grants that reference them (FK order). Mirrors
+  // SeedFeatures in dataconnect/seed_data.gql; seeded here too so a reset
+  // leaves a fully working environment rather than one where the test user is
+  // an Admin holding no grants — which looks exactly like the gating is broken.
+  await dc.upsertMany(
+    "Feature",
+    FEATURE_NAMES.map((name) => ({
+      name,
+      description: FEATURE_DEFINITIONS[name].description,
+      createdAt: new Date().toISOString(),
+    }))
+  );
+
+  const grants = FEATURE_NAMES.flatMap((name) =>
+    FEATURE_DEFINITIONS[name].defaultTiers.map((userTypeName) => ({
+      userTypeName,
+      featureName: name,
+      createdAt: new Date().toISOString(),
+    }))
+  );
+  await dc.upsertMany("UserTypeFeature", grants);
+  console.log(`Features: ${FEATURE_NAMES.length} rows, ${grants.length} tier grants`);
+
+  // 5. User row (upsert by id, so reruns are no-ops).
   await dc.upsertMany("User", [
     {
       id: userRowId,
       googleUid: TEST_USER_UID,
       username: TEST_USER_NAME,
       email: TEST_USER_EMAIL,
-      userTypeName: DEFAULT_USER_TYPE,
+      userTypeName: TEST_USER_TYPE,
       createdAt: new Date().toISOString(),
     },
   ]);
 
-  // 5. Tickets (parent table before TimeEntry references them).
+  // 6. A sample team containing the test user, so the admin page's Teams tab
+  // renders something real instead of an empty state. Team id is derived from
+  // a fixed key (like every other id here) so reruns upsert the same row.
+  const teamId = id("team", "local-dev");
+  await dc.upsertMany("Team", [
+    {
+      id: teamId,
+      name: "Local Dev",
+      description: "Sample team seeded for local development.",
+      createdAt: new Date().toISOString(),
+    },
+  ]);
+  await dc.upsertMany("TeamMember", [
+    { teamId, userId: userRowId, createdAt: new Date().toISOString() },
+  ]);
+  console.log("Teams: 1 row, 1 membership");
+
+  // 7. Tickets (parent table before TimeEntry references them).
   for (const [i, batch] of chunk(ticketPool, TICKET_CHUNK).entries()) {
     await dc.upsertMany(
       "Ticket",
@@ -378,13 +426,13 @@ async function main() {
     console.log(`Tickets: chunk ${i + 1} (${batch.length} rows)`);
   }
 
-  // 6. Work logs (parent table before TimeEntry references them).
+  // 8. Work logs (parent table before TimeEntry references them).
   for (const [i, batch] of chunk(workLogs, WORKLOG_CHUNK).entries()) {
     await dc.upsertMany("WorkLog", batch);
     console.log(`WorkLogs: chunk ${i + 1}/${Math.ceil(workLogs.length / WORKLOG_CHUNK)} (${batch.length} rows)`);
   }
 
-  // 7. Time entries.
+  // 9. Time entries.
   for (const [i, batch] of chunk(timeEntries, ENTRY_CHUNK).entries()) {
     await dc.upsertMany("TimeEntry", batch);
     console.log(`TimeEntries: chunk ${i + 1}/${Math.ceil(timeEntries.length / ENTRY_CHUNK)} (${batch.length} rows)`);

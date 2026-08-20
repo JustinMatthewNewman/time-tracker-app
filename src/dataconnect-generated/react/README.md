@@ -29,6 +29,12 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*ListMyTimeEntries*](#listmytimeentries)
   - [*ListTimeEntriesByDateRange*](#listtimeentriesbydaterange)
   - [*ListUserTypes*](#listusertypes)
+  - [*GetUserAccessByGoogleUid*](#getuseraccessbygoogleuid)
+  - [*AdminListUsers*](#adminlistusers)
+  - [*AdminListUserTypes*](#adminlistusertypes)
+  - [*AdminListFeatures*](#adminlistfeatures)
+  - [*AdminGetUser*](#admingetuser)
+  - [*AdminListTeams*](#adminlistteams)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*SetUserType*](#setusertype)
@@ -244,6 +250,9 @@ export interface GetMyUserData {
     id: UUIDString;
     userType: {
       name: string;
+      features: ({
+        name: string;
+      } & Feature_Key)[];
     } & UserType_Key;
     colorScheme?: {
       id: UUIDString;
@@ -1260,6 +1269,497 @@ export default function ListUserTypesComponent() {
   // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
   if (query.isSuccess) {
     console.log(query.data.userTypes);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## GetUserAccessByGoogleUid
+You can execute the `GetUserAccessByGoogleUid` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useGetUserAccessByGoogleUid(dc: DataConnect, vars: GetUserAccessByGoogleUidVariables, options?: useDataConnectQueryOptions<GetUserAccessByGoogleUidData>): UseDataConnectQueryResult<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useGetUserAccessByGoogleUid(vars: GetUserAccessByGoogleUidVariables, options?: useDataConnectQueryOptions<GetUserAccessByGoogleUidData>): UseDataConnectQueryResult<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+```
+
+### Variables
+The `GetUserAccessByGoogleUid` Query requires an argument of type `GetUserAccessByGoogleUidVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface GetUserAccessByGoogleUidVariables {
+  googleUid: string;
+}
+```
+### Return Type
+Recall that calling the `GetUserAccessByGoogleUid` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetUserAccessByGoogleUid` Query is of type `GetUserAccessByGoogleUidData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface GetUserAccessByGoogleUidData {
+  user?: {
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    userType: {
+      name: string;
+      features: ({
+        name: string;
+      } & Feature_Key)[];
+    } & UserType_Key;
+  } & User_Key;
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `GetUserAccessByGoogleUid`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, GetUserAccessByGoogleUidVariables } from '@dataconnect/generated';
+import { useGetUserAccessByGoogleUid } from '@dataconnect/generated/react'
+
+export default function GetUserAccessByGoogleUidComponent() {
+  // The `useGetUserAccessByGoogleUid` Query hook requires an argument of type `GetUserAccessByGoogleUidVariables`:
+  const getUserAccessByGoogleUidVars: GetUserAccessByGoogleUidVariables = {
+    googleUid: ..., 
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useGetUserAccessByGoogleUid(getUserAccessByGoogleUidVars);
+  // Variables can be defined inline as well.
+  const query = useGetUserAccessByGoogleUid({ googleUid: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useGetUserAccessByGoogleUid(dataConnect, getUserAccessByGoogleUidVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetUserAccessByGoogleUid(getUserAccessByGoogleUidVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetUserAccessByGoogleUid(dataConnect, getUserAccessByGoogleUidVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.user);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminListUsers
+You can execute the `AdminListUsers` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useAdminListUsers(dc: DataConnect, options?: useDataConnectQueryOptions<AdminListUsersData>): UseDataConnectQueryResult<AdminListUsersData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useAdminListUsers(options?: useDataConnectQueryOptions<AdminListUsersData>): UseDataConnectQueryResult<AdminListUsersData, undefined>;
+```
+
+### Variables
+The `AdminListUsers` Query has no variables.
+### Return Type
+Recall that calling the `AdminListUsers` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `AdminListUsers` Query is of type `AdminListUsersData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminListUsersData {
+  users: ({
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    createdAt: TimestampString;
+    userType: {
+      name: string;
+    } & UserType_Key;
+  } & User_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `AdminListUsers`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useAdminListUsers } from '@dataconnect/generated/react'
+
+export default function AdminListUsersComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useAdminListUsers();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useAdminListUsers(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListUsers(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListUsers(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.users);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminListUserTypes
+You can execute the `AdminListUserTypes` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useAdminListUserTypes(dc: DataConnect, options?: useDataConnectQueryOptions<AdminListUserTypesData>): UseDataConnectQueryResult<AdminListUserTypesData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useAdminListUserTypes(options?: useDataConnectQueryOptions<AdminListUserTypesData>): UseDataConnectQueryResult<AdminListUserTypesData, undefined>;
+```
+
+### Variables
+The `AdminListUserTypes` Query has no variables.
+### Return Type
+Recall that calling the `AdminListUserTypes` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `AdminListUserTypes` Query is of type `AdminListUserTypesData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminListUserTypesData {
+  userTypes: ({
+    id: UUIDString;
+    name: string;
+    features: ({
+      name: string;
+      description?: string | null;
+    } & Feature_Key)[];
+  } & UserType_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `AdminListUserTypes`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useAdminListUserTypes } from '@dataconnect/generated/react'
+
+export default function AdminListUserTypesComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useAdminListUserTypes();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useAdminListUserTypes(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListUserTypes(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListUserTypes(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.userTypes);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminListFeatures
+You can execute the `AdminListFeatures` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useAdminListFeatures(dc: DataConnect, options?: useDataConnectQueryOptions<AdminListFeaturesData>): UseDataConnectQueryResult<AdminListFeaturesData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useAdminListFeatures(options?: useDataConnectQueryOptions<AdminListFeaturesData>): UseDataConnectQueryResult<AdminListFeaturesData, undefined>;
+```
+
+### Variables
+The `AdminListFeatures` Query has no variables.
+### Return Type
+Recall that calling the `AdminListFeatures` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `AdminListFeatures` Query is of type `AdminListFeaturesData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminListFeaturesData {
+  features: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+  } & Feature_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `AdminListFeatures`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useAdminListFeatures } from '@dataconnect/generated/react'
+
+export default function AdminListFeaturesComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useAdminListFeatures();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useAdminListFeatures(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListFeatures(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListFeatures(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.features);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminGetUser
+You can execute the `AdminGetUser` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useAdminGetUser(dc: DataConnect, vars: AdminGetUserVariables, options?: useDataConnectQueryOptions<AdminGetUserData>): UseDataConnectQueryResult<AdminGetUserData, AdminGetUserVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useAdminGetUser(vars: AdminGetUserVariables, options?: useDataConnectQueryOptions<AdminGetUserData>): UseDataConnectQueryResult<AdminGetUserData, AdminGetUserVariables>;
+```
+
+### Variables
+The `AdminGetUser` Query requires an argument of type `AdminGetUserVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface AdminGetUserVariables {
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `AdminGetUser` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `AdminGetUser` Query is of type `AdminGetUserData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminGetUserData {
+  user?: {
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    userType: {
+      name: string;
+    } & UserType_Key;
+  } & User_Key;
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `AdminGetUser`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, AdminGetUserVariables } from '@dataconnect/generated';
+import { useAdminGetUser } from '@dataconnect/generated/react'
+
+export default function AdminGetUserComponent() {
+  // The `useAdminGetUser` Query hook requires an argument of type `AdminGetUserVariables`:
+  const adminGetUserVars: AdminGetUserVariables = {
+    userId: ..., 
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useAdminGetUser(adminGetUserVars);
+  // Variables can be defined inline as well.
+  const query = useAdminGetUser({ userId: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useAdminGetUser(dataConnect, adminGetUserVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminGetUser(adminGetUserVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminGetUser(dataConnect, adminGetUserVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.user);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminListTeams
+You can execute the `AdminListTeams` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useAdminListTeams(dc: DataConnect, options?: useDataConnectQueryOptions<AdminListTeamsData>): UseDataConnectQueryResult<AdminListTeamsData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useAdminListTeams(options?: useDataConnectQueryOptions<AdminListTeamsData>): UseDataConnectQueryResult<AdminListTeamsData, undefined>;
+```
+
+### Variables
+The `AdminListTeams` Query has no variables.
+### Return Type
+Recall that calling the `AdminListTeams` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `AdminListTeams` Query is of type `AdminListTeamsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminListTeamsData {
+  teams: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    createdAt: TimestampString;
+    members: ({
+      user: {
+        id: UUIDString;
+        username: string;
+        email?: string | null;
+        userType: {
+          name: string;
+        } & UserType_Key;
+      } & User_Key;
+    })[];
+  } & Team_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `AdminListTeams`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useAdminListTeams } from '@dataconnect/generated/react'
+
+export default function AdminListTeamsComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useAdminListTeams();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useAdminListTeams(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListTeams(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListTeams(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.teams);
   }
   return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
 }
