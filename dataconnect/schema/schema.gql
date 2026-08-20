@@ -19,6 +19,41 @@ type UserType @table(key: "name") {
   createdAt: Timestamp! @default(expr: "request.time")
 }
 
+# A named application capability that can be granted to tiers — e.g.
+# "AdminPage". Gating on a Feature row rather than on a hardcoded
+# `userType.name == "Admin"` check means granting or revoking access is a data
+# change, not a code change: a second tier can be handed the admin dashboard
+# without touching a component, and a feature can be dark-launched by simply
+# not granting it to anyone yet.
+#
+# Keyed on `name` for the same readability reason as UserType.
+type Feature @table(key: "name") {
+  id: UUID! @default(expr: "uuidV4()") @unique
+  name: String!
+  description: String
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# Cross-reference granting a Feature to a UserType. Composite key means one
+# row per (tier, feature), so grants are idempotent to upsert and can't
+# duplicate.
+#
+# Generates `userType.features_via_UserTypeFeature`, which is what GetMyUser
+# reads to hand the client its whole capability set in one round trip.
+#
+# ON DELETE CASCADE (required refs, per Data Connect's nullability rule) is the
+# behaviour you want here, unlike on User.userType: deleting a Feature should
+# clean up its grants rather than strand them.
+#
+# Deliberately keyed to UserType, not User — permissions live on the tier.
+# Per-user overrides, if ever needed, belong in a separate UserFeature xref
+# rather than by blurring this one.
+type UserTypeFeature @table(key: ["userType", "feature"]) {
+  userType: UserType!
+  feature: Feature!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
 type User @table {
   id: UUID! @default(expr: "uuidV4()")
   googleUid: String! @unique
@@ -62,6 +97,37 @@ type User @table {
   # the background/shadow, so cards stay visually distinct.
   bordersEnabled: Boolean @default(expr: "true")
   createdAt: Timestamp!
+}
+
+# A named group of users, surfaced on the admin page's Teams tab.
+#
+# Keyed on the default UUID rather than on `name` like UserType and Feature —
+# and that difference is deliberate. Those two are fixed configuration whose
+# names are referenced from application code, so a readable natural key is
+# worth the cost of renames being data migrations. A team is user-authored
+# data that people will rename casually, so its identity lives in an immutable
+# id and `name` is merely unique.
+type Team @table {
+  id: UUID! @default(expr: "uuidV4()")
+  name: String! @unique
+  description: String
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
+# Membership xref, same shape as UserTypeFeature. A user can belong to several
+# teams and a team holds many users, so this is a join table rather than a
+# `User.team` column — which would also have meant ALTERing an already-populated
+# user table (see the ordering hazard documented on User.userTypeName).
+#
+# Generates `team.users_via_TeamMember` and `user.teams_via_TeamMember`.
+#
+# ON DELETE CASCADE on both sides (required refs) is what you want here:
+# deleting a team should drop its memberships, and deleting a user should drop
+# theirs, rather than stranding rows pointing at nothing.
+type TeamMember @table(key: ["team", "user"]) {
+  team: Team!
+  user: User!
+  createdAt: Timestamp! @default(expr: "request.time")
 }
 
 type WorkLog @table {

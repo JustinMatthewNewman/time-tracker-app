@@ -11,6 +11,71 @@ export type DateString = string;
 
 
 
+export interface AdminGetUserData {
+  user?: {
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    userType: {
+      name: string;
+    } & UserType_Key;
+  } & User_Key;
+}
+
+export interface AdminGetUserVariables {
+  userId: UUIDString;
+}
+
+export interface AdminListFeaturesData {
+  features: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+  } & Feature_Key)[];
+}
+
+export interface AdminListTeamsData {
+  teams: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    createdAt: TimestampString;
+    members: ({
+      user: {
+        id: UUIDString;
+        username: string;
+        email?: string | null;
+        userType: {
+          name: string;
+        } & UserType_Key;
+      } & User_Key;
+    })[];
+  } & Team_Key)[];
+}
+
+export interface AdminListUserTypesData {
+  userTypes: ({
+    id: UUIDString;
+    name: string;
+    features: ({
+      name: string;
+      description?: string | null;
+    } & Feature_Key)[];
+  } & UserType_Key)[];
+}
+
+export interface AdminListUsersData {
+  users: ({
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    createdAt: TimestampString;
+    userType: {
+      name: string;
+    } & UserType_Key;
+  } & User_Key)[];
+}
+
 export interface ClearMyColorSchemeData {
   user_update?: User_Key | null;
 }
@@ -119,11 +184,19 @@ export interface DeleteWorkLogVariables {
   workLogId: UUIDString;
 }
 
+export interface Feature_Key {
+  name: string;
+  __typename?: 'Feature_Key';
+}
+
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
     userType: {
       name: string;
+      features: ({
+        name: string;
+      } & Feature_Key)[];
     } & UserType_Key;
     colorScheme?: {
       id: UUIDString;
@@ -164,6 +237,24 @@ export interface GetTimeEntryData {
 
 export interface GetTimeEntryVariables {
   entryId: UUIDString;
+}
+
+export interface GetUserAccessByGoogleUidData {
+  user?: {
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    userType: {
+      name: string;
+      features: ({
+        name: string;
+      } & Feature_Key)[];
+    } & UserType_Key;
+  } & User_Key;
+}
+
+export interface GetUserAccessByGoogleUidVariables {
+  googleUid: string;
 }
 
 export interface ListColorSchemesData {
@@ -432,6 +523,17 @@ export interface SetUserTypeVariables {
   userTypeName: string;
 }
 
+export interface TeamMember_Key {
+  teamId: UUIDString;
+  userId: UUIDString;
+  __typename?: 'TeamMember_Key';
+}
+
+export interface Team_Key {
+  id: UUIDString;
+  __typename?: 'Team_Key';
+}
+
 export interface Theme_Key {
   id: UUIDString;
   __typename?: 'Theme_Key';
@@ -495,6 +597,12 @@ export interface UpsertTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+}
+
+export interface UserTypeFeature_Key {
+  userTypeName: string;
+  featureName: string;
+  __typename?: 'UserTypeFeature_Key';
 }
 
 export interface UserType_Key {
@@ -895,4 +1003,76 @@ export const listUserTypesRef: ListUserTypesRef;
 
 export function listUserTypes(options?: ExecuteQueryOptions): QueryPromise<ListUserTypesData, undefined>;
 export function listUserTypes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUserTypesData, undefined>;
+
+interface GetUserAccessByGoogleUidRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetUserAccessByGoogleUidVariables): QueryRef<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetUserAccessByGoogleUidVariables): QueryRef<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+  operationName: string;
+}
+export const getUserAccessByGoogleUidRef: GetUserAccessByGoogleUidRef;
+
+export function getUserAccessByGoogleUid(vars: GetUserAccessByGoogleUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+export function getUserAccessByGoogleUid(dc: DataConnect, vars: GetUserAccessByGoogleUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+
+interface AdminListUsersRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<AdminListUsersData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<AdminListUsersData, undefined>;
+  operationName: string;
+}
+export const adminListUsersRef: AdminListUsersRef;
+
+export function adminListUsers(options?: ExecuteQueryOptions): QueryPromise<AdminListUsersData, undefined>;
+export function adminListUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<AdminListUsersData, undefined>;
+
+interface AdminListUserTypesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<AdminListUserTypesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<AdminListUserTypesData, undefined>;
+  operationName: string;
+}
+export const adminListUserTypesRef: AdminListUserTypesRef;
+
+export function adminListUserTypes(options?: ExecuteQueryOptions): QueryPromise<AdminListUserTypesData, undefined>;
+export function adminListUserTypes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<AdminListUserTypesData, undefined>;
+
+interface AdminListFeaturesRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<AdminListFeaturesData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<AdminListFeaturesData, undefined>;
+  operationName: string;
+}
+export const adminListFeaturesRef: AdminListFeaturesRef;
+
+export function adminListFeatures(options?: ExecuteQueryOptions): QueryPromise<AdminListFeaturesData, undefined>;
+export function adminListFeatures(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<AdminListFeaturesData, undefined>;
+
+interface AdminGetUserRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminGetUserVariables): QueryRef<AdminGetUserData, AdminGetUserVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: AdminGetUserVariables): QueryRef<AdminGetUserData, AdminGetUserVariables>;
+  operationName: string;
+}
+export const adminGetUserRef: AdminGetUserRef;
+
+export function adminGetUser(vars: AdminGetUserVariables, options?: ExecuteQueryOptions): QueryPromise<AdminGetUserData, AdminGetUserVariables>;
+export function adminGetUser(dc: DataConnect, vars: AdminGetUserVariables, options?: ExecuteQueryOptions): QueryPromise<AdminGetUserData, AdminGetUserVariables>;
+
+interface AdminListTeamsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<AdminListTeamsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<AdminListTeamsData, undefined>;
+  operationName: string;
+}
+export const adminListTeamsRef: AdminListTeamsRef;
+
+export function adminListTeams(options?: ExecuteQueryOptions): QueryPromise<AdminListTeamsData, undefined>;
+export function adminListTeams(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<AdminListTeamsData, undefined>;
 

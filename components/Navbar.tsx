@@ -25,6 +25,8 @@ import {
 import AuthSection from "./AuthSection";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useFeatures } from "@/hooks/useFeatures";
+import type { FeatureName } from "@/lib/features";
 import { loginWithGoogle, logout } from "@/lib/auth";
 import { GlobalSearch } from "@/components/Search/GlobalSearch";
 import { usePerformanceMode } from "@/context/PerformanceModeContext";
@@ -38,10 +40,24 @@ interface NavLink {
   href: string;
   icon: typeof House;
   authRequired?: boolean;
+  // Hides the tab unless the signed-in user's tier holds this feature.
+  //
+  // Two different jobs share this one mechanism, and they are not equally
+  // strong. For AdminPage it mirrors a real server-side gate (see
+  // lib/featureAccess.ts) — hiding the tab is convenience, the API is the
+  // boundary. For Dashboard it is product packaging only: that page reads the
+  // signed-in user's *own* data through USER-level queries already scoped by
+  // auth.uid, so there is no privilege to escalate and nothing to enforce
+  // server-side. Don't mistake a gated tab here for a protected page.
+  feature?: FeatureName;
 }
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Dashboard", href: "/dashboard", icon: House, authRequired: true },
+  // Leads the strip, ahead of Dashboard — but only ever renders for users
+  // whose tier holds the AdminPage grant, so for everyone else the nav
+  // still starts at Dashboard exactly as before.
+  { label: "Admin", href: "/admin", icon: Shield, authRequired: true, feature: "AdminPage" },
+  { label: "Dashboard", href: "/dashboard", icon: House, authRequired: true, feature: "Dashboard" },
   { label: "Work Logs", href: "/worklogs", icon: ClockFill, authRequired: true },
   { label: "Tickets", href: "/tickets", icon: Ticket, authRequired: true },
   { label: "Profile", href: "/profile", icon: Person, authRequired: true },
@@ -355,6 +371,7 @@ export default function AppNavbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { performanceMode } = usePerformanceMode();
+  const { features, loading: featuresLoading } = useFeatures();
 
   const handleLogin = async () => {
     await loginWithGoogle();
@@ -376,8 +393,12 @@ export default function AppNavbar() {
   };
 
   const filteredLinks = NAV_LINKS.filter((link) => {
-    if (!link.authRequired) return true;
-    return !!user;
+    if (link.authRequired && !user) return false;
+    // While the grant set is still loading, withhold gated tabs rather than
+    // rendering then yanking them — a tab that appears and vanishes reads as a
+    // glitch, and briefly showing "Admin" to a non-admin invites confusion.
+    if (link.feature) return !featuresLoading && features.has(link.feature);
+    return true;
   });
 
   const isLinkActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);

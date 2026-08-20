@@ -19,6 +19,53 @@ extend type Query {
     first: ColorScheme_FirstRow
   ): ColorScheme @fdc_generated(from: "ColorScheme", purpose: QUERY_SINGLE)
   """
+  ✨ Look up a single `Feature` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  feature(
+    """
+    The key used to identify the object.
+    """
+    key: Feature_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Feature_FirstRow
+  ): Feature @fdc_generated(from: "Feature", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `Team` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  team(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Team_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Team_FirstRow
+  ): Team @fdc_generated(from: "Team", purpose: QUERY_SINGLE)
+  """
+  ✨ Look up a single `TeamMember` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  teamMember(
+    """
+    The key used to identify the object.
+    """
+    key: TeamMember_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: TeamMember_FirstRow
+  ): TeamMember @fdc_generated(from: "TeamMember", purpose: QUERY_SINGLE)
+  """
   ✨ Look up a single `Theme` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   theme(
@@ -104,6 +151,20 @@ extend type Query {
     first: UserType_FirstRow
   ): UserType @fdc_generated(from: "UserType", purpose: QUERY_SINGLE)
   """
+  ✨ Look up a single `UserTypeFeature` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  userTypeFeature(
+    """
+    The key used to identify the object.
+    """
+    key: UserTypeFeature_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserTypeFeature_FirstRow
+  ): UserTypeFeature @fdc_generated(from: "UserTypeFeature", purpose: QUERY_SINGLE)
+  """
   ✨ Look up a single `WorkLog` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   workLog(
@@ -156,6 +217,108 @@ extend type Query {
     """
     having: ColorScheme_Having
   ): [ColorScheme!]! @fdc_generated(from: "ColorScheme", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Feature` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  features(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Feature_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Feature_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Feature_Having
+  ): [Feature!]! @fdc_generated(from: "Feature", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `Team` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  teams(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: Team_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [Team_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: Team_Having
+  ): [Team!]! @fdc_generated(from: "Team", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `TeamMember` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  teamMembers(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: TeamMember_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [TeamMember_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: TeamMember_Having
+  ): [TeamMember!]! @fdc_generated(from: "TeamMember", purpose: QUERY_MULTIPLE)
   """
   ✨ List `Theme` objects in the table and return selected fields, optionally filtered by `where` conditions
   """
@@ -326,6 +489,40 @@ extend type Query {
     """
     having: UserType_Having
   ): [UserType!]! @fdc_generated(from: "UserType", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `UserTypeFeature` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  userTypeFeatures(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: UserTypeFeature_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [UserTypeFeature_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: UserTypeFeature_Having
+  ): [UserTypeFeature!]! @fdc_generated(from: "UserTypeFeature", purpose: QUERY_MULTIPLE)
   """
   ✨ List `WorkLog` objects in the table and return selected fields, optionally filtered by `where` conditions
   """

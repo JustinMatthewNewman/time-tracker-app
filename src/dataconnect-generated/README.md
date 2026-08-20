@@ -22,6 +22,12 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListMyTimeEntries*](#listmytimeentries)
   - [*ListTimeEntriesByDateRange*](#listtimeentriesbydaterange)
   - [*ListUserTypes*](#listusertypes)
+  - [*GetUserAccessByGoogleUid*](#getuseraccessbygoogleuid)
+  - [*AdminListUsers*](#adminlistusers)
+  - [*AdminListUserTypes*](#adminlistusertypes)
+  - [*AdminListFeatures*](#adminlistfeatures)
+  - [*AdminGetUser*](#admingetuser)
+  - [*AdminListTeams*](#adminlistteams)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*SetUserType*](#setusertype)
@@ -230,6 +236,9 @@ export interface GetMyUserData {
     id: UUIDString;
     userType: {
       name: string;
+      features: ({
+        name: string;
+      } & Feature_Key)[];
     } & UserType_Key;
     colorScheme?: {
       id: UUIDString;
@@ -1515,6 +1524,639 @@ console.log(data.userTypes);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.userTypes);
+});
+```
+
+## GetUserAccessByGoogleUid
+You can execute the `GetUserAccessByGoogleUid` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getUserAccessByGoogleUid(vars: GetUserAccessByGoogleUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+
+interface GetUserAccessByGoogleUidRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetUserAccessByGoogleUidVariables): QueryRef<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+}
+export const getUserAccessByGoogleUidRef: GetUserAccessByGoogleUidRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getUserAccessByGoogleUid(dc: DataConnect, vars: GetUserAccessByGoogleUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+
+interface GetUserAccessByGoogleUidRef {
+  ...
+  (dc: DataConnect, vars: GetUserAccessByGoogleUidVariables): QueryRef<GetUserAccessByGoogleUidData, GetUserAccessByGoogleUidVariables>;
+}
+export const getUserAccessByGoogleUidRef: GetUserAccessByGoogleUidRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getUserAccessByGoogleUidRef:
+```typescript
+const name = getUserAccessByGoogleUidRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetUserAccessByGoogleUid` query requires an argument of type `GetUserAccessByGoogleUidVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetUserAccessByGoogleUidVariables {
+  googleUid: string;
+}
+```
+### Return Type
+Recall that executing the `GetUserAccessByGoogleUid` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetUserAccessByGoogleUidData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetUserAccessByGoogleUidData {
+  user?: {
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    userType: {
+      name: string;
+      features: ({
+        name: string;
+      } & Feature_Key)[];
+    } & UserType_Key;
+  } & User_Key;
+}
+```
+### Using `GetUserAccessByGoogleUid`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getUserAccessByGoogleUid, GetUserAccessByGoogleUidVariables } from '@dataconnect/generated';
+
+// The `GetUserAccessByGoogleUid` query requires an argument of type `GetUserAccessByGoogleUidVariables`:
+const getUserAccessByGoogleUidVars: GetUserAccessByGoogleUidVariables = {
+  googleUid: ..., 
+};
+
+// Call the `getUserAccessByGoogleUid()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getUserAccessByGoogleUid(getUserAccessByGoogleUidVars);
+// Variables can be defined inline as well.
+const { data } = await getUserAccessByGoogleUid({ googleUid: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getUserAccessByGoogleUid(dataConnect, getUserAccessByGoogleUidVars);
+
+console.log(data.user);
+
+// Or, you can use the `Promise` API.
+getUserAccessByGoogleUid(getUserAccessByGoogleUidVars).then((response) => {
+  const data = response.data;
+  console.log(data.user);
+});
+```
+
+### Using `GetUserAccessByGoogleUid`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getUserAccessByGoogleUidRef, GetUserAccessByGoogleUidVariables } from '@dataconnect/generated';
+
+// The `GetUserAccessByGoogleUid` query requires an argument of type `GetUserAccessByGoogleUidVariables`:
+const getUserAccessByGoogleUidVars: GetUserAccessByGoogleUidVariables = {
+  googleUid: ..., 
+};
+
+// Call the `getUserAccessByGoogleUidRef()` function to get a reference to the query.
+const ref = getUserAccessByGoogleUidRef(getUserAccessByGoogleUidVars);
+// Variables can be defined inline as well.
+const ref = getUserAccessByGoogleUidRef({ googleUid: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getUserAccessByGoogleUidRef(dataConnect, getUserAccessByGoogleUidVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.user);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user);
+});
+```
+
+## AdminListUsers
+You can execute the `AdminListUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminListUsers(options?: ExecuteQueryOptions): QueryPromise<AdminListUsersData, undefined>;
+
+interface AdminListUsersRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<AdminListUsersData, undefined>;
+}
+export const adminListUsersRef: AdminListUsersRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+adminListUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<AdminListUsersData, undefined>;
+
+interface AdminListUsersRef {
+  ...
+  (dc: DataConnect): QueryRef<AdminListUsersData, undefined>;
+}
+export const adminListUsersRef: AdminListUsersRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminListUsersRef:
+```typescript
+const name = adminListUsersRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminListUsers` query has no variables.
+### Return Type
+Recall that executing the `AdminListUsers` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminListUsersData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminListUsersData {
+  users: ({
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    createdAt: TimestampString;
+    userType: {
+      name: string;
+    } & UserType_Key;
+  } & User_Key)[];
+}
+```
+### Using `AdminListUsers`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminListUsers } from '@dataconnect/generated';
+
+
+// Call the `adminListUsers()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminListUsers();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminListUsers(dataConnect);
+
+console.log(data.users);
+
+// Or, you can use the `Promise` API.
+adminListUsers().then((response) => {
+  const data = response.data;
+  console.log(data.users);
+});
+```
+
+### Using `AdminListUsers`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, adminListUsersRef } from '@dataconnect/generated';
+
+
+// Call the `adminListUsersRef()` function to get a reference to the query.
+const ref = adminListUsersRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminListUsersRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.users);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.users);
+});
+```
+
+## AdminListUserTypes
+You can execute the `AdminListUserTypes` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminListUserTypes(options?: ExecuteQueryOptions): QueryPromise<AdminListUserTypesData, undefined>;
+
+interface AdminListUserTypesRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<AdminListUserTypesData, undefined>;
+}
+export const adminListUserTypesRef: AdminListUserTypesRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+adminListUserTypes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<AdminListUserTypesData, undefined>;
+
+interface AdminListUserTypesRef {
+  ...
+  (dc: DataConnect): QueryRef<AdminListUserTypesData, undefined>;
+}
+export const adminListUserTypesRef: AdminListUserTypesRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminListUserTypesRef:
+```typescript
+const name = adminListUserTypesRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminListUserTypes` query has no variables.
+### Return Type
+Recall that executing the `AdminListUserTypes` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminListUserTypesData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminListUserTypesData {
+  userTypes: ({
+    id: UUIDString;
+    name: string;
+    features: ({
+      name: string;
+      description?: string | null;
+    } & Feature_Key)[];
+  } & UserType_Key)[];
+}
+```
+### Using `AdminListUserTypes`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminListUserTypes } from '@dataconnect/generated';
+
+
+// Call the `adminListUserTypes()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminListUserTypes();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminListUserTypes(dataConnect);
+
+console.log(data.userTypes);
+
+// Or, you can use the `Promise` API.
+adminListUserTypes().then((response) => {
+  const data = response.data;
+  console.log(data.userTypes);
+});
+```
+
+### Using `AdminListUserTypes`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, adminListUserTypesRef } from '@dataconnect/generated';
+
+
+// Call the `adminListUserTypesRef()` function to get a reference to the query.
+const ref = adminListUserTypesRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminListUserTypesRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.userTypes);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userTypes);
+});
+```
+
+## AdminListFeatures
+You can execute the `AdminListFeatures` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminListFeatures(options?: ExecuteQueryOptions): QueryPromise<AdminListFeaturesData, undefined>;
+
+interface AdminListFeaturesRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<AdminListFeaturesData, undefined>;
+}
+export const adminListFeaturesRef: AdminListFeaturesRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+adminListFeatures(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<AdminListFeaturesData, undefined>;
+
+interface AdminListFeaturesRef {
+  ...
+  (dc: DataConnect): QueryRef<AdminListFeaturesData, undefined>;
+}
+export const adminListFeaturesRef: AdminListFeaturesRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminListFeaturesRef:
+```typescript
+const name = adminListFeaturesRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminListFeatures` query has no variables.
+### Return Type
+Recall that executing the `AdminListFeatures` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminListFeaturesData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminListFeaturesData {
+  features: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+  } & Feature_Key)[];
+}
+```
+### Using `AdminListFeatures`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminListFeatures } from '@dataconnect/generated';
+
+
+// Call the `adminListFeatures()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminListFeatures();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminListFeatures(dataConnect);
+
+console.log(data.features);
+
+// Or, you can use the `Promise` API.
+adminListFeatures().then((response) => {
+  const data = response.data;
+  console.log(data.features);
+});
+```
+
+### Using `AdminListFeatures`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, adminListFeaturesRef } from '@dataconnect/generated';
+
+
+// Call the `adminListFeaturesRef()` function to get a reference to the query.
+const ref = adminListFeaturesRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminListFeaturesRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.features);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.features);
+});
+```
+
+## AdminGetUser
+You can execute the `AdminGetUser` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminGetUser(vars: AdminGetUserVariables, options?: ExecuteQueryOptions): QueryPromise<AdminGetUserData, AdminGetUserVariables>;
+
+interface AdminGetUserRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminGetUserVariables): QueryRef<AdminGetUserData, AdminGetUserVariables>;
+}
+export const adminGetUserRef: AdminGetUserRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+adminGetUser(dc: DataConnect, vars: AdminGetUserVariables, options?: ExecuteQueryOptions): QueryPromise<AdminGetUserData, AdminGetUserVariables>;
+
+interface AdminGetUserRef {
+  ...
+  (dc: DataConnect, vars: AdminGetUserVariables): QueryRef<AdminGetUserData, AdminGetUserVariables>;
+}
+export const adminGetUserRef: AdminGetUserRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminGetUserRef:
+```typescript
+const name = adminGetUserRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminGetUser` query requires an argument of type `AdminGetUserVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface AdminGetUserVariables {
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `AdminGetUser` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminGetUserData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminGetUserData {
+  user?: {
+    id: UUIDString;
+    username: string;
+    email?: string | null;
+    userType: {
+      name: string;
+    } & UserType_Key;
+  } & User_Key;
+}
+```
+### Using `AdminGetUser`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminGetUser, AdminGetUserVariables } from '@dataconnect/generated';
+
+// The `AdminGetUser` query requires an argument of type `AdminGetUserVariables`:
+const adminGetUserVars: AdminGetUserVariables = {
+  userId: ..., 
+};
+
+// Call the `adminGetUser()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminGetUser(adminGetUserVars);
+// Variables can be defined inline as well.
+const { data } = await adminGetUser({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminGetUser(dataConnect, adminGetUserVars);
+
+console.log(data.user);
+
+// Or, you can use the `Promise` API.
+adminGetUser(adminGetUserVars).then((response) => {
+  const data = response.data;
+  console.log(data.user);
+});
+```
+
+### Using `AdminGetUser`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, adminGetUserRef, AdminGetUserVariables } from '@dataconnect/generated';
+
+// The `AdminGetUser` query requires an argument of type `AdminGetUserVariables`:
+const adminGetUserVars: AdminGetUserVariables = {
+  userId: ..., 
+};
+
+// Call the `adminGetUserRef()` function to get a reference to the query.
+const ref = adminGetUserRef(adminGetUserVars);
+// Variables can be defined inline as well.
+const ref = adminGetUserRef({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminGetUserRef(dataConnect, adminGetUserVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.user);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user);
+});
+```
+
+## AdminListTeams
+You can execute the `AdminListTeams` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminListTeams(options?: ExecuteQueryOptions): QueryPromise<AdminListTeamsData, undefined>;
+
+interface AdminListTeamsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<AdminListTeamsData, undefined>;
+}
+export const adminListTeamsRef: AdminListTeamsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+adminListTeams(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<AdminListTeamsData, undefined>;
+
+interface AdminListTeamsRef {
+  ...
+  (dc: DataConnect): QueryRef<AdminListTeamsData, undefined>;
+}
+export const adminListTeamsRef: AdminListTeamsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminListTeamsRef:
+```typescript
+const name = adminListTeamsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminListTeams` query has no variables.
+### Return Type
+Recall that executing the `AdminListTeams` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminListTeamsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminListTeamsData {
+  teams: ({
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    createdAt: TimestampString;
+    members: ({
+      user: {
+        id: UUIDString;
+        username: string;
+        email?: string | null;
+        userType: {
+          name: string;
+        } & UserType_Key;
+      } & User_Key;
+    })[];
+  } & Team_Key)[];
+}
+```
+### Using `AdminListTeams`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminListTeams } from '@dataconnect/generated';
+
+
+// Call the `adminListTeams()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminListTeams();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminListTeams(dataConnect);
+
+console.log(data.teams);
+
+// Or, you can use the `Promise` API.
+adminListTeams().then((response) => {
+  const data = response.data;
+  console.log(data.teams);
+});
+```
+
+### Using `AdminListTeams`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, adminListTeamsRef } from '@dataconnect/generated';
+
+
+// Call the `adminListTeamsRef()` function to get a reference to the query.
+const ref = adminListTeamsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminListTeamsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.teams);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.teams);
 });
 ```
 
