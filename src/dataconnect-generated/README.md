@@ -21,8 +21,10 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListTimeEntriesByTicket*](#listtimeentriesbyticket)
   - [*ListMyTimeEntries*](#listmytimeentries)
   - [*ListTimeEntriesByDateRange*](#listtimeentriesbydaterange)
+  - [*ListUserTypes*](#listusertypes)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
+  - [*SetUserType*](#setusertype)
   - [*CreateTimeEntry*](#createtimeentry)
   - [*CreateWorkLogOnly*](#createworklogonly)
   - [*UpdateTimeEntry*](#updatetimeentry)
@@ -128,6 +130,10 @@ export interface ListUsersData {
     id: UUIDString;
     username: string;
     email?: string | null;
+    userType: {
+      id: UUIDString;
+      name: string;
+    } & UserType_Key;
     createdAt: TimestampString;
   } & User_Key)[];
 }
@@ -222,6 +228,9 @@ The `data` property is an object of type `GetMyUserData`, which is defined in [d
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
+    userType: {
+      name: string;
+    } & UserType_Key;
     colorScheme?: {
       id: UUIDString;
       name: string;
@@ -1415,6 +1424,100 @@ executeQuery(ref).then((response) => {
 });
 ```
 
+## ListUserTypes
+You can execute the `ListUserTypes` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listUserTypes(options?: ExecuteQueryOptions): QueryPromise<ListUserTypesData, undefined>;
+
+interface ListUserTypesRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListUserTypesData, undefined>;
+}
+export const listUserTypesRef: ListUserTypesRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listUserTypes(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUserTypesData, undefined>;
+
+interface ListUserTypesRef {
+  ...
+  (dc: DataConnect): QueryRef<ListUserTypesData, undefined>;
+}
+export const listUserTypesRef: ListUserTypesRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listUserTypesRef:
+```typescript
+const name = listUserTypesRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListUserTypes` query has no variables.
+### Return Type
+Recall that executing the `ListUserTypes` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListUserTypesData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListUserTypesData {
+  userTypes: ({
+    id: UUIDString;
+    name: string;
+  } & UserType_Key)[];
+}
+```
+### Using `ListUserTypes`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listUserTypes } from '@dataconnect/generated';
+
+
+// Call the `listUserTypes()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listUserTypes();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listUserTypes(dataConnect);
+
+console.log(data.userTypes);
+
+// Or, you can use the `Promise` API.
+listUserTypes().then((response) => {
+  const data = response.data;
+  console.log(data.userTypes);
+});
+```
+
+### Using `ListUserTypes`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listUserTypesRef } from '@dataconnect/generated';
+
+
+// Call the `listUserTypesRef()` function to get a reference to the query.
+const ref = listUserTypesRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listUserTypesRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.userTypes);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userTypes);
+});
+```
+
 # Mutations
 
 There are two ways to execute a Data Connect Mutation using the generated Web SDK:
@@ -1468,6 +1571,7 @@ export interface CreateUserFromGoogleVariables {
   username: string;
   email: string;
   createdAt: TimestampString;
+  userTypeName?: string;
 }
 ```
 ### Return Type
@@ -1491,13 +1595,14 @@ const createUserFromGoogleVars: CreateUserFromGoogleVariables = {
   username: ..., 
   email: ..., 
   createdAt: ..., 
+  userTypeName: ..., // optional
 };
 
 // Call the `createUserFromGoogle()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createUserFromGoogle(createUserFromGoogleVars);
 // Variables can be defined inline as well.
-const { data } = await createUserFromGoogle({ googleUid: ..., username: ..., email: ..., createdAt: ..., });
+const { data } = await createUserFromGoogle({ googleUid: ..., username: ..., email: ..., createdAt: ..., userTypeName: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1524,12 +1629,13 @@ const createUserFromGoogleVars: CreateUserFromGoogleVariables = {
   username: ..., 
   email: ..., 
   createdAt: ..., 
+  userTypeName: ..., // optional
 };
 
 // Call the `createUserFromGoogleRef()` function to get a reference to the mutation.
 const ref = createUserFromGoogleRef(createUserFromGoogleVars);
 // Variables can be defined inline as well.
-const ref = createUserFromGoogleRef({ googleUid: ..., username: ..., email: ..., createdAt: ..., });
+const ref = createUserFromGoogleRef({ googleUid: ..., username: ..., email: ..., createdAt: ..., userTypeName: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1545,6 +1651,118 @@ console.log(data.user_insert);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.user_insert);
+});
+```
+
+## SetUserType
+You can execute the `SetUserType` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+setUserType(vars: SetUserTypeVariables): MutationPromise<SetUserTypeData, SetUserTypeVariables>;
+
+interface SetUserTypeRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SetUserTypeVariables): MutationRef<SetUserTypeData, SetUserTypeVariables>;
+}
+export const setUserTypeRef: SetUserTypeRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+setUserType(dc: DataConnect, vars: SetUserTypeVariables): MutationPromise<SetUserTypeData, SetUserTypeVariables>;
+
+interface SetUserTypeRef {
+  ...
+  (dc: DataConnect, vars: SetUserTypeVariables): MutationRef<SetUserTypeData, SetUserTypeVariables>;
+}
+export const setUserTypeRef: SetUserTypeRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the setUserTypeRef:
+```typescript
+const name = setUserTypeRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SetUserType` mutation requires an argument of type `SetUserTypeVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SetUserTypeVariables {
+  userId: UUIDString;
+  userTypeName: string;
+}
+```
+### Return Type
+Recall that executing the `SetUserType` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SetUserTypeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SetUserTypeData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SetUserType`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, setUserType, SetUserTypeVariables } from '@dataconnect/generated';
+
+// The `SetUserType` mutation requires an argument of type `SetUserTypeVariables`:
+const setUserTypeVars: SetUserTypeVariables = {
+  userId: ..., 
+  userTypeName: ..., 
+};
+
+// Call the `setUserType()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await setUserType(setUserTypeVars);
+// Variables can be defined inline as well.
+const { data } = await setUserType({ userId: ..., userTypeName: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await setUserType(dataConnect, setUserTypeVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+setUserType(setUserTypeVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SetUserType`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, setUserTypeRef, SetUserTypeVariables } from '@dataconnect/generated';
+
+// The `SetUserType` mutation requires an argument of type `SetUserTypeVariables`:
+const setUserTypeVars: SetUserTypeVariables = {
+  userId: ..., 
+  userTypeName: ..., 
+};
+
+// Call the `setUserTypeRef()` function to get a reference to the mutation.
+const ref = setUserTypeRef(setUserTypeVars);
+// Variables can be defined inline as well.
+const ref = setUserTypeRef({ userId: ..., userTypeName: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = setUserTypeRef(dataConnect, setUserTypeVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
 });
 ```
 

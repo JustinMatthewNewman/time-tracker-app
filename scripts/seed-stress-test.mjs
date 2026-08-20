@@ -19,6 +19,7 @@
 // DATA_CONNECT_EMULATOR_HOST both point at localhost — see assertLocalOnly().
 
 import { v5 as uuidv5 } from "uuid";
+import { USER_TYPE_NAMES, DEFAULT_USER_TYPE } from "../lib/userTypes.ts";
 
 const args = new Set(process.argv.slice(2));
 const DRY_RUN = args.has("--dry-run");
@@ -346,18 +347,29 @@ async function main() {
     );
   }
 
-  // 3. User row (upsert by id, so reruns are no-ops).
+  // 3. Account tiers — must land before the User row, since User.userTypeName
+  // is a NOT NULL foreign key into this table. Same rows SeedUserTypes writes
+  // in dataconnect/seed_data.gql, seeded here too so this script stands alone
+  // rather than silently depending on that file having been run by hand first.
+  await dc.upsertMany(
+    "UserType",
+    USER_TYPE_NAMES.map((name) => ({ name, createdAt: new Date().toISOString() }))
+  );
+  console.log(`UserTypes: ${USER_TYPE_NAMES.length} rows`);
+
+  // 4. User row (upsert by id, so reruns are no-ops).
   await dc.upsertMany("User", [
     {
       id: userRowId,
       googleUid: TEST_USER_UID,
       username: TEST_USER_NAME,
       email: TEST_USER_EMAIL,
+      userTypeName: DEFAULT_USER_TYPE,
       createdAt: new Date().toISOString(),
     },
   ]);
 
-  // 4. Tickets (parent table before TimeEntry references them).
+  // 5. Tickets (parent table before TimeEntry references them).
   for (const [i, batch] of chunk(ticketPool, TICKET_CHUNK).entries()) {
     await dc.upsertMany(
       "Ticket",
@@ -366,13 +378,13 @@ async function main() {
     console.log(`Tickets: chunk ${i + 1} (${batch.length} rows)`);
   }
 
-  // 5. Work logs (parent table before TimeEntry references them).
+  // 6. Work logs (parent table before TimeEntry references them).
   for (const [i, batch] of chunk(workLogs, WORKLOG_CHUNK).entries()) {
     await dc.upsertMany("WorkLog", batch);
     console.log(`WorkLogs: chunk ${i + 1}/${Math.ceil(workLogs.length / WORKLOG_CHUNK)} (${batch.length} rows)`);
   }
 
-  // 6. Time entries.
+  // 7. Time entries.
   for (const [i, batch] of chunk(timeEntries, ENTRY_CHUNK).entries()) {
     await dc.upsertMany("TimeEntry", batch);
     console.log(`TimeEntries: chunk ${i + 1}/${Math.ceil(timeEntries.length / ENTRY_CHUNK)} (${batch.length} rows)`);

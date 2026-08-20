@@ -27,6 +27,20 @@ exports.createUserFromGoogle = function createUserFromGoogle(dcOrVars, vars) {
 }
 ;
 
+const setUserTypeRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SetUserType', inputVars);
+}
+setUserTypeRef.operationName = 'SetUserType';
+exports.setUserTypeRef = setUserTypeRef;
+
+exports.setUserType = function setUserType(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(setUserTypeRef(dcInstance, inputVars));
+}
+;
+
 const createTimeEntryRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -441,5 +455,20 @@ exports.listTimeEntriesByDateRange = function listTimeEntriesByDateRange(dcOrVar
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(listTimeEntriesByDateRangeRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const listUserTypesRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListUserTypes');
+}
+listUserTypesRef.operationName = 'ListUserTypes';
+exports.listUserTypesRef = listUserTypesRef;
+
+exports.listUserTypes = function listUserTypes(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listUserTypesRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;

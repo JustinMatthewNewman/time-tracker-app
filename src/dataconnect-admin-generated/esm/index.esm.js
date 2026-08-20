@@ -12,6 +12,12 @@ export function createUserFromGoogle(dcOrVarsOrOptions, varsOrOptions, options) 
   return dcInstance.executeMutation('CreateUserFromGoogle', inputVars, inputOpts);
 }
 
+export function setUserType(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SetUserType', inputVars, inputOpts);
+}
+
 export function createTimeEntry(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
@@ -184,5 +190,11 @@ export function listTimeEntriesByDateRange(dcOrVarsOrOptions, varsOrOptions, opt
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
   return dcInstance.executeQuery('ListTimeEntriesByDateRange', inputVars, inputOpts);
+}
+
+export function listUserTypes(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListUserTypes', undefined, inputOpts);
 }
 

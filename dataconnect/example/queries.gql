@@ -5,6 +5,10 @@ query ListUsers @auth(level: NO_ACCESS) {
     id
     username
     email
+    userType {
+      id
+      name
+    }
     createdAt
   }
 }
@@ -12,6 +16,12 @@ query ListUsers @auth(level: NO_ACCESS) {
 query GetMyUser @auth(level: USER) {
   user(first: { where: { googleUid: { eq_expr: "auth.uid" } } }) {
     id
+    # Non-null in the schema, so this is always present — feature gating can
+    # switch on userType.name without a null check. Read-only to the client:
+    # changing it goes through SetUserType, which is NO_ACCESS (see mutations).
+    userType {
+      name
+    }
     colorScheme {
       id
       name
@@ -257,5 +267,15 @@ query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Da
     }
     officeNumber
     createdAt
+  }
+}
+
+# The available account tiers. USER-level rather than NO_ACCESS because the
+# list is non-sensitive (five fixed names) and an admin UI needs it to populate
+# a picker; assigning one is the privileged half, and that lives in SetUserType.
+query ListUserTypes @auth(level: USER, insecureReason: "Tiers are non-sensitive public metadata") {
+  userTypes(orderBy: [{ name: ASC }]) {
+    id
+    name
   }
 }

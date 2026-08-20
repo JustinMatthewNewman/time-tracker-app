@@ -1,8 +1,44 @@
+# The fixed set of account tiers (Admin, Guest, Regular, Elevated, Premium),
+# referenced by User.userType. Keyed on `name` rather than a UUID for the same
+# reason Ticket is keyed on ticketNumber: the natural key makes userType_upsert
+# idempotent by name, and it keeps User's foreign key column readable
+# ("Regular") instead of an opaque UUID.
+#
+# Deliberately names-only for now — feature gating keys off `name` in app code.
+# Per-tier config columns (maxWorkLogs, canExportData, ...) can be added here
+# later without touching User.
+#
+# WARNING — never DELETE a row from this table. Data Connect derives ON DELETE
+# from nullability and gives no override, so User.userType being a required
+# reference makes it ON DELETE CASCADE: dropping a tier here deletes every User
+# holding it, and WorkLog.user / TimeEntry.user cascade in turn, taking those
+# users' work logs and time entries with them. Add tiers; never remove one.
+type UserType @table(key: "name") {
+  id: UUID! @default(expr: "uuidV4()") @unique
+  name: String!
+  createdAt: Timestamp! @default(expr: "request.time")
+}
+
 type User @table {
   id: UUID! @default(expr: "uuidV4()")
   googleUid: String! @unique
   username: String!
   email: String
+  # Every user has exactly one tier — non-null, no default tier at the GraphQL
+  # level beyond the column default below.
+  #
+  # The FK scalar is declared explicitly (rather than letting a bare
+  # `userType: UserType!` generate an implicit one) purely so it can carry
+  # @default: that default is what backfills every pre-existing user to
+  # "Regular" when the NOT NULL column is added.
+  #
+  # The default alone is NOT enough on a database that already has users —
+  # Data Connect adds the column and its FK constraint in one statement, so the
+  # "Regular" row must already be in user_type or the migration aborts with a
+  # foreign key violation. See the two-phase rollout note on SeedUserTypes in
+  # dataconnect/seed_data.gql.
+  userType: UserType! @ref(fields: "userTypeName", references: "name")
+  userTypeName: String! @default(value: "Regular")
   colorScheme: ColorScheme
   performanceMode: Boolean @default(expr: "false")
   # Percentage (0-100) multiplier applied on top of each page's own

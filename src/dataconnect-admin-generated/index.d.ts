@@ -41,6 +41,7 @@ export interface CreateUserFromGoogleVariables {
   username: string;
   email: string;
   createdAt: TimestampString;
+  userTypeName?: string;
 }
 
 export interface CreateWorkLogData {
@@ -118,6 +119,9 @@ export interface DeleteWorkLogVariables {
 export interface GetMyUserData {
   user?: {
     id: UUIDString;
+    userType: {
+      name: string;
+    } & UserType_Key;
     colorScheme?: {
       id: UUIDString;
       name: string;
@@ -324,11 +328,22 @@ export interface ListTimeEntriesVariables {
   userId: UUIDString;
 }
 
+export interface ListUserTypesData {
+  userTypes: ({
+    id: UUIDString;
+    name: string;
+  } & UserType_Key)[];
+}
+
 export interface ListUsersData {
   users: ({
     id: UUIDString;
     username: string;
     email?: string | null;
+    userType: {
+      id: UUIDString;
+      name: string;
+    } & UserType_Key;
     createdAt: TimestampString;
   } & User_Key)[];
 }
@@ -405,6 +420,15 @@ export interface SelectMyPerformanceModeVariables {
   performanceMode: boolean;
 }
 
+export interface SetUserTypeData {
+  user_update?: User_Key | null;
+}
+
+export interface SetUserTypeVariables {
+  userId: UUIDString;
+  userTypeName: string;
+}
+
 export interface Theme_Key {
   id: UUIDString;
   __typename?: 'Theme_Key';
@@ -470,6 +494,11 @@ export interface UpsertTicketVariables {
   ticketLink?: string | null;
 }
 
+export interface UserType_Key {
+  name: string;
+  __typename?: 'UserType_Key';
+}
+
 export interface User_Key {
   id: UUIDString;
   __typename?: 'User_Key';
@@ -484,6 +513,11 @@ export interface WorkLog_Key {
 export function createUserFromGoogle(dc: DataConnect, vars: CreateUserFromGoogleVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateUserFromGoogleData>>;
 /** Generated Node Admin SDK operation action function for the 'CreateUserFromGoogle' Mutation. Allow users to pass in custom DataConnect instances. */
 export function createUserFromGoogle(vars: CreateUserFromGoogleVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateUserFromGoogleData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SetUserType' Mutation. Allow users to execute without passing in DataConnect. */
+export function setUserType(dc: DataConnect, vars: SetUserTypeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SetUserTypeData>>;
+/** Generated Node Admin SDK operation action function for the 'SetUserType' Mutation. Allow users to pass in custom DataConnect instances. */
+export function setUserType(vars: SetUserTypeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SetUserTypeData>>;
 
 /** Generated Node Admin SDK operation action function for the 'CreateTimeEntry' Mutation. Allow users to execute without passing in DataConnect. */
 export function createTimeEntry(dc: DataConnect, vars: CreateTimeEntryVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateTimeEntryData>>;
@@ -629,4 +663,9 @@ export function listMyTimeEntries(vars?: ListMyTimeEntriesVariables, options?: O
 export function listTimeEntriesByDateRange(dc: DataConnect, vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;
 /** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByDateRange' Query. Allow users to pass in custom DataConnect instances. */
 export function listTimeEntriesByDateRange(vars: ListTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByDateRangeData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListUserTypes' Query. Allow users to execute without passing in DataConnect. */
+export function listUserTypes(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListUserTypesData>>;
+/** Generated Node Admin SDK operation action function for the 'ListUserTypes' Query. Allow users to pass in custom DataConnect instances. */
+export function listUserTypes(options?: OperationOptions): Promise<ExecuteOperationResponse<ListUserTypesData>>;
 
