@@ -57,3 +57,39 @@ export function formatDuration(minutes: number): string {
 export function formatDecimalHours(minutes: number): string {
   return (Math.round((minutes / 60) * 100) / 100).toString();
 }
+
+export const TICKET_TITLE_MAX_CHARS = 20;
+
+// Caps a ticket title before it's shown alongside the ticket number, so a
+// long title can't push other UI (a calendar day cell, a table column) out
+// of shape — same rationale as UNASSIGNED_TICKET being a fixed label.
+export function truncateTicketTitle(title: string): string {
+  const trimmed = title.trim();
+  return trimmed.length > TICKET_TITLE_MAX_CHARS ? `${trimmed.slice(0, TICKET_TITLE_MAX_CHARS)}…` : trimmed;
+}
+
+interface TicketWithTitle {
+  ticketNumber: number;
+  ticketTitle?: string | null;
+}
+
+// Every entry-level `ticket` sub-object (TimeEntry.ticket in the various
+// list queries) only ever carries ticketNumber/ticketLink, not the title —
+// so callers that group entries by ticket (groupByTicket above) look the
+// title up separately from TicketsContext's already-loaded ticket list
+// rather than widening every entry query just to carry one extra field.
+export function buildTicketTitleMap(tickets: TicketWithTitle[]): Map<number, string> {
+  const map = new Map<number, string>();
+  for (const t of tickets) {
+    if (t.ticketTitle) map.set(t.ticketNumber, t.ticketTitle);
+  }
+  return map;
+}
+
+// Plain-text "number - Title" for contexts that can't render the styled
+// TicketTitleSuffix component (a native `title=` hover attribute, a chart
+// tooltip's text-only label) — same truncation rule, just flattened to one
+// string instead of two differently-styled spans.
+export function ticketLabelWithTitle(ticket: string, title?: string | null): string {
+  return title ? `${ticket} - ${truncateTicketTitle(title)}` : ticket;
+}

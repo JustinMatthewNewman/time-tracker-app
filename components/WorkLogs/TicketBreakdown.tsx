@@ -3,10 +3,12 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "@heroui/react";
-import { groupByTicket, formatDuration, formatDecimalHours, UNASSIGNED_TICKET } from "@/lib/timeTotals";
+import { groupByTicket, formatDuration, formatDecimalHours, buildTicketTitleMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "@/components/Dashboard/chartColor";
+import { TicketTitleSuffix } from "@/components/Dashboard/TicketTitleSuffix";
 import { ArrowUpRightFromSquare, Copy, CopyCheck } from "@gravity-ui/icons";
 import { useBorders } from "@/context/BordersContext";
+import { useTickets } from "@/context/TicketsContext";
 import { DonutChart } from "./DonutChart";
 import { TicketBarChart } from "./TicketBarChart";
 
@@ -46,7 +48,9 @@ export function TicketBreakdown({
   emptyMessage = "No time entries for this work log.",
 }: TicketBreakdownProps) {
   const { bordersEnabled } = useBorders();
+  const { tickets } = useTickets();
   const totals = useMemo(() => groupByTicket(entries), [entries]);
+  const ticketTitleByNumber = useMemo(() => buildTicketTitleMap(tickets), [tickets]);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const handleCopy = async (key: string, text: string) => {
@@ -155,6 +159,9 @@ export function TicketBreakdown({
                         ) : (
                           t.ticket
                         )}
+                        <TicketTitleSuffix
+                          title={t.ticket !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(t.ticket)) : null}
+                        />
                       </span>
                       {t.ticketLink && (
                         <a
@@ -242,6 +249,9 @@ export function TicketBreakdown({
                 ) : (
                   d.label
                 )}
+                <TicketTitleSuffix
+                  title={d.label !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(d.label)) : null}
+                />
               </span>
               <span className="text-foreground/50">
                 {grandTotalMinutes > 0 ? Math.round((d.value / grandTotalMinutes) * 100) : 0}%
@@ -254,6 +264,7 @@ export function TicketBreakdown({
           <TicketBarChart
             data={totals.map((t) => ({
               label: t.ticket,
+              title: t.ticket !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(t.ticket)) : null,
               entryCount: t.entryCount,
               totalMinutes: t.totalMinutes,
               ...styleByTicket.get(t.ticket)!,
