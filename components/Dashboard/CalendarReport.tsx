@@ -7,12 +7,14 @@ import { useTimeEntriesByDateRange, type RangeTimeEntry } from "@/hooks/useTimeE
 import { useWorkLogs } from "@/hooks/useWorkLogs";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
 import { useBorders } from "@/context/BordersContext";
-import { groupByTicket, formatDuration, UNASSIGNED_TICKET } from "@/lib/timeTotals";
+import { useTickets } from "@/context/TicketsContext";
+import { groupByTicket, formatDuration, buildTicketTitleMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "./chartColor";
 import { startOfMonth, buildMonthGrid, type MonthGridDay } from "@/lib/monthBuckets";
 import { normalizeDayKey } from "@/lib/dayKeys";
 import { ChartTooltip, useChartTooltip } from "./ChartTooltip";
 import { MonthSelector } from "./MonthSelector";
+import { TicketTitleSuffix } from "./TicketTitleSuffix";
 
 const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const TOP_TICKETS_PER_DAY = 5;
@@ -95,6 +97,8 @@ export function CalendarReport() {
 
   const { entries, loading: entriesLoading, error } = useTimeEntriesByDateRange(startDate, endDate);
   const { workLogs, loading: workLogsLoading } = useWorkLogs();
+  const { tickets } = useTickets();
+  const ticketTitleByNumber = useMemo(() => buildTicketTitleMap(tickets), [tickets]);
 
   const entriesByDay = useMemo(() => {
     const map = new Map<string, RangeTimeEntry[]>();
@@ -205,7 +209,12 @@ export function CalendarReport() {
                                 style={{ backgroundColor: t.color, filter: t.filter }}
                                 aria-hidden
                               />
-                              <span className="min-w-0 flex-1 truncate text-foreground/80">{t.ticket}</span>
+                              <span className="min-w-0 flex-1 truncate text-foreground/80">
+                                {t.ticket}
+                                <TicketTitleSuffix
+                                  title={t.ticket !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(t.ticket)) : null}
+                                />
+                              </span>
                               <span className="shrink-0 tabular-nums text-foreground/50">{t.pct}%</span>
                             </div>
                           ))}

@@ -1,9 +1,14 @@
 "use client";
 
 import { ChartTooltip, useChartTooltip } from "@/components/Dashboard/ChartTooltip";
+import { TicketTitleSuffix } from "@/components/Dashboard/TicketTitleSuffix";
+import { ticketLabelWithTitle } from "@/lib/timeTotals";
 
 export interface TicketBarChartRow {
   label: string;
+  // Optional — only ticket-labeled callers (TicketBreakdownWeekly) have a
+  // title to offer; a plain work-log-labeled row leaves this undefined.
+  title?: string | null;
   entryCount: number;
   totalMinutes: number;
   color: string;
@@ -49,7 +54,7 @@ export function TicketBarChart({ data, formatDuration }: TicketBarChartProps) {
             >
               <span
                 className="row-span-2 truncate text-right text-xs font-medium text-foreground"
-                title={row.label}
+                title={ticketLabelWithTitle(row.label, row.title)}
               >
                 {row.label}
               </span>
@@ -76,7 +81,10 @@ export function TicketBarChart({ data, formatDuration }: TicketBarChartProps) {
 
       {tooltip && (
         <ChartTooltip x={tooltip.x} y={tooltip.y}>
-          <div className="font-medium text-foreground">{tooltip.data.label}</div>
+          <div className="font-medium text-foreground">
+            {tooltip.data.label}
+            <TicketTitleSuffix title={tooltip.data.title} />
+          </div>
           <div className="text-foreground/60">
             {tooltip.data.entryCount} entries · {formatDuration(tooltip.data.totalMinutes)}
           </div>

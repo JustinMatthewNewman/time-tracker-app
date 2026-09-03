@@ -1,9 +1,13 @@
 import { Card, Skeleton } from "@heroui/react";
-import { formatDuration } from "@/lib/timeTotals";
+import { formatDuration, ticketLabelWithTitle } from "@/lib/timeTotals";
 import { ChartTooltip, useChartTooltip } from "./ChartTooltip";
+import { TicketTitleSuffix } from "./TicketTitleSuffix";
 
 export interface HoursBarDatum {
   label: string;
+  // Optional — only ticket-labeled callers (TicketsReport) have a title to
+  // offer; the work-log-labeled caller (WorkLogsReport) leaves it undefined.
+  title?: string | null;
   totalMinutes: number;
 }
 
@@ -46,7 +50,7 @@ export function HoursBarChart({ title, data, emptyMessage = "No data yet.", sort
               <div
                 key={d.label}
                 className="group flex items-center gap-3"
-                title={`${d.label}: ${formatDuration(d.totalMinutes)}`}
+                title={`${ticketLabelWithTitle(d.label, d.title)}: ${formatDuration(d.totalMinutes)}`}
                 onPointerEnter={(e) => showAt(e, d)}
                 onPointerLeave={hide}
               >
@@ -68,7 +72,10 @@ export function HoursBarChart({ title, data, emptyMessage = "No data yet.", sort
 
           {tooltip && (
             <ChartTooltip x={tooltip.x} y={tooltip.y}>
-              <div className="font-medium text-foreground">{tooltip.data.label}</div>
+              <div className="font-medium text-foreground">
+                {tooltip.data.label}
+                <TicketTitleSuffix title={tooltip.data.title} />
+              </div>
               <div className="text-foreground/60">{formatDuration(tooltip.data.totalMinutes)}</div>
             </ChartTooltip>
           )}

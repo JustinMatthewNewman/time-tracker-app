@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { Card, Skeleton, Tabs } from "@heroui/react";
 import { useTimeEntriesByDateRange } from "@/hooks/useTimeEntriesByDateRange";
-import { groupByTicket, formatDuration, UNASSIGNED_TICKET } from "@/lib/timeTotals";
+import { useTickets } from "@/context/TicketsContext";
+import { groupByTicket, formatDuration, buildTicketTitleMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { startOfWeek, endOfWeek } from "@/lib/weekBuckets";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, CATEGORICAL_HUE_COUNT } from "./chartColor";
 import { DonutChart } from "@/components/WorkLogs/DonutChart";
@@ -63,6 +64,8 @@ export function TicketBreakdownWeekly() {
   }, [window]);
 
   const { entries, loading } = useTimeEntriesByDateRange(startDate, endDate);
+  const { tickets } = useTickets();
+  const ticketTitleByNumber = useMemo(() => buildTicketTitleMap(tickets), [tickets]);
   const rawTotals = useMemo(() => groupByTicket(entries), [entries]);
   const totals = useMemo(() => capToOther(rawTotals), [rawTotals]);
   const grandTotalMinutes = totals.reduce((sum, t) => sum + t.totalMinutes, 0);
@@ -113,6 +116,7 @@ export function TicketBreakdownWeekly() {
             <TicketBarChart
               data={totals.map((t) => ({
                 label: t.ticket,
+                title: t.ticket !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(t.ticket)) : null,
                 entryCount: t.entryCount,
                 totalMinutes: t.totalMinutes,
                 ...styleByTicket.get(t.ticket)!,
