@@ -29,7 +29,13 @@ export interface CreateTicketInput {
 
 export interface UpdateTicketInput {
   ticketNumber: number;
-  office: string;
+  // Optional so callers can patch a single field (e.g. just ticketTitle)
+  // without having to know/resend the other fields' current values —
+  // updateTicket's underlying GraphQL variables are all nullable, and an
+  // omitted variable leaves that column untouched (same partial-update
+  // behavior ensureTicketsExist already relies on for ticketNumber-only
+  // upserts).
+  office?: string;
   ticketTitle?: string;
   ticketLink?: string;
 }

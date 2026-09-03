@@ -45,6 +45,11 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState("");
+  const [savingTitle, setSavingTitle] = useState(false);
+  const [titleSaveError, setTitleSaveError] = useState<string | null>(null);
+
   // Grouped once per entries change (O(n)) rather than re-filtering on every
   // render — same approach as WorkLogTimeEntryCardLayout's entriesByHour.
   const entriesByDay = useMemo(() => {
@@ -99,17 +104,32 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
     setSaving(true);
     setSaveError(null);
     try {
-      await updateTicketDetails({
-        ticketNumber: ticket.ticketNumber,
-        office: trimmed,
-        ticketTitle: ticket.ticketTitle ?? undefined,
-        ticketLink: ticket.ticketLink ?? undefined,
-      });
+      await updateTicketDetails({ ticketNumber: ticket.ticketNumber, office: trimmed });
       setIsEditingOffice(false);
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : "Failed to save office");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const startEditingTitle = () => {
+    setTitleDraft(ticket?.ticketTitle ?? "");
+    setTitleSaveError(null);
+    setIsEditingTitle(true);
+  };
+
+  const handleSaveTitle = async () => {
+    if (!ticket) return;
+    setSavingTitle(true);
+    setTitleSaveError(null);
+    try {
+      await updateTicketDetails({ ticketNumber: ticket.ticketNumber, ticketTitle: titleDraft.trim() });
+      setIsEditingTitle(false);
+    } catch (err) {
+      setTitleSaveError(err instanceof Error ? err.message : "Failed to save title");
+    } finally {
+      setSavingTitle(false);
     }
   };
 
@@ -160,12 +180,53 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
           <>
             <Card className="shrink-0 p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex items-center gap-3">
-                  <TicketIcon className="size-6 text-accent" />
-                  <div>
+                <div className="flex items-start gap-3">
+                  <TicketIcon className="mt-0.5 size-6 shrink-0 text-accent" />
+                  <div className="min-w-0">
                     <h1 className="text-2xl font-bold">Ticket #{ticket.ticketNumber}</h1>
-                    {ticket.ticketTitle && (
-                      <p className="text-sm text-foreground/60">{ticket.ticketTitle}</p>
+
+                    {isEditingTitle ? (
+                      <div className="mt-2 flex max-w-sm flex-col gap-2">
+                        <TextField
+                          value={titleDraft}
+                          onChange={setTitleDraft}
+                          isDisabled={savingTitle}
+                          autoFocus
+                        >
+                          <Label>Title</Label>
+                          <Input placeholder="e.g. Migrate billing service" />
+                        </TextField>
+                        {titleSaveError && <p className="text-sm text-danger">{titleSaveError}</p>}
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={handleSaveTitle} isDisabled={savingTitle}>
+                            <Check className="size-4" /> {savingTitle ? "Saving..." : "Save"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setIsEditingTitle(false)}
+                            isDisabled={savingTitle}
+                          >
+                            <Xmark className="size-4" /> Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-0.5 flex items-center gap-2">
+                        <span
+                          className={`text-sm ${ticket.ticketTitle ? "text-foreground/60" : "italic text-foreground/40"}`}
+                        >
+                          {ticket.ticketTitle || "Add a title"}
+                        </span>
+                        <button
+                          type="button"
+                          aria-label={ticket.ticketTitle ? "Edit title" : "Add title"}
+                          onClick={startEditingTitle}
+                          className="rounded p-1 text-foreground/40 hover:bg-default hover:text-foreground"
+                        >
+                          <Pencil className="size-3.5" />
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
