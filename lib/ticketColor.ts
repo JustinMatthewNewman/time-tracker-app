@@ -76,6 +76,81 @@ export const TICKET_COLOR_PRESETS: readonly { hex: TicketColor; name: string }[]
   { hex: "#78716c", name: "Stone" },
 ];
 
+// --- Automatic colors -----------------------------------------------------
+//
+// Every ticket has a color whether or not anyone chose one. Without this the
+// whole feature is invisible on a real database: nothing tints until each
+// ticket is hand-colored, so the Ticket Colors switch appears to do nothing.
+//
+// Hues are spread by the golden angle (137.5°) rather than by dividing the
+// circle into N slots, because the ticket count isn't known in advance. Each
+// successive number lands in the largest remaining gap, so the palette stays
+// well-separated at any size — and, usefully here, consecutive ticket numbers
+// (which is what a day of related work looks like) come out maximally far
+// apart rather than nearly identical.
+const GOLDEN_ANGLE_DEG = 137.508;
+
+// Mid saturation and lightness on purpose. These get mixed down to ~12%
+// against the theme's surface, and fully saturated hues turn muddy and
+// indistinguishable at that strength, while pale ones vanish entirely.
+const AUTO_SATURATION = 0.6;
+const AUTO_LIGHTNESS = 0.5;
+
+const autoColorCache = new Map<number, TicketColor>();
+
+/**
+ * The color a ticket has when nobody has picked one.
+ *
+ * Derived purely from the ticket number, so it is stable forever and
+ * identical in every view — unlike chartColor.ts's rotation, which is indexed
+ * by position within whatever list is being rendered and therefore gives the
+ * same ticket different colors in different tables.
+ */
+export function autoTicketColor(ticketNumber: number): TicketColor {
+  const key = Math.abs(Math.trunc(ticketNumber));
+  const cached = autoColorCache.get(key);
+  if (cached) return cached;
+
+  const hue = (key * GOLDEN_ANGLE_DEG) % 360;
+  const hex = hslToHex(hue, AUTO_SATURATION, AUTO_LIGHTNESS);
+  autoColorCache.set(key, hex);
+  return hex;
+}
+
+/**
+ * A ticket's color: what someone chose, else the derived one.
+ *
+ * Null only for "no ticket at all" — that has no identity to color, and
+ * tinting it would imply one.
+ */
+export function effectiveTicketColor(
+  stored: string | null | undefined,
+  ticketNumber: number | null | undefined
+): TicketColor | null {
+  const explicit = normalizeTicketColor(stored);
+  if (explicit) return explicit;
+  if (ticketNumber === null || ticketNumber === undefined || !Number.isFinite(ticketNumber)) {
+    return null;
+  }
+  return autoTicketColor(ticketNumber);
+}
+
+function hslToHex(h: number, s: number, l: number): TicketColor {
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const hp = ((h % 360) + 360) % 360 / 60;
+  const x = c * (1 - Math.abs((hp % 2) - 1));
+  const [r1, g1, b1] =
+    hp < 1 ? [c, x, 0] :
+    hp < 2 ? [x, c, 0] :
+    hp < 3 ? [0, c, x] :
+    hp < 4 ? [0, x, c] :
+    hp < 5 ? [x, 0, c] :
+             [c, 0, x];
+  const m = l - c / 2;
+  const to255 = (v: number) => Math.round((v + m) * 255).toString(16).padStart(2, "0");
+  return `#${to255(r1)}${to255(g1)}${to255(b1)}`;
+}
+
 /**
  * Faint background wash for a table row.
  *

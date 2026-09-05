@@ -2,17 +2,23 @@
 
 import { useState } from "react";
 import { Button } from "@heroui/react";
-import { Check, Palette, Xmark } from "@gravity-ui/icons";
+import { Check, Xmark } from "@gravity-ui/icons";
 import { normalizeTicketColor, TICKET_COLOR_PRESETS, ticketRowTint } from "@/lib/ticketColor";
 
 interface TicketColorPickerProps {
-  /** Current color, already normalized ("#rrggbb"), or null when unset. */
+  /** The explicitly chosen color, or null when the ticket is using the default. */
   value: string | null;
+  /** The number-derived color used when nothing is chosen. */
+  fallback: string;
   onSave: (color: string | null) => Promise<void>;
 }
 
 /**
- * Sets a ticket's identity color.
+ * Overrides a ticket's identity color.
+ *
+ * Every ticket already has one, derived from its number (see autoTicketColor),
+ * so this is an override rather than an assignment — which is why the reset
+ * button says "automatic" instead of "clear".
  *
  * Presets plus a custom well, rather than only one or the other: a curated row
  * makes the common case a single click and keeps a project's tickets from
@@ -23,14 +29,17 @@ interface TicketColorPickerProps {
  * swatch click — would be a database round trip per exploratory click, and
  * each one repaints every row of every breakdown showing that ticket.
  */
-export function TicketColorPicker({ value, onSave }: TicketColorPickerProps) {
+export function TicketColorPicker({ value, fallback, onSave }: TicketColorPickerProps) {
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState<string | null>(value);
+  // Opens on whatever the ticket currently *looks* like, so the picker starts
+  // from the color on screen rather than from an empty state that doesn't
+  // match anything the user can see.
+  const [draft, setDraft] = useState<string | null>(value ?? fallback);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const start = () => {
-    setDraft(value);
+    setDraft(value ?? fallback);
     setError(null);
     setOpen(true);
   };
@@ -53,19 +62,15 @@ export function TicketColorPicker({ value, onSave }: TicketColorPickerProps) {
       <button
         type="button"
         onClick={start}
-        aria-label={value ? "Change ticket color" : "Set ticket color"}
+        aria-label="Change ticket color"
         className="flex items-center gap-2 rounded px-1 py-0.5 text-sm text-foreground/60 hover:bg-default hover:text-foreground"
       >
-        {value ? (
-          <span
-            className="size-3.5 shrink-0 rounded-full border border-default-300"
-            style={{ backgroundColor: value }}
-            aria-hidden
-          />
-        ) : (
-          <Palette className="size-3.5" aria-hidden />
-        )}
-        {value ? "Color" : "Set color"}
+        <span
+          className="size-3.5 shrink-0 rounded-full border border-default-300"
+          style={{ backgroundColor: value ?? fallback }}
+          aria-hidden
+        />
+        {value ? "Color" : "Color (automatic)"}
       </button>
     );
   }
@@ -102,7 +107,7 @@ export function TicketColorPicker({ value, onSave }: TicketColorPickerProps) {
             type="color"
             // The native input can't express "no color", so it shows the
             // draft or a neutral placeholder; clearing is the separate button.
-            value={draft ?? "#78716c"}
+            value={draft ?? fallback}
             onChange={(e) => setDraft(normalizeTicketColor(e.target.value))}
             disabled={saving}
             className="size-7 cursor-pointer rounded border border-default-200 bg-transparent"
@@ -120,7 +125,7 @@ export function TicketColorPicker({ value, onSave }: TicketColorPickerProps) {
                 : undefined
             }
           >
-            {draft ?? "No color"}
+            {draft ?? fallback}
           </span>
         </span>
       </div>
@@ -135,8 +140,10 @@ export function TicketColorPicker({ value, onSave }: TicketColorPickerProps) {
           <Xmark className="size-4" /> Cancel
         </Button>
         {value && (
-          <Button size="sm" variant="danger-soft" onClick={() => commit(null)} isDisabled={saving}>
-            Clear color
+          // Clears the override rather than the color: the ticket falls back
+          // to its number-derived default, it does not become colorless.
+          <Button size="sm" variant="outline" onClick={() => commit(null)} isDisabled={saving}>
+            Reset to automatic
           </Button>
         )}
       </div>

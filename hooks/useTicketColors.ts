@@ -4,7 +4,7 @@ import { useCallback, useMemo } from "react";
 import { useTickets } from "@/context/TicketsContext";
 import { useTicketColorsSetting } from "@/context/TicketColorsContext";
 import { buildTicketColorMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
-import { ticketRowTint } from "@/lib/ticketColor";
+import { effectiveTicketColor, ticketRowTint } from "@/lib/ticketColor";
 
 // The single place anything in the app asks "what color is this ticket, and
 // may I paint with it?".
@@ -24,7 +24,7 @@ import { ticketRowTint } from "@/lib/ticketColor";
 export interface TicketColors {
   /** False when the user has switched Ticket Colors off. */
   enabled: boolean;
-  /** The ticket's color, or null when unset or the setting is off. */
+  /** The ticket's color (chosen or derived), or null for "(No ticket)" / setting off. */
   colorFor: (ticket: number | string | null | undefined) => string | null;
   /** Faint row wash, or undefined when there's nothing to paint. */
   rowStyle: (ticket: number | string | null | undefined) => React.CSSProperties | undefined;
@@ -48,7 +48,10 @@ export function useTicketColors(): TicketColors {
       if (ticket === UNASSIGNED_TICKET) return null;
       const num = typeof ticket === "number" ? ticket : Number(ticket);
       if (!Number.isFinite(num)) return null;
-      return colorByNumber.get(num) ?? null;
+      // Chosen color if there is one, otherwise the number-derived default —
+      // so every ticket is colored and the feature is visible without anyone
+      // hand-assigning 100 tickets first.
+      return effectiveTicketColor(colorByNumber.get(num), num);
     },
     [ticketColorsEnabled, colorByNumber]
   );

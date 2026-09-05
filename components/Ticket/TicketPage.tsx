@@ -14,6 +14,7 @@ import { TicketDayEntriesTable } from "./TicketDayEntriesTable";
 import { TicketTotals } from "./TicketTotals";
 import { TicketColorPicker } from "./TicketColorPicker";
 import { useTicketColors } from "@/hooks/useTicketColors";
+import { autoTicketColor } from "@/lib/ticketColor";
 import AmbientBackground from "@/components/AmbientBackground";
 
 const TICKET_ID_PLACEHOLDER = "{ticket_id}";
@@ -259,7 +260,11 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
                     )}
 
                     <div className="mt-2 max-w-md">
-                      <TicketColorPicker value={ticket.color} onSave={handleSaveColor} />
+                      <TicketColorPicker
+                        value={ticket.color}
+                        fallback={autoTicketColor(ticket.ticketNumber)}
+                        onSave={handleSaveColor}
+                      />
                     </div>
                   </div>
                 </div>
