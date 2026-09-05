@@ -165,6 +165,14 @@ export interface CreateWorkLogVariables {
   workLogDate: TimestampString;
 }
 
+export interface DeleteGoogleCalendarConnectionData {
+  googleCalendarConnection_delete?: GoogleCalendarConnection_Key | null;
+}
+
+export interface DeleteGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+}
+
 export interface DeleteTimeEntryData {
   timeEntry_delete?: TimeEntry_Key | null;
 }
@@ -184,6 +192,26 @@ export interface DeleteWorkLogVariables {
 export interface Feature_Key {
   name: string;
   __typename?: 'Feature_Key';
+}
+
+export interface GetGoogleCalendarConnectionData {
+  googleCalendarConnection?: {
+    calendarId: string;
+    googleEmail?: string | null;
+    refreshTokenCipher: string;
+    scope: string;
+    mergeConsecutive: boolean;
+    overwriteExisting: boolean;
+    pruneOrphans: boolean;
+    markAsFree: boolean;
+    includeDescription: boolean;
+    connectedAt: TimestampString;
+    lastSyncedAt?: TimestampString | null;
+  };
+}
+
+export interface GetGoogleCalendarConnectionVariables {
+  userId: UUIDString;
 }
 
 export interface GetMyUserData {
@@ -252,6 +280,11 @@ export interface GetUserAccessByGoogleUidData {
 
 export interface GetUserAccessByGoogleUidVariables {
   googleUid: string;
+}
+
+export interface GoogleCalendarConnection_Key {
+  userId: UUIDString;
+  __typename?: 'GoogleCalendarConnection_Key';
 }
 
 export interface ListColorSchemesData {
@@ -546,6 +579,27 @@ export interface TimeEntry_Key {
   __typename?: 'TimeEntry_Key';
 }
 
+export interface TouchGoogleCalendarLastSyncedData {
+  googleCalendarConnection_update?: GoogleCalendarConnection_Key | null;
+}
+
+export interface TouchGoogleCalendarLastSyncedVariables {
+  userId: UUIDString;
+}
+
+export interface UpdateGoogleCalendarSyncPrefsData {
+  googleCalendarConnection_update?: GoogleCalendarConnection_Key | null;
+}
+
+export interface UpdateGoogleCalendarSyncPrefsVariables {
+  userId: UUIDString;
+  mergeConsecutive: boolean;
+  overwriteExisting: boolean;
+  pruneOrphans: boolean;
+  markAsFree: boolean;
+  includeDescription: boolean;
+}
+
 export interface UpdateTicketData {
   ticket_update?: Ticket_Key | null;
 }
@@ -583,6 +637,18 @@ export interface UpdateWorkLogData {
 export interface UpdateWorkLogVariables {
   workLogId: UUIDString;
   name: string;
+}
+
+export interface UpsertGoogleCalendarConnectionData {
+  googleCalendarConnection_upsert: GoogleCalendarConnection_Key;
+}
+
+export interface UpsertGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+  calendarId: string;
+  googleEmail?: string | null;
+  refreshTokenCipher: string;
+  scope: string;
 }
 
 export interface UpsertTicketData {
@@ -717,6 +783,26 @@ export function createWorkLog(dc: DataConnect, vars: CreateWorkLogVariables, opt
 /** Generated Node Admin SDK operation action function for the 'CreateWorkLog' Mutation. Allow users to pass in custom DataConnect instances. */
 export function createWorkLog(vars: CreateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateWorkLogData>>;
 
+/** Generated Node Admin SDK operation action function for the 'UpsertGoogleCalendarConnection' Mutation. Allow users to execute without passing in DataConnect. */
+export function upsertGoogleCalendarConnection(dc: DataConnect, vars: UpsertGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpsertGoogleCalendarConnectionData>>;
+/** Generated Node Admin SDK operation action function for the 'UpsertGoogleCalendarConnection' Mutation. Allow users to pass in custom DataConnect instances. */
+export function upsertGoogleCalendarConnection(vars: UpsertGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpsertGoogleCalendarConnectionData>>;
+
+/** Generated Node Admin SDK operation action function for the 'UpdateGoogleCalendarSyncPrefs' Mutation. Allow users to execute without passing in DataConnect. */
+export function updateGoogleCalendarSyncPrefs(dc: DataConnect, vars: UpdateGoogleCalendarSyncPrefsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateGoogleCalendarSyncPrefsData>>;
+/** Generated Node Admin SDK operation action function for the 'UpdateGoogleCalendarSyncPrefs' Mutation. Allow users to pass in custom DataConnect instances. */
+export function updateGoogleCalendarSyncPrefs(vars: UpdateGoogleCalendarSyncPrefsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateGoogleCalendarSyncPrefsData>>;
+
+/** Generated Node Admin SDK operation action function for the 'TouchGoogleCalendarLastSynced' Mutation. Allow users to execute without passing in DataConnect. */
+export function touchGoogleCalendarLastSynced(dc: DataConnect, vars: TouchGoogleCalendarLastSyncedVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<TouchGoogleCalendarLastSyncedData>>;
+/** Generated Node Admin SDK operation action function for the 'TouchGoogleCalendarLastSynced' Mutation. Allow users to pass in custom DataConnect instances. */
+export function touchGoogleCalendarLastSynced(vars: TouchGoogleCalendarLastSyncedVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<TouchGoogleCalendarLastSyncedData>>;
+
+/** Generated Node Admin SDK operation action function for the 'DeleteGoogleCalendarConnection' Mutation. Allow users to execute without passing in DataConnect. */
+export function deleteGoogleCalendarConnection(dc: DataConnect, vars: DeleteGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteGoogleCalendarConnectionData>>;
+/** Generated Node Admin SDK operation action function for the 'DeleteGoogleCalendarConnection' Mutation. Allow users to pass in custom DataConnect instances. */
+export function deleteGoogleCalendarConnection(vars: DeleteGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<DeleteGoogleCalendarConnectionData>>;
+
 /** Generated Node Admin SDK operation action function for the 'ListUsers' Query. Allow users to execute without passing in DataConnect. */
 export function listUsers(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListUsersData>>;
 /** Generated Node Admin SDK operation action function for the 'ListUsers' Query. Allow users to pass in custom DataConnect instances. */
@@ -806,4 +892,9 @@ export function adminGetUser(vars: AdminGetUserVariables, options?: OperationOpt
 export function adminListTeams(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListTeamsData>>;
 /** Generated Node Admin SDK operation action function for the 'AdminListTeams' Query. Allow users to pass in custom DataConnect instances. */
 export function adminListTeams(options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListTeamsData>>;
+
+/** Generated Node Admin SDK operation action function for the 'GetGoogleCalendarConnection' Query. Allow users to execute without passing in DataConnect. */
+export function getGoogleCalendarConnection(dc: DataConnect, vars: GetGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetGoogleCalendarConnectionData>>;
+/** Generated Node Admin SDK operation action function for the 'GetGoogleCalendarConnection' Query. Allow users to pass in custom DataConnect instances. */
+export function getGoogleCalendarConnection(vars: GetGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetGoogleCalendarConnectionData>>;
 

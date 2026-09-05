@@ -551,3 +551,73 @@ mutation CreateWorkLog(
     createdAt_expr: "request.time"
   })
 }
+
+# Find-or-create the caller's Google Calendar authorization. GoogleCalendarConnection
+# is keyed on `user`, so reconnecting overwrites the existing row rather than
+# creating a second one — which matters because the old row's refresh token is
+# dead the moment a new consent is granted, and two rows would leave a dead
+# credential behind.
+#
+# Deliberately does NOT touch the five sync preferences: an upsert listing them
+# would reset the user's settings to defaults on every reconnect. New rows get
+# the defaults from the column definitions in schema.gql instead.
+#
+# NO_ACCESS — see the security note on GoogleCalendarConnection in schema.gql.
+# This writes a credential; it is only ever called from the OAuth callback
+# route, which has already verified who the caller is.
+mutation UpsertGoogleCalendarConnection(
+  $userId: UUID!
+  $calendarId: String!
+  $googleEmail: String
+  $refreshTokenCipher: String!
+  $scope: String!
+) @auth(level: NO_ACCESS) {
+  googleCalendarConnection_upsert(data: {
+    userId: $userId
+    calendarId: $calendarId
+    googleEmail: $googleEmail
+    refreshTokenCipher: $refreshTokenCipher
+    scope: $scope
+    connectedAt_expr: "request.time"
+  })
+}
+
+# Sync preferences only — never the credential fields, so a bug in the settings
+# route cannot overwrite or clear the stored refresh token. All five are sent
+# together because the settings card writes them as one payload.
+mutation UpdateGoogleCalendarSyncPrefs(
+  $userId: UUID!
+  $mergeConsecutive: Boolean!
+  $overwriteExisting: Boolean!
+  $pruneOrphans: Boolean!
+  $markAsFree: Boolean!
+  $includeDescription: Boolean!
+) @auth(level: NO_ACCESS) {
+  googleCalendarConnection_update(
+    key: { userId: $userId }
+    data: {
+      mergeConsecutive: $mergeConsecutive
+      overwriteExisting: $overwriteExisting
+      pruneOrphans: $pruneOrphans
+      markAsFree: $markAsFree
+      includeDescription: $includeDescription
+    }
+  )
+}
+
+# Stamped after a sync that actually completed. Separate from the prefs
+# mutation so a sync never rewrites settings as a side effect.
+mutation TouchGoogleCalendarLastSynced($userId: UUID!) @auth(level: NO_ACCESS) {
+  googleCalendarConnection_update(
+    key: { userId: $userId }
+    data: { lastSyncedAt_expr: "request.time" }
+  )
+}
+
+# Forgets the authorization. The Google-side calendar and its events are NOT
+# touched here — deleting those is a separate, explicitly-confirmed step in the
+# disconnect route, because "stop syncing" and "destroy the record of my work"
+# are very different intentions.
+mutation DeleteGoogleCalendarConnection($userId: UUID!) @auth(level: NO_ACCESS) {
+  googleCalendarConnection_delete(key: { userId: $userId })
+}

@@ -126,6 +126,30 @@ export function createWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
   return dcInstance.executeMutation('CreateWorkLog', inputVars, inputOpts);
 }
 
+export function upsertGoogleCalendarConnection(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpsertGoogleCalendarConnection', inputVars, inputOpts);
+}
+
+export function updateGoogleCalendarSyncPrefs(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('UpdateGoogleCalendarSyncPrefs', inputVars, inputOpts);
+}
+
+export function touchGoogleCalendarLastSynced(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('TouchGoogleCalendarLastSynced', inputVars, inputOpts);
+}
+
+export function deleteGoogleCalendarConnection(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('DeleteGoogleCalendarConnection', inputVars, inputOpts);
+}
+
 export function listUsers(dcOrOptions, options) {
   const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
@@ -232,5 +256,11 @@ export function adminListTeams(dcOrOptions, options) {
   const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);
   return dcInstance.executeQuery('AdminListTeams', undefined, inputOpts);
+}
+
+export function getGoogleCalendarConnection(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('GetGoogleCalendarConnection', inputVars, inputOpts);
 }
 

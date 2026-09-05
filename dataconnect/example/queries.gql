@@ -382,3 +382,30 @@ query AdminListTeams @auth(level: NO_ACCESS) {
     }
   }
 }
+
+# The caller's Google Calendar authorization and sync preferences.
+#
+# NO_ACCESS, and load-bearing: this returns refreshTokenCipher, a live (if
+# encrypted) credential. A USER-level version would put an OAuth token on the
+# wire to the browser, which is precisely what storing it server-side was for.
+# Only app/api/google-calendar/* reads this, and it never forwards the cipher
+# to the client — see the redacted projection in lib/googleCalendar/store.ts.
+#
+# Looked up by the table key (userId) rather than by googleUid like
+# GetUserAccessByGoogleUid, because every caller has already resolved the uid
+# to a user row via getCallerAccess() before it gets here.
+query GetGoogleCalendarConnection($userId: UUID!) @auth(level: NO_ACCESS) {
+  googleCalendarConnection(key: { userId: $userId }) {
+    calendarId
+    googleEmail
+    refreshTokenCipher
+    scope
+    mergeConsecutive
+    overwriteExisting
+    pruneOrphans
+    markAsFree
+    includeDescription
+    connectedAt
+    lastSyncedAt
+  }
+}

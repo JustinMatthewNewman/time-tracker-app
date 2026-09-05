@@ -76,6 +76,77 @@ password: stress-test-password-123
 
 Sign in with that via the emulator's Google sign-in popup (pick it from the existing-accounts list, or just retype the email) to see the generated data in the app.
 
+## Google Calendar Sync
+
+Pushes your tracked time into a **dedicated "Time Tracker" calendar** in Google, so your day fills in with what you actually worked on. Manual "Sync now" over a date range you choose — there is no background job and no API call in the entry-save path.
+
+Configured from **Settings → Google Calendar** ([components/Settings/GoogleCalendarCard.tsx](components/Settings/GoogleCalendarCard.tsx)). The integration is inert until the four environment variables below are set; without them the card shows a setup hint rather than a broken button.
+
+### One-time Google Cloud setup
+
+Claude can't provision these for you — they have to be created in your own Google account.
+
+Use the **existing `ecs-time-tracker-app` project** — a Firebase project *is* a Google Cloud project, so the one backing Firebase Auth already exists and already has a consent screen configured by Firebase. A second project would just mean a second consent screen to maintain.
+
+> The consent screen pages were reorganized in 2025. What used to live under *APIs & Services → OAuth consent screen* is now **Google Auth Platform**, split into Branding / Audience / Clients / Data Access.
+
+1. **Enable the API.** [APIs & Services → Library](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) → **Google Calendar API** → Enable.
+2. **Check the audience.** [Google Auth Platform → Audience](https://console.cloud.google.com/auth/audience). Firebase will have set this up already; what matters is the publishing status:
+   - **Testing** — refresh tokens [expire after 7 days](https://developers.google.com/identity/protocols/oauth2#expiration), so you reconnect weekly. (The documented exception covers only name/email/profile scopes, which doesn't apply here.) Add your Google account under **Test users**.
+   - **In production** — tokens last indefinitely. Unverified apps show a one-time "Google hasn't verified this app" interstitial (Advanced → Go to…), and are capped at 100 users. **For personal use this is the better trade.**
+   - A refresh token also dies on revocation, six months of disuse, or exceeding 100 live tokens per client. All surface as a `reauth_required` error with a reconnect prompt, never a silent failure.
+3. **Register the scope** (optional in Testing, required for verification): [Data Access](https://console.cloud.google.com/auth/scopes) → Add or remove scopes → `https://www.googleapis.com/auth/calendar.app.created`.
+4. **Create the client.** [Google Auth Platform → Clients](https://console.cloud.google.com/auth/clients) → **Create client** → **Web application**.
+   - Name it something like `Time Tracker — Calendar Sync`. Create a *new* client rather than editing the Firebase-managed one, so an accidental change can't break sign-in.
+   - **Authorized redirect URIs** → `http://localhost:3000/api/google-calendar/callback`, plus your deployed equivalent. Must match `GOOGLE_OAUTH_REDIRECT_URI` **exactly** — scheme, case, and trailing slash all count.
+   - Leave *Authorized JavaScript origins* empty; the browser never calls Google directly here.
+5. **Copy the secret immediately.** Since June 2025 the client secret is [shown only once, at creation](https://support.google.com/cloud/answer/15549257). If you lose it, add a new secret on the client's detail page (max two).
+
+### Environment variables
+
+All server-side — none are `NEXT_PUBLIC_`, and none may become so. The browser never sees the client id, the secret, or any Google token.
+
+```bash
+GOOGLE_OAUTH_CLIENT_ID=...apps.googleusercontent.com
+GOOGLE_OAUTH_CLIENT_SECRET=...
+GOOGLE_OAUTH_REDIRECT_URI=http://localhost:3000/api/google-calendar/callback
+# 32 random bytes, base64. Generate with: openssl rand -base64 32
+GOOGLE_TOKEN_ENCRYPTION_KEY=...
+```
+
+`GOOGLE_TOKEN_ENCRYPTION_KEY` encrypts the stored refresh token at rest and signs the OAuth `state` parameter (two HKDF-derived subkeys — see [lib/googleCalendar/crypto.ts](lib/googleCalendar/crypto.ts)). **Rotating it invalidates every existing connection**; users just reconnect.
+
+### What it can and can't touch
+
+The only calendar scope requested is [`calendar.app.created`](https://developers.google.com/workspace/calendar/api/auth), which permits creating secondary calendars and managing events **only on calendars this app itself created**. Your primary calendar is unreachable — not by convention, but because Google rejects those requests at the token level. `openid`/`email` are also requested, purely so the settings card can show which account is connected.
+
+### Sync behavior
+
+| Setting | Default | Effect |
+| --- | --- | --- |
+| Merge consecutive entries | on | Back-to-back entries on the same ticket become one event, so a day is a few blocks rather than ~20 fifteen-minute slivers. |
+| Overwrite existing events | on | Re-syncing rewrites events this app created. Off preserves manual edits made in Google Calendar. |
+| Remove orphaned events | on | Deletes in-range events whose time entry is gone, making the calendar a true mirror of that range. |
+| Show as Free | on | Events are `transparent`, so logging past work doesn't retroactively blank out your availability. |
+| Include entry notes | on | Copies entry notes into the event body. |
+
+Two properties make this safe to re-run:
+
+- **Idempotent.** A Google event id is derived from the source TimeEntry's UUID (dashes stripped — hex is a subset of the base32hex alphabet Google requires), so re-syncing addresses the same event instead of duplicating it. No mapping table exists or is needed. A merged block keys on its *first* entry, so extending a block updates the event in place rather than churning it.
+- **Only ever touches its own events.** Every written event carries a private `ttManaged=1` extended property, and the sync lists events filtered on it. An event you add to the Time Tracker calendar by hand is invisible to the diff and can never be overwritten or pruned.
+
+Bounded per request: at most **366 days** of range and **500 writes**. A large first backfill reports what it left over — press Sync now again, and already-synced events come back "unchanged" for free.
+
+### Local development
+
+The OAuth flow talks to the real Google, so it can't be exercised against the emulators. The rest works locally with `GOOGLE_OAUTH_REDIRECT_URI=http://localhost:3000/api/google-calendar/callback` and your account added as a test user.
+
+Sync logic is covered by unit tests that need no network — merging, idempotency, the insert/update/skip/prune diff, and the crypto:
+
+```bash
+npx vitest run lib/googleCalendar
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

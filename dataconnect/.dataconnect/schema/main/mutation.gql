@@ -18,6 +18,15 @@ extend type Mutation {
     data: Feature_Data!
   ): Feature_KeyOutput! @fdc_generated(from: "Feature", purpose: INSERT_SINGLE)
   """
+  ✨ Insert a single `GoogleCalendarConnection` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  googleCalendarConnection_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: GoogleCalendarConnection_Data!
+  ): GoogleCalendarConnection_KeyOutput! @fdc_generated(from: "GoogleCalendarConnection", purpose: INSERT_SINGLE)
+  """
   ✨ Insert a single `Team` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
   team_insert(
@@ -116,6 +125,15 @@ extend type Mutation {
     """
     data: [Feature_Data!]!
   ): [Feature_KeyOutput!]! @fdc_generated(from: "Feature", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `GoogleCalendarConnection` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  googleCalendarConnection_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [GoogleCalendarConnection_Data!]!
+  ): [GoogleCalendarConnection_KeyOutput!]! @fdc_generated(from: "GoogleCalendarConnection", purpose: INSERT_MULTIPLE)
   """
   ✨ Insert `Team` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
   """
@@ -216,6 +234,15 @@ extend type Mutation {
     data: Feature_Data!
   ): Feature_KeyOutput! @fdc_generated(from: "Feature", purpose: UPSERT_SINGLE)
   """
+  ✨ Insert or update a single `GoogleCalendarConnection` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `GoogleCalendarConnection`.
+  """
+  googleCalendarConnection_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: GoogleCalendarConnection_Data!
+  ): GoogleCalendarConnection_KeyOutput! @fdc_generated(from: "GoogleCalendarConnection", purpose: UPSERT_SINGLE)
+  """
   ✨ Insert or update a single `Team` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Team`.
   """
   team_upsert(
@@ -314,6 +341,15 @@ extend type Mutation {
     """
     data: [Feature_Data!]!
   ): [Feature_KeyOutput!]! @fdc_generated(from: "Feature", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `GoogleCalendarConnection` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `GoogleCalendarConnection`.
+  """
+  googleCalendarConnection_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [GoogleCalendarConnection_Data!]!
+  ): [GoogleCalendarConnection_KeyOutput!]! @fdc_generated(from: "GoogleCalendarConnection", purpose: UPSERT_MULTIPLE)
   """
   ✨ Insert or update `Team` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Team`.
   """
@@ -438,6 +474,25 @@ extend type Mutation {
     """
     data: Feature_Data!
   ): Feature_KeyOutput @fdc_generated(from: "Feature", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `GoogleCalendarConnection` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `GoogleCalendarConnection` or `null` if not found.
+  """
+  googleCalendarConnection_update(
+    """
+    The key used to identify the object.
+    """
+    key: GoogleCalendarConnection_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: GoogleCalendarConnection_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: GoogleCalendarConnection_Data!
+  ): GoogleCalendarConnection_KeyOutput @fdc_generated(from: "GoogleCalendarConnection", purpose: UPDATE_SINGLE)
   """
   ✨ Update a single `Team` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Team` or `null` if not found.
   """
@@ -673,6 +728,25 @@ extend type Mutation {
     data: Feature_Data!
   ): Int! @fdc_generated(from: "Feature", purpose: UPDATE_MULTIPLE)
   """
+  ✨ Update `GoogleCalendarConnection` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  googleCalendarConnection_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: GoogleCalendarConnection_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: GoogleCalendarConnection_Data!
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection", purpose: UPDATE_MULTIPLE)
+  """
   ✨ Update `Team` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
   """
   team_updateMany(
@@ -877,6 +951,20 @@ extend type Mutation {
     first: Feature_FirstRow
   ): Feature_KeyOutput @fdc_generated(from: "Feature", purpose: DELETE_SINGLE)
   """
+  ✨ Delete a single `GoogleCalendarConnection` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  googleCalendarConnection_delete(
+    """
+    The key used to identify the object.
+    """
+    key: GoogleCalendarConnection_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: GoogleCalendarConnection_FirstRow
+  ): GoogleCalendarConnection_KeyOutput @fdc_generated(from: "GoogleCalendarConnection", purpose: DELETE_SINGLE)
+  """
   ✨ Delete a single `Team` based on `id`, `key` or `first` and return its key (or `null` if not found).
   """
   team_delete(
@@ -1055,6 +1143,20 @@ extend type Mutation {
     """
     all: Boolean = false
   ): Int! @fdc_generated(from: "Feature", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `GoogleCalendarConnection` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  googleCalendarConnection_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: GoogleCalendarConnection_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection", purpose: DELETE_MULTIPLE)
   """
   ✨ Delete `Team` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
   """

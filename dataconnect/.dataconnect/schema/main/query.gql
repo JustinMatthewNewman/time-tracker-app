@@ -33,6 +33,20 @@ extend type Query {
     first: Feature_FirstRow
   ): Feature @fdc_generated(from: "Feature", purpose: QUERY_SINGLE)
   """
+  ✨ Look up a single `GoogleCalendarConnection` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
+  """
+  googleCalendarConnection(
+    """
+    The key used to identify the object.
+    """
+    key: GoogleCalendarConnection_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: GoogleCalendarConnection_FirstRow
+  ): GoogleCalendarConnection @fdc_generated(from: "GoogleCalendarConnection", purpose: QUERY_SINGLE)
+  """
   ✨ Look up a single `Team` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   team(
@@ -251,6 +265,40 @@ extend type Query {
     """
     having: Feature_Having
   ): [Feature!]! @fdc_generated(from: "Feature", purpose: QUERY_MULTIPLE)
+  """
+  ✨ List `GoogleCalendarConnection` objects in the table and return selected fields, optionally filtered by `where` conditions
+  """
+  googleCalendarConnections(
+    """
+    Filter condition to narrow down the query results.
+    """
+    where: GoogleCalendarConnection_Filter
+
+    """
+    Order the query results by specific fields.
+    """
+    orderBy: [GoogleCalendarConnection_Order!]
+
+    """
+    Number of rows to skip before starting to return the results.
+    """
+    offset: Int
+
+    """
+    Maximum number of rows to return (defaults to 100 rows).
+    """
+    limit: Int = 100
+
+    """
+    Set to true to return distinct results.
+    """
+    distinct: Boolean = false
+
+    """
+    Filter condition to apply to the groups of aggregate queries.
+    """
+    having: GoogleCalendarConnection_Having
+  ): [GoogleCalendarConnection!]! @fdc_generated(from: "GoogleCalendarConnection", purpose: QUERY_MULTIPLE)
   """
   ✨ List `Team` objects in the table and return selected fields, optionally filtered by `where` conditions
   """

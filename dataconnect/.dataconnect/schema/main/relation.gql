@@ -241,6 +241,144 @@ extend type Feature {
   """
   _id: ID! @fdc_generated(from: "Feature.name", purpose: ENTITY_ID)
 }
+extend type GoogleCalendarConnection {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "GoogleCalendarConnection", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table.
+  """
+  _count: Int! @fdc_generated(from: "GoogleCalendarConnection.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `calendarId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  calendarId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.calendarId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `connectedAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  connectedAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.connectedAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `googleEmail` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  googleEmail_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.googleEmail", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `includeDescription` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  includeDescription_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.includeDescription", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `lastSyncedAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  lastSyncedAt_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.lastSyncedAt", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `markAsFree` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  markAsFree_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.markAsFree", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `mergeConsecutive` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  mergeConsecutive_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.mergeConsecutive", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `overwriteExisting` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  overwriteExisting_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.overwriteExisting", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `pruneOrphans` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  pruneOrphans_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.pruneOrphans", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `refreshTokenCipher` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  refreshTokenCipher_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.refreshTokenCipher", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `scope` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  scope_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.scope", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `GoogleCalendarConnection` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "GoogleCalendarConnection.userId", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `connectedAt` field in the `GoogleCalendarConnection` table.
+  """
+  connectedAt_min: Timestamp @fdc_generated(from: "GoogleCalendarConnection.connectedAt", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `lastSyncedAt` field in the `GoogleCalendarConnection` table.
+  """
+  lastSyncedAt_min: Timestamp @fdc_generated(from: "GoogleCalendarConnection.lastSyncedAt", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `connectedAt` field in the `GoogleCalendarConnection` table.
+  """
+  connectedAt_max: Timestamp @fdc_generated(from: "GoogleCalendarConnection.connectedAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `lastSyncedAt` field in the `GoogleCalendarConnection` table.
+  """
+  lastSyncedAt_max: Timestamp @fdc_generated(from: "GoogleCalendarConnection.lastSyncedAt", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "GoogleCalendarConnection.userId", purpose: ENTITY_ID)
+}
 extend type Team {
   """
   ✨ List `TeamMember` objects in a one-to-many relationship (where `TeamMember`.`team` is this object).
@@ -992,6 +1130,10 @@ extend type User {
     """
     having: WorkLog_Having
   ): [WorkLog!]! @fdc_generated(from: "WorkLog.user", purpose: QUERY_MULTIPLE_ONE_TO_MANY)
+  """
+  ✨ List `GoogleCalendarConnection` objects in a one-to-one relationship (where `GoogleCalendarConnection`.`user` is this object).
+  """
+  googleCalendarConnection_on_user: GoogleCalendarConnection @fdc_generated(from: "GoogleCalendarConnection.user", purpose: QUERY_SINGLE_ONE_TO_ONE)
   """
   ✨ List `Team` objects using `TeamMember` as the join table (a `TeamMember` object exists where its `user` is this and its `team` is that).
   """
