@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "@heroui/react";
-import { groupByTicket, formatDuration, formatDecimalHours, buildTicketTitleMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
+import { groupByTicket, formatDuration, formatDecimalHours, buildTicketTitleMap, buildTicketColorMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
+import { ticketRowTint } from "@/lib/ticketColor";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "@/components/Dashboard/chartColor";
 import { TicketTitleSuffix } from "@/components/Dashboard/TicketTitleSuffix";
 import { ArrowUpRightFromSquare, Copy, CopyCheck } from "@gravity-ui/icons";
@@ -12,9 +13,16 @@ import { useTickets } from "@/context/TicketsContext";
 import { DonutChart } from "./DonutChart";
 import { TicketBarChart } from "./TicketBarChart";
 
-// "(No ticket)" always renders as the theme's neutral --muted token instead
-// of taking a categorical rotation slot.
-function sliceStyle(ticket: string, colorIndex: number): SeriesColor {
+// Precedence: a ticket's own assigned color wins, then the neutral token for
+// "(No ticket)", then the theme-aware categorical rotation.
+//
+// The rotation stays the fallback rather than being replaced outright, so a
+// ticket nobody has colored looks exactly as it did before and still re-tints
+// with the active ColorScheme — the property chartColor.ts exists to protect.
+// An assigned color is a deliberate override of that, and only affects the
+// tickets someone actually chose a color for.
+function sliceStyle(ticket: string, colorIndex: number, assigned?: string): SeriesColor {
+  if (assigned) return { color: assigned };
   if (ticket === UNASSIGNED_TICKET) return NEUTRAL_SERIES_COLOR;
   return getSeriesColor(colorIndex);
 }
@@ -51,6 +59,7 @@ export function TicketBreakdown({
   const { tickets } = useTickets();
   const totals = useMemo(() => groupByTicket(entries), [entries]);
   const ticketTitleByNumber = useMemo(() => buildTicketTitleMap(tickets), [tickets]);
+  const ticketColorByNumber = useMemo(() => buildTicketColorMap(tickets), [tickets]);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const handleCopy = async (key: string, text: string) => {
@@ -113,7 +122,14 @@ export function TicketBreakdown({
 
   const grandTotalMinutes = totals.reduce((sum, t) => sum + t.totalMinutes, 0);
 
-  const chartData = totals.map((t, i) => ({ label: t.ticket, value: t.totalMinutes, ...sliceStyle(t.ticket, i) }));
+  const assignedColor = (ticket: string) =>
+    ticket === UNASSIGNED_TICKET ? undefined : ticketColorByNumber.get(Number(ticket));
+
+  const chartData = totals.map((t, i) => ({
+    label: t.ticket,
+    value: t.totalMinutes,
+    ...sliceStyle(t.ticket, i, assignedColor(t.ticket)),
+  }));
   const styleByTicket = new Map(chartData.map((d) => [d.label, { color: d.color, filter: d.filter }]));
 
   return (
@@ -132,9 +148,26 @@ export function TicketBreakdown({
           <tbody>
             {totals.map((t) => {
               const hoursKey = `${t.ticket}-hours`;
+              const rowColor = assignedColor(t.ticket);
               return (
-                <tr key={t.ticket}>
-                  <td className="border p-2">
+                <tr
+                  key={t.ticket}
+                  // Faint wash of the ticket's own color, so scanning the table
+                  // groups by ticket visually before you read a single number.
+                  // Untinted when no color is assigned, rather than falling back
+                  // to the rotation hue — a categorical color is legible as a
+                  // 10px dot but reads as noise smeared across a whole row.
+                  style={rowColor ? { backgroundColor: ticketRowTint(rowColor) } : undefined}
+                >
+                  <td
+                    className="border p-2"
+                    // Inset shadow rather than a real border: at 12% the wash
+                    // is nearly invisible for a dark or desaturated color, and
+                    // a full-strength edge keeps it readable — without an
+                    // actual border-left, which would fight the table's own
+                    // collapsed borders and shift every column by 3px.
+                    style={rowColor ? { boxShadow: `inset 3px 0 0 0 ${rowColor}` } : undefined}
+                  >
                     {/* Every item in this row shares the same fixed h-5 box
                         (content centered inside via its own flex), rather
                         than relying on the row's items-center to line up

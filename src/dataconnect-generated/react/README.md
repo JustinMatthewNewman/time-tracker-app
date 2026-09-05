@@ -440,6 +440,7 @@ export interface ListTicketsData {
     office?: string | null;
     ticketTitle?: string | null;
     ticketLink?: string | null;
+    color?: string | null;
   } & Ticket_Key)[];
 }
 ```
@@ -2604,6 +2605,7 @@ export interface UpsertTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 ```
 ### Return Type
@@ -2657,10 +2659,11 @@ export default function UpsertTicketComponent() {
     office: ..., // optional
     ticketTitle: ..., // optional
     ticketLink: ..., // optional
+    color: ..., // optional
   };
   mutation.mutate(upsertTicketVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+  mutation.mutate({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
@@ -2704,6 +2707,7 @@ export interface UpdateTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 ```
 ### Return Type
@@ -2757,10 +2761,11 @@ export default function UpdateTicketComponent() {
     office: ..., // optional
     ticketTitle: ..., // optional
     ticketLink: ..., // optional
+    color: ..., // optional
   };
   mutation.mutate(updateTicketVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+  mutation.mutate({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {

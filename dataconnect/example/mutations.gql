@@ -133,12 +133,14 @@ mutation UpsertTicket(
   $office: String
   $ticketTitle: String
   $ticketLink: String
+  $color: String
 ) @auth(level: USER) {
   ticket_upsert(data: {
     ticketNumber: $ticketNumber
     office: $office
     ticketTitle: $ticketTitle
     ticketLink: $ticketLink
+    color: $color
   })
 }
 
@@ -153,6 +155,7 @@ mutation UpdateTicket(
   $office: String
   $ticketTitle: String
   $ticketLink: String
+  $color: String
 ) @auth(level: USER) {
   ticket_update(
     key: { ticketNumber: $ticketNumber }
@@ -160,6 +163,7 @@ mutation UpdateTicket(
       office: $office
       ticketTitle: $ticketTitle
       ticketLink: $ticketLink
+      color: $color
     }
   )
 }

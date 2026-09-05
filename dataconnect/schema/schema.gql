@@ -201,6 +201,26 @@ type Ticket @table(key: "ticketNumber") {
   office: String
   ticketTitle: String
   ticketLink: String
+  # User-chosen identity color for this ticket, as "#rrggbb". Surfaced
+  # wherever a ticket appears — the work log breakdown tints each row with a
+  # muted version of it, and it's edited on the ticket detail page.
+  #
+  # Lives on Ticket rather than per user, matching office/ticketTitle: a
+  # ticket is a shared lookup row, so its color is a property of the ticket
+  # itself and stays consistent for everyone looking at it.
+  #
+  # Nullable, and null is a real state rather than a gap to backfill — it
+  # means "no color chosen", and the UI falls back to the theme-aware
+  # categorical palette in components/Dashboard/chartColor.ts. That fallback
+  # is why this needs no migration and why existing tickets look exactly as
+  # they did until someone picks a color.
+  #
+  # Stored as text, not validated by the database. Data Connect has no CHECK
+  # constraint to hang a hex pattern on, so validation lives in
+  # lib/ticketColor.ts and every read goes through it — a malformed value must
+  # never reach a CSS color-mix(), which would silently drop the whole
+  # declaration rather than just the color.
+  color: String
   createdAt: Timestamp! @default(expr: "request.time")
 }
 

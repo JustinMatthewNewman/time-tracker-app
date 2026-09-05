@@ -3,12 +3,12 @@
 import { useMemo, useState } from "react";
 import type { Key } from "react-aria-components";
 import { ComboBox, Input, ListBox } from "@heroui/react";
-import { useTickets, type Ticket } from "@/context/TicketsContext";
+import { useTickets, type Ticket, type TicketRef } from "@/context/TicketsContext";
 
 const CREATE_KEY = "__create__";
 
 interface TicketComboBoxProps {
-  ticket: Ticket | null;
+  ticket: TicketRef | null;
   onSelect: (ticket: Ticket) => void;
   onClear: () => void;
   onRequestCreate: (ticketNumberText: string) => void;
@@ -17,7 +17,7 @@ interface TicketComboBoxProps {
 
 type ComboItem = { key: string; kind: "ticket"; ticket: Ticket } | { key: string; kind: "create" };
 
-function ticketLabel(ticket: Ticket) {
+function ticketLabel(ticket: TicketRef) {
   return ticket.ticketTitle ? `${ticket.ticketNumber} — ${ticket.ticketTitle}` : String(ticket.ticketNumber);
 }
 

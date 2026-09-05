@@ -347,6 +347,7 @@ export interface ListTicketsData {
     office?: string | null;
     ticketTitle?: string | null;
     ticketLink?: string | null;
+    color?: string | null;
   } & Ticket_Key)[];
 }
 
@@ -612,6 +613,7 @@ export interface UpdateTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 
 export interface UpdateTimeEntryClearTicketData {
@@ -663,6 +665,7 @@ export interface UpsertTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 
 export interface UserTypeFeature_Key {

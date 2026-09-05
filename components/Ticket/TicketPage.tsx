@@ -12,6 +12,7 @@ import { useUserSettings } from "@/context/UserSettingsContext";
 import { formatDayKey, normalizeDayKey, type DayKey } from "@/lib/dayKeys";
 import { TicketDayEntriesTable } from "./TicketDayEntriesTable";
 import { TicketTotals } from "./TicketTotals";
+import { TicketColorPicker } from "./TicketColorPicker";
 import AmbientBackground from "@/components/AmbientBackground";
 
 const TICKET_ID_PLACEHOLDER = "{ticket_id}";
@@ -119,6 +120,13 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
     setIsEditingTitle(true);
   };
 
+  const handleSaveColor = async (color: string | null) => {
+    if (!ticket) return;
+    // null is sent through rather than omitted — UpdateTicketInput treats it
+    // as "clear this column", where an absent key would leave it untouched.
+    await updateTicketDetails({ ticketNumber: ticket.ticketNumber, color });
+  };
+
   const handleSaveTitle = async () => {
     if (!ticket) return;
     setSavingTitle(true);
@@ -181,7 +189,10 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
             <Card className="shrink-0 p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-start gap-3">
-                  <TicketIcon className="mt-0.5 size-6 shrink-0 text-accent" />
+                  <TicketIcon
+                    className={`mt-0.5 size-6 shrink-0 ${ticket.color ? "" : "text-accent"}`}
+                    style={ticket.color ? { color: ticket.color } : undefined}
+                  />
                   <div className="min-w-0">
                     <h1 className="text-2xl font-bold">Ticket #{ticket.ticketNumber}</h1>
 
@@ -228,6 +239,10 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
                         </button>
                       </div>
                     )}
+
+                    <div className="mt-2 max-w-md">
+                      <TicketColorPicker value={ticket.color} onSave={handleSaveColor} />
+                    </div>
                   </div>
                 </div>
 

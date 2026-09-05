@@ -1953,6 +1953,14 @@ input Ticket_Data {
   """
   ticketNumber_update: [Int_Update!] @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `Ticket`.`color` of type `String`
+  """
+  color: String
+  """
+  ✨ `_expr` server value variant of `color` (✨ Generated from Field `Ticket`.`color` of type `String`)
+  """
+  color_expr: String_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `Ticket`.`createdAt` of type `Timestamp!`
   """
   createdAt: Timestamp
@@ -2026,6 +2034,10 @@ input Ticket_Filter {
   """
   ticketNumber: Int_Filter
   """
+  ✨ Generated from Field `Ticket`.`color` of type `String`
+  """
+  color: String_Filter
+  """
   ✨ Generated from Field `Ticket`.`createdAt` of type `Timestamp!`
   """
   createdAt: Timestamp_Filter
@@ -2087,6 +2099,10 @@ input Ticket_Having {
   ✨ Generated from Field `Ticket`.`_count` of type `Int!`
   """
   _count: Int_Filter
+  """
+  ✨ Generated from Field `Ticket`.`color_count` of type `Int!`
+  """
+  color_count: Int_Filter
   """
   ✨ Generated from Field `Ticket`.`createdAt_count` of type `Int!`
   """
@@ -2171,6 +2187,10 @@ input Ticket_Order {
   """
   ticketNumber: OrderDirection
   """
+  ✨ Generated from Field `Ticket`.`color` of type `String`
+  """
+  color: OrderDirection
+  """
   ✨ Generated from Field `Ticket`.`createdAt` of type `Timestamp!`
   """
   createdAt: OrderDirection
@@ -2194,6 +2214,10 @@ input Ticket_Order {
   ✨ Generated from Field `Ticket`.`_count` of type `Int!`
   """
   _count: OrderDirection
+  """
+  ✨ Generated from Field `Ticket`.`color_count` of type `Int!`
+  """
+  color_count: OrderDirection
   """
   ✨ Generated from Field `Ticket`.`createdAt_count` of type `Int!`
   """

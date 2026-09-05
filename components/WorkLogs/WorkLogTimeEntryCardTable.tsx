@@ -16,7 +16,7 @@ import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { formatEntryClipboardLine } from "@/lib/entryClipboard";
 import { TicketComboBox } from "./TicketComboBox";
 import { TicketDialog } from "./TicketDialog";
-import type { Ticket } from "@/context/TicketsContext";
+import type { Ticket, TicketRef } from "@/context/TicketsContext";
 
 interface WorkLogTimeEntryCardTableProps {
     entries: WorkLogTimeEntry[];
@@ -37,7 +37,7 @@ const AUTOSAVE_DELAY_MS = 600;
 // only one row's ticket can be created/edited at a time.
 type DialogState =
     | { mode: "create"; entryId: string; initialTicketNumber?: number }
-    | { mode: "edit"; entryId: string; ticket: Ticket };
+    | { mode: "edit"; entryId: string; ticket: TicketRef };
 
 function formatTime(isoDate: string) {
     return new Date(isoDate).toLocaleTimeString([], {

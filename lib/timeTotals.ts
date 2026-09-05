@@ -73,6 +73,11 @@ interface TicketWithTitle {
   ticketTitle?: string | null;
 }
 
+interface TicketWithColor {
+  ticketNumber: number;
+  color?: string | null;
+}
+
 // Every entry-level `ticket` sub-object (TimeEntry.ticket in the various
 // list queries) only ever carries ticketNumber/ticketLink, not the title —
 // so callers that group entries by ticket (groupByTicket above) look the
@@ -82,6 +87,21 @@ export function buildTicketTitleMap(tickets: TicketWithTitle[]): Map<number, str
   const map = new Map<number, string>();
   for (const t of tickets) {
     if (t.ticketTitle) map.set(t.ticketNumber, t.ticketTitle);
+  }
+  return map;
+}
+
+// Companion to buildTicketTitleMap, and there for exactly the same reason:
+// TimeEntry.ticket sub-objects carry only ticketNumber/ticketLink, so a view
+// that groups entries by ticket resolves colors from TicketsContext's loaded
+// list rather than every entry query growing a `color` field.
+//
+// Tickets with no color are simply absent from the map, so callers get
+// `undefined` and fall back to the theme-aware categorical palette.
+export function buildTicketColorMap(tickets: TicketWithColor[]): Map<number, string> {
+  const map = new Map<number, string>();
+  for (const t of tickets) {
+    if (t.color) map.set(t.ticketNumber, t.color);
   }
   return map;
 }

@@ -470,6 +470,7 @@ export interface ListTicketsData {
     office?: string | null;
     ticketTitle?: string | null;
     ticketLink?: string | null;
+    color?: string | null;
   } & Ticket_Key)[];
 }
 ```
@@ -3159,6 +3160,7 @@ export interface UpsertTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 ```
 ### Return Type
@@ -3182,13 +3184,14 @@ const upsertTicketVars: UpsertTicketVariables = {
   office: ..., // optional
   ticketTitle: ..., // optional
   ticketLink: ..., // optional
+  color: ..., // optional
 };
 
 // Call the `upsertTicket()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await upsertTicket(upsertTicketVars);
 // Variables can be defined inline as well.
-const { data } = await upsertTicket({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+const { data } = await upsertTicket({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -3215,12 +3218,13 @@ const upsertTicketVars: UpsertTicketVariables = {
   office: ..., // optional
   ticketTitle: ..., // optional
   ticketLink: ..., // optional
+  color: ..., // optional
 };
 
 // Call the `upsertTicketRef()` function to get a reference to the mutation.
 const ref = upsertTicketRef(upsertTicketVars);
 // Variables can be defined inline as well.
-const ref = upsertTicketRef({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+const ref = upsertTicketRef({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -3277,6 +3281,7 @@ export interface UpdateTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 ```
 ### Return Type
@@ -3300,13 +3305,14 @@ const updateTicketVars: UpdateTicketVariables = {
   office: ..., // optional
   ticketTitle: ..., // optional
   ticketLink: ..., // optional
+  color: ..., // optional
 };
 
 // Call the `updateTicket()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await updateTicket(updateTicketVars);
 // Variables can be defined inline as well.
-const { data } = await updateTicket({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+const { data } = await updateTicket({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -3333,12 +3339,13 @@ const updateTicketVars: UpdateTicketVariables = {
   office: ..., // optional
   ticketTitle: ..., // optional
   ticketLink: ..., // optional
+  color: ..., // optional
 };
 
 // Call the `updateTicketRef()` function to get a reference to the mutation.
 const ref = updateTicketRef(updateTicketVars);
 // Variables can be defined inline as well.
-const ref = updateTicketRef({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+const ref = updateTicketRef({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
