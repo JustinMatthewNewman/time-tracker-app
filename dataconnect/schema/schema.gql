@@ -96,6 +96,14 @@ type User @table {
   # and table/th/td rules in globals.css). Off strips just the border, not
   # the background/shadow, so cards stay visually distinct.
   bordersEnabled: Boolean @default(expr: "true")
+  # Whether a ticket's assigned color (see Ticket.color) tints the surfaces it
+  # appears on — breakdown rows, entry rows, the ticket page header.
+  #
+  # A display preference rather than a data one: turning it off never clears a
+  # ticket's color, it only stops the app painting with it. That matters
+  # because Ticket.color is shared across users while this switch is per
+  # account, so one person muting the tints can't affect anyone else's view.
+  ticketColorsEnabled: Boolean @default(expr: "true")
   createdAt: Timestamp!
 }
 
@@ -201,6 +209,26 @@ type Ticket @table(key: "ticketNumber") {
   office: String
   ticketTitle: String
   ticketLink: String
+  # User-chosen identity color for this ticket, as "#rrggbb". Surfaced
+  # wherever a ticket appears — the work log breakdown tints each row with a
+  # muted version of it, and it's edited on the ticket detail page.
+  #
+  # Lives on Ticket rather than per user, matching office/ticketTitle: a
+  # ticket is a shared lookup row, so its color is a property of the ticket
+  # itself and stays consistent for everyone looking at it.
+  #
+  # Nullable, and null is a real state rather than a gap to backfill — it
+  # means "no color chosen", and the UI falls back to the theme-aware
+  # categorical palette in components/Dashboard/chartColor.ts. That fallback
+  # is why this needs no migration and why existing tickets look exactly as
+  # they did until someone picks a color.
+  #
+  # Stored as text, not validated by the database. Data Connect has no CHECK
+  # constraint to hang a hex pattern on, so validation lives in
+  # lib/ticketColor.ts and every read goes through it — a malformed value must
+  # never reach a CSS color-mix(), which would silently drop the whole
+  # declaration rather than just the color.
+  color: String
   createdAt: Timestamp! @default(expr: "request.time")
 }
 

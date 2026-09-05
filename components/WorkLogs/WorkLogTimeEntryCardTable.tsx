@@ -16,7 +16,8 @@ import type { WorkLogTimeEntry } from "@/hooks/useTimeEntriesByWorkLog";
 import { formatEntryClipboardLine } from "@/lib/entryClipboard";
 import { TicketComboBox } from "./TicketComboBox";
 import { TicketDialog } from "./TicketDialog";
-import type { Ticket } from "@/context/TicketsContext";
+import type { Ticket, TicketRef } from "@/context/TicketsContext";
+import { useTicketColors } from "@/hooks/useTicketColors";
 
 interface WorkLogTimeEntryCardTableProps {
     entries: WorkLogTimeEntry[];
@@ -37,7 +38,7 @@ const AUTOSAVE_DELAY_MS = 600;
 // only one row's ticket can be created/edited at a time.
 type DialogState =
     | { mode: "create"; entryId: string; initialTicketNumber?: number }
-    | { mode: "edit"; entryId: string; ticket: Ticket };
+    | { mode: "edit"; entryId: string; ticket: TicketRef };
 
 function formatTime(isoDate: string) {
     return new Date(isoDate).toLocaleTimeString([], {
@@ -58,6 +59,7 @@ export function WorkLogTimeEntryCardTable({
     const [drafts, setDrafts] = useState<Drafts>({});
     const [copiedEntryId, setCopiedEntryId] = useState<string | null>(null);
     const [dialogState, setDialogState] = useState<DialogState | null>(null);
+    const ticketColors = useTicketColors();
     const [flashedEntryId, setFlashedEntryId] = useState<string | null>(null);
     const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
@@ -226,8 +228,20 @@ export function WorkLogTimeEntryCardTable({
                             className={`transition-colors duration-700 ${
                                 flashedEntryId === entry.id ? "bg-accent/20" : ""
                             }`}
+                            // Skipped while a row is flashing: the flash is a
+                            // Tailwind background class, and an inline
+                            // backgroundColor would win the cascade and
+                            // swallow the "jumped to this entry" cue.
+                            style={
+                                flashedEntryId === entry.id
+                                    ? undefined
+                                    : ticketColors.rowStyle(entry.ticket?.ticketNumber)
+                            }
                         >
-                            <td className="border p-2 whitespace-nowrap">
+                            <td
+                                className="border p-2 whitespace-nowrap"
+                                style={ticketColors.edgeStyle(entry.ticket?.ticketNumber)}
+                            >
                                 {formatTime(entry.startTime)} - {formatTime(entry.endTime)}
                             </td>
 

@@ -236,6 +236,7 @@ export interface GetMyUserData {
     cardOpacity?: number | null;
     cardBlur?: number | null;
     bordersEnabled?: boolean | null;
+    ticketColorsEnabled?: boolean | null;
   } & User_Key;
 }
 
@@ -347,6 +348,7 @@ export interface ListTicketsData {
     office?: string | null;
     ticketTitle?: string | null;
     ticketLink?: string | null;
+    color?: string | null;
   } & Ticket_Key)[];
 }
 
@@ -547,6 +549,14 @@ export interface SelectMyPerformanceModeVariables {
   performanceMode: boolean;
 }
 
+export interface SelectMyTicketColorsEnabledData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyTicketColorsEnabledVariables {
+  ticketColorsEnabled: boolean;
+}
+
 export interface SetUserTypeData {
   user_update?: User_Key | null;
 }
@@ -612,6 +622,7 @@ export interface UpdateTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 
 export interface UpdateTimeEntryClearTicketData {
@@ -663,6 +674,7 @@ export interface UpsertTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 
 export interface UserTypeFeature_Key {
@@ -877,6 +889,18 @@ export const selectMyBordersEnabledRef: SelectMyBordersEnabledRef;
 
 export function selectMyBordersEnabled(vars: SelectMyBordersEnabledVariables): MutationPromise<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
 export function selectMyBordersEnabled(dc: DataConnect, vars: SelectMyBordersEnabledVariables): MutationPromise<SelectMyBordersEnabledData, SelectMyBordersEnabledVariables>;
+
+interface SelectMyTicketColorsEnabledRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyTicketColorsEnabledVariables): MutationRef<SelectMyTicketColorsEnabledData, SelectMyTicketColorsEnabledVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SelectMyTicketColorsEnabledVariables): MutationRef<SelectMyTicketColorsEnabledData, SelectMyTicketColorsEnabledVariables>;
+  operationName: string;
+}
+export const selectMyTicketColorsEnabledRef: SelectMyTicketColorsEnabledRef;
+
+export function selectMyTicketColorsEnabled(vars: SelectMyTicketColorsEnabledVariables): MutationPromise<SelectMyTicketColorsEnabledData, SelectMyTicketColorsEnabledVariables>;
+export function selectMyTicketColorsEnabled(dc: DataConnect, vars: SelectMyTicketColorsEnabledVariables): MutationPromise<SelectMyTicketColorsEnabledData, SelectMyTicketColorsEnabledVariables>;
 
 interface UpdateWorkLogRef {
   /* Allow users to create refs without passing in DataConnect */

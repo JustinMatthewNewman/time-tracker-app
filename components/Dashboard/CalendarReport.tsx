@@ -8,6 +8,7 @@ import { useWorkLogs } from "@/hooks/useWorkLogs";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
 import { useBorders } from "@/context/BordersContext";
 import { useTickets } from "@/context/TicketsContext";
+import { useTicketColors } from "@/hooks/useTicketColors";
 import { groupByTicket, formatDuration, buildTicketTitleMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "./chartColor";
 import { startOfMonth, buildMonthGrid, type MonthGridDay } from "@/lib/monthBuckets";
@@ -45,15 +46,23 @@ interface DayTotal {
   overflowCount: number;
 }
 
-function summarizeDay(entries: RangeTimeEntry[]): DayTotal {
+// colorFor is threaded in rather than read from a hook, so this stays a pure
+// function of its inputs and the day cells keep memoizing cleanly.
+function summarizeDay(
+  entries: RangeTimeEntry[],
+  colorFor: (ticket: string) => string | null
+): DayTotal {
   const totals = groupByTicket(entries).sort((a, b) => b.totalMinutes - a.totalMinutes);
   const totalMinutes = totals.reduce((sum, t) => sum + t.totalMinutes, 0);
-  const topTickets = totals.slice(0, TOP_TICKETS_PER_DAY).map((t, i) => ({
-    ticket: t.ticket,
-    totalMinutes: t.totalMinutes,
-    pct: totalMinutes > 0 ? Math.round((t.totalMinutes / totalMinutes) * 100) : 0,
-    ...sliceStyle(t.ticket, i),
-  }));
+  const topTickets = totals.slice(0, TOP_TICKETS_PER_DAY).map((t, i) => {
+    const assigned = colorFor(t.ticket);
+    return {
+      ticket: t.ticket,
+      totalMinutes: t.totalMinutes,
+      pct: totalMinutes > 0 ? Math.round((t.totalMinutes / totalMinutes) * 100) : 0,
+      ...(assigned ? { color: assigned } : sliceStyle(t.ticket, i)),
+    };
+  });
   return { totalMinutes, topTickets, overflowCount: Math.max(0, totals.length - TOP_TICKETS_PER_DAY) };
 }
 
@@ -99,6 +108,7 @@ export function CalendarReport() {
   const { workLogs, loading: workLogsLoading } = useWorkLogs();
   const { tickets } = useTickets();
   const ticketTitleByNumber = useMemo(() => buildTicketTitleMap(tickets), [tickets]);
+  const ticketColors = useTicketColors();
 
   const entriesByDay = useMemo(() => {
     const map = new Map<string, RangeTimeEntry[]>();
@@ -169,7 +179,7 @@ export function CalendarReport() {
           <div className={`relative grid ${gridColsClass} gap-1.5`}>
             {visibleGrid.map((day) => {
               const dayEntries = entriesByDay.get(day.dayKey) ?? [];
-              const summary = summarizeDay(dayEntries);
+              const summary = summarizeDay(dayEntries, ticketColors.colorFor);
               const workLogId = workLogIdByDate.get(day.dayKey);
               const clickable = day.isCurrentMonth && !!workLogId;
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { Card, Button } from "@heroui/react";
-import { useTickets, type Ticket } from "@/context/TicketsContext";
+import { useTickets, type Ticket, type TicketRef } from "@/context/TicketsContext";
 
 interface TicketDialogProps {
   isOpen: boolean;
@@ -13,7 +13,10 @@ interface TicketDialogProps {
   initialTicketNumber?: number;
   // Edit mode: the existing ticket being edited. ticketNumber is shown but
   // locked — see UpdateTicket in mutations.gql for why.
-  ticket?: Ticket;
+  //
+  // TicketRef, not Ticket: this form reads only number/office/title, and its
+  // callers hold an entry-level ticket that carries no color.
+  ticket?: TicketRef;
   onClose: () => void;
   onSaved: (ticket: Ticket) => void;
 }

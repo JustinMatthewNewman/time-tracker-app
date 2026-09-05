@@ -40,6 +40,7 @@ query GetMyUser @auth(level: USER) {
     cardOpacity
     cardBlur
     bordersEnabled
+    ticketColorsEnabled
   }
 }
 
@@ -82,6 +83,7 @@ query ListTickets($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
     office
     ticketTitle
     ticketLink
+    color
   }
 }
 

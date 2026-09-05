@@ -46,6 +46,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*SelectMyExternalTicketLinkTemplate*](#selectmyexternalticketlinktemplate)
   - [*SelectMyCardStyle*](#selectmycardstyle)
   - [*SelectMyBordersEnabled*](#selectmybordersenabled)
+  - [*SelectMyTicketColorsEnabled*](#selectmyticketcolorsenabled)
   - [*UpdateWorkLog*](#updateworklog)
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
@@ -255,6 +256,7 @@ export interface GetMyUserData {
     cardOpacity?: number | null;
     cardBlur?: number | null;
     bordersEnabled?: boolean | null;
+    ticketColorsEnabled?: boolean | null;
   } & User_Key;
 }
 ```
@@ -470,6 +472,7 @@ export interface ListTicketsData {
     office?: string | null;
     ticketTitle?: string | null;
     ticketLink?: string | null;
+    color?: string | null;
   } & Ticket_Key)[];
 }
 ```
@@ -3159,6 +3162,7 @@ export interface UpsertTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 ```
 ### Return Type
@@ -3182,13 +3186,14 @@ const upsertTicketVars: UpsertTicketVariables = {
   office: ..., // optional
   ticketTitle: ..., // optional
   ticketLink: ..., // optional
+  color: ..., // optional
 };
 
 // Call the `upsertTicket()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await upsertTicket(upsertTicketVars);
 // Variables can be defined inline as well.
-const { data } = await upsertTicket({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+const { data } = await upsertTicket({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -3215,12 +3220,13 @@ const upsertTicketVars: UpsertTicketVariables = {
   office: ..., // optional
   ticketTitle: ..., // optional
   ticketLink: ..., // optional
+  color: ..., // optional
 };
 
 // Call the `upsertTicketRef()` function to get a reference to the mutation.
 const ref = upsertTicketRef(upsertTicketVars);
 // Variables can be defined inline as well.
-const ref = upsertTicketRef({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+const ref = upsertTicketRef({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -3277,6 +3283,7 @@ export interface UpdateTicketVariables {
   office?: string | null;
   ticketTitle?: string | null;
   ticketLink?: string | null;
+  color?: string | null;
 }
 ```
 ### Return Type
@@ -3300,13 +3307,14 @@ const updateTicketVars: UpdateTicketVariables = {
   office: ..., // optional
   ticketTitle: ..., // optional
   ticketLink: ..., // optional
+  color: ..., // optional
 };
 
 // Call the `updateTicket()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await updateTicket(updateTicketVars);
 // Variables can be defined inline as well.
-const { data } = await updateTicket({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+const { data } = await updateTicket({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -3333,12 +3341,13 @@ const updateTicketVars: UpdateTicketVariables = {
   office: ..., // optional
   ticketTitle: ..., // optional
   ticketLink: ..., // optional
+  color: ..., // optional
 };
 
 // Call the `updateTicketRef()` function to get a reference to the mutation.
 const ref = updateTicketRef(updateTicketVars);
 // Variables can be defined inline as well.
-const ref = updateTicketRef({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., });
+const ref = updateTicketRef({ ticketNumber: ..., office: ..., ticketTitle: ..., ticketLink: ..., color: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -4095,6 +4104,115 @@ const ref = selectMyBordersEnabledRef({ bordersEnabled: ..., });
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = selectMyBordersEnabledRef(dataConnect, selectMyBordersEnabledVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMyTicketColorsEnabled
+You can execute the `SelectMyTicketColorsEnabled` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyTicketColorsEnabled(vars: SelectMyTicketColorsEnabledVariables): MutationPromise<SelectMyTicketColorsEnabledData, SelectMyTicketColorsEnabledVariables>;
+
+interface SelectMyTicketColorsEnabledRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyTicketColorsEnabledVariables): MutationRef<SelectMyTicketColorsEnabledData, SelectMyTicketColorsEnabledVariables>;
+}
+export const selectMyTicketColorsEnabledRef: SelectMyTicketColorsEnabledRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyTicketColorsEnabled(dc: DataConnect, vars: SelectMyTicketColorsEnabledVariables): MutationPromise<SelectMyTicketColorsEnabledData, SelectMyTicketColorsEnabledVariables>;
+
+interface SelectMyTicketColorsEnabledRef {
+  ...
+  (dc: DataConnect, vars: SelectMyTicketColorsEnabledVariables): MutationRef<SelectMyTicketColorsEnabledData, SelectMyTicketColorsEnabledVariables>;
+}
+export const selectMyTicketColorsEnabledRef: SelectMyTicketColorsEnabledRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyTicketColorsEnabledRef:
+```typescript
+const name = selectMyTicketColorsEnabledRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyTicketColorsEnabled` mutation requires an argument of type `SelectMyTicketColorsEnabledVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyTicketColorsEnabledVariables {
+  ticketColorsEnabled: boolean;
+}
+```
+### Return Type
+Recall that executing the `SelectMyTicketColorsEnabled` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyTicketColorsEnabledData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyTicketColorsEnabledData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyTicketColorsEnabled`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyTicketColorsEnabled, SelectMyTicketColorsEnabledVariables } from '@dataconnect/generated';
+
+// The `SelectMyTicketColorsEnabled` mutation requires an argument of type `SelectMyTicketColorsEnabledVariables`:
+const selectMyTicketColorsEnabledVars: SelectMyTicketColorsEnabledVariables = {
+  ticketColorsEnabled: ..., 
+};
+
+// Call the `selectMyTicketColorsEnabled()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyTicketColorsEnabled(selectMyTicketColorsEnabledVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyTicketColorsEnabled({ ticketColorsEnabled: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyTicketColorsEnabled(dataConnect, selectMyTicketColorsEnabledVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyTicketColorsEnabled(selectMyTicketColorsEnabledVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyTicketColorsEnabled`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyTicketColorsEnabledRef, SelectMyTicketColorsEnabledVariables } from '@dataconnect/generated';
+
+// The `SelectMyTicketColorsEnabled` mutation requires an argument of type `SelectMyTicketColorsEnabledVariables`:
+const selectMyTicketColorsEnabledVars: SelectMyTicketColorsEnabledVariables = {
+  ticketColorsEnabled: ..., 
+};
+
+// Call the `selectMyTicketColorsEnabledRef()` function to get a reference to the mutation.
+const ref = selectMyTicketColorsEnabledRef(selectMyTicketColorsEnabledVars);
+// Variables can be defined inline as well.
+const ref = selectMyTicketColorsEnabledRef({ ticketColorsEnabled: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyTicketColorsEnabledRef(dataConnect, selectMyTicketColorsEnabledVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.

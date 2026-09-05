@@ -11,6 +11,7 @@ import type {
   ListTicketsVariables,
 } from "@/src/dataconnect-generated";
 import { fetchAllPages } from "@/lib/dataconnectPagination";
+import { normalizeTicketColor } from "@/lib/ticketColor";
 
 export interface Ticket {
   id: string;
@@ -18,6 +19,26 @@ export interface Ticket {
   office: string | null;
   ticketTitle: string | null;
   ticketLink: string | null;
+  /** Canonical "#rrggbb", or null when no color has been chosen. */
+  color: string | null;
+}
+
+/**
+ * The subset of a ticket that entry-level queries carry.
+ *
+ * Components that merely display or edit a *linked* ticket take this instead
+ * of the full `Ticket`, so a caller holding a WorkLogTimeEntryTicket can pass
+ * it straight through with no adapter. Same structural-prop reasoning as
+ * TicketBreakdownEntry — and the reason adding `color` to `Ticket` didn't
+ * force every entry query to grow a field it has no use for. Colors are
+ * looked up from this context by ticket number, exactly as titles already are
+ * (see buildTicketTitleMap in lib/timeTotals.ts).
+ */
+export interface TicketRef {
+  id: string;
+  ticketNumber: number;
+  office?: string | null;
+  ticketTitle?: string | null;
 }
 
 export interface CreateTicketInput {
@@ -25,6 +46,7 @@ export interface CreateTicketInput {
   office: string;
   ticketTitle?: string;
   ticketLink?: string;
+  color?: string | null;
 }
 
 export interface UpdateTicketInput {
@@ -38,6 +60,10 @@ export interface UpdateTicketInput {
   office?: string;
   ticketTitle?: string;
   ticketLink?: string;
+  // Explicitly nullable, unlike the fields above: null is a meaningful value
+  // here ("clear this ticket's color"), whereas omitting the key leaves the
+  // column untouched. The other three have no such distinction to express.
+  color?: string | null;
 }
 
 type TicketsContextType = {
@@ -58,6 +84,9 @@ function normalizeTicket(ticket: ListTicketsData["tickets"][number]): Ticket {
     office: ticket.office ?? null,
     ticketTitle: ticket.ticketTitle ?? null,
     ticketLink: ticket.ticketLink ?? null,
+    // Normalized at the boundary, so nothing downstream can hand an unvetted
+    // string to a CSS color-mix() — see lib/ticketColor.ts.
+    color: normalizeTicketColor(ticket.color),
   };
 }
 
@@ -112,6 +141,7 @@ export function TicketsProvider({ children }: { children: React.ReactNode }) {
         office: data.office,
         ticketTitle: data.ticketTitle,
         ticketLink: data.ticketLink,
+        color: data.color,
       } as UpsertTicketVariables);
       const fresh = await refetch();
       const saved = fresh.find((t) => t.ticketNumber === data.ticketNumber);
@@ -128,6 +158,7 @@ export function TicketsProvider({ children }: { children: React.ReactNode }) {
         office: data.office,
         ticketTitle: data.ticketTitle,
         ticketLink: data.ticketLink,
+        color: data.color,
       } as UpdateTicketVariables);
       const fresh = await refetch();
       const saved = fresh.find((t) => t.ticketNumber === data.ticketNumber);

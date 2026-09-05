@@ -12,6 +12,9 @@ import { useUserSettings } from "@/context/UserSettingsContext";
 import { formatDayKey, normalizeDayKey, type DayKey } from "@/lib/dayKeys";
 import { TicketDayEntriesTable } from "./TicketDayEntriesTable";
 import { TicketTotals } from "./TicketTotals";
+import { TicketColorPicker } from "./TicketColorPicker";
+import { useTicketColors } from "@/hooks/useTicketColors";
+import { autoTicketColor } from "@/lib/ticketColor";
 import AmbientBackground from "@/components/AmbientBackground";
 
 const TICKET_ID_PLACEHOLDER = "{ticket_id}";
@@ -26,6 +29,7 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
   const { tickets, loading: ticketsLoading, updateTicketDetails } = useTickets();
   const { setSelectedWorkLogId, setFocusEntryId } = useSelectedWorkLog();
   const { externalTicketLinkTemplate } = useUserSettings();
+  const ticketColors = useTicketColors();
 
   const ticketNumber = Number(ticketNumberParam);
   const isValidTicketNumber = Number.isInteger(ticketNumber);
@@ -119,6 +123,13 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
     setIsEditingTitle(true);
   };
 
+  const handleSaveColor = async (color: string | null) => {
+    if (!ticket) return;
+    // null is sent through rather than omitted — UpdateTicketInput treats it
+    // as "clear this column", where an absent key would leave it untouched.
+    await updateTicketDetails({ ticketNumber: ticket.ticketNumber, color });
+  };
+
   const handleSaveTitle = async () => {
     if (!ticket) return;
     setSavingTitle(true);
@@ -178,10 +189,29 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
           </EmptyState>
         ) : (
           <>
-            <Card className="shrink-0 p-6">
+            {/* Header wears the ticket's colour: a faint wash plus a solid
+                left edge, matching how its rows read elsewhere. Muted enough
+                to sit under body text — the edge is what actually carries the
+                identity at a glance. */}
+            <Card
+              className="shrink-0 p-6"
+              style={{
+                ...ticketColors.rowStyle(ticket.ticketNumber),
+                ...ticketColors.edgeStyle(ticket.ticketNumber),
+              }}
+            >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-start gap-3">
-                  <TicketIcon className="mt-0.5 size-6 shrink-0 text-accent" />
+                  <TicketIcon
+                    className={`mt-0.5 size-6 shrink-0 ${
+                      ticketColors.colorFor(ticket.ticketNumber) ? "" : "text-accent"
+                    }`}
+                    style={
+                      ticketColors.colorFor(ticket.ticketNumber)
+                        ? { color: ticketColors.colorFor(ticket.ticketNumber)! }
+                        : undefined
+                    }
+                  />
                   <div className="min-w-0">
                     <h1 className="text-2xl font-bold">Ticket #{ticket.ticketNumber}</h1>
 
@@ -228,6 +258,14 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
                         </button>
                       </div>
                     )}
+
+                    <div className="mt-2 max-w-md">
+                      <TicketColorPicker
+                        value={ticket.color}
+                        fallback={autoTicketColor(ticket.ticketNumber)}
+                        onSave={handleSaveColor}
+                      />
+                    </div>
                   </div>
                 </div>
 

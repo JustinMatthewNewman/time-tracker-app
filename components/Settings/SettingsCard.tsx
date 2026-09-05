@@ -10,6 +10,7 @@ import { usePerformanceMode } from '@/context/PerformanceModeContext'
 import { useBackgroundOpacity } from '@/context/BackgroundOpacityContext'
 import { useCardStyle } from '@/context/CardStyleContext'
 import { useBorders } from '@/context/BordersContext'
+import { useTicketColorsSetting } from '@/context/TicketColorsContext'
 import { useUserSettings } from '@/context/UserSettingsContext'
 import { useSelectMyExternalTicketLinkTemplate } from '@/src/dataconnect-generated/react'
 import {
@@ -23,6 +24,7 @@ import {
   Layers,
   SquareDashed,
   Square,
+  Palette,
   Link as LinkIcon,
   CircleInfo,
   ShieldKeyhole,
@@ -42,6 +44,7 @@ function SettingsCard() {
   const { backgroundOpacity, setBackgroundOpacity } = useBackgroundOpacity()
   const { cardOpacity, setCardOpacity, cardBlur, setCardBlur } = useCardStyle()
   const { bordersEnabled, setBordersEnabled } = useBorders()
+  const { ticketColorsEnabled, setTicketColorsEnabled } = useTicketColorsSetting()
   const { externalTicketLinkTemplate, refetch: refetchUserSettings } = useUserSettings()
   const selectTemplateMutation = useSelectMyExternalTicketLinkTemplate()
 
@@ -328,6 +331,30 @@ function SettingsCard() {
             isSelected={bordersEnabled}
             onChange={setBordersEnabled}
             aria-label="Show borders"
+          >
+            <Switch.Content>
+              <Switch.Control>
+                <Switch.Thumb />
+              </Switch.Control>
+            </Switch.Content>
+          </Switch>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between gap-4 rounded-lg bg-default-100 p-3">
+          <div>
+            <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <Palette className="size-4" /> Ticket Colors
+            </p>
+            <p className="text-xs text-foreground/60">
+              Tints ticket rows, tables and ticket pages with each ticket&apos;s assigned color.
+              Set a ticket&apos;s color on its detail page. Turning this off hides the tints
+              everywhere without clearing any colors.
+            </p>
+          </div>
+          <Switch
+            isSelected={ticketColorsEnabled}
+            onChange={setTicketColorsEnabled}
+            aria-label="Ticket Colors"
           >
             <Switch.Content>
               <Switch.Control>

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Card, Skeleton, Tabs } from "@heroui/react";
 import { useTimeEntriesByDateRange } from "@/hooks/useTimeEntriesByDateRange";
 import { useTickets } from "@/context/TicketsContext";
+import { useTicketColors } from "@/hooks/useTicketColors";
 import { groupByTicket, formatDuration, buildTicketTitleMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { startOfWeek, endOfWeek } from "@/lib/weekBuckets";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, CATEGORICAL_HUE_COUNT } from "./chartColor";
@@ -65,12 +66,20 @@ export function TicketBreakdownWeekly() {
 
   const { entries, loading } = useTimeEntriesByDateRange(startDate, endDate);
   const { tickets } = useTickets();
+  const ticketColors = useTicketColors();
   const ticketTitleByNumber = useMemo(() => buildTicketTitleMap(tickets), [tickets]);
   const rawTotals = useMemo(() => groupByTicket(entries), [entries]);
   const totals = useMemo(() => capToOther(rawTotals), [rawTotals]);
   const grandTotalMinutes = totals.reduce((sum, t) => sum + t.totalMinutes, 0);
 
-  const chartData = totals.map((t, i) => ({ label: t.ticket, value: t.totalMinutes, ...sliceStyle(t.ticket, i) }));
+  const chartData = totals.map((t, i) => {
+    const assigned = ticketColors.colorFor(t.ticket);
+    return {
+      label: t.ticket,
+      value: t.totalMinutes,
+      ...(assigned ? { color: assigned } : sliceStyle(t.ticket, i)),
+    };
+  });
   const styleByTicket = new Map(chartData.map((d) => [d.label, { color: d.color, filter: d.filter }]));
 
   return (

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildTicketColorMap,
   minutesBetween,
   groupByTicket,
   formatDuration,
@@ -122,5 +123,31 @@ describe("groupByTicket", () => {
     const flatTotal = entries.reduce((sum, e) => sum + minutesBetween(e.startTime, e.endTime), 0);
     const groupedTotal = groupByTicket(entries).reduce((sum, t) => sum + t.totalMinutes, 0);
     expect(groupedTotal).toBe(flatTotal);
+  });
+});
+
+describe("buildTicketColorMap", () => {
+  it("maps ticket number to color", () => {
+    const map = buildTicketColorMap([
+      { ticketNumber: 42, color: "#0891b2" },
+      { ticketNumber: 43, color: "#e11d48" },
+    ]);
+    expect(map.get(42)).toBe("#0891b2");
+    expect(map.get(43)).toBe("#e11d48");
+  });
+
+  it("omits tickets with no color, so callers fall back to the rotation", () => {
+    const map = buildTicketColorMap([
+      { ticketNumber: 42, color: null },
+      { ticketNumber: 43 },
+      { ticketNumber: 44, color: "#0891b2" },
+    ]);
+    expect(map.has(42)).toBe(false);
+    expect(map.has(43)).toBe(false);
+    expect(map.get(44)).toBe("#0891b2");
+  });
+
+  it("returns an empty map for no tickets", () => {
+    expect(buildTicketColorMap([]).size).toBe(0);
   });
 });
