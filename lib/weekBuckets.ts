@@ -45,6 +45,51 @@ export function weekLabel(weekStart: Date): string {
   return `${startStr} – ${endStr}`;
 }
 
+export function getRelativeWeekLabel(weekStart: Date, relativeTo: Date = new Date()): string {
+  const currentWeekStart = startOfWeek(relativeTo);
+  const targetWeekStart = startOfWeek(weekStart);
+
+  const diffMs = currentWeekStart.getTime() - targetWeekStart.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+  const diffWeeks = Math.round(diffDays / 7);
+
+  if (diffWeeks === 0) return "This week";
+  if (diffWeeks === 1) return "Last week";
+  if (diffWeeks < 0) {
+    if (diffWeeks === -1) return "Next week";
+    return `In ${Math.abs(diffWeeks)} weeks`;
+  }
+
+  const currentYear = currentWeekStart.getFullYear();
+  const currentMonth = currentWeekStart.getMonth();
+  const targetYear = targetWeekStart.getFullYear();
+  const targetMonth = targetWeekStart.getMonth();
+
+  const monthDiff = (currentYear - targetYear) * 12 + (currentMonth - targetMonth);
+  const yearDiff = currentYear - targetYear;
+
+  if (yearDiff >= 2) {
+    return `${yearDiff} Years Ago`;
+  }
+  if (yearDiff === 1 && monthDiff >= 12) {
+    return "Last Year";
+  }
+  if (monthDiff > 1 && yearDiff < 2) {
+    return `${monthDiff} Months Ago`;
+  }
+  if (monthDiff === 1 && diffWeeks >= 3) {
+    return "Last Month";
+  }
+  if (diffWeeks < 4 && monthDiff <= 1) {
+    return `${diffWeeks} weeks ago`;
+  }
+  if (monthDiff === 1) {
+    return "Last Month";
+  }
+
+  return `${diffWeeks} weeks ago`;
+}
+
 export function isSameWeek(a: Date, b: Date): boolean {
   return weekKey(a) === weekKey(b);
 }

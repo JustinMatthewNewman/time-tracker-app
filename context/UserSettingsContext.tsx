@@ -13,6 +13,7 @@ type UserSettingsState = {
   cardOpacity: number | null;
   cardBlur: number | null;
   bordersEnabled: boolean | null;
+  ticketColorsEnabled: boolean | null;
 };
 
 type UserSettingsContextType = UserSettingsState & {
@@ -28,6 +29,7 @@ const EMPTY_STATE: UserSettingsState = {
   cardOpacity: null,
   cardBlur: null,
   bordersEnabled: null,
+  ticketColorsEnabled: null,
 };
 
 const UserSettingsContext = createContext<UserSettingsContextType | null>(null);
@@ -62,6 +64,7 @@ export function UserSettingsProvider({ children }: { children: React.ReactNode }
         cardOpacity: dbUser?.cardOpacity ?? 100,
         cardBlur: dbUser?.cardBlur ?? 0,
         bordersEnabled: dbUser?.bordersEnabled ?? true,
+        ticketColorsEnabled: dbUser?.ticketColorsEnabled ?? true,
       });
     } finally {
       setLoading(false);

@@ -233,6 +233,7 @@ export interface GetMyUserData {
     cardOpacity?: number | null;
     cardBlur?: number | null;
     bordersEnabled?: boolean | null;
+    ticketColorsEnabled?: boolean | null;
   } & User_Key;
 }
 
@@ -545,6 +546,14 @@ export interface SelectMyPerformanceModeVariables {
   performanceMode: boolean;
 }
 
+export interface SelectMyTicketColorsEnabledData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyTicketColorsEnabledVariables {
+  ticketColorsEnabled: boolean;
+}
+
 export interface SetUserTypeData {
   user_update?: User_Key | null;
 }
@@ -765,6 +774,11 @@ export function selectMyCardStyle(vars: SelectMyCardStyleVariables, options?: Op
 export function selectMyBordersEnabled(dc: DataConnect, vars: SelectMyBordersEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBordersEnabledData>>;
 /** Generated Node Admin SDK operation action function for the 'SelectMyBordersEnabled' Mutation. Allow users to pass in custom DataConnect instances. */
 export function selectMyBordersEnabled(vars: SelectMyBordersEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBordersEnabledData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SelectMyTicketColorsEnabled' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyTicketColorsEnabled(dc: DataConnect, vars: SelectMyTicketColorsEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyTicketColorsEnabledData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyTicketColorsEnabled' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyTicketColorsEnabled(vars: SelectMyTicketColorsEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyTicketColorsEnabledData>>;
 
 /** Generated Node Admin SDK operation action function for the 'UpdateWorkLog' Mutation. Allow users to execute without passing in DataConnect. */
 export function updateWorkLog(dc: DataConnect, vars: UpdateWorkLogVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<UpdateWorkLogData>>;

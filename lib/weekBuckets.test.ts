@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { startOfWeek, endOfWeek, weekKey, weekLabel, isSameWeek, groupByWeek } from "./weekBuckets";
+import { startOfWeek, endOfWeek, weekKey, weekLabel, getRelativeWeekLabel, isSameWeek, groupByWeek } from "./weekBuckets";
 
 // 2026-08-09 is a Sunday, so its Monday-start week runs 2026-08-03..2026-08-09.
 const SUNDAY = new Date(2026, 7, 9);
@@ -49,6 +49,39 @@ describe("weekLabel", () => {
 
   it("formats a week that crosses a year boundary", () => {
     expect(weekLabel(new Date(2026, 11, 28))).toBe("Dec 28 – Jan 3, 2027");
+  });
+});
+
+describe("getRelativeWeekLabel", () => {
+  const referenceDate = new Date(2026, 8, 5); // Saturday, Sep 5, 2026 (Week of Aug 31)
+
+  it("labels current week as 'This week'", () => {
+    expect(getRelativeWeekLabel(new Date(2026, 7, 31), referenceDate)).toBe("This week");
+    expect(getRelativeWeekLabel(new Date(2026, 8, 2), referenceDate)).toBe("This week");
+  });
+
+  it("labels 1 week ago as 'Last week'", () => {
+    expect(getRelativeWeekLabel(new Date(2026, 7, 24), referenceDate)).toBe("Last week");
+  });
+
+  it("labels 2 weeks ago in same month as '2 weeks ago'", () => {
+    expect(getRelativeWeekLabel(new Date(2026, 7, 17), referenceDate)).toBe("2 weeks ago");
+  });
+
+  it("labels previous month as 'Last Month'", () => {
+    expect(getRelativeWeekLabel(new Date(2026, 6, 27), referenceDate)).toBe("Last Month");
+  });
+
+  it("labels 2 months ago as '2 Months Ago'", () => {
+    expect(getRelativeWeekLabel(new Date(2026, 5, 29), referenceDate)).toBe("2 Months Ago");
+  });
+
+  it("labels 1 year ago as 'Last Year'", () => {
+    expect(getRelativeWeekLabel(new Date(2025, 7, 25), referenceDate)).toBe("Last Year");
+  });
+
+  it("labels 2 years ago as '2 Years Ago'", () => {
+    expect(getRelativeWeekLabel(new Date(2024, 7, 26), referenceDate)).toBe("2 Years Ago");
   });
 });
 

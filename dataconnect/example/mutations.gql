@@ -240,6 +240,15 @@ mutation SelectMyBordersEnabled($bordersEnabled: Boolean!) @auth(level: USER) {
   )
 }
 
+# Toggles whether ticket colors tint the UI. Mirrors SelectMyBordersEnabled:
+# an instant per-account display boolean, no debounce needed.
+mutation SelectMyTicketColorsEnabled($ticketColorsEnabled: Boolean!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { ticketColorsEnabled: $ticketColorsEnabled }
+  )
+}
+
 mutation UpdateWorkLog($workLogId: UUID!, $name: String!) @auth(level: USER) @transaction {
   query @redact {
     workLog(key: { id: $workLogId }) {

@@ -202,6 +202,18 @@ export function selectMyBordersEnabled(dcOrVars, vars) {
   return executeMutation(selectMyBordersEnabledRef(dcInstance, inputVars));
 }
 
+export const selectMyTicketColorsEnabledRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SelectMyTicketColorsEnabled', inputVars);
+}
+selectMyTicketColorsEnabledRef.operationName = 'SelectMyTicketColorsEnabled';
+
+export function selectMyTicketColorsEnabled(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(selectMyTicketColorsEnabledRef(dcInstance, inputVars));
+}
+
 export const updateWorkLogRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

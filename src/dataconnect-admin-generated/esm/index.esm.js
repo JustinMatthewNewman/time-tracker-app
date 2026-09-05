@@ -102,6 +102,12 @@ export function selectMyBordersEnabled(dcOrVarsOrOptions, varsOrOptions, options
   return dcInstance.executeMutation('SelectMyBordersEnabled', inputVars, inputOpts);
 }
 
+export function selectMyTicketColorsEnabled(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SelectMyTicketColorsEnabled', inputVars, inputOpts);
+}
+
 export function updateWorkLog(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);

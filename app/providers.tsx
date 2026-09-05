@@ -12,6 +12,7 @@ import { PerformanceModeProvider } from "@/context/PerformanceModeContext";
 import { BackgroundOpacityProvider } from "@/context/BackgroundOpacityContext";
 import { CardStyleProvider } from "@/context/CardStyleContext";
 import { BordersProvider } from "@/context/BordersContext";
+import { TicketColorsProvider } from "@/context/TicketColorsContext";
 import { ThemeProvider } from "next-themes";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -36,6 +37,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                   <BordersProvider>
                     <ThemeSelectionProvider>
                       <TicketsProvider>
+                        <TicketColorsProvider>
                         <SidebarProvider>
                           <TimeRangeProvider>
                             <SelectedWorkLogProvider>
@@ -44,6 +46,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                             </SelectedWorkLogProvider>
                           </TimeRangeProvider>
                         </SidebarProvider>
+                        </TicketColorsProvider>
                       </TicketsProvider>
                     </ThemeSelectionProvider>
                   </BordersProvider>

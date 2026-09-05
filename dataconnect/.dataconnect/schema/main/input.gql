@@ -2899,6 +2899,14 @@ input User_Data {
   """
   performanceMode_expr: Boolean_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `User`.`ticketColorsEnabled` of type `Boolean`
+  """
+  ticketColorsEnabled: Boolean
+  """
+  ✨ `_expr` server value variant of `ticketColorsEnabled` (✨ Generated from Field `User`.`ticketColorsEnabled` of type `Boolean`)
+  """
+  ticketColorsEnabled_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `User`.`username` of type `String!`
   """
   username: String
@@ -2995,6 +3003,10 @@ input User_Filter {
   ✨ Generated from Field `User`.`performanceMode` of type `Boolean`
   """
   performanceMode: Boolean_Filter
+  """
+  ✨ Generated from Field `User`.`ticketColorsEnabled` of type `Boolean`
+  """
+  ticketColorsEnabled: Boolean_Filter
   """
   ✨ Generated from Field `User`.`username` of type `String!`
   """
@@ -3101,6 +3113,10 @@ input User_Having {
   ✨ Generated from Field `User`.`performanceMode_count` of type `Int!`
   """
   performanceMode_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`ticketColorsEnabled_count` of type `Int!`
+  """
+  ticketColorsEnabled_count: Int_Filter
   """
   ✨ Generated from Field `User`.`userTypeName_count` of type `Int!`
   """
@@ -3253,6 +3269,10 @@ input User_Order {
   """
   performanceMode: OrderDirection
   """
+  ✨ Generated from Field `User`.`ticketColorsEnabled` of type `Boolean`
+  """
+  ticketColorsEnabled: OrderDirection
+  """
   ✨ Generated from Field `User`.`username` of type `String!`
   """
   username: OrderDirection
@@ -3304,6 +3324,10 @@ input User_Order {
   ✨ Generated from Field `User`.`performanceMode_count` of type `Int!`
   """
   performanceMode_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`ticketColorsEnabled_count` of type `Int!`
+  """
+  ticketColorsEnabled_count: OrderDirection
   """
   ✨ Generated from Field `User`.`userTypeName_count` of type `Int!`
   """

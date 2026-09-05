@@ -9,7 +9,7 @@ import type { MyTimeEntry } from "@/hooks/useMyTimeEntries";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
 import { useBorders } from "@/context/BordersContext";
 import { minutesBetween, formatDuration } from "@/lib/timeTotals";
-import { weekKey, weekLabel, groupByWeek } from "@/lib/weekBuckets";
+import { weekKey, weekLabel, getRelativeWeekLabel, groupByWeek } from "@/lib/weekBuckets";
 import { NewWorkLogDialog } from "./NewWorkLogDialog";
 import { RenameWorkLogDialog } from "./RenameWorkLogDialog";
 import { DeleteWorkLogDialog } from "./DeleteWorkLogDialog";
@@ -168,6 +168,17 @@ export function WorkLogListBox({
 
   return (
     <div className="flex h-full w-full min-h-0 flex-col gap-3">
+      {currentWeek && (
+        <div className="flex shrink-0 items-center justify-between px-1 pb-1">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-accent">
+            {getRelativeWeekLabel(currentWeek.start)}
+          </h3>
+          <span className="text-xs font-medium text-foreground/60">
+            {weekLabel(currentWeek.start)}
+          </span>
+        </div>
+      )}
+
       <div className="min-h-0 flex-1">
         {weekSections.length === 0 ? (
           <p className="p-4 text-sm text-foreground/60">No work logs yet.</p>

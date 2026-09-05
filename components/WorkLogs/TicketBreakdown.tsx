@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "@heroui/react";
-import { groupByTicket, formatDuration, formatDecimalHours, buildTicketTitleMap, buildTicketColorMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
-import { ticketRowTint } from "@/lib/ticketColor";
+import { groupByTicket, formatDuration, formatDecimalHours, buildTicketTitleMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
+import { useTicketColors } from "@/hooks/useTicketColors";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "@/components/Dashboard/chartColor";
 import { TicketTitleSuffix } from "@/components/Dashboard/TicketTitleSuffix";
 import { ArrowUpRightFromSquare, Copy, CopyCheck } from "@gravity-ui/icons";
@@ -57,9 +57,9 @@ export function TicketBreakdown({
 }: TicketBreakdownProps) {
   const { bordersEnabled } = useBorders();
   const { tickets } = useTickets();
+  const ticketColors = useTicketColors();
   const totals = useMemo(() => groupByTicket(entries), [entries]);
   const ticketTitleByNumber = useMemo(() => buildTicketTitleMap(tickets), [tickets]);
-  const ticketColorByNumber = useMemo(() => buildTicketColorMap(tickets), [tickets]);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const handleCopy = async (key: string, text: string) => {
@@ -122,13 +122,10 @@ export function TicketBreakdown({
 
   const grandTotalMinutes = totals.reduce((sum, t) => sum + t.totalMinutes, 0);
 
-  const assignedColor = (ticket: string) =>
-    ticket === UNASSIGNED_TICKET ? undefined : ticketColorByNumber.get(Number(ticket));
-
   const chartData = totals.map((t, i) => ({
     label: t.ticket,
     value: t.totalMinutes,
-    ...sliceStyle(t.ticket, i, assignedColor(t.ticket)),
+    ...sliceStyle(t.ticket, i, ticketColors.colorFor(t.ticket) ?? undefined),
   }));
   const styleByTicket = new Map(chartData.map((d) => [d.label, { color: d.color, filter: d.filter }]));
 
@@ -148,7 +145,8 @@ export function TicketBreakdown({
           <tbody>
             {totals.map((t) => {
               const hoursKey = `${t.ticket}-hours`;
-              const rowColor = assignedColor(t.ticket);
+              const rowStyle = ticketColors.rowStyle(t.ticket);
+              const edgeStyle = ticketColors.edgeStyle(t.ticket);
               return (
                 <tr
                   key={t.ticket}
@@ -157,7 +155,7 @@ export function TicketBreakdown({
                   // Untinted when no color is assigned, rather than falling back
                   // to the rotation hue — a categorical color is legible as a
                   // 10px dot but reads as noise smeared across a whole row.
-                  style={rowColor ? { backgroundColor: ticketRowTint(rowColor) } : undefined}
+                  style={rowStyle}
                 >
                   <td
                     className="border p-2"
@@ -166,7 +164,7 @@ export function TicketBreakdown({
                     // a full-strength edge keeps it readable — without an
                     // actual border-left, which would fight the table's own
                     // collapsed borders and shift every column by 3px.
-                    style={rowColor ? { boxShadow: `inset 3px 0 0 0 ${rowColor}` } : undefined}
+                    style={edgeStyle}
                   >
                     {/* Every item in this row shares the same fixed h-5 box
                         (content centered inside via its own flex), rather

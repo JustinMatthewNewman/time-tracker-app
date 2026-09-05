@@ -5,6 +5,7 @@ import { ArrowUpRightFromSquare } from "@gravity-ui/icons";
 import { useUpdateTimeEntry } from "@/src/dataconnect-generated/react";
 import type { UpdateTimeEntryVariables } from "@/src/dataconnect-generated";
 import type { TicketTimeEntry } from "@/hooks/useTimeEntriesByTicket";
+import { useTicketColors } from "@/hooks/useTicketColors";
 
 interface TicketDayEntriesTableProps {
   entries: TicketTimeEntry[];
@@ -32,6 +33,11 @@ export function TicketDayEntriesTable({
 }: TicketDayEntriesTableProps) {
   const updateMutation = useUpdateTimeEntry();
   const [drafts, setDrafts] = useState<Drafts>({});
+  // Every row here is the same ticket (the page's own), so the tint is
+  // computed once rather than per row.
+  const ticketColors = useTicketColors();
+  const rowStyle = ticketColors.rowStyle(ticketNumber);
+  const edgeStyle = ticketColors.edgeStyle(ticketNumber);
 
   // Same mirrors-kept-in-sync-via-effects pattern as WorkLogTimeEntryCardTable,
   // so the debounce timers/unmount flush always see the latest values instead
@@ -100,8 +106,8 @@ export function TicketDayEntriesTable({
 
         <tbody>
           {entries.map((entry) => (
-            <tr key={entry.id}>
-              <td className="border p-2 whitespace-nowrap">
+            <tr key={entry.id} style={rowStyle}>
+              <td className="border p-2 whitespace-nowrap" style={edgeStyle}>
                 {formatTime(entry.startTime)} - {formatTime(entry.endTime)}
               </td>
 
