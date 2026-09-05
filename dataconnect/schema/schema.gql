@@ -203,3 +203,71 @@ type Ticket @table(key: "ticketNumber") {
   ticketLink: String
   createdAt: Timestamp! @default(expr: "request.time")
 }
+
+# One user's authorization to push their time entries into Google Calendar,
+# plus the sync preferences that shape what gets written. Backs the
+# app/api/google-calendar/* routes and the Settings integration card.
+#
+# Keyed on `user` rather than a UUID id, for the same find-or-create reason
+# Ticket is keyed on ticketNumber: the connection is inherently one-per-user,
+# so keying on it makes googleCalendarConnection_upsert idempotent — a
+# reconnect overwrites the existing row instead of stranding a second one
+# holding a now-revoked refresh token.
+#
+# SECURITY — this table holds a live credential. Every operation over it in
+# dataconnect/example/{queries,mutations}.gql is @auth(level: NO_ACCESS) and
+# unreachable from the browser, unlike the per-user preferences on User (which
+# are USER-level and read straight from the client via GetMyUser). The refresh
+# token is additionally encrypted at rest, so a database leak alone does not
+# hand over calendar access: see lib/googleCalendar/crypto.ts.
+type GoogleCalendarConnection @table(key: ["user"]) {
+  user: User!
+  # Which Google account was authorized. Display-only — shown on the settings
+  # card so it's obvious *whose* calendar is being written to when the Google
+  # account differs from the Firebase sign-in account, which is allowed here.
+  googleEmail: String
+  # The dedicated secondary calendar this app created via calendars.insert.
+  # Never "primary": the OAuth scope requested (calendar.app.created) cannot
+  # reach the user's own calendars at all, only ones the app made.
+  calendarId: String!
+  # AES-256-GCM sealed OAuth refresh token — "v1.<iv>.<tag>.<ciphertext>",
+  # all base64url. Sealed and opened only by lib/googleCalendar/crypto.ts.
+  refreshTokenCipher: String!
+  # Space-delimited scopes Google actually granted, which is not necessarily
+  # what was asked for — granular consent lets a user approve a subset. Stored
+  # so the sync route can fail with an actionable "reconnect and allow calendar
+  # access" instead of an opaque 403 from Google mid-sync.
+  scope: String!
+
+  # --- Sync preferences (see lib/googleCalendar/events.ts for semantics) ---
+  #
+  # Non-null with defaults, unlike the nullable-with-default preference columns
+  # on User. That difference is deliberate: those were added to an
+  # already-populated table, where NOT NULL would have required a backfill.
+  # This table starts empty, so its columns can carry the stronger guarantee
+  # and the generated TypeScript type doesn't force a `?? true` at every read.
+
+  # Collapse back-to-back entries on the same ticket into a single event, so a
+  # day of 15-minute segments becomes a handful of readable blocks rather than
+  # ~20 slivers.
+  mergeConsecutive: Boolean! @default(expr: "true")
+  # Whether a re-sync rewrites events it previously created (app is the source
+  # of truth) or leaves them alone once written (manual edits in Google
+  # Calendar survive).
+  overwriteExisting: Boolean! @default(expr: "true")
+  # Whether a sync deletes app-created events in the synced range whose time
+  # entry no longer exists, making the calendar a true mirror of the range.
+  pruneOrphans: Boolean! @default(expr: "true")
+  # Write events as transparency:"transparent" (Free). On by default because
+  # these are *records of work already done*, and marking them Busy would
+  # retroactively make the user look unavailable to anyone sharing the calendar.
+  markAsFree: Boolean! @default(expr: "true")
+  # Carry each entry's notes into the event body. Off leaves events titled by
+  # ticket only, for anyone who shares this calendar and would rather not
+  # publish per-entry notes.
+  includeDescription: Boolean! @default(expr: "true")
+
+  connectedAt: Timestamp! @default(expr: "request.time")
+  # Null until the first successful sync. Display-only.
+  lastSyncedAt: Timestamp
+}

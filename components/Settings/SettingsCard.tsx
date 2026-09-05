@@ -3,6 +3,7 @@
 import { Card, Switch, Button, Tooltip, Slider, TextField, Input, Label } from '@heroui/react'
 import { useTheme } from 'next-themes'
 import TimeRangeSettings from '../TimeRangeSettings'
+import GoogleCalendarCard from './GoogleCalendarCard'
 import { useEffect, useState } from 'react'
 import { useThemeSelection, getVariant } from '@/context/ThemeSelectionContext'
 import { usePerformanceMode } from '@/context/PerformanceModeContext'
@@ -358,6 +359,11 @@ function SettingsCard() {
           </Button>
         </div>
       </Card>
+
+      {/* Google Calendar — its own Card rather than a row inside Integrations
+          above: it owns a connection lifecycle, a sync action and five
+          preferences, which is more than that section's single-field rows. */}
+      <GoogleCalendarCard />
 
       {/* Data & Privacy (mocked) */}
       {/* <Card className="p-6">

@@ -28,6 +28,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*AdminListFeatures*](#adminlistfeatures)
   - [*AdminGetUser*](#admingetuser)
   - [*AdminListTeams*](#adminlistteams)
+  - [*GetGoogleCalendarConnection*](#getgooglecalendarconnection)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*SetUserType*](#setusertype)
@@ -49,6 +50,10 @@ This README will guide you through the process of using the generated JavaScript
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
   - [*CreateWorkLog*](#createworklog)
+  - [*UpsertGoogleCalendarConnection*](#upsertgooglecalendarconnection)
+  - [*UpdateGoogleCalendarSyncPrefs*](#updategooglecalendarsyncprefs)
+  - [*TouchGoogleCalendarLastSynced*](#touchgooglecalendarlastsynced)
+  - [*DeleteGoogleCalendarConnection*](#deletegooglecalendarconnection)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -2157,6 +2162,127 @@ console.log(data.teams);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.teams);
+});
+```
+
+## GetGoogleCalendarConnection
+You can execute the `GetGoogleCalendarConnection` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getGoogleCalendarConnection(vars: GetGoogleCalendarConnectionVariables, options?: ExecuteQueryOptions): QueryPromise<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+
+interface GetGoogleCalendarConnectionRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetGoogleCalendarConnectionVariables): QueryRef<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+}
+export const getGoogleCalendarConnectionRef: GetGoogleCalendarConnectionRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getGoogleCalendarConnection(dc: DataConnect, vars: GetGoogleCalendarConnectionVariables, options?: ExecuteQueryOptions): QueryPromise<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+
+interface GetGoogleCalendarConnectionRef {
+  ...
+  (dc: DataConnect, vars: GetGoogleCalendarConnectionVariables): QueryRef<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+}
+export const getGoogleCalendarConnectionRef: GetGoogleCalendarConnectionRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getGoogleCalendarConnectionRef:
+```typescript
+const name = getGoogleCalendarConnectionRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetGoogleCalendarConnection` query requires an argument of type `GetGoogleCalendarConnectionVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `GetGoogleCalendarConnection` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetGoogleCalendarConnectionData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetGoogleCalendarConnectionData {
+  googleCalendarConnection?: {
+    calendarId: string;
+    googleEmail?: string | null;
+    refreshTokenCipher: string;
+    scope: string;
+    mergeConsecutive: boolean;
+    overwriteExisting: boolean;
+    pruneOrphans: boolean;
+    markAsFree: boolean;
+    includeDescription: boolean;
+    connectedAt: TimestampString;
+    lastSyncedAt?: TimestampString | null;
+  };
+}
+```
+### Using `GetGoogleCalendarConnection`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getGoogleCalendarConnection, GetGoogleCalendarConnectionVariables } from '@dataconnect/generated';
+
+// The `GetGoogleCalendarConnection` query requires an argument of type `GetGoogleCalendarConnectionVariables`:
+const getGoogleCalendarConnectionVars: GetGoogleCalendarConnectionVariables = {
+  userId: ..., 
+};
+
+// Call the `getGoogleCalendarConnection()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getGoogleCalendarConnection(getGoogleCalendarConnectionVars);
+// Variables can be defined inline as well.
+const { data } = await getGoogleCalendarConnection({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getGoogleCalendarConnection(dataConnect, getGoogleCalendarConnectionVars);
+
+console.log(data.googleCalendarConnection);
+
+// Or, you can use the `Promise` API.
+getGoogleCalendarConnection(getGoogleCalendarConnectionVars).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection);
+});
+```
+
+### Using `GetGoogleCalendarConnection`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getGoogleCalendarConnectionRef, GetGoogleCalendarConnectionVariables } from '@dataconnect/generated';
+
+// The `GetGoogleCalendarConnection` query requires an argument of type `GetGoogleCalendarConnectionVariables`:
+const getGoogleCalendarConnectionVars: GetGoogleCalendarConnectionVariables = {
+  userId: ..., 
+};
+
+// Call the `getGoogleCalendarConnectionRef()` function to get a reference to the query.
+const ref = getGoogleCalendarConnectionRef(getGoogleCalendarConnectionVars);
+// Variables can be defined inline as well.
+const ref = getGoogleCalendarConnectionRef({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getGoogleCalendarConnectionRef(dataConnect, getGoogleCalendarConnectionVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.googleCalendarConnection);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection);
 });
 ```
 
@@ -4591,6 +4717,469 @@ executeMutation(ref).then((response) => {
   console.log(data.seg30);
   console.log(data.seg31);
   console.log(data.seg32);
+});
+```
+
+## UpsertGoogleCalendarConnection
+You can execute the `UpsertGoogleCalendarConnection` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+upsertGoogleCalendarConnection(vars: UpsertGoogleCalendarConnectionVariables): MutationPromise<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+
+interface UpsertGoogleCalendarConnectionRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpsertGoogleCalendarConnectionVariables): MutationRef<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+}
+export const upsertGoogleCalendarConnectionRef: UpsertGoogleCalendarConnectionRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+upsertGoogleCalendarConnection(dc: DataConnect, vars: UpsertGoogleCalendarConnectionVariables): MutationPromise<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+
+interface UpsertGoogleCalendarConnectionRef {
+  ...
+  (dc: DataConnect, vars: UpsertGoogleCalendarConnectionVariables): MutationRef<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+}
+export const upsertGoogleCalendarConnectionRef: UpsertGoogleCalendarConnectionRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the upsertGoogleCalendarConnectionRef:
+```typescript
+const name = upsertGoogleCalendarConnectionRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpsertGoogleCalendarConnection` mutation requires an argument of type `UpsertGoogleCalendarConnectionVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpsertGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+  calendarId: string;
+  googleEmail?: string | null;
+  refreshTokenCipher: string;
+  scope: string;
+}
+```
+### Return Type
+Recall that executing the `UpsertGoogleCalendarConnection` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpsertGoogleCalendarConnectionData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpsertGoogleCalendarConnectionData {
+  googleCalendarConnection_upsert: GoogleCalendarConnection_Key;
+}
+```
+### Using `UpsertGoogleCalendarConnection`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, upsertGoogleCalendarConnection, UpsertGoogleCalendarConnectionVariables } from '@dataconnect/generated';
+
+// The `UpsertGoogleCalendarConnection` mutation requires an argument of type `UpsertGoogleCalendarConnectionVariables`:
+const upsertGoogleCalendarConnectionVars: UpsertGoogleCalendarConnectionVariables = {
+  userId: ..., 
+  calendarId: ..., 
+  googleEmail: ..., // optional
+  refreshTokenCipher: ..., 
+  scope: ..., 
+};
+
+// Call the `upsertGoogleCalendarConnection()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await upsertGoogleCalendarConnection(upsertGoogleCalendarConnectionVars);
+// Variables can be defined inline as well.
+const { data } = await upsertGoogleCalendarConnection({ userId: ..., calendarId: ..., googleEmail: ..., refreshTokenCipher: ..., scope: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await upsertGoogleCalendarConnection(dataConnect, upsertGoogleCalendarConnectionVars);
+
+console.log(data.googleCalendarConnection_upsert);
+
+// Or, you can use the `Promise` API.
+upsertGoogleCalendarConnection(upsertGoogleCalendarConnectionVars).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection_upsert);
+});
+```
+
+### Using `UpsertGoogleCalendarConnection`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, upsertGoogleCalendarConnectionRef, UpsertGoogleCalendarConnectionVariables } from '@dataconnect/generated';
+
+// The `UpsertGoogleCalendarConnection` mutation requires an argument of type `UpsertGoogleCalendarConnectionVariables`:
+const upsertGoogleCalendarConnectionVars: UpsertGoogleCalendarConnectionVariables = {
+  userId: ..., 
+  calendarId: ..., 
+  googleEmail: ..., // optional
+  refreshTokenCipher: ..., 
+  scope: ..., 
+};
+
+// Call the `upsertGoogleCalendarConnectionRef()` function to get a reference to the mutation.
+const ref = upsertGoogleCalendarConnectionRef(upsertGoogleCalendarConnectionVars);
+// Variables can be defined inline as well.
+const ref = upsertGoogleCalendarConnectionRef({ userId: ..., calendarId: ..., googleEmail: ..., refreshTokenCipher: ..., scope: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = upsertGoogleCalendarConnectionRef(dataConnect, upsertGoogleCalendarConnectionVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.googleCalendarConnection_upsert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection_upsert);
+});
+```
+
+## UpdateGoogleCalendarSyncPrefs
+You can execute the `UpdateGoogleCalendarSyncPrefs` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+updateGoogleCalendarSyncPrefs(vars: UpdateGoogleCalendarSyncPrefsVariables): MutationPromise<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+
+interface UpdateGoogleCalendarSyncPrefsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateGoogleCalendarSyncPrefsVariables): MutationRef<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+}
+export const updateGoogleCalendarSyncPrefsRef: UpdateGoogleCalendarSyncPrefsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+updateGoogleCalendarSyncPrefs(dc: DataConnect, vars: UpdateGoogleCalendarSyncPrefsVariables): MutationPromise<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+
+interface UpdateGoogleCalendarSyncPrefsRef {
+  ...
+  (dc: DataConnect, vars: UpdateGoogleCalendarSyncPrefsVariables): MutationRef<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+}
+export const updateGoogleCalendarSyncPrefsRef: UpdateGoogleCalendarSyncPrefsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the updateGoogleCalendarSyncPrefsRef:
+```typescript
+const name = updateGoogleCalendarSyncPrefsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpdateGoogleCalendarSyncPrefs` mutation requires an argument of type `UpdateGoogleCalendarSyncPrefsVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpdateGoogleCalendarSyncPrefsVariables {
+  userId: UUIDString;
+  mergeConsecutive: boolean;
+  overwriteExisting: boolean;
+  pruneOrphans: boolean;
+  markAsFree: boolean;
+  includeDescription: boolean;
+}
+```
+### Return Type
+Recall that executing the `UpdateGoogleCalendarSyncPrefs` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpdateGoogleCalendarSyncPrefsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpdateGoogleCalendarSyncPrefsData {
+  googleCalendarConnection_update?: GoogleCalendarConnection_Key | null;
+}
+```
+### Using `UpdateGoogleCalendarSyncPrefs`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, updateGoogleCalendarSyncPrefs, UpdateGoogleCalendarSyncPrefsVariables } from '@dataconnect/generated';
+
+// The `UpdateGoogleCalendarSyncPrefs` mutation requires an argument of type `UpdateGoogleCalendarSyncPrefsVariables`:
+const updateGoogleCalendarSyncPrefsVars: UpdateGoogleCalendarSyncPrefsVariables = {
+  userId: ..., 
+  mergeConsecutive: ..., 
+  overwriteExisting: ..., 
+  pruneOrphans: ..., 
+  markAsFree: ..., 
+  includeDescription: ..., 
+};
+
+// Call the `updateGoogleCalendarSyncPrefs()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await updateGoogleCalendarSyncPrefs(updateGoogleCalendarSyncPrefsVars);
+// Variables can be defined inline as well.
+const { data } = await updateGoogleCalendarSyncPrefs({ userId: ..., mergeConsecutive: ..., overwriteExisting: ..., pruneOrphans: ..., markAsFree: ..., includeDescription: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await updateGoogleCalendarSyncPrefs(dataConnect, updateGoogleCalendarSyncPrefsVars);
+
+console.log(data.googleCalendarConnection_update);
+
+// Or, you can use the `Promise` API.
+updateGoogleCalendarSyncPrefs(updateGoogleCalendarSyncPrefsVars).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection_update);
+});
+```
+
+### Using `UpdateGoogleCalendarSyncPrefs`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, updateGoogleCalendarSyncPrefsRef, UpdateGoogleCalendarSyncPrefsVariables } from '@dataconnect/generated';
+
+// The `UpdateGoogleCalendarSyncPrefs` mutation requires an argument of type `UpdateGoogleCalendarSyncPrefsVariables`:
+const updateGoogleCalendarSyncPrefsVars: UpdateGoogleCalendarSyncPrefsVariables = {
+  userId: ..., 
+  mergeConsecutive: ..., 
+  overwriteExisting: ..., 
+  pruneOrphans: ..., 
+  markAsFree: ..., 
+  includeDescription: ..., 
+};
+
+// Call the `updateGoogleCalendarSyncPrefsRef()` function to get a reference to the mutation.
+const ref = updateGoogleCalendarSyncPrefsRef(updateGoogleCalendarSyncPrefsVars);
+// Variables can be defined inline as well.
+const ref = updateGoogleCalendarSyncPrefsRef({ userId: ..., mergeConsecutive: ..., overwriteExisting: ..., pruneOrphans: ..., markAsFree: ..., includeDescription: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = updateGoogleCalendarSyncPrefsRef(dataConnect, updateGoogleCalendarSyncPrefsVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.googleCalendarConnection_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection_update);
+});
+```
+
+## TouchGoogleCalendarLastSynced
+You can execute the `TouchGoogleCalendarLastSynced` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+touchGoogleCalendarLastSynced(vars: TouchGoogleCalendarLastSyncedVariables): MutationPromise<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+
+interface TouchGoogleCalendarLastSyncedRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: TouchGoogleCalendarLastSyncedVariables): MutationRef<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+}
+export const touchGoogleCalendarLastSyncedRef: TouchGoogleCalendarLastSyncedRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+touchGoogleCalendarLastSynced(dc: DataConnect, vars: TouchGoogleCalendarLastSyncedVariables): MutationPromise<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+
+interface TouchGoogleCalendarLastSyncedRef {
+  ...
+  (dc: DataConnect, vars: TouchGoogleCalendarLastSyncedVariables): MutationRef<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+}
+export const touchGoogleCalendarLastSyncedRef: TouchGoogleCalendarLastSyncedRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the touchGoogleCalendarLastSyncedRef:
+```typescript
+const name = touchGoogleCalendarLastSyncedRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `TouchGoogleCalendarLastSynced` mutation requires an argument of type `TouchGoogleCalendarLastSyncedVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface TouchGoogleCalendarLastSyncedVariables {
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `TouchGoogleCalendarLastSynced` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `TouchGoogleCalendarLastSyncedData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface TouchGoogleCalendarLastSyncedData {
+  googleCalendarConnection_update?: GoogleCalendarConnection_Key | null;
+}
+```
+### Using `TouchGoogleCalendarLastSynced`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, touchGoogleCalendarLastSynced, TouchGoogleCalendarLastSyncedVariables } from '@dataconnect/generated';
+
+// The `TouchGoogleCalendarLastSynced` mutation requires an argument of type `TouchGoogleCalendarLastSyncedVariables`:
+const touchGoogleCalendarLastSyncedVars: TouchGoogleCalendarLastSyncedVariables = {
+  userId: ..., 
+};
+
+// Call the `touchGoogleCalendarLastSynced()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await touchGoogleCalendarLastSynced(touchGoogleCalendarLastSyncedVars);
+// Variables can be defined inline as well.
+const { data } = await touchGoogleCalendarLastSynced({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await touchGoogleCalendarLastSynced(dataConnect, touchGoogleCalendarLastSyncedVars);
+
+console.log(data.googleCalendarConnection_update);
+
+// Or, you can use the `Promise` API.
+touchGoogleCalendarLastSynced(touchGoogleCalendarLastSyncedVars).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection_update);
+});
+```
+
+### Using `TouchGoogleCalendarLastSynced`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, touchGoogleCalendarLastSyncedRef, TouchGoogleCalendarLastSyncedVariables } from '@dataconnect/generated';
+
+// The `TouchGoogleCalendarLastSynced` mutation requires an argument of type `TouchGoogleCalendarLastSyncedVariables`:
+const touchGoogleCalendarLastSyncedVars: TouchGoogleCalendarLastSyncedVariables = {
+  userId: ..., 
+};
+
+// Call the `touchGoogleCalendarLastSyncedRef()` function to get a reference to the mutation.
+const ref = touchGoogleCalendarLastSyncedRef(touchGoogleCalendarLastSyncedVars);
+// Variables can be defined inline as well.
+const ref = touchGoogleCalendarLastSyncedRef({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = touchGoogleCalendarLastSyncedRef(dataConnect, touchGoogleCalendarLastSyncedVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.googleCalendarConnection_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection_update);
+});
+```
+
+## DeleteGoogleCalendarConnection
+You can execute the `DeleteGoogleCalendarConnection` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+deleteGoogleCalendarConnection(vars: DeleteGoogleCalendarConnectionVariables): MutationPromise<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+
+interface DeleteGoogleCalendarConnectionRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteGoogleCalendarConnectionVariables): MutationRef<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+}
+export const deleteGoogleCalendarConnectionRef: DeleteGoogleCalendarConnectionRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+deleteGoogleCalendarConnection(dc: DataConnect, vars: DeleteGoogleCalendarConnectionVariables): MutationPromise<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+
+interface DeleteGoogleCalendarConnectionRef {
+  ...
+  (dc: DataConnect, vars: DeleteGoogleCalendarConnectionVariables): MutationRef<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+}
+export const deleteGoogleCalendarConnectionRef: DeleteGoogleCalendarConnectionRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the deleteGoogleCalendarConnectionRef:
+```typescript
+const name = deleteGoogleCalendarConnectionRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `DeleteGoogleCalendarConnection` mutation requires an argument of type `DeleteGoogleCalendarConnectionVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface DeleteGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `DeleteGoogleCalendarConnection` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `DeleteGoogleCalendarConnectionData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface DeleteGoogleCalendarConnectionData {
+  googleCalendarConnection_delete?: GoogleCalendarConnection_Key | null;
+}
+```
+### Using `DeleteGoogleCalendarConnection`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, deleteGoogleCalendarConnection, DeleteGoogleCalendarConnectionVariables } from '@dataconnect/generated';
+
+// The `DeleteGoogleCalendarConnection` mutation requires an argument of type `DeleteGoogleCalendarConnectionVariables`:
+const deleteGoogleCalendarConnectionVars: DeleteGoogleCalendarConnectionVariables = {
+  userId: ..., 
+};
+
+// Call the `deleteGoogleCalendarConnection()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await deleteGoogleCalendarConnection(deleteGoogleCalendarConnectionVars);
+// Variables can be defined inline as well.
+const { data } = await deleteGoogleCalendarConnection({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await deleteGoogleCalendarConnection(dataConnect, deleteGoogleCalendarConnectionVars);
+
+console.log(data.googleCalendarConnection_delete);
+
+// Or, you can use the `Promise` API.
+deleteGoogleCalendarConnection(deleteGoogleCalendarConnectionVars).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection_delete);
+});
+```
+
+### Using `DeleteGoogleCalendarConnection`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, deleteGoogleCalendarConnectionRef, DeleteGoogleCalendarConnectionVariables } from '@dataconnect/generated';
+
+// The `DeleteGoogleCalendarConnection` mutation requires an argument of type `DeleteGoogleCalendarConnectionVariables`:
+const deleteGoogleCalendarConnectionVars: DeleteGoogleCalendarConnectionVariables = {
+  userId: ..., 
+};
+
+// Call the `deleteGoogleCalendarConnectionRef()` function to get a reference to the mutation.
+const ref = deleteGoogleCalendarConnectionRef(deleteGoogleCalendarConnectionVars);
+// Variables can be defined inline as well.
+const ref = deleteGoogleCalendarConnectionRef({ userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = deleteGoogleCalendarConnectionRef(dataConnect, deleteGoogleCalendarConnectionVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.googleCalendarConnection_delete);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.googleCalendarConnection_delete);
 });
 ```
 

@@ -250,6 +250,54 @@ export function createWorkLog(dcOrVars, vars) {
   return executeMutation(createWorkLogRef(dcInstance, inputVars));
 }
 
+export const upsertGoogleCalendarConnectionRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpsertGoogleCalendarConnection', inputVars);
+}
+upsertGoogleCalendarConnectionRef.operationName = 'UpsertGoogleCalendarConnection';
+
+export function upsertGoogleCalendarConnection(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(upsertGoogleCalendarConnectionRef(dcInstance, inputVars));
+}
+
+export const updateGoogleCalendarSyncPrefsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateGoogleCalendarSyncPrefs', inputVars);
+}
+updateGoogleCalendarSyncPrefsRef.operationName = 'UpdateGoogleCalendarSyncPrefs';
+
+export function updateGoogleCalendarSyncPrefs(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateGoogleCalendarSyncPrefsRef(dcInstance, inputVars));
+}
+
+export const touchGoogleCalendarLastSyncedRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'TouchGoogleCalendarLastSynced', inputVars);
+}
+touchGoogleCalendarLastSyncedRef.operationName = 'TouchGoogleCalendarLastSynced';
+
+export function touchGoogleCalendarLastSynced(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(touchGoogleCalendarLastSyncedRef(dcInstance, inputVars));
+}
+
+export const deleteGoogleCalendarConnectionRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteGoogleCalendarConnection', inputVars);
+}
+deleteGoogleCalendarConnectionRef.operationName = 'DeleteGoogleCalendarConnection';
+
+export function deleteGoogleCalendarConnection(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteGoogleCalendarConnectionRef(dcInstance, inputVars));
+}
+
 export const listUsersRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
@@ -482,5 +530,18 @@ export function adminListTeams(dcOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
   return executeQuery(adminListTeamsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+
+export const getGoogleCalendarConnectionRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetGoogleCalendarConnection', inputVars);
+}
+getGoogleCalendarConnectionRef.operationName = 'GetGoogleCalendarConnection';
+
+export function getGoogleCalendarConnection(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getGoogleCalendarConnectionRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 

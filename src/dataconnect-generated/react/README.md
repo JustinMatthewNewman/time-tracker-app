@@ -35,6 +35,7 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*AdminListFeatures*](#adminlistfeatures)
   - [*AdminGetUser*](#admingetuser)
   - [*AdminListTeams*](#adminlistteams)
+  - [*GetGoogleCalendarConnection*](#getgooglecalendarconnection)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*SetUserType*](#setusertype)
@@ -56,6 +57,10 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*DeleteWorkLog*](#deleteworklog)
   - [*RestoreWorkLog*](#restoreworklog)
   - [*CreateWorkLog*](#createworklog)
+  - [*UpsertGoogleCalendarConnection*](#upsertgooglecalendarconnection)
+  - [*UpdateGoogleCalendarSyncPrefs*](#updategooglecalendarsyncprefs)
+  - [*TouchGoogleCalendarLastSynced*](#touchgooglecalendarlastsynced)
+  - [*DeleteGoogleCalendarConnection*](#deletegooglecalendarconnection)
 
 # TanStack Query Firebase & TanStack React Query
 This SDK provides [React](https://react.dev/) hooks generated specific to your application, for the operations found in the connector `example`. These hooks are generated using [TanStack Query Firebase](https://react-query-firebase.invertase.dev/) by our partners at Invertase, a library built on top of [TanStack React Query v5](https://tanstack.com/query/v5/docs/framework/react/overview).
@@ -1760,6 +1765,100 @@ export default function AdminListTeamsComponent() {
   // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
   if (query.isSuccess) {
     console.log(query.data.teams);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## GetGoogleCalendarConnection
+You can execute the `GetGoogleCalendarConnection` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useGetGoogleCalendarConnection(dc: DataConnect, vars: GetGoogleCalendarConnectionVariables, options?: useDataConnectQueryOptions<GetGoogleCalendarConnectionData>): UseDataConnectQueryResult<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useGetGoogleCalendarConnection(vars: GetGoogleCalendarConnectionVariables, options?: useDataConnectQueryOptions<GetGoogleCalendarConnectionData>): UseDataConnectQueryResult<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+```
+
+### Variables
+The `GetGoogleCalendarConnection` Query requires an argument of type `GetGoogleCalendarConnectionVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface GetGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `GetGoogleCalendarConnection` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetGoogleCalendarConnection` Query is of type `GetGoogleCalendarConnectionData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface GetGoogleCalendarConnectionData {
+  googleCalendarConnection?: {
+    calendarId: string;
+    googleEmail?: string | null;
+    refreshTokenCipher: string;
+    scope: string;
+    mergeConsecutive: boolean;
+    overwriteExisting: boolean;
+    pruneOrphans: boolean;
+    markAsFree: boolean;
+    includeDescription: boolean;
+    connectedAt: TimestampString;
+    lastSyncedAt?: TimestampString | null;
+  };
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `GetGoogleCalendarConnection`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, GetGoogleCalendarConnectionVariables } from '@dataconnect/generated';
+import { useGetGoogleCalendarConnection } from '@dataconnect/generated/react'
+
+export default function GetGoogleCalendarConnectionComponent() {
+  // The `useGetGoogleCalendarConnection` Query hook requires an argument of type `GetGoogleCalendarConnectionVariables`:
+  const getGoogleCalendarConnectionVars: GetGoogleCalendarConnectionVariables = {
+    userId: ..., 
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useGetGoogleCalendarConnection(getGoogleCalendarConnectionVars);
+  // Variables can be defined inline as well.
+  const query = useGetGoogleCalendarConnection({ userId: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useGetGoogleCalendarConnection(dataConnect, getGoogleCalendarConnectionVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetGoogleCalendarConnection(getGoogleCalendarConnectionVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetGoogleCalendarConnection(dataConnect, getGoogleCalendarConnectionVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.googleCalendarConnection);
   }
   return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
 }
@@ -3784,6 +3883,400 @@ export default function CreateWorkLogComponent() {
     console.log(mutation.data.seg30);
     console.log(mutation.data.seg31);
     console.log(mutation.data.seg32);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## UpsertGoogleCalendarConnection
+You can execute the `UpsertGoogleCalendarConnection` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useUpsertGoogleCalendarConnection(options?: useDataConnectMutationOptions<UpsertGoogleCalendarConnectionData, FirebaseError, UpsertGoogleCalendarConnectionVariables>): UseDataConnectMutationResult<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useUpsertGoogleCalendarConnection(dc: DataConnect, options?: useDataConnectMutationOptions<UpsertGoogleCalendarConnectionData, FirebaseError, UpsertGoogleCalendarConnectionVariables>): UseDataConnectMutationResult<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+```
+
+### Variables
+The `UpsertGoogleCalendarConnection` Mutation requires an argument of type `UpsertGoogleCalendarConnectionVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface UpsertGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+  calendarId: string;
+  googleEmail?: string | null;
+  refreshTokenCipher: string;
+  scope: string;
+}
+```
+### Return Type
+Recall that calling the `UpsertGoogleCalendarConnection` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `UpsertGoogleCalendarConnection` Mutation is of type `UpsertGoogleCalendarConnectionData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface UpsertGoogleCalendarConnectionData {
+  googleCalendarConnection_upsert: GoogleCalendarConnection_Key;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `UpsertGoogleCalendarConnection`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, UpsertGoogleCalendarConnectionVariables } from '@dataconnect/generated';
+import { useUpsertGoogleCalendarConnection } from '@dataconnect/generated/react'
+
+export default function UpsertGoogleCalendarConnectionComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useUpsertGoogleCalendarConnection();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useUpsertGoogleCalendarConnection(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useUpsertGoogleCalendarConnection(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useUpsertGoogleCalendarConnection(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useUpsertGoogleCalendarConnection` Mutation requires an argument of type `UpsertGoogleCalendarConnectionVariables`:
+  const upsertGoogleCalendarConnectionVars: UpsertGoogleCalendarConnectionVariables = {
+    userId: ..., 
+    calendarId: ..., 
+    googleEmail: ..., // optional
+    refreshTokenCipher: ..., 
+    scope: ..., 
+  };
+  mutation.mutate(upsertGoogleCalendarConnectionVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ userId: ..., calendarId: ..., googleEmail: ..., refreshTokenCipher: ..., scope: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(upsertGoogleCalendarConnectionVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.googleCalendarConnection_upsert);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## UpdateGoogleCalendarSyncPrefs
+You can execute the `UpdateGoogleCalendarSyncPrefs` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useUpdateGoogleCalendarSyncPrefs(options?: useDataConnectMutationOptions<UpdateGoogleCalendarSyncPrefsData, FirebaseError, UpdateGoogleCalendarSyncPrefsVariables>): UseDataConnectMutationResult<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useUpdateGoogleCalendarSyncPrefs(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateGoogleCalendarSyncPrefsData, FirebaseError, UpdateGoogleCalendarSyncPrefsVariables>): UseDataConnectMutationResult<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+```
+
+### Variables
+The `UpdateGoogleCalendarSyncPrefs` Mutation requires an argument of type `UpdateGoogleCalendarSyncPrefsVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface UpdateGoogleCalendarSyncPrefsVariables {
+  userId: UUIDString;
+  mergeConsecutive: boolean;
+  overwriteExisting: boolean;
+  pruneOrphans: boolean;
+  markAsFree: boolean;
+  includeDescription: boolean;
+}
+```
+### Return Type
+Recall that calling the `UpdateGoogleCalendarSyncPrefs` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `UpdateGoogleCalendarSyncPrefs` Mutation is of type `UpdateGoogleCalendarSyncPrefsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface UpdateGoogleCalendarSyncPrefsData {
+  googleCalendarConnection_update?: GoogleCalendarConnection_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `UpdateGoogleCalendarSyncPrefs`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, UpdateGoogleCalendarSyncPrefsVariables } from '@dataconnect/generated';
+import { useUpdateGoogleCalendarSyncPrefs } from '@dataconnect/generated/react'
+
+export default function UpdateGoogleCalendarSyncPrefsComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useUpdateGoogleCalendarSyncPrefs();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useUpdateGoogleCalendarSyncPrefs(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useUpdateGoogleCalendarSyncPrefs(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useUpdateGoogleCalendarSyncPrefs(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useUpdateGoogleCalendarSyncPrefs` Mutation requires an argument of type `UpdateGoogleCalendarSyncPrefsVariables`:
+  const updateGoogleCalendarSyncPrefsVars: UpdateGoogleCalendarSyncPrefsVariables = {
+    userId: ..., 
+    mergeConsecutive: ..., 
+    overwriteExisting: ..., 
+    pruneOrphans: ..., 
+    markAsFree: ..., 
+    includeDescription: ..., 
+  };
+  mutation.mutate(updateGoogleCalendarSyncPrefsVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ userId: ..., mergeConsecutive: ..., overwriteExisting: ..., pruneOrphans: ..., markAsFree: ..., includeDescription: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(updateGoogleCalendarSyncPrefsVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.googleCalendarConnection_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## TouchGoogleCalendarLastSynced
+You can execute the `TouchGoogleCalendarLastSynced` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useTouchGoogleCalendarLastSynced(options?: useDataConnectMutationOptions<TouchGoogleCalendarLastSyncedData, FirebaseError, TouchGoogleCalendarLastSyncedVariables>): UseDataConnectMutationResult<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useTouchGoogleCalendarLastSynced(dc: DataConnect, options?: useDataConnectMutationOptions<TouchGoogleCalendarLastSyncedData, FirebaseError, TouchGoogleCalendarLastSyncedVariables>): UseDataConnectMutationResult<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+```
+
+### Variables
+The `TouchGoogleCalendarLastSynced` Mutation requires an argument of type `TouchGoogleCalendarLastSyncedVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface TouchGoogleCalendarLastSyncedVariables {
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `TouchGoogleCalendarLastSynced` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `TouchGoogleCalendarLastSynced` Mutation is of type `TouchGoogleCalendarLastSyncedData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface TouchGoogleCalendarLastSyncedData {
+  googleCalendarConnection_update?: GoogleCalendarConnection_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `TouchGoogleCalendarLastSynced`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, TouchGoogleCalendarLastSyncedVariables } from '@dataconnect/generated';
+import { useTouchGoogleCalendarLastSynced } from '@dataconnect/generated/react'
+
+export default function TouchGoogleCalendarLastSyncedComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useTouchGoogleCalendarLastSynced();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useTouchGoogleCalendarLastSynced(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useTouchGoogleCalendarLastSynced(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useTouchGoogleCalendarLastSynced(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useTouchGoogleCalendarLastSynced` Mutation requires an argument of type `TouchGoogleCalendarLastSyncedVariables`:
+  const touchGoogleCalendarLastSyncedVars: TouchGoogleCalendarLastSyncedVariables = {
+    userId: ..., 
+  };
+  mutation.mutate(touchGoogleCalendarLastSyncedVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ userId: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(touchGoogleCalendarLastSyncedVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.googleCalendarConnection_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## DeleteGoogleCalendarConnection
+You can execute the `DeleteGoogleCalendarConnection` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useDeleteGoogleCalendarConnection(options?: useDataConnectMutationOptions<DeleteGoogleCalendarConnectionData, FirebaseError, DeleteGoogleCalendarConnectionVariables>): UseDataConnectMutationResult<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useDeleteGoogleCalendarConnection(dc: DataConnect, options?: useDataConnectMutationOptions<DeleteGoogleCalendarConnectionData, FirebaseError, DeleteGoogleCalendarConnectionVariables>): UseDataConnectMutationResult<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+```
+
+### Variables
+The `DeleteGoogleCalendarConnection` Mutation requires an argument of type `DeleteGoogleCalendarConnectionVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface DeleteGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `DeleteGoogleCalendarConnection` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `DeleteGoogleCalendarConnection` Mutation is of type `DeleteGoogleCalendarConnectionData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface DeleteGoogleCalendarConnectionData {
+  googleCalendarConnection_delete?: GoogleCalendarConnection_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `DeleteGoogleCalendarConnection`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, DeleteGoogleCalendarConnectionVariables } from '@dataconnect/generated';
+import { useDeleteGoogleCalendarConnection } from '@dataconnect/generated/react'
+
+export default function DeleteGoogleCalendarConnectionComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useDeleteGoogleCalendarConnection();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useDeleteGoogleCalendarConnection(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useDeleteGoogleCalendarConnection(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useDeleteGoogleCalendarConnection(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useDeleteGoogleCalendarConnection` Mutation requires an argument of type `DeleteGoogleCalendarConnectionVariables`:
+  const deleteGoogleCalendarConnectionVars: DeleteGoogleCalendarConnectionVariables = {
+    userId: ..., 
+  };
+  mutation.mutate(deleteGoogleCalendarConnectionVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ userId: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(deleteGoogleCalendarConnectionVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.googleCalendarConnection_delete);
   }
   return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
 }

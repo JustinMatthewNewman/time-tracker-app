@@ -168,6 +168,14 @@ export interface CreateWorkLogVariables {
   workLogDate: TimestampString;
 }
 
+export interface DeleteGoogleCalendarConnectionData {
+  googleCalendarConnection_delete?: GoogleCalendarConnection_Key | null;
+}
+
+export interface DeleteGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+}
+
 export interface DeleteTimeEntryData {
   timeEntry_delete?: TimeEntry_Key | null;
 }
@@ -187,6 +195,26 @@ export interface DeleteWorkLogVariables {
 export interface Feature_Key {
   name: string;
   __typename?: 'Feature_Key';
+}
+
+export interface GetGoogleCalendarConnectionData {
+  googleCalendarConnection?: {
+    calendarId: string;
+    googleEmail?: string | null;
+    refreshTokenCipher: string;
+    scope: string;
+    mergeConsecutive: boolean;
+    overwriteExisting: boolean;
+    pruneOrphans: boolean;
+    markAsFree: boolean;
+    includeDescription: boolean;
+    connectedAt: TimestampString;
+    lastSyncedAt?: TimestampString | null;
+  };
+}
+
+export interface GetGoogleCalendarConnectionVariables {
+  userId: UUIDString;
 }
 
 export interface GetMyUserData {
@@ -255,6 +283,11 @@ export interface GetUserAccessByGoogleUidData {
 
 export interface GetUserAccessByGoogleUidVariables {
   googleUid: string;
+}
+
+export interface GoogleCalendarConnection_Key {
+  userId: UUIDString;
+  __typename?: 'GoogleCalendarConnection_Key';
 }
 
 export interface ListColorSchemesData {
@@ -549,6 +582,27 @@ export interface TimeEntry_Key {
   __typename?: 'TimeEntry_Key';
 }
 
+export interface TouchGoogleCalendarLastSyncedData {
+  googleCalendarConnection_update?: GoogleCalendarConnection_Key | null;
+}
+
+export interface TouchGoogleCalendarLastSyncedVariables {
+  userId: UUIDString;
+}
+
+export interface UpdateGoogleCalendarSyncPrefsData {
+  googleCalendarConnection_update?: GoogleCalendarConnection_Key | null;
+}
+
+export interface UpdateGoogleCalendarSyncPrefsVariables {
+  userId: UUIDString;
+  mergeConsecutive: boolean;
+  overwriteExisting: boolean;
+  pruneOrphans: boolean;
+  markAsFree: boolean;
+  includeDescription: boolean;
+}
+
 export interface UpdateTicketData {
   ticket_update?: Ticket_Key | null;
 }
@@ -586,6 +640,18 @@ export interface UpdateWorkLogData {
 export interface UpdateWorkLogVariables {
   workLogId: UUIDString;
   name: string;
+}
+
+export interface UpsertGoogleCalendarConnectionData {
+  googleCalendarConnection_upsert: GoogleCalendarConnection_Key;
+}
+
+export interface UpsertGoogleCalendarConnectionVariables {
+  userId: UUIDString;
+  calendarId: string;
+  googleEmail?: string | null;
+  refreshTokenCipher: string;
+  scope: string;
 }
 
 export interface UpsertTicketData {
@@ -860,6 +926,54 @@ export const createWorkLogRef: CreateWorkLogRef;
 export function createWorkLog(vars: CreateWorkLogVariables): MutationPromise<CreateWorkLogData, CreateWorkLogVariables>;
 export function createWorkLog(dc: DataConnect, vars: CreateWorkLogVariables): MutationPromise<CreateWorkLogData, CreateWorkLogVariables>;
 
+interface UpsertGoogleCalendarConnectionRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpsertGoogleCalendarConnectionVariables): MutationRef<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpsertGoogleCalendarConnectionVariables): MutationRef<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+  operationName: string;
+}
+export const upsertGoogleCalendarConnectionRef: UpsertGoogleCalendarConnectionRef;
+
+export function upsertGoogleCalendarConnection(vars: UpsertGoogleCalendarConnectionVariables): MutationPromise<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+export function upsertGoogleCalendarConnection(dc: DataConnect, vars: UpsertGoogleCalendarConnectionVariables): MutationPromise<UpsertGoogleCalendarConnectionData, UpsertGoogleCalendarConnectionVariables>;
+
+interface UpdateGoogleCalendarSyncPrefsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateGoogleCalendarSyncPrefsVariables): MutationRef<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateGoogleCalendarSyncPrefsVariables): MutationRef<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+  operationName: string;
+}
+export const updateGoogleCalendarSyncPrefsRef: UpdateGoogleCalendarSyncPrefsRef;
+
+export function updateGoogleCalendarSyncPrefs(vars: UpdateGoogleCalendarSyncPrefsVariables): MutationPromise<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+export function updateGoogleCalendarSyncPrefs(dc: DataConnect, vars: UpdateGoogleCalendarSyncPrefsVariables): MutationPromise<UpdateGoogleCalendarSyncPrefsData, UpdateGoogleCalendarSyncPrefsVariables>;
+
+interface TouchGoogleCalendarLastSyncedRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: TouchGoogleCalendarLastSyncedVariables): MutationRef<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: TouchGoogleCalendarLastSyncedVariables): MutationRef<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+  operationName: string;
+}
+export const touchGoogleCalendarLastSyncedRef: TouchGoogleCalendarLastSyncedRef;
+
+export function touchGoogleCalendarLastSynced(vars: TouchGoogleCalendarLastSyncedVariables): MutationPromise<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+export function touchGoogleCalendarLastSynced(dc: DataConnect, vars: TouchGoogleCalendarLastSyncedVariables): MutationPromise<TouchGoogleCalendarLastSyncedData, TouchGoogleCalendarLastSyncedVariables>;
+
+interface DeleteGoogleCalendarConnectionRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteGoogleCalendarConnectionVariables): MutationRef<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteGoogleCalendarConnectionVariables): MutationRef<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+  operationName: string;
+}
+export const deleteGoogleCalendarConnectionRef: DeleteGoogleCalendarConnectionRef;
+
+export function deleteGoogleCalendarConnection(vars: DeleteGoogleCalendarConnectionVariables): MutationPromise<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+export function deleteGoogleCalendarConnection(dc: DataConnect, vars: DeleteGoogleCalendarConnectionVariables): MutationPromise<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+
 interface ListUsersRef {
   /* Allow users to create refs without passing in DataConnect */
   (): QueryRef<ListUsersData, undefined>;
@@ -1075,4 +1189,16 @@ export const adminListTeamsRef: AdminListTeamsRef;
 
 export function adminListTeams(options?: ExecuteQueryOptions): QueryPromise<AdminListTeamsData, undefined>;
 export function adminListTeams(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<AdminListTeamsData, undefined>;
+
+interface GetGoogleCalendarConnectionRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetGoogleCalendarConnectionVariables): QueryRef<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetGoogleCalendarConnectionVariables): QueryRef<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+  operationName: string;
+}
+export const getGoogleCalendarConnectionRef: GetGoogleCalendarConnectionRef;
+
+export function getGoogleCalendarConnection(vars: GetGoogleCalendarConnectionVariables, options?: ExecuteQueryOptions): QueryPromise<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+export function getGoogleCalendarConnection(dc: DataConnect, vars: GetGoogleCalendarConnectionVariables, options?: ExecuteQueryOptions): QueryPromise<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
 
