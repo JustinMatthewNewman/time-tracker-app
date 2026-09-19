@@ -7,8 +7,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
 import { useTicketColorsSetting } from "@/context/TicketColorsContext";
 import { SideNavListBox } from "@/components/Utilities/SideNavListBox";
-import type { MemberMetrics, TeamMetrics } from "@/lib/adminTeamMetrics";
+import type { MemberDay, MemberMetrics, TeamMetrics } from "@/lib/adminTeamMetrics";
 import { AdminShell } from "./AdminShell";
+import { IsoStackedBarChart } from "./IsoStackedBarChart";
 import { MemberStatStrip, TeamStatStrip } from "./TeamStats";
 import { TeamRangeToggle } from "./TeamRangeToggle";
 import { defaultTeamRange, isRangeInvalid, resolveRange, type TeamRange } from "./teamRange";
@@ -38,6 +39,9 @@ interface AdminUserRow {
 interface TeamMetricsResponse {
   totals: TeamMetrics;
   members: MemberMetrics[];
+  /** Null when the range is wider than the server will break down by day. */
+  daily: Record<string, MemberDay[]> | null;
+  dailyLimitDays: number;
 }
 
 export function AdminTeamsPage() {
@@ -59,7 +63,9 @@ export function AdminTeamsPage() {
   const activeTeamId = selectedTeamId ?? teams[0]?.id ?? null;
   const team = teams.find((t) => t.id === activeTeamId) ?? null;
 
-  const [range, setRange] = useState<TeamRange>(() => defaultTeamRange());
+  // Defaults to the week rather than the month: the per-day chart below reads
+  // best at a week's worth of bars, and the stats are unaffected by the choice.
+  const [range, setRange] = useState<TeamRange>(() => ({ ...defaultTeamRange(), preset: "week" }));
   const rangeInvalid = isRangeInvalid(range);
   const { start, end } = resolveRange(range);
   // Same endpoint the team dashboard reads; the URL is the cache key
@@ -186,6 +192,8 @@ export function AdminTeamsPage() {
   const selectedMember = members.find((m) => m.id === selectedMemberId) ?? null;
   const memberMetrics =
     (selectedMember && metricsQuery.data?.members.find((m) => m.id === selectedMember.id)) || null;
+  const memberDays =
+    (selectedMember && metricsQuery.data?.daily?.[selectedMember.id]) || null;
   const addableUsers = (usersQuery.data?.users ?? []).filter(
     (u) => !members.some((m) => m.id === u.id)
   );
@@ -352,6 +360,22 @@ export function AdminTeamsPage() {
                   <MemberStatStrip member={memberMetrics} enabled={ticketColorsEnabled} />
                 ) : (
                   <p className="text-sm text-foreground/60">No stats for this member yet.</p>
+                )}
+
+                {!rangeInvalid && metricsQuery.data && (
+                  <div className="mt-1">
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wide text-foreground/40">
+                      Tickets per day
+                    </p>
+                    {memberDays ? (
+                      <IsoStackedBarChart days={memberDays} />
+                    ) : (
+                      <p className="text-sm text-foreground/60">
+                        Pick a range of {metricsQuery.data.dailyLimitDays} days or fewer to see the
+                        daily breakdown.
+                      </p>
+                    )}
+                  </div>
                 )}
                 <div className="flex items-center gap-3">
                   <Button
