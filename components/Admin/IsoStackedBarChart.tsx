@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { ChartTooltip, useChartTooltip } from "@/components/Dashboard/ChartTooltip";
 import { effectiveTicketColor } from "@/lib/ticketColor";
 import { formatDuration } from "@/lib/timeTotals";
-import type { MemberDay } from "@/lib/adminTeamMetrics";
+import type { DaySegment, MemberDay } from "@/lib/adminTeamMetrics";
 
 /**
  * Isometric stacked bar chart — one bar per day, one segment per ticket.
@@ -65,11 +67,21 @@ function dayLabel(dayKey: string): { weekday: string; day: string } {
   };
 }
 
+interface HoverData {
+  day: MemberDay;
+  segment: DaySegment;
+  weekday: string;
+  dayNumber: string;
+}
+
 export function IsoStackedBarChart({
   days,
   maxBarHeight = 130,
   className,
 }: IsoStackedBarChartProps) {
+  const router = useRouter();
+  const { tooltip, showAt, hide } = useChartTooltip<HoverData>();
+
   const maxMinutes = useMemo(
     () => days.reduce((max, d) => Math.max(max, d.totalMinutes), 0),
     [days]
@@ -88,91 +100,168 @@ export function IsoStackedBarChart({
   const total = days.reduce((sum, d) => sum + d.totalMinutes, 0);
 
   return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      // Scales down on narrow screens but never up: stretched to a wide card,
-      // a ~400-unit viewBox doubles in size and takes the label text with it.
-      style={{ maxWidth: width }}
-      className={`block h-auto w-full overflow-visible ${className ?? ""}`}
-      shapeRendering="geometricPrecision"
-      role="img"
-      aria-label={`Tickets per day, ${days.length} days, ${formatDuration(total)} total`}
-    >
-      {days.map((day, i) => {
-        const x = PAD + i * (BAR_WIDTH + GAP);
-        const label = dayLabel(day.date);
+    <>
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        // Scales down on narrow screens but never up: stretched to a wide card,
+        // a ~400-unit viewBox doubles in size and takes the label text with it.
+        style={{ maxWidth: width }}
+        className={`block h-auto w-full overflow-visible ${className ?? ""}`}
+        shapeRendering="geometricPrecision"
+        role="img"
+        aria-label={`Tickets per day, ${days.length} days, ${formatDuration(total)} total`}
+        onPointerLeave={hide}
+      >
+        {days.map((day, i) => {
+          const x = PAD + i * (BAR_WIDTH + GAP);
+          const label = dayLabel(day.date);
 
-        // Stack from the baseline up; `cursor` is the top edge of the stack so
-        // far, which is where the next segment's front face starts.
-        let cursor = baseline;
-        const faces = day.segments.map((seg, s) => {
-          const h = (seg.minutes / maxMinutes) * maxBarHeight;
-          const y = cursor - h;
-          cursor = y;
-          const base = segmentColor(seg.ticketNumber, seg.color);
-          const title = `${label.weekday} ${label.day} · ${
-            seg.ticketNumber == null ? "No ticket" : `#${seg.ticketNumber}`
-          }${seg.ticketTitle ? ` ${seg.ticketTitle}` : ""} · ${formatDuration(seg.minutes)}`;
+          // Stack from the baseline up; `cursor` is the top edge of the stack
+          // so far, which is where the next segment's front face starts.
+          let cursor = baseline;
+
+          const segments = day.segments.map((seg, s) => {
+            const h = (seg.minutes / maxMinutes) * maxBarHeight;
+            const y = cursor - h;
+            cursor = y;
+            const base = segmentColor(seg.ticketNumber, seg.color);
+            const isTop = s === day.segments.length - 1;
+            const clickable = seg.ticketNumber != null;
+
+            const ticketLabel =
+              seg.ticketNumber == null
+                ? "No ticket"
+                : `#${seg.ticketNumber}${seg.ticketTitle ? ` ${seg.ticketTitle}` : ""}`;
+            const title = `${label.weekday} ${label.day} · ${ticketLabel} · ${formatDuration(seg.minutes)}`;
+
+            const hover = {
+              onPointerEnter: (e: React.PointerEvent) =>
+                showAt(e, { day, segment: seg, weekday: label.weekday, dayNumber: label.day }),
+              onPointerMove: (e: React.PointerEvent) =>
+                showAt(e, { day, segment: seg, weekday: label.weekday, dayNumber: label.day }),
+            };
+
+            const shapes = (
+              <>
+                {/* Native title kept as the no-JS / assistive fallback, as
+                    ChartTooltip's own note prescribes. */}
+                <title>{title}</title>
+                {/* Side first, so the front face overlaps its shared edge. */}
+                <polygon
+                  points={`${x + BAR_WIDTH},${y} ${x + BAR_WIDTH + DEPTH_X},${y - DEPTH_Y} ${x + BAR_WIDTH + DEPTH_X},${y + h - DEPTH_Y} ${x + BAR_WIDTH},${y + h}`}
+                  fill={sideFace(base)}
+                />
+                <rect x={x} y={y} width={BAR_WIDTH} height={h} fill={base} />
+                {/* Only the topmost segment shows a top face — the others are
+                    covered by the segment stacked on them. It lives inside this
+                    group so it hovers and clicks with the rest of its segment
+                    rather than being dead area. */}
+                {isTop && (
+                  <polygon
+                    points={`${x},${y} ${x + BAR_WIDTH},${y} ${x + BAR_WIDTH + DEPTH_X},${y - DEPTH_Y} ${x + DEPTH_X},${y - DEPTH_Y}`}
+                    fill={topFace(base)}
+                  />
+                )}
+              </>
+            );
+
+            // A real anchor, not just an onClick: it gives keyboard focus,
+            // middle-click and "open in new tab" for free, and the status bar
+            // shows where the segment goes. The handler then keeps navigation
+            // client-side.
+            return clickable ? (
+              <a
+                key={s}
+                href={`/ticket/${seg.ticketNumber}`}
+                aria-label={`${ticketLabel}, ${formatDuration(seg.minutes)} on ${label.weekday} ${label.day}. Open ticket breakdown.`}
+                className="cursor-pointer outline-none [&:focus-visible>rect]:stroke-accent [&:focus-visible>rect]:[stroke-width:2]"
+                onClick={(e) => {
+                  // Leave modified clicks to the browser.
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                  e.preventDefault();
+                  hide();
+                  router.push(`/ticket/${seg.ticketNumber}`);
+                }}
+                {...hover}
+              >
+                {shapes}
+              </a>
+            ) : (
+              <g key={s} {...hover}>
+                {shapes}
+              </g>
+            );
+          });
+
+          const topY = cursor;
+
           return (
-            <g key={s}>
-              <title>{title}</title>
-              {/* Side first, so the front face overlaps its shared edge. */}
-              <polygon
-                points={`${x + BAR_WIDTH},${y} ${x + BAR_WIDTH + DEPTH_X},${y - DEPTH_Y} ${x + BAR_WIDTH + DEPTH_X},${y + h - DEPTH_Y} ${x + BAR_WIDTH},${y + h}`}
-                fill={sideFace(base)}
-              />
-              <rect x={x} y={y} width={BAR_WIDTH} height={h} fill={base} />
+            <g key={day.date}>
+              {segments}
+
+              {/* The printed total is what makes the value readable — the
+                  projection alone is not precise enough to read off. */}
+              <text
+                x={x + BAR_WIDTH / 2 + DEPTH_X / 2}
+                y={topY - DEPTH_Y - 6}
+                textAnchor="middle"
+                className="pointer-events-none fill-foreground/70 text-[10px] tabular-nums"
+              >
+                {formatDuration(day.totalMinutes)}
+              </text>
+
+              <text
+                x={x + BAR_WIDTH / 2}
+                y={baseline + 16}
+                textAnchor="middle"
+                className="pointer-events-none fill-foreground/60 text-[10px]"
+              >
+                {label.weekday}
+              </text>
+              <text
+                x={x + BAR_WIDTH / 2}
+                y={baseline + 28}
+                textAnchor="middle"
+                className="pointer-events-none fill-foreground/40 text-[10px] tabular-nums"
+              >
+                {label.day}
+              </text>
             </g>
           );
-        });
+        })}
+      </svg>
 
-        // Only the topmost segment shows a top face — the others are covered by
-        // the segment stacked on them, and drawing them anyway would make each
-        // band look like a separate floating solid.
-        const topY = cursor;
-
-        return (
-          <g key={day.date}>
-            {faces}
-            <polygon
-              points={`${x},${topY} ${x + BAR_WIDTH},${topY} ${x + BAR_WIDTH + DEPTH_X},${topY - DEPTH_Y} ${x + DEPTH_X},${topY - DEPTH_Y}`}
-              fill={topFace(segmentColor(
-                day.segments[day.segments.length - 1]?.ticketNumber ?? null,
-                day.segments[day.segments.length - 1]?.color ?? null
-              ))}
-            />
-
-            {/* The printed total is what makes the value readable — the
-                projection alone is not precise enough to read off. */}
-            <text
-              x={x + BAR_WIDTH / 2 + DEPTH_X / 2}
-              y={topY - DEPTH_Y - 6}
-              textAnchor="middle"
-              className="fill-foreground/70 text-[10px] tabular-nums"
-            >
-              {formatDuration(day.totalMinutes)}
-            </text>
-
-            <text
-              x={x + BAR_WIDTH / 2}
-              y={baseline + 16}
-              textAnchor="middle"
-              className="fill-foreground/60 text-[10px]"
-            >
-              {label.weekday}
-            </text>
-            <text
-              x={x + BAR_WIDTH / 2}
-              y={baseline + 28}
-              textAnchor="middle"
-              className="fill-foreground/40 text-[10px] tabular-nums"
-            >
-              {label.day}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
+      {tooltip && (
+        <ChartTooltip x={tooltip.x} y={tooltip.y}>
+          <p className="font-medium text-foreground">
+            {tooltip.data.segment.ticketNumber == null
+              ? "No ticket"
+              : `#${tooltip.data.segment.ticketNumber}`}
+          </p>
+          {tooltip.data.segment.ticketTitle && (
+            <p className="max-w-56 truncate text-foreground/70">
+              {tooltip.data.segment.ticketTitle}
+            </p>
+          )}
+          <p className="mt-1 tabular-nums text-foreground/70">
+            {formatDuration(tooltip.data.segment.minutes)}
+            {tooltip.data.day.totalMinutes > 0 && (
+              <span className="text-foreground/50">
+                {" · "}
+                {Math.round((tooltip.data.segment.minutes / tooltip.data.day.totalMinutes) * 100)}% of{" "}
+                {tooltip.data.weekday}
+              </span>
+            )}
+          </p>
+          <p className="tabular-nums text-foreground/50">
+            {tooltip.data.weekday} {tooltip.data.dayNumber} · {formatDuration(tooltip.data.day.totalMinutes)} total
+          </p>
+          {tooltip.data.segment.ticketNumber != null && (
+            <p className="mt-1 text-foreground/40">Click to open the ticket breakdown</p>
+          )}
+        </ChartTooltip>
+      )}
+    </>
   );
 }
 
