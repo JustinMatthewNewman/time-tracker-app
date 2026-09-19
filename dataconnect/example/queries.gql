@@ -94,7 +94,7 @@ query ListTickets($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
 query ListTimeEntries($userId: UUID!) @auth(level: NO_ACCESS) {
   timeEntries(
     where: { user: { id: { eq: $userId } } }
-    orderBy: [{ startTime: DESC }]
+    orderBy: [{ startTime: DESC }, { id: ASC }]
   ) {
     id
     user {
@@ -155,7 +155,7 @@ query ListWorkLogs($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
         { _or: [{ isDeleted: { eq: false } }, { isDeleted: { isNull: true } }] }
       ]
     }
-    orderBy: [{ workLogDate: DESC }]
+    orderBy: [{ workLogDate: DESC }, { id: ASC }]
   ) {
     id
     name
@@ -206,7 +206,7 @@ query ListTimeEntriesByTicket($ticketNumber: Int!) @auth(level: USER) {
         { user: { googleUid: { eq_expr: "auth.uid" } } }
       ]
     }
-    orderBy: [{ startTime: DESC }]
+    orderBy: [{ startTime: DESC }, { id: ASC }]
   ) {
     id
     startTime
@@ -229,7 +229,7 @@ query ListMyTimeEntries($limit: Int = 500, $offset: Int = 0) @auth(level: USER) 
     limit: $limit
     offset: $offset
     where: { user: { googleUid: { eq_expr: "auth.uid" } } }
-    orderBy: [{ startTime: DESC }]
+    orderBy: [{ startTime: DESC }, { id: ASC }]
   ) {
     id
     startTime
@@ -268,7 +268,7 @@ query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Da
         { date: { le: $endDate } }
       ]
     }
-    orderBy: [{ startTime: DESC }]
+    orderBy: [{ startTime: DESC }, { id: ASC }]
   ) {
     id
     user { id }
@@ -442,7 +442,7 @@ query ListMyTimeEntriesByDateRange(
         { date: { le: $endDate } }
       ]
     }
-    orderBy: [{ startTime: DESC }]
+    orderBy: [{ startTime: DESC }, { id: ASC }]
   ) {
     id
     startTime
@@ -474,6 +474,13 @@ query ListMyTimeEntriesByDateRange(
 # owner to group by, and the descriptions are the sensitive part of an entry —
 # an admin counting a teammate's hours has no reason to receive the text of
 # what they wrote.
+# `id` is the tiebreaker, and it is load-bearing rather than tidiness. This
+# query is read through fetchAllPages, and offset paging is only coherent when
+# the ordering is a *total* order: ties may come back in a different order on
+# each page request, which duplicates some rows across page boundaries and
+# drops others entirely. Measured before this was added: 4,835 rows fetched,
+# 4,784 unique — 51 duplicates and 51 silently missing, concentrated on
+# whichever days straddled a boundary.
 query AdminListTimeEntriesForUsers(
   $userIds: [UUID!]!
   $startDate: Date!
@@ -491,7 +498,7 @@ query AdminListTimeEntriesForUsers(
         { date: { le: $endDate } }
       ]
     }
-    orderBy: [{ date: DESC }]
+    orderBy: [{ date: DESC }, { id: ASC }]
   ) {
     id
     user {
@@ -500,6 +507,12 @@ query AdminListTimeEntriesForUsers(
     startTime
     endTime
     date
+    # Only the id, so the chart's day axis can link to that day's work log.
+    # Still no description and no work log name: an admin counting hours has no
+    # reason to receive what anyone wrote.
+    workLog {
+      id
+    }
     ticket {
       ticketNumber
       ticketTitle

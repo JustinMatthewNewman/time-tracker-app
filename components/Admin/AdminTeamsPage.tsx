@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Card, EmptyState, ListBox, Select, Skeleton } from "@heroui/react";
 import { Check, Pencil, Person, Persons, TrashBin, Xmark } from "@gravity-ui/icons";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useFeatures } from "@/hooks/useFeatures";
+import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
 import { useTicketColorsSetting } from "@/context/TicketColorsContext";
 import { SideNavListBox } from "@/components/Utilities/SideNavListBox";
@@ -46,6 +49,9 @@ interface TeamMetricsResponse {
 
 export function AdminTeamsPage() {
   const { user } = useAuth();
+  const router = useRouter();
+  const { userId: myUserId } = useFeatures();
+  const { setSelectedWorkLogId } = useSelectedWorkLog();
   const { ticketColorsEnabled } = useTicketColorsSetting();
   const { data, loading, error, refetch } = useAdminFetch<{ teams: TeamRow[] }>(
     "/api/admin/teams",
@@ -388,7 +394,32 @@ export function AdminTeamsPage() {
                       Tickets per day
                     </p>
                     {memberDays ? (
-                      <IsoStackedBarChart days={memberDays} />
+                      <>
+                        <IsoStackedBarChart
+                          days={memberDays}
+                          // Only wired up for your own row. /worklogs lists the
+                          // signed-in user's logs (ListWorkLogs binds to
+                          // auth.uid), so there is nowhere to send an admin
+                          // looking at a teammate's day — a link that quietly
+                          // opened the admin's *own* log for that date would be
+                          // worse than no link.
+                          onDaySelect={
+                            selectedMember && myUserId && selectedMember.id === myUserId
+                              ? (day) => {
+                                  if (!day.workLogId) return;
+                                  setSelectedWorkLogId(day.workLogId);
+                                  router.push("/worklogs");
+                                }
+                              : undefined
+                          }
+                        />
+                        {selectedMember && myUserId && selectedMember.id !== myUserId && (
+                          <p className="mt-1 text-xs text-foreground/40">
+                            Work logs are private to their owner, so a teammate&apos;s day
+                            can&apos;t be opened from here.
+                          </p>
+                        )}
+                      </>
                     ) : (
                       <p className="text-sm text-foreground/60">
                         Pick a range of {metricsQuery.data.dailyLimitDays} days or fewer to see the

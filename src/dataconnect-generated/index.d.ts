@@ -115,6 +115,9 @@ export interface AdminListTimeEntriesForUsersData {
     startTime: TimestampString;
     endTime: TimestampString;
     date: DateString;
+    workLog?: {
+      id: UUIDString;
+    } & WorkLog_Key;
     ticket?: {
       ticketNumber: number;
       ticketTitle?: string | null;

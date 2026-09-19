@@ -24,6 +24,13 @@ import type { DaySegment, MemberDay } from "@/lib/adminTeamMetrics";
 
 export interface IsoStackedBarChartProps {
   days: MemberDay[];
+  /**
+   * Called when a day's axis label is activated. Omit to leave the axis inert
+   * — which is the right default here, because the only page that can show a
+   * day's work log shows the *signed-in user's* logs (ListWorkLogs binds to
+   * auth.uid), so it cannot open a teammate's.
+   */
+  onDaySelect?: (day: MemberDay) => void;
   /** Height of the tallest bar, in user units. */
   maxBarHeight?: number;
   className?: string;
@@ -76,6 +83,7 @@ interface HoverData {
 
 export function IsoStackedBarChart({
   days,
+  onDaySelect,
   maxBarHeight = 130,
   className,
 }: IsoStackedBarChartProps) {
@@ -210,22 +218,61 @@ export function IsoStackedBarChart({
                 {formatDuration(day.totalMinutes)}
               </text>
 
-              <text
-                x={x + BAR_WIDTH / 2}
-                y={baseline + 16}
-                textAnchor="middle"
-                className="pointer-events-none fill-foreground/60 text-[10px]"
-              >
-                {label.weekday}
-              </text>
-              <text
-                x={x + BAR_WIDTH / 2}
-                y={baseline + 28}
-                textAnchor="middle"
-                className="pointer-events-none fill-foreground/40 text-[10px] tabular-nums"
-              >
-                {label.day}
-              </text>
+              {(() => {
+                const axis = (
+                  <>
+                    <text
+                      x={x + BAR_WIDTH / 2}
+                      y={baseline + 16}
+                      textAnchor="middle"
+                      className="pointer-events-none fill-foreground/60 text-[10px]"
+                    >
+                      {label.weekday}
+                    </text>
+                    <text
+                      x={x + BAR_WIDTH / 2}
+                      y={baseline + 28}
+                      textAnchor="middle"
+                      className="pointer-events-none fill-foreground/40 text-[10px] tabular-nums"
+                    >
+                      {label.day}
+                    </text>
+                  </>
+                );
+
+                // Only a day that actually has a work log is actionable; an
+                // empty day would navigate to nothing.
+                if (!onDaySelect || !day.workLogId) return axis;
+
+                return (
+                  <g
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Open the work log for ${label.weekday} ${label.day}`}
+                    className="cursor-pointer outline-none [&:focus-visible>rect]:stroke-accent [&:focus-visible>rect]:[stroke-width:2]"
+                    onClick={() => onDaySelect(day)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onDaySelect(day);
+                      }
+                    }}
+                  >
+                    {/* A transparent hit area: the two labels alone are a
+                        sliver of text and awkward to hit. */}
+                    <rect
+                      x={x - 2}
+                      y={baseline + 4}
+                      width={BAR_WIDTH + 4}
+                      height={30}
+                      rx={4}
+                      fill="transparent"
+                      className="hover:fill-default-100"
+                    />
+                    {axis}
+                  </g>
+                );
+              })()}
             </g>
           );
         })}

@@ -13,6 +13,7 @@ export interface MetricEntry {
   startTime: string;
   endTime: string;
   date: string;
+  workLog?: { id: string } | null;
   ticket?: { ticketNumber: number; ticketTitle?: string | null; color?: string | null } | null;
 }
 
@@ -198,6 +199,13 @@ export interface DaySegment {
 export interface MemberDay {
   /** Day key, YYYY-MM-DD. */
   date: string;
+  /**
+   * The work log this member's entries for the day belong to, so the chart's
+   * day axis can link to it. Null when the day is empty, or when its entries
+   * carry no work log. If a day somehow spans several, the first is used —
+   * the app creates one per user per day.
+   */
+  workLogId: string | null;
   totalMinutes: number;
   /** Largest share first, so a stacked bar reads bottom-heavy. */
   segments: DaySegment[];
@@ -238,6 +246,8 @@ export function aggregateDailyByMember(
 
   // userId -> dayKey -> ticketKey -> segment
   const byUser = new Map<string, Map<string, Map<string, DaySegment>>>();
+  // userId -> dayKey -> workLogId
+  const workLogs = new Map<string, Map<string, string>>();
   for (const entry of entries) {
     const dayKey = entry.date.slice(0, 10);
     const minutes = minutesBetween(entry.startTime, entry.endTime);
@@ -247,6 +257,12 @@ export function aggregateDailyByMember(
     if (!byDay) byUser.set(entry.user.id, (byDay = new Map()));
     let byTicket = byDay.get(dayKey);
     if (!byTicket) byDay.set(dayKey, (byTicket = new Map()));
+
+    if (entry.workLog?.id) {
+      let days = workLogs.get(entry.user.id);
+      if (!days) workLogs.set(entry.user.id, (days = new Map()));
+      if (!days.has(dayKey)) days.set(dayKey, entry.workLog.id);
+    }
 
     const ticketKey = entry.ticket ? String(entry.ticket.ticketNumber) : "none";
     const existing = byTicket.get(ticketKey);
@@ -274,6 +290,7 @@ export function aggregateDailyByMember(
       );
       return {
         date,
+        workLogId: workLogs.get(member.id)?.get(date) ?? null,
         totalMinutes: segments.reduce((sum, seg) => sum + seg.minutes, 0),
         segments,
       };
