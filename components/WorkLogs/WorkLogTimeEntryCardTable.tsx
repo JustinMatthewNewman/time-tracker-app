@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@heroui/react";
-import { ArrowUpRightFromSquare, Copy, CopyCheck, Pencil } from "@gravity-ui/icons";
+import { ArrowUpRightFromSquare, Copy, CopyCheck, Pencil, Ticket as TicketIcon } from "@gravity-ui/icons";
 import {
     useUpdateTimeEntry,
     useUpdateTimeEntryClearTicket,
@@ -18,6 +18,8 @@ import { TicketComboBox } from "./TicketComboBox";
 import { TicketDialog } from "./TicketDialog";
 import type { Ticket, TicketRef } from "@/context/TicketsContext";
 import { useTicketColors } from "@/hooks/useTicketColors";
+import { useUserSettings } from "@/context/UserSettingsContext";
+import { resolveExternalTicketLink } from "@/lib/externalTicketLink";
 
 interface WorkLogTimeEntryCardTableProps {
     entries: WorkLogTimeEntry[];
@@ -60,6 +62,7 @@ export function WorkLogTimeEntryCardTable({
     const [copiedEntryId, setCopiedEntryId] = useState<string | null>(null);
     const [dialogState, setDialogState] = useState<DialogState | null>(null);
     const ticketColors = useTicketColors();
+    const { externalTicketLinkTemplate } = useUserSettings();
     const [flashedEntryId, setFlashedEntryId] = useState<string | null>(null);
     const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
 
@@ -262,16 +265,46 @@ export function WorkLogTimeEntryCardTable({
                                             }}
                                         />
                                     </div>
+                                    {/* Two distinct destinations. The ticket
+                                        glyph stays in the app; the outward
+                                        arrow leaves for the external tracker
+                                        in a new tab.
+
+                                        The in-app button used to wear the
+                                        outward arrow itself, which was already
+                                        misleading and would have been
+                                        indistinguishable once a genuine
+                                        external link sat beside it. */}
                                     {entry.ticket && (
                                         <button
                                             type="button"
-                                            aria-label={`View breakdown for ticket ${entry.ticket.ticketNumber}`}
+                                            title={`View ticket ${entry.ticket.ticketNumber} in Time Tracker`}
+                                            aria-label={`View ticket ${entry.ticket.ticketNumber} in Time Tracker`}
                                             onClick={() => router.push(`/ticket/${entry.ticket!.ticketNumber}`)}
                                             className="shrink-0 rounded p-1 text-foreground/40 hover:bg-default hover:text-foreground"
                                         >
-                                            <ArrowUpRightFromSquare className="size-3.5" />
+                                            <TicketIcon className="size-3.5" />
                                         </button>
                                     )}
+                                    {(() => {
+                                        const externalLink = resolveExternalTicketLink(
+                                            entry.ticket?.ticketNumber,
+                                            entry.ticket?.ticketLink,
+                                            externalTicketLinkTemplate
+                                        );
+                                        return externalLink ? (
+                                            <a
+                                                href={externalLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                title={`Open ticket ${entry.ticket!.ticketNumber} in the external ticket system`}
+                                                aria-label={`Open ticket ${entry.ticket!.ticketNumber} in the external ticket system (opens in a new tab)`}
+                                                className="shrink-0 rounded p-1 text-foreground/40 hover:bg-default hover:text-accent"
+                                            >
+                                                <ArrowUpRightFromSquare className="size-3.5" />
+                                            </a>
+                                        ) : null;
+                                    })()}
                                 </div>
                             </td>
 

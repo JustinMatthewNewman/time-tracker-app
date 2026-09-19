@@ -15,9 +15,8 @@ import { TicketTotals } from "./TicketTotals";
 import { TicketColorPicker } from "./TicketColorPicker";
 import { useTicketColors } from "@/hooks/useTicketColors";
 import { autoTicketColor } from "@/lib/ticketColor";
+import { resolveExternalTicketLink } from "@/lib/externalTicketLink";
 import AmbientBackground from "@/components/AmbientBackground";
-
-const TICKET_ID_PLACEHOLDER = "{ticket_id}";
 
 interface TicketPageProps {
   ticketNumberParam: string;
@@ -35,10 +34,14 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
   const isValidTicketNumber = Number.isInteger(ticketNumber);
   const ticket = isValidTicketNumber ? tickets.find((t) => t.ticketNumber === ticketNumber) : undefined;
 
-  const externalTicketLink =
-    ticket && externalTicketLinkTemplate?.includes(TICKET_ID_PLACEHOLDER)
-      ? externalTicketLinkTemplate.replace(TICKET_ID_PLACEHOLDER, String(ticket.ticketNumber))
-      : null;
+  // Shared resolver rather than a local copy of the substitution: this page
+  // previously ignored Ticket.ticketLink while the work log breakdown used
+  // only that, so the same ticket could link to two different places.
+  const externalTicketLink = resolveExternalTicketLink(
+    ticket?.ticketNumber,
+    ticket?.ticketLink,
+    externalTicketLinkTemplate
+  );
 
   const { entries, loading: entriesLoading, refetch: refetchEntries } = useTimeEntriesByTicket(
     isValidTicketNumber ? ticketNumber : null
