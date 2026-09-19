@@ -21,7 +21,6 @@ import {
   Book,
   FileText,
   PlugConnection,
-  PersonGear,
 } from "@gravity-ui/icons";
 import AuthSection from "./AuthSection";
 
@@ -58,10 +57,6 @@ const NAV_LINKS: NavLink[] = [
   // whose tier holds the AdminPage grant, so for everyone else the nav
   // still starts at Dashboard exactly as before.
   { label: "Admin", href: "/admin", icon: Shield, authRequired: true, feature: "AdminPage" },
-  // Separate item rather than a section inside /admin: account administration
-  // and team reporting are different jobs behind different grants, so a tier
-  // can hold one without the other and the nav should say which.
-  { label: "Admin Dashboard", href: "/admin/dashboard", icon: PersonGear, authRequired: true, feature: "AdminDashboard" },
   // Team administration — same grant as the team dashboard, which already
   // exposes rosters and per-member hours.
   { label: "Teams", href: "/admin/teams", icon: Persons, authRequired: true, feature: "AdminDashboard" },

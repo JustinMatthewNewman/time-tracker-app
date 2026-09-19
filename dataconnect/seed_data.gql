@@ -250,6 +250,12 @@ mutation SeedFeatures @transaction {
     userTypeName: "Admin"
     featureName: "AdminDashboard"
   })
+  # "Elevated and above" — Elevated, Premium, Admin. Mirrors
+  # FEATURE_DEFINITIONS.AdminDashboard in lib/features.ts, which this file
+  # cannot import. Grants sight of every team member's hours, so adding a tier
+  # here is a privacy decision, not a convenience one.
+  adminDashboardForElevated: userTypeFeature_upsert(data: { userTypeName: "Elevated", featureName: "AdminDashboard" })
+  adminDashboardForPremium: userTypeFeature_upsert(data: { userTypeName: "Premium", featureName: "AdminDashboard" })
 
   # Dashboard goes to every tier. Bringing an already-shipped page under
   # feature control has to start from "everyone keeps what they had" —

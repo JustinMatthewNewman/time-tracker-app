@@ -4,19 +4,33 @@ import { useState } from "react";
 import { Card } from "@heroui/react";
 import { Bars, ChevronLeft, ChevronRight } from "@gravity-ui/icons";
 import { useSidebar } from "@/context/SideBarContext";
+import { useFeatures } from "@/hooks/useFeatures";
 import { useBorders } from "@/context/BordersContext";
 import { ReportListBox } from "./ReportListBox";
 import { REPORTS, type ReportId } from "./reportTypes";
 import { OverviewReport } from "./OverviewReport";
 import { TicketsReport } from "./TicketsReport";
 import { WorkLogsReport } from "./WorkLogsReport";
+import { AdminReport } from "./AdminReport";
 
 function DashboardLayout() {
   const { isOpen, toggle: toggleSidebar } = useSidebar();
   const { bordersEnabled } = useBorders();
+  const { features, loading: featuresLoading } = useFeatures();
   const [selectedReportId, setSelectedReportId] = useState<ReportId>("overview");
 
-  const selectedReport = REPORTS.find((report) => report.id === selectedReportId) ?? REPORTS[0];
+  // Withheld while the grant set is still loading, rather than rendered then
+  // yanked — same reasoning as NAV_LINKS in Navbar.tsx. A gated report that
+  // flashes in and disappears reads as a glitch.
+  const visibleReports = REPORTS.filter(
+    (report) => !report.feature || (!featuresLoading && features.has(report.feature))
+  );
+
+  // If the grant behind the selected report disappears mid-session, fall back
+  // to the first visible one rather than rendering an empty pane.
+  const selectedReport =
+    visibleReports.find((report) => report.id === selectedReportId) ?? visibleReports[0] ?? REPORTS[0];
+  const activeReportId = selectedReport.id;
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden">
@@ -42,7 +56,11 @@ function DashboardLayout() {
           `}
         >
           <div className="w-full md:w-88 h-full bg-default-50 p-4">
-            <ReportListBox selectedReportId={selectedReportId} onSelectReport={setSelectedReportId} />
+            <ReportListBox
+              reports={visibleReports}
+              selectedReportId={activeReportId}
+              onSelectReport={setSelectedReportId}
+            />
           </div>
         </aside>
 
@@ -70,9 +88,10 @@ function DashboardLayout() {
               </div>
 
               <div className="flex-1 min-h-0 overflow-y-auto p-3">
-                {selectedReportId === "overview" && <OverviewReport />}
-                {selectedReportId === "tickets" && <TicketsReport />}
-                {selectedReportId === "worklogs" && <WorkLogsReport />}
+                {activeReportId === "overview" && <OverviewReport />}
+                {activeReportId === "tickets" && <TicketsReport />}
+                {activeReportId === "worklogs" && <WorkLogsReport />}
+                {activeReportId === "admin" && <AdminReport />}
               </div>
             </Card>
           </div>

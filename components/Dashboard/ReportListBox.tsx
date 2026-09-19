@@ -1,9 +1,11 @@
 "use client";
 
 import { SideNavListBox } from "@/components/Utilities/SideNavListBox";
-import { REPORTS, type ReportId } from "./reportTypes";
+import type { ReportDef, ReportId } from "./reportTypes";
 
 interface ReportListBoxProps {
+  /** Already filtered by grant — this component does not gate. */
+  reports: ReportDef[];
   selectedReportId: ReportId;
   onSelectReport: (id: ReportId) => void;
 }
@@ -12,11 +14,11 @@ interface ReportListBoxProps {
 // was copied into the admin pages; it moved to SideNavListBox so those match
 // this by construction rather than by keeping three copies of the same
 // class strings in sync.
-export function ReportListBox({ selectedReportId, onSelectReport }: ReportListBoxProps) {
+export function ReportListBox({ reports, selectedReportId, onSelectReport }: ReportListBoxProps) {
   return (
     <SideNavListBox
       ariaLabel="Report types"
-      items={REPORTS.map((report) => ({
+      items={reports.map((report) => ({
         id: report.id,
         label: report.label,
         description: report.description,
