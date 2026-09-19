@@ -1,4 +1,4 @@
-const { createUserFromGoogleRef, setUserTypeRef, createTimeEntryRef, createWorkLogOnlyRef, updateTimeEntryRef, updateTimeEntryClearTicketRef, deleteTimeEntryRef, upsertTicketRef, updateTicketRef, selectMyColorSchemeRef, clearMyColorSchemeRef, selectMyPerformanceModeRef, selectMyBackgroundOpacityRef, selectMyExternalTicketLinkTemplateRef, selectMyCardStyleRef, selectMyBordersEnabledRef, selectMyTicketColorsEnabledRef, updateWorkLogRef, deleteWorkLogRef, restoreWorkLogRef, createWorkLogRef, upsertGoogleCalendarConnectionRef, updateGoogleCalendarSyncPrefsRef, touchGoogleCalendarLastSyncedRef, deleteGoogleCalendarConnectionRef, listUsersRef, getMyUserRef, listColorSchemesRef, listTicketsRef, listTimeEntriesRef, getTimeEntryRef, listWorkLogsRef, listTimeEntriesByWorkLogRef, listTimeEntriesByTicketRef, listMyTimeEntriesRef, listTimeEntriesByDateRangeRef, listUserTypesRef, getUserAccessByGoogleUidRef, adminListUsersRef, adminListUserTypesRef, adminListFeaturesRef, adminGetUserRef, adminListTeamsRef, getGoogleCalendarConnectionRef, connectorConfig } = require('../index.cjs.js');
+const { createUserFromGoogleRef, setUserTypeRef, createTimeEntryRef, createWorkLogOnlyRef, updateTimeEntryRef, updateTimeEntryClearTicketRef, deleteTimeEntryRef, upsertTicketRef, updateTicketRef, selectMyColorSchemeRef, clearMyColorSchemeRef, selectMyPerformanceModeRef, selectMyBackgroundOpacityRef, selectMyExternalTicketLinkTemplateRef, selectMyCardStyleRef, selectMySquareCornersRef, selectMyBordersEnabledRef, selectMyTicketColorsEnabledRef, updateWorkLogRef, deleteWorkLogRef, restoreWorkLogRef, createWorkLogRef, upsertGoogleCalendarConnectionRef, updateGoogleCalendarSyncPrefsRef, touchGoogleCalendarLastSyncedRef, deleteGoogleCalendarConnectionRef, listUsersRef, getMyUserRef, listColorSchemesRef, listTicketsRef, listTimeEntriesRef, getTimeEntryRef, listWorkLogsRef, listTimeEntriesByWorkLogRef, listTimeEntriesByTicketRef, listMyTimeEntriesRef, listTimeEntriesByDateRangeRef, listUserTypesRef, getUserAccessByGoogleUidRef, adminListUsersRef, adminListUserTypesRef, adminListFeaturesRef, adminGetUserRef, adminListTeamsRef, getGoogleCalendarConnectionRef, listMyTimeEntriesByDateRangeRef, adminListTimeEntriesForUsersRef, adminGetTeamRef, connectorConfig } = require('../index.cjs.js');
 const { validateArgs, CallerSdkTypeEnum } = require('firebase/data-connect');
 const { useDataConnectQuery, useDataConnectMutation, validateReactArgs } = require('@tanstack-query-firebase/react/data-connect');
 
@@ -118,6 +118,14 @@ exports.useSelectMyCardStyle = function useSelectMyCardStyle(dcOrOptions, option
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
     return selectMyCardStyleRef(dcInstance, vars);
+  }
+  return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+exports.useSelectMySquareCorners = function useSelectMySquareCorners(dcOrOptions, options) {
+  const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
+  function refFactory(vars) {
+    return selectMySquareCornersRef(dcInstance, vars);
   }
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }
@@ -314,5 +322,23 @@ exports.useAdminListTeams = function useAdminListTeams(dcOrOptions, options) {
 exports.useGetGoogleCalendarConnection = function useGetGoogleCalendarConnection(dcOrVars, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   const ref = getGoogleCalendarConnectionRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+exports.useListMyTimeEntriesByDateRange = function useListMyTimeEntriesByDateRange(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = listMyTimeEntriesByDateRangeRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+exports.useAdminListTimeEntriesForUsers = function useAdminListTimeEntriesForUsers(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = adminListTimeEntriesForUsersRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+exports.useAdminGetTeam = function useAdminGetTeam(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = adminGetTeamRef(dcInstance, inputVars);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }

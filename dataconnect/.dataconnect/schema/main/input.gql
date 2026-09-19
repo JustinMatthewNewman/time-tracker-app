@@ -2899,6 +2899,14 @@ input User_Data {
   """
   performanceMode_expr: Boolean_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `User`.`squareCorners` of type `Boolean`
+  """
+  squareCorners: Boolean
+  """
+  ✨ `_expr` server value variant of `squareCorners` (✨ Generated from Field `User`.`squareCorners` of type `Boolean`)
+  """
+  squareCorners_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `User`.`ticketColorsEnabled` of type `Boolean`
   """
   ticketColorsEnabled: Boolean
@@ -3003,6 +3011,10 @@ input User_Filter {
   ✨ Generated from Field `User`.`performanceMode` of type `Boolean`
   """
   performanceMode: Boolean_Filter
+  """
+  ✨ Generated from Field `User`.`squareCorners` of type `Boolean`
+  """
+  squareCorners: Boolean_Filter
   """
   ✨ Generated from Field `User`.`ticketColorsEnabled` of type `Boolean`
   """
@@ -3113,6 +3125,10 @@ input User_Having {
   ✨ Generated from Field `User`.`performanceMode_count` of type `Int!`
   """
   performanceMode_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`squareCorners_count` of type `Int!`
+  """
+  squareCorners_count: Int_Filter
   """
   ✨ Generated from Field `User`.`ticketColorsEnabled_count` of type `Int!`
   """
@@ -3269,6 +3285,10 @@ input User_Order {
   """
   performanceMode: OrderDirection
   """
+  ✨ Generated from Field `User`.`squareCorners` of type `Boolean`
+  """
+  squareCorners: OrderDirection
+  """
   ✨ Generated from Field `User`.`ticketColorsEnabled` of type `Boolean`
   """
   ticketColorsEnabled: OrderDirection
@@ -3324,6 +3344,10 @@ input User_Order {
   ✨ Generated from Field `User`.`performanceMode_count` of type `Int!`
   """
   performanceMode_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`squareCorners_count` of type `Int!`
+  """
+  squareCorners_count: OrderDirection
   """
   ✨ Generated from Field `User`.`ticketColorsEnabled_count` of type `Int!`
   """

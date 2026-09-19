@@ -112,6 +112,13 @@ function selectMyCardStyle(dcOrVarsOrOptions, varsOrOptions, options) {
 }
 exports.selectMyCardStyle = selectMyCardStyle;
 
+function selectMySquareCorners(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SelectMySquareCorners', inputVars, inputOpts);
+}
+exports.selectMySquareCorners = selectMySquareCorners;
+
 function selectMyBordersEnabled(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
@@ -314,4 +321,25 @@ function getGoogleCalendarConnection(dcOrVarsOrOptions, varsOrOptions, options) 
   return dcInstance.executeQuery('GetGoogleCalendarConnection', inputVars, inputOpts);
 }
 exports.getGoogleCalendarConnection = getGoogleCalendarConnection;
+
+function listMyTimeEntriesByDateRange(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListMyTimeEntriesByDateRange', inputVars, inputOpts);
+}
+exports.listMyTimeEntriesByDateRange = listMyTimeEntriesByDateRange;
+
+function adminListTimeEntriesForUsers(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('AdminListTimeEntriesForUsers', inputVars, inputOpts);
+}
+exports.adminListTimeEntriesForUsers = adminListTimeEntriesForUsers;
+
+function adminGetTeam(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('AdminGetTeam', inputVars, inputOpts);
+}
+exports.adminGetTeam = adminGetTeam;
 

@@ -223,6 +223,20 @@ exports.selectMyCardStyle = function selectMyCardStyle(dcOrVars, vars) {
 }
 ;
 
+const selectMySquareCornersRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SelectMySquareCorners', inputVars);
+}
+selectMySquareCornersRef.operationName = 'SelectMySquareCorners';
+exports.selectMySquareCornersRef = selectMySquareCornersRef;
+
+exports.selectMySquareCorners = function selectMySquareCorners(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(selectMySquareCornersRef(dcInstance, inputVars));
+}
+;
+
 const selectMyBordersEnabledRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -645,5 +659,50 @@ exports.getGoogleCalendarConnection = function getGoogleCalendarConnection(dcOrV
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(getGoogleCalendarConnectionRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const listMyTimeEntriesByDateRangeRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListMyTimeEntriesByDateRange', inputVars);
+}
+listMyTimeEntriesByDateRangeRef.operationName = 'ListMyTimeEntriesByDateRange';
+exports.listMyTimeEntriesByDateRangeRef = listMyTimeEntriesByDateRangeRef;
+
+exports.listMyTimeEntriesByDateRange = function listMyTimeEntriesByDateRange(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(listMyTimeEntriesByDateRangeRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const adminListTimeEntriesForUsersRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'AdminListTimeEntriesForUsers', inputVars);
+}
+adminListTimeEntriesForUsersRef.operationName = 'AdminListTimeEntriesForUsers';
+exports.adminListTimeEntriesForUsersRef = adminListTimeEntriesForUsersRef;
+
+exports.adminListTimeEntriesForUsers = function adminListTimeEntriesForUsers(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(adminListTimeEntriesForUsersRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
+const adminGetTeamRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'AdminGetTeam', inputVars);
+}
+adminGetTeamRef.operationName = 'AdminGetTeam';
+exports.adminGetTeamRef = adminGetTeamRef;
+
+exports.adminGetTeam = function adminGetTeam(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(adminGetTeamRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 ;

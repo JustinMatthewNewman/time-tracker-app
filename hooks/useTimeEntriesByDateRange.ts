@@ -3,11 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { QueryFetchPolicy } from "firebase/data-connect";
 import { useAuth } from "./useAuth";
-import { useGetMyUser } from "@/src/dataconnect-generated/react";
-import { listTimeEntriesByDateRange } from "@/src/dataconnect-generated";
+import { listMyTimeEntriesByDateRange } from "@/src/dataconnect-generated";
 import type {
-  ListTimeEntriesByDateRangeData,
-  ListTimeEntriesByDateRangeVariables,
+  ListMyTimeEntriesByDateRangeData,
+  ListMyTimeEntriesByDateRangeVariables,
 } from "@/src/dataconnect-generated";
 import { fetchAllPages } from "@/lib/dataconnectPagination";
 
@@ -23,7 +22,7 @@ export interface RangeTimeEntry {
 }
 
 function toRangeTimeEntries(
-  timeEntries: ListTimeEntriesByDateRangeData["timeEntries"]
+  timeEntries: ListMyTimeEntriesByDateRangeData["timeEntries"]
 ): RangeTimeEntry[] {
   return timeEntries.map((entry) => ({
     id: entry.id,
@@ -41,16 +40,18 @@ function toRangeTimeEntries(
 // heatmap, monthly bars) — scoped to a date range instead of pulling the
 // entire multi-year set via useMyTimeEntries() on every widget.
 export function useTimeEntriesByDateRange(startDate: string | null, endDate: string | null) {
+  // No userId to resolve or pass: ListMyTimeEntriesByDateRange binds its row
+  // filter to auth.uid server-side, so the signed-in token decides the scope.
+  // That also drops the GetMyUser round trip this hook used to wait on.
   const { user } = useAuth();
-  const myUserQuery = useGetMyUser({ enabled: !!user?.uid });
-  const userId = myUserQuery.data?.user?.id;
+  const signedIn = !!user?.uid;
 
   const [entries, setEntries] = useState<RangeTimeEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const refetch = useCallback(async () => {
-    if (!userId || !startDate || !endDate) {
+    if (!signedIn || !startDate || !endDate) {
       setEntries([]);
       return;
     }
@@ -60,14 +61,14 @@ export function useTimeEntriesByDateRange(startDate: string | null, endDate: str
 
     try {
       const rows = await fetchAllPages<
-        ListTimeEntriesByDateRangeVariables,
-        ListTimeEntriesByDateRangeData["timeEntries"][number]
+        ListMyTimeEntriesByDateRangeVariables,
+        ListMyTimeEntriesByDateRangeData["timeEntries"][number]
       >(
         (vars) =>
-          listTimeEntriesByDateRange(vars, { fetchPolicy: QueryFetchPolicy.SERVER_ONLY }).then(
+          listMyTimeEntriesByDateRange(vars, { fetchPolicy: QueryFetchPolicy.SERVER_ONLY }).then(
             (r) => r.data.timeEntries
           ),
-        { userId, startDate, endDate }
+        { startDate, endDate }
       );
       setEntries(toRangeTimeEntries(rows));
     } catch (err) {
@@ -75,7 +76,7 @@ export function useTimeEntriesByDateRange(startDate: string | null, endDate: str
     } finally {
       setLoading(false);
     }
-  }, [userId, startDate, endDate]);
+  }, [signedIn, startDate, endDate]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

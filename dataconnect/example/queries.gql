@@ -41,6 +41,7 @@ query GetMyUser @auth(level: USER) {
     cardBlur
     bordersEnabled
     ticketColorsEnabled
+    squareCorners
   }
 }
 
@@ -87,7 +88,10 @@ query ListTickets($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
   }
 }
 
-query ListTimeEntries($userId: UUID!) @auth(level: USER) {
+# NO_ACCESS: filters on a caller-supplied $userId with nothing tying that id
+# to the caller, so at USER level any signed-in account could read any other
+# account's entries by passing a different UUID. Server-only (Admin SDK).
+query ListTimeEntries($userId: UUID!) @auth(level: NO_ACCESS) {
   timeEntries(
     where: { user: { id: { eq: $userId } } }
     orderBy: [{ startTime: DESC }]
@@ -249,7 +253,11 @@ query ListMyTimeEntries($limit: Int = 500, $offset: Int = 0) @auth(level: USER) 
 # $limit/$offset default so existing no-arg call sites stay source-compatible;
 # see lib/dataconnectPagination.ts for why callers page through this instead
 # of trusting a single large `limit`.
-query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Date!, $limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
+# NO_ACCESS for the same reason as ListTimeEntries: $userId is caller-supplied
+# and unbound. Reached only by the Admin SDK (lib/googleCalendar/sync.ts, and
+# admin aggregates behind requireFeature). Browsers use
+# ListMyTimeEntriesByDateRange below, which binds the filter to auth.uid.
+query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Date!, $limit: Int = 500, $offset: Int = 0) @auth(level: NO_ACCESS) {
   timeEntries(
     limit: $limit
     offset: $offset
@@ -409,5 +417,113 @@ query GetGoogleCalendarConnection($userId: UUID!) @auth(level: NO_ACCESS) {
     includeDescription
     connectedAt
     lastSyncedAt
+  }
+}
+
+# The browser's date-windowed fetch. Unlike ListTimeEntriesByDateRange there is
+# no $userId parameter to get wrong: the row filter is bound to auth.uid, so the
+# scope is decided by the verified token rather than by what the client asks
+# for. Same $limit/$offset paging contract as ListMyTimeEntries.
+query ListMyTimeEntriesByDateRange(
+  $startDate: Date!
+  $endDate: Date!
+  $limit: Int = 500
+  $offset: Int = 0
+) @auth(level: USER) {
+  timeEntries(
+    limit: $limit
+    offset: $offset
+    where: {
+      _and: [
+        { user: { googleUid: { eq_expr: "auth.uid" } } }
+        { date: { ge: $startDate } }
+        { date: { le: $endDate } }
+      ]
+    }
+    orderBy: [{ startTime: DESC }]
+  ) {
+    id
+    startTime
+    endTime
+    date
+    description
+    ticket {
+      id
+      ticketNumber
+      office
+      ticketTitle
+      ticketLink
+    }
+    officeNumber
+    createdAt
+  }
+}
+
+# Time entries for a set of users over a date range, for the admin team
+# dashboard's per-member totals.
+#
+# NO_ACCESS on purpose, and this is the whole reason the operation exists
+# separately from anything the browser can call: it reads across users, so the
+# only safe home for it is behind requireFeature() on the server. See the note
+# on ListTimeEntriesByDateRange — a client-callable query taking a user id is
+# exactly the shape that let any signed-in account read anyone's entries.
+#
+# Deliberately thin: no description, no work log. Totals need durations and an
+# owner to group by, and the descriptions are the sensitive part of an entry —
+# an admin counting a teammate's hours has no reason to receive the text of
+# what they wrote.
+query AdminListTimeEntriesForUsers(
+  $userIds: [UUID!]!
+  $startDate: Date!
+  $endDate: Date!
+  $limit: Int = 500
+  $offset: Int = 0
+) @auth(level: NO_ACCESS) {
+  timeEntries(
+    limit: $limit
+    offset: $offset
+    where: {
+      _and: [
+        { user: { id: { in: $userIds } } }
+        { date: { ge: $startDate } }
+        { date: { le: $endDate } }
+      ]
+    }
+    orderBy: [{ date: DESC }]
+  ) {
+    id
+    user {
+      id
+    }
+    startTime
+    endTime
+    date
+    ticket {
+      ticketNumber
+      ticketTitle
+      color
+    }
+  }
+}
+
+# One team with its members. AdminListTeams already returns every team with
+# rosters, but the team dashboard needs only the selected team, and pulling all
+# of them to find one gets worse with every team added.
+query AdminGetTeam($teamId: UUID!) @auth(level: NO_ACCESS) {
+  team(id: $teamId) {
+    id
+    name
+    description
+    createdAt
+    members: teamMembers_on_team {
+      user {
+        id
+        username
+        email
+        userType {
+          name
+        }
+      }
+    }
   }
 }

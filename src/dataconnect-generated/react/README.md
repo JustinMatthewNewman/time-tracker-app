@@ -36,6 +36,9 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*AdminGetUser*](#admingetuser)
   - [*AdminListTeams*](#adminlistteams)
   - [*GetGoogleCalendarConnection*](#getgooglecalendarconnection)
+  - [*ListMyTimeEntriesByDateRange*](#listmytimeentriesbydaterange)
+  - [*AdminListTimeEntriesForUsers*](#adminlisttimeentriesforusers)
+  - [*AdminGetTeam*](#admingetteam)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*SetUserType*](#setusertype)
@@ -52,6 +55,7 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*SelectMyBackgroundOpacity*](#selectmybackgroundopacity)
   - [*SelectMyExternalTicketLinkTemplate*](#selectmyexternalticketlinktemplate)
   - [*SelectMyCardStyle*](#selectmycardstyle)
+  - [*SelectMySquareCorners*](#selectmysquarecorners)
   - [*SelectMyBordersEnabled*](#selectmybordersenabled)
   - [*SelectMyTicketColorsEnabled*](#selectmyticketcolorsenabled)
   - [*UpdateWorkLog*](#updateworklog)
@@ -271,6 +275,7 @@ export interface GetMyUserData {
     cardBlur?: number | null;
     bordersEnabled?: boolean | null;
     ticketColorsEnabled?: boolean | null;
+    squareCorners?: boolean | null;
   } & User_Key;
 }
 ```
@@ -1867,6 +1872,309 @@ export default function GetGoogleCalendarConnectionComponent() {
 }
 ```
 
+## ListMyTimeEntriesByDateRange
+You can execute the `ListMyTimeEntriesByDateRange` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useListMyTimeEntriesByDateRange(dc: DataConnect, vars: ListMyTimeEntriesByDateRangeVariables, options?: useDataConnectQueryOptions<ListMyTimeEntriesByDateRangeData>): UseDataConnectQueryResult<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useListMyTimeEntriesByDateRange(vars: ListMyTimeEntriesByDateRangeVariables, options?: useDataConnectQueryOptions<ListMyTimeEntriesByDateRangeData>): UseDataConnectQueryResult<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+```
+
+### Variables
+The `ListMyTimeEntriesByDateRange` Query requires an argument of type `ListMyTimeEntriesByDateRangeVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface ListMyTimeEntriesByDateRangeVariables {
+  startDate: DateString;
+  endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
+}
+```
+### Return Type
+Recall that calling the `ListMyTimeEntriesByDateRange` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListMyTimeEntriesByDateRange` Query is of type `ListMyTimeEntriesByDateRangeData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListMyTimeEntriesByDateRangeData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      office?: string | null;
+      ticketTitle?: string | null;
+      ticketLink?: string | null;
+    } & Ticket_Key;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `ListMyTimeEntriesByDateRange`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, ListMyTimeEntriesByDateRangeVariables } from '@dataconnect/generated';
+import { useListMyTimeEntriesByDateRange } from '@dataconnect/generated/react'
+
+export default function ListMyTimeEntriesByDateRangeComponent() {
+  // The `useListMyTimeEntriesByDateRange` Query hook requires an argument of type `ListMyTimeEntriesByDateRangeVariables`:
+  const listMyTimeEntriesByDateRangeVars: ListMyTimeEntriesByDateRangeVariables = {
+    startDate: ..., 
+    endDate: ..., 
+    limit: ..., // optional
+    offset: ..., // optional
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListMyTimeEntriesByDateRange(listMyTimeEntriesByDateRangeVars);
+  // Variables can be defined inline as well.
+  const query = useListMyTimeEntriesByDateRange({ startDate: ..., endDate: ..., limit: ..., offset: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useListMyTimeEntriesByDateRange(dataConnect, listMyTimeEntriesByDateRangeVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useListMyTimeEntriesByDateRange(listMyTimeEntriesByDateRangeVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useListMyTimeEntriesByDateRange(dataConnect, listMyTimeEntriesByDateRangeVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.timeEntries);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminListTimeEntriesForUsers
+You can execute the `AdminListTimeEntriesForUsers` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useAdminListTimeEntriesForUsers(dc: DataConnect, vars: AdminListTimeEntriesForUsersVariables, options?: useDataConnectQueryOptions<AdminListTimeEntriesForUsersData>): UseDataConnectQueryResult<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useAdminListTimeEntriesForUsers(vars: AdminListTimeEntriesForUsersVariables, options?: useDataConnectQueryOptions<AdminListTimeEntriesForUsersData>): UseDataConnectQueryResult<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+```
+
+### Variables
+The `AdminListTimeEntriesForUsers` Query requires an argument of type `AdminListTimeEntriesForUsersVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface AdminListTimeEntriesForUsersVariables {
+  userIds: UUIDString[];
+  startDate: DateString;
+  endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
+}
+```
+### Return Type
+Recall that calling the `AdminListTimeEntriesForUsers` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `AdminListTimeEntriesForUsers` Query is of type `AdminListTimeEntriesForUsersData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminListTimeEntriesForUsersData {
+  timeEntries: ({
+    id: UUIDString;
+    user: {
+      id: UUIDString;
+    } & User_Key;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    ticket?: {
+      ticketNumber: number;
+      ticketTitle?: string | null;
+      color?: string | null;
+    } & Ticket_Key;
+  } & TimeEntry_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `AdminListTimeEntriesForUsers`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, AdminListTimeEntriesForUsersVariables } from '@dataconnect/generated';
+import { useAdminListTimeEntriesForUsers } from '@dataconnect/generated/react'
+
+export default function AdminListTimeEntriesForUsersComponent() {
+  // The `useAdminListTimeEntriesForUsers` Query hook requires an argument of type `AdminListTimeEntriesForUsersVariables`:
+  const adminListTimeEntriesForUsersVars: AdminListTimeEntriesForUsersVariables = {
+    userIds: ..., 
+    startDate: ..., 
+    endDate: ..., 
+    limit: ..., // optional
+    offset: ..., // optional
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useAdminListTimeEntriesForUsers(adminListTimeEntriesForUsersVars);
+  // Variables can be defined inline as well.
+  const query = useAdminListTimeEntriesForUsers({ userIds: ..., startDate: ..., endDate: ..., limit: ..., offset: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useAdminListTimeEntriesForUsers(dataConnect, adminListTimeEntriesForUsersVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListTimeEntriesForUsers(adminListTimeEntriesForUsersVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminListTimeEntriesForUsers(dataConnect, adminListTimeEntriesForUsersVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.timeEntries);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminGetTeam
+You can execute the `AdminGetTeam` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useAdminGetTeam(dc: DataConnect, vars: AdminGetTeamVariables, options?: useDataConnectQueryOptions<AdminGetTeamData>): UseDataConnectQueryResult<AdminGetTeamData, AdminGetTeamVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useAdminGetTeam(vars: AdminGetTeamVariables, options?: useDataConnectQueryOptions<AdminGetTeamData>): UseDataConnectQueryResult<AdminGetTeamData, AdminGetTeamVariables>;
+```
+
+### Variables
+The `AdminGetTeam` Query requires an argument of type `AdminGetTeamVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface AdminGetTeamVariables {
+  teamId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `AdminGetTeam` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `AdminGetTeam` Query is of type `AdminGetTeamData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminGetTeamData {
+  team?: {
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    createdAt: TimestampString;
+    members: ({
+      user: {
+        id: UUIDString;
+        username: string;
+        email?: string | null;
+        userType: {
+          name: string;
+        } & UserType_Key;
+      } & User_Key;
+    })[];
+  } & Team_Key;
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `AdminGetTeam`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, AdminGetTeamVariables } from '@dataconnect/generated';
+import { useAdminGetTeam } from '@dataconnect/generated/react'
+
+export default function AdminGetTeamComponent() {
+  // The `useAdminGetTeam` Query hook requires an argument of type `AdminGetTeamVariables`:
+  const adminGetTeamVars: AdminGetTeamVariables = {
+    teamId: ..., 
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useAdminGetTeam(adminGetTeamVars);
+  // Variables can be defined inline as well.
+  const query = useAdminGetTeam({ teamId: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useAdminGetTeam(dataConnect, adminGetTeamVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminGetTeam(adminGetTeamVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useAdminGetTeam(dataConnect, adminGetTeamVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.team);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
 # Mutations
 
 The React generated SDK provides Mutations hook functions that call and return [`useDataConnectMutation`](https://react-query-firebase.invertase.dev/react/data-connect/mutations) hooks from TanStack Query Firebase.
@@ -3333,6 +3641,100 @@ export default function SelectMyCardStyleComponent() {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
   mutation.mutate(selectMyCardStyleVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.user_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## SelectMySquareCorners
+You can execute the `SelectMySquareCorners` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useSelectMySquareCorners(options?: useDataConnectMutationOptions<SelectMySquareCornersData, FirebaseError, SelectMySquareCornersVariables>): UseDataConnectMutationResult<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useSelectMySquareCorners(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMySquareCornersData, FirebaseError, SelectMySquareCornersVariables>): UseDataConnectMutationResult<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+```
+
+### Variables
+The `SelectMySquareCorners` Mutation requires an argument of type `SelectMySquareCornersVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface SelectMySquareCornersVariables {
+  squareCorners: boolean;
+}
+```
+### Return Type
+Recall that calling the `SelectMySquareCorners` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SelectMySquareCorners` Mutation is of type `SelectMySquareCornersData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface SelectMySquareCornersData {
+  user_update?: User_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `SelectMySquareCorners`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, SelectMySquareCornersVariables } from '@dataconnect/generated';
+import { useSelectMySquareCorners } from '@dataconnect/generated/react'
+
+export default function SelectMySquareCornersComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useSelectMySquareCorners();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useSelectMySquareCorners(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMySquareCorners(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMySquareCorners(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useSelectMySquareCorners` Mutation requires an argument of type `SelectMySquareCornersVariables`:
+  const selectMySquareCornersVars: SelectMySquareCornersVariables = {
+    squareCorners: ..., 
+  };
+  mutation.mutate(selectMySquareCornersVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ squareCorners: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(selectMySquareCornersVars, options);
 
   // Then, you can render your component dynamically based on the status of the Mutation.
   if (mutation.isPending) {

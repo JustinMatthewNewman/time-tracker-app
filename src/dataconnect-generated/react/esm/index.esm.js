@@ -1,4 +1,4 @@
-import { createUserFromGoogleRef, setUserTypeRef, createTimeEntryRef, createWorkLogOnlyRef, updateTimeEntryRef, updateTimeEntryClearTicketRef, deleteTimeEntryRef, upsertTicketRef, updateTicketRef, selectMyColorSchemeRef, clearMyColorSchemeRef, selectMyPerformanceModeRef, selectMyBackgroundOpacityRef, selectMyExternalTicketLinkTemplateRef, selectMyCardStyleRef, selectMyBordersEnabledRef, selectMyTicketColorsEnabledRef, updateWorkLogRef, deleteWorkLogRef, restoreWorkLogRef, createWorkLogRef, upsertGoogleCalendarConnectionRef, updateGoogleCalendarSyncPrefsRef, touchGoogleCalendarLastSyncedRef, deleteGoogleCalendarConnectionRef, listUsersRef, getMyUserRef, listColorSchemesRef, listTicketsRef, listTimeEntriesRef, getTimeEntryRef, listWorkLogsRef, listTimeEntriesByWorkLogRef, listTimeEntriesByTicketRef, listMyTimeEntriesRef, listTimeEntriesByDateRangeRef, listUserTypesRef, getUserAccessByGoogleUidRef, adminListUsersRef, adminListUserTypesRef, adminListFeaturesRef, adminGetUserRef, adminListTeamsRef, getGoogleCalendarConnectionRef, connectorConfig } from '../../esm/index.esm.js';
+import { createUserFromGoogleRef, setUserTypeRef, createTimeEntryRef, createWorkLogOnlyRef, updateTimeEntryRef, updateTimeEntryClearTicketRef, deleteTimeEntryRef, upsertTicketRef, updateTicketRef, selectMyColorSchemeRef, clearMyColorSchemeRef, selectMyPerformanceModeRef, selectMyBackgroundOpacityRef, selectMyExternalTicketLinkTemplateRef, selectMyCardStyleRef, selectMySquareCornersRef, selectMyBordersEnabledRef, selectMyTicketColorsEnabledRef, updateWorkLogRef, deleteWorkLogRef, restoreWorkLogRef, createWorkLogRef, upsertGoogleCalendarConnectionRef, updateGoogleCalendarSyncPrefsRef, touchGoogleCalendarLastSyncedRef, deleteGoogleCalendarConnectionRef, listUsersRef, getMyUserRef, listColorSchemesRef, listTicketsRef, listTimeEntriesRef, getTimeEntryRef, listWorkLogsRef, listTimeEntriesByWorkLogRef, listTimeEntriesByTicketRef, listMyTimeEntriesRef, listTimeEntriesByDateRangeRef, listUserTypesRef, getUserAccessByGoogleUidRef, adminListUsersRef, adminListUserTypesRef, adminListFeaturesRef, adminGetUserRef, adminListTeamsRef, getGoogleCalendarConnectionRef, listMyTimeEntriesByDateRangeRef, adminListTimeEntriesForUsersRef, adminGetTeamRef, connectorConfig } from '../../esm/index.esm.js';
 import { validateArgs, CallerSdkTypeEnum } from 'firebase/data-connect';
 import { useDataConnectQuery, useDataConnectMutation, validateReactArgs } from '@tanstack-query-firebase/react/data-connect';
 
@@ -118,6 +118,14 @@ export function useSelectMyCardStyle(dcOrOptions, options) {
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
     return selectMyCardStyleRef(dcInstance, vars);
+  }
+  return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+export function useSelectMySquareCorners(dcOrOptions, options) {
+  const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
+  function refFactory(vars) {
+    return selectMySquareCornersRef(dcInstance, vars);
   }
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }
@@ -314,5 +322,23 @@ export function useAdminListTeams(dcOrOptions, options) {
 export function useGetGoogleCalendarConnection(dcOrVars, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   const ref = getGoogleCalendarConnectionRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+export function useListMyTimeEntriesByDateRange(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = listMyTimeEntriesByDateRangeRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+export function useAdminListTimeEntriesForUsers(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = adminListTimeEntriesForUsersRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+export function useAdminGetTeam(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = adminGetTeamRef(dcInstance, inputVars);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }

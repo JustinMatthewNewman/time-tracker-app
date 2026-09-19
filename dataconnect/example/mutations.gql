@@ -233,6 +233,13 @@ mutation SelectMyCardStyle($cardOpacity: Int!, $cardBlur: Int!) @auth(level: USE
 
 # Toggles the Card/table border outline (see globals.css). Mirrors
 # SelectMyPerformanceMode — a plain instant boolean, no debounce needed.
+mutation SelectMySquareCorners($squareCorners: Boolean!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { squareCorners: $squareCorners }
+  )
+}
+
 mutation SelectMyBordersEnabled($bordersEnabled: Boolean!) @auth(level: USER) {
   user_update(
     first: { where: { googleUid: { eq_expr: "auth.uid" } } }

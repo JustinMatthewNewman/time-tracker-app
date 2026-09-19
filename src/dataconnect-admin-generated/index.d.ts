@@ -8,6 +8,29 @@ export type Int64String = string;
 export type DateString = string;
 
 
+export interface AdminGetTeamData {
+  team?: {
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    createdAt: TimestampString;
+    members: ({
+      user: {
+        id: UUIDString;
+        username: string;
+        email?: string | null;
+        userType: {
+          name: string;
+        } & UserType_Key;
+      } & User_Key;
+    })[];
+  } & Team_Key;
+}
+
+export interface AdminGetTeamVariables {
+  teamId: UUIDString;
+}
+
 export interface AdminGetUserData {
   user?: {
     id: UUIDString;
@@ -48,6 +71,31 @@ export interface AdminListTeamsData {
       } & User_Key;
     })[];
   } & Team_Key)[];
+}
+
+export interface AdminListTimeEntriesForUsersData {
+  timeEntries: ({
+    id: UUIDString;
+    user: {
+      id: UUIDString;
+    } & User_Key;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    ticket?: {
+      ticketNumber: number;
+      ticketTitle?: string | null;
+      color?: string | null;
+    } & Ticket_Key;
+  } & TimeEntry_Key)[];
+}
+
+export interface AdminListTimeEntriesForUsersVariables {
+  userIds: UUIDString[];
+  startDate: DateString;
+  endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
 }
 
 export interface AdminListUserTypesData {
@@ -234,6 +282,7 @@ export interface GetMyUserData {
     cardBlur?: number | null;
     bordersEnabled?: boolean | null;
     ticketColorsEnabled?: boolean | null;
+    squareCorners?: boolean | null;
   } & User_Key;
 }
 
@@ -310,6 +359,32 @@ export interface ListColorSchemesData {
       separator: string;
     } & Theme_Key)[];
   } & ColorScheme_Key)[];
+}
+
+export interface ListMyTimeEntriesByDateRangeData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      office?: string | null;
+      ticketTitle?: string | null;
+      ticketLink?: string | null;
+    } & Ticket_Key;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+
+export interface ListMyTimeEntriesByDateRangeVariables {
+  startDate: DateString;
+  endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
 }
 
 export interface ListMyTimeEntriesData {
@@ -546,6 +621,14 @@ export interface SelectMyPerformanceModeVariables {
   performanceMode: boolean;
 }
 
+export interface SelectMySquareCornersData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMySquareCornersVariables {
+  squareCorners: boolean;
+}
+
 export interface SelectMyTicketColorsEnabledData {
   user_update?: User_Key | null;
 }
@@ -770,6 +853,11 @@ export function selectMyCardStyle(dc: DataConnect, vars: SelectMyCardStyleVariab
 /** Generated Node Admin SDK operation action function for the 'SelectMyCardStyle' Mutation. Allow users to pass in custom DataConnect instances. */
 export function selectMyCardStyle(vars: SelectMyCardStyleVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyCardStyleData>>;
 
+/** Generated Node Admin SDK operation action function for the 'SelectMySquareCorners' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMySquareCorners(dc: DataConnect, vars: SelectMySquareCornersVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMySquareCornersData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMySquareCorners' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMySquareCorners(vars: SelectMySquareCornersVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMySquareCornersData>>;
+
 /** Generated Node Admin SDK operation action function for the 'SelectMyBordersEnabled' Mutation. Allow users to execute without passing in DataConnect. */
 export function selectMyBordersEnabled(dc: DataConnect, vars: SelectMyBordersEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBordersEnabledData>>;
 /** Generated Node Admin SDK operation action function for the 'SelectMyBordersEnabled' Mutation. Allow users to pass in custom DataConnect instances. */
@@ -914,4 +1002,19 @@ export function adminListTeams(options?: OperationOptions): Promise<ExecuteOpera
 export function getGoogleCalendarConnection(dc: DataConnect, vars: GetGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetGoogleCalendarConnectionData>>;
 /** Generated Node Admin SDK operation action function for the 'GetGoogleCalendarConnection' Query. Allow users to pass in custom DataConnect instances. */
 export function getGoogleCalendarConnection(vars: GetGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetGoogleCalendarConnectionData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntriesByDateRange' Query. Allow users to execute without passing in DataConnect. */
+export function listMyTimeEntriesByDateRange(dc: DataConnect, vars: ListMyTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesByDateRangeData>>;
+/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntriesByDateRange' Query. Allow users to pass in custom DataConnect instances. */
+export function listMyTimeEntriesByDateRange(vars: ListMyTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesByDateRangeData>>;
+
+/** Generated Node Admin SDK operation action function for the 'AdminListTimeEntriesForUsers' Query. Allow users to execute without passing in DataConnect. */
+export function adminListTimeEntriesForUsers(dc: DataConnect, vars: AdminListTimeEntriesForUsersVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListTimeEntriesForUsersData>>;
+/** Generated Node Admin SDK operation action function for the 'AdminListTimeEntriesForUsers' Query. Allow users to pass in custom DataConnect instances. */
+export function adminListTimeEntriesForUsers(vars: AdminListTimeEntriesForUsersVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminListTimeEntriesForUsersData>>;
+
+/** Generated Node Admin SDK operation action function for the 'AdminGetTeam' Query. Allow users to execute without passing in DataConnect. */
+export function adminGetTeam(dc: DataConnect, vars: AdminGetTeamVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminGetTeamData>>;
+/** Generated Node Admin SDK operation action function for the 'AdminGetTeam' Query. Allow users to pass in custom DataConnect instances. */
+export function adminGetTeam(vars: AdminGetTeamVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminGetTeamData>>;
 
