@@ -5,8 +5,13 @@ import { Button, Card, EmptyState, ListBox, Select, Skeleton } from "@heroui/rea
 import { Person, Persons, TrashBin } from "@gravity-ui/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
+import { useTicketColorsSetting } from "@/context/TicketColorsContext";
 import { SideNavListBox } from "@/components/Utilities/SideNavListBox";
+import type { MemberMetrics, TeamMetrics } from "@/lib/adminTeamMetrics";
 import { AdminShell } from "./AdminShell";
+import { MemberStatStrip, TeamStatStrip } from "./TeamStats";
+import { TeamRangeToggle } from "./TeamRangeToggle";
+import { defaultTeamRange, isRangeInvalid, resolveRange, type TeamRange } from "./teamRange";
 
 interface MemberRow {
   id: string;
@@ -30,8 +35,14 @@ interface AdminUserRow {
   userType: string;
 }
 
+interface TeamMetricsResponse {
+  totals: TeamMetrics;
+  members: MemberMetrics[];
+}
+
 export function AdminTeamsPage() {
   const { user } = useAuth();
+  const { ticketColorsEnabled } = useTicketColorsSetting();
   const { data, loading, error, refetch } = useAdminFetch<{ teams: TeamRow[] }>(
     "/api/admin/teams",
     true
@@ -47,6 +58,20 @@ export function AdminTeamsPage() {
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
   const activeTeamId = selectedTeamId ?? teams[0]?.id ?? null;
   const team = teams.find((t) => t.id === activeTeamId) ?? null;
+
+  const [range, setRange] = useState<TeamRange>(() => defaultTeamRange());
+  const rangeInvalid = isRangeInvalid(range);
+  const { start, end } = resolveRange(range);
+  // Same endpoint the team dashboard reads; the URL is the cache key
+  // useAdminFetch refetches on, so changing team or range reloads.
+  const metricsPath = useMemo(
+    () => (activeTeamId ? `/api/admin/teams/${activeTeamId}/metrics?start=${start}&end=${end}` : ""),
+    [activeTeamId, start, end]
+  );
+  const metricsQuery = useAdminFetch<TeamMetricsResponse>(
+    metricsPath,
+    !!activeTeamId && !rangeInvalid
+  );
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -151,14 +176,22 @@ export function AdminTeamsPage() {
     }
   };
 
-  const members = team?.members ?? [];
+  // AdminGetTeam returns the roster in insertion order, so removing and
+  // re-adding someone silently reshuffles the sidebar. Sort by name to keep
+  // the list stable across edits.
+  const members = useMemo(
+    () => [...(team?.members ?? [])].sort((a, b) => a.username.localeCompare(b.username)),
+    [team]
+  );
   const selectedMember = members.find((m) => m.id === selectedMemberId) ?? null;
+  const memberMetrics =
+    (selectedMember && metricsQuery.data?.members.find((m) => m.id === selectedMember.id)) || null;
   const addableUsers = (usersQuery.data?.users ?? []).filter(
     (u) => !members.some((m) => m.id === u.id)
   );
 
   const teamPicker = (
-    <div className="flex flex-col gap-1 border-t border-default-200 pt-3">
+    <div className="flex flex-col gap-1">
       <span className="text-xs font-medium uppercase tracking-wide text-foreground/40">Team</span>
       <Select
         aria-label="Team"
@@ -205,7 +238,7 @@ export function AdminTeamsPage() {
       selectedId={selectedMemberId}
       onSelect={setSelectedMemberId}
       emptyMessage={loading ? "Loading…" : "No members on this team yet."}
-      footer={teamPicker}
+      header={teamPicker}
       action={
         team && (
           <div className="flex flex-col gap-2">
@@ -256,6 +289,7 @@ export function AdminTeamsPage() {
       nav={nav}
       heading={team?.name ?? "Teams"}
       description="View and edit team details"
+      headerExtra={team ? <TeamRangeToggle value={range} onChange={setRange} /> : undefined}
     >
       {error && (
         <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
@@ -276,7 +310,74 @@ export function AdminTeamsPage() {
       )}
 
       {team && (
-        <div className="flex max-w-3xl flex-col gap-4">
+        <div className="flex max-w-4xl flex-col gap-4">
+          {/* Team stats first, then the selected member's, then the editor —
+              the numbers are what this page is read for, the form is what it
+              is occasionally used for. */}
+          <Card className="flex flex-col gap-3 p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">
+              Team stats
+            </p>
+            {rangeInvalid ? (
+              <p className="text-sm text-foreground/60">Choose a valid date range.</p>
+            ) : metricsQuery.error ? (
+              <p className="text-sm text-danger">{metricsQuery.error}</p>
+            ) : metricsQuery.loading || !metricsQuery.data ? (
+              <Skeleton className="h-16 w-full rounded" />
+            ) : (
+              <TeamStatStrip totals={metricsQuery.data.totals} enabled={ticketColorsEnabled} />
+            )}
+          </Card>
+
+          <Card className="flex flex-col gap-3 p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">
+              {selectedMember ? "Member" : "Members"}
+            </p>
+
+            {selectedMember ? (
+              <>
+                <div>
+                  <p className="text-lg font-semibold text-foreground">{selectedMember.username}</p>
+                  <p className="text-sm text-foreground/60">{selectedMember.email ?? "No email"}</p>
+                  <p className="mt-1 text-xs uppercase tracking-wide text-foreground/50">
+                    {selectedMember.userType}
+                  </p>
+                </div>
+
+                {/* Same range as the team strip above, so the two are directly
+                    comparable rather than each carrying their own period. */}
+                {rangeInvalid ? null : metricsQuery.loading || !metricsQuery.data ? (
+                  <Skeleton className="h-16 w-full rounded" />
+                ) : memberMetrics ? (
+                  <MemberStatStrip member={memberMetrics} enabled={ticketColorsEnabled} />
+                ) : (
+                  <p className="text-sm text-foreground/60">No stats for this member yet.</p>
+                )}
+                <div className="flex items-center gap-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onPress={() => removeMember(selectedMember.id)}
+                    isDisabled={busyMemberId === selectedMember.id}
+                  >
+                    <TrashBin className="size-4" aria-hidden />
+                    {busyMemberId === selectedMember.id ? "Removing…" : "Remove from team"}
+                  </Button>
+                  {/* Said plainly, because "remove" next to a person's name
+                      reads like it might delete the account. */}
+                  <span className="text-xs text-foreground/50">
+                    Removes the membership only — the account and its time entries are untouched.
+                  </span>
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-foreground/60">
+                {members.length === 0
+                  ? "This team has no members. Add one from the sidebar."
+                  : "Pick a member in the sidebar to see their details."}
+              </p>
+            )}
+          </Card>
           <Card className="flex flex-col gap-3 p-4">
             <div className="flex items-baseline justify-between gap-3">
               <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">
@@ -326,45 +427,6 @@ export function AdminTeamsPage() {
             {saveError && <p className="text-sm text-danger">{saveError}</p>}
           </Card>
 
-          <Card className="flex flex-col gap-3 p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">
-              {selectedMember ? "Member" : "Members"}
-            </p>
-
-            {selectedMember ? (
-              <>
-                <div>
-                  <p className="text-lg font-semibold text-foreground">{selectedMember.username}</p>
-                  <p className="text-sm text-foreground/60">{selectedMember.email ?? "No email"}</p>
-                  <p className="mt-1 text-xs uppercase tracking-wide text-foreground/50">
-                    {selectedMember.userType}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onPress={() => removeMember(selectedMember.id)}
-                    isDisabled={busyMemberId === selectedMember.id}
-                  >
-                    <TrashBin className="size-4" aria-hidden />
-                    {busyMemberId === selectedMember.id ? "Removing…" : "Remove from team"}
-                  </Button>
-                  {/* Said plainly, because "remove" next to a person's name
-                      reads like it might delete the account. */}
-                  <span className="text-xs text-foreground/50">
-                    Removes the membership only — the account and its time entries are untouched.
-                  </span>
-                </div>
-              </>
-            ) : (
-              <p className="text-sm text-foreground/60">
-                {members.length === 0
-                  ? "This team has no members. Add one from the sidebar."
-                  : "Pick a member in the sidebar to see their details."}
-              </p>
-            )}
-          </Card>
         </div>
       )}
     </AdminShell>

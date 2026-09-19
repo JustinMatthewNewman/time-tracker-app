@@ -29,11 +29,11 @@ interface SideNavListBoxProps {
    */
   action?: ReactNode;
   /**
-   * Optional control pinned below the list, e.g. a context switcher. Distinct
-   * from `action`: this one belongs at the bottom, away from the rows, because
-   * it changes what the list shows rather than acting on it.
+   * Optional control above the heading, e.g. a context switcher. Distinct from
+   * `action`: this one decides what the list contains, so it reads as the
+   * thing the rest of the sidebar hangs off rather than an operation on a row.
    */
-  footer?: ReactNode;
+  header?: ReactNode;
 }
 
 /**
@@ -61,7 +61,7 @@ export function SideNavListBox({
   headingAside,
   emptyMessage = "Nothing here yet.",
   action,
-  footer,
+  header,
 }: SideNavListBoxProps) {
   const { bordersEnabled } = useBorders();
 
@@ -71,6 +71,8 @@ export function SideNavListBox({
 
   return (
     <div className="flex h-full w-full min-h-0 flex-col gap-3">
+      {header && <div className="shrink-0">{header}</div>}
+
       {heading && (
         <div className="flex shrink-0 items-center justify-between px-1 pb-1">
           <h3 className="text-xs font-bold uppercase tracking-wider text-accent">{heading}</h3>
@@ -133,8 +135,6 @@ export function SideNavListBox({
           </Tabs>
         )}
       </div>
-
-      {footer && <div className="shrink-0">{footer}</div>}
     </div>
   );
 }

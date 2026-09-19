@@ -5,9 +5,9 @@ import { Card, EmptyState, Skeleton } from "@heroui/react";
 import { Persons } from "@gravity-ui/icons";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
 import { useTicketColorsSetting } from "@/context/TicketColorsContext";
-import { effectiveTicketColor, ticketRowTint } from "@/lib/ticketColor";
 import { formatDuration } from "@/lib/timeTotals";
-import type { MemberMetrics, TeamMetrics, TopTicket } from "@/lib/adminTeamMetrics";
+import type { MemberMetrics, TeamMetrics } from "@/lib/adminTeamMetrics";
+import { TeamStat, TicketChip } from "./TeamStats";
 import { isRangeInvalid, resolveRange, type TeamRange } from "./teamRange";
 
 interface TeamMetricsResponse {
@@ -20,38 +20,6 @@ interface TeamMetricsResponse {
 interface TeamOverviewProps {
   teamId: string;
   range: TeamRange;
-}
-
-function TicketChip({ ticket, enabled }: { ticket: TopTicket; enabled: boolean }) {
-  const color = enabled ? effectiveTicketColor(ticket.color, ticket.ticketNumber) : null;
-  return (
-    <span
-      className="inline-flex max-w-full items-center gap-1.5 rounded-full px-2 py-0.5 text-xs"
-      style={color ? { backgroundColor: ticketRowTint(color, 22) } : undefined}
-    >
-      {color && (
-        <span
-          aria-hidden
-          className="size-2 shrink-0 rounded-full"
-          style={{ backgroundColor: color }}
-        />
-      )}
-      <span className="truncate">
-        #{ticket.ticketNumber}
-        {ticket.ticketTitle ? ` · ${ticket.ticketTitle}` : ""}
-      </span>
-    </span>
-  );
-}
-
-function TeamStat({ label, value, hint }: { label: string; value: string; hint?: string }) {
-  return (
-    <div>
-      <p className="text-xs text-foreground/60">{label}</p>
-      <p className="text-xl font-semibold tabular-nums text-foreground">{value}</p>
-      {hint && <p className="text-xs text-foreground/50">{hint}</p>}
-    </div>
-  );
 }
 
 function MemberCard({ member, enabled }: { member: MemberMetrics; enabled: boolean }) {
