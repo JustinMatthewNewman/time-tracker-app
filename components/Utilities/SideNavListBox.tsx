@@ -21,6 +21,19 @@ interface SideNavListBoxProps {
   heading?: ReactNode;
   headingAside?: ReactNode;
   emptyMessage?: string;
+  /**
+   * Optional action rendered directly beneath the heading, e.g. "Add member".
+   * Deliberately above the list rather than below it: the list panel stretches
+   * to full height, so a footer ends up far from the rows it acts on whenever
+   * the list is short.
+   */
+  action?: ReactNode;
+  /**
+   * Optional control above the heading, e.g. a context switcher. Distinct from
+   * `action`: this one decides what the list contains, so it reads as the
+   * thing the rest of the sidebar hangs off rather than an operation on a row.
+   */
+  header?: ReactNode;
 }
 
 /**
@@ -47,6 +60,8 @@ export function SideNavListBox({
   heading,
   headingAside,
   emptyMessage = "Nothing here yet.",
+  action,
+  header,
 }: SideNavListBoxProps) {
   const { bordersEnabled } = useBorders();
 
@@ -56,6 +71,8 @@ export function SideNavListBox({
 
   return (
     <div className="flex h-full w-full min-h-0 flex-col gap-3">
+      {header && <div className="shrink-0">{header}</div>}
+
       {heading && (
         <div className="flex shrink-0 items-center justify-between px-1 pb-1">
           <h3 className="text-xs font-bold uppercase tracking-wider text-accent">{heading}</h3>
@@ -64,6 +81,8 @@ export function SideNavListBox({
           )}
         </div>
       )}
+
+      {action && <div className="shrink-0">{action}</div>}
 
       <div className="min-h-0 flex-1">
         {items.length === 0 ? (

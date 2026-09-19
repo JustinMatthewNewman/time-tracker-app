@@ -189,6 +189,27 @@ function deleteGoogleCalendarConnection(dcOrVarsOrOptions, varsOrOptions, option
 }
 exports.deleteGoogleCalendarConnection = deleteGoogleCalendarConnection;
 
+function adminUpdateTeam(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('AdminUpdateTeam', inputVars, inputOpts);
+}
+exports.adminUpdateTeam = adminUpdateTeam;
+
+function adminAddTeamMember(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('AdminAddTeamMember', inputVars, inputOpts);
+}
+exports.adminAddTeamMember = adminAddTeamMember;
+
+function adminRemoveTeamMember(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('AdminRemoveTeamMember', inputVars, inputOpts);
+}
+exports.adminRemoveTeamMember = adminRemoveTeamMember;
+
 function listUsers(dcOrOptions, options) {
   const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
   dcInstance.useGen(true);

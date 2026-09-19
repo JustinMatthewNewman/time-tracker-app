@@ -163,3 +163,100 @@ export function aggregateTeam(
     topTicket: tickets.top,
   };
 }
+
+/** One ticket's share of one member's day. */
+export interface DaySegment {
+  /** null for entries with no ticket. */
+  ticketNumber: number | null;
+  ticketTitle: string | null;
+  color: string | null;
+  minutes: number;
+}
+
+export interface MemberDay {
+  /** Day key, YYYY-MM-DD. */
+  date: string;
+  totalMinutes: number;
+  /** Largest share first, so a stacked bar reads bottom-heavy. */
+  segments: DaySegment[];
+}
+
+/** Every day in [start, end], inclusive, as day keys. */
+export function daysInRange(start: string, end: string): string[] {
+  const days: string[] = [];
+  const cursor = new Date(`${start}T00:00:00Z`);
+  const last = new Date(`${end}T00:00:00Z`);
+  while (cursor <= last) {
+    days.push(cursor.toISOString().slice(0, 10));
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return days;
+}
+
+/**
+ * Per-member, per-day, per-ticket minutes — the shape a stacked bar chart
+ * needs, one bar per day and one segment per ticket.
+ *
+ * Every day in the range appears for every member, including empty ones: a
+ * chart that silently drops quiet days compresses the x-axis and makes a
+ * four-day week look like a full one.
+ *
+ * Entry dates arrive as timestamps rather than bare day keys (TimeEntry.date
+ * is stored as a Timestamp), so they are truncated here rather than compared
+ * whole.
+ */
+export function aggregateDailyByMember(
+  members: TeamMemberInput[],
+  entries: MetricEntry[],
+  start: string,
+  end: string
+): Record<string, MemberDay[]> {
+  const days = daysInRange(start, end);
+  const result: Record<string, MemberDay[]> = {};
+
+  // userId -> dayKey -> ticketKey -> segment
+  const byUser = new Map<string, Map<string, Map<string, DaySegment>>>();
+  for (const entry of entries) {
+    const dayKey = entry.date.slice(0, 10);
+    const minutes = minutesBetween(entry.startTime, entry.endTime);
+    if (minutes <= 0) continue;
+
+    let byDay = byUser.get(entry.user.id);
+    if (!byDay) byUser.set(entry.user.id, (byDay = new Map()));
+    let byTicket = byDay.get(dayKey);
+    if (!byTicket) byDay.set(dayKey, (byTicket = new Map()));
+
+    const ticketKey = entry.ticket ? String(entry.ticket.ticketNumber) : "none";
+    const existing = byTicket.get(ticketKey);
+    if (existing) {
+      existing.minutes += minutes;
+    } else {
+      byTicket.set(ticketKey, {
+        ticketNumber: entry.ticket?.ticketNumber ?? null,
+        ticketTitle: entry.ticket?.ticketTitle ?? null,
+        color: entry.ticket?.color ?? null,
+        minutes,
+      });
+    }
+  }
+
+  for (const member of members) {
+    const byDay = byUser.get(member.id);
+    result[member.id] = days.map((date) => {
+      const segments = [...(byDay?.get(date)?.values() ?? [])].sort(
+        (a, b) =>
+          b.minutes - a.minutes ||
+          // Stable tiebreak so the stacking order doesn't wobble between
+          // requests; unticketed sorts last.
+          (a.ticketNumber ?? Number.MAX_SAFE_INTEGER) - (b.ticketNumber ?? Number.MAX_SAFE_INTEGER)
+      );
+      return {
+        date,
+        totalMinutes: segments.reduce((sum, seg) => sum + seg.minutes, 0),
+        segments,
+      };
+    });
+  }
+
+  return result;
+}

@@ -11,6 +11,15 @@ export type DateString = string;
 
 
 
+export interface AdminAddTeamMemberData {
+  teamMember_insert: TeamMember_Key;
+}
+
+export interface AdminAddTeamMemberVariables {
+  teamId: UUIDString;
+  userId: UUIDString;
+}
+
 export interface AdminGetTeamData {
   team?: {
     id: UUIDString;
@@ -122,6 +131,25 @@ export interface AdminListUsersData {
       name: string;
     } & UserType_Key;
   } & User_Key)[];
+}
+
+export interface AdminRemoveTeamMemberData {
+  teamMember_delete?: TeamMember_Key | null;
+}
+
+export interface AdminRemoveTeamMemberVariables {
+  teamId: UUIDString;
+  userId: UUIDString;
+}
+
+export interface AdminUpdateTeamData {
+  team_update?: Team_Key | null;
+}
+
+export interface AdminUpdateTeamVariables {
+  teamId: UUIDString;
+  name: string;
+  description?: string | null;
 }
 
 export interface ClearMyColorSchemeData {
@@ -1092,6 +1120,42 @@ export const deleteGoogleCalendarConnectionRef: DeleteGoogleCalendarConnectionRe
 
 export function deleteGoogleCalendarConnection(vars: DeleteGoogleCalendarConnectionVariables): MutationPromise<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
 export function deleteGoogleCalendarConnection(dc: DataConnect, vars: DeleteGoogleCalendarConnectionVariables): MutationPromise<DeleteGoogleCalendarConnectionData, DeleteGoogleCalendarConnectionVariables>;
+
+interface AdminUpdateTeamRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminUpdateTeamVariables): MutationRef<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: AdminUpdateTeamVariables): MutationRef<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+  operationName: string;
+}
+export const adminUpdateTeamRef: AdminUpdateTeamRef;
+
+export function adminUpdateTeam(vars: AdminUpdateTeamVariables): MutationPromise<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+export function adminUpdateTeam(dc: DataConnect, vars: AdminUpdateTeamVariables): MutationPromise<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+
+interface AdminAddTeamMemberRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminAddTeamMemberVariables): MutationRef<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: AdminAddTeamMemberVariables): MutationRef<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+  operationName: string;
+}
+export const adminAddTeamMemberRef: AdminAddTeamMemberRef;
+
+export function adminAddTeamMember(vars: AdminAddTeamMemberVariables): MutationPromise<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+export function adminAddTeamMember(dc: DataConnect, vars: AdminAddTeamMemberVariables): MutationPromise<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+
+interface AdminRemoveTeamMemberRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminRemoveTeamMemberVariables): MutationRef<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: AdminRemoveTeamMemberVariables): MutationRef<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
+  operationName: string;
+}
+export const adminRemoveTeamMemberRef: AdminRemoveTeamMemberRef;
+
+export function adminRemoveTeamMember(vars: AdminRemoveTeamMemberVariables): MutationPromise<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
+export function adminRemoveTeamMember(dc: DataConnect, vars: AdminRemoveTeamMemberVariables): MutationPromise<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
 
 interface ListUsersRef {
   /* Allow users to create refs without passing in DataConnect */

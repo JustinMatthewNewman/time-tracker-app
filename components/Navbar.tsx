@@ -62,6 +62,9 @@ const NAV_LINKS: NavLink[] = [
   // and team reporting are different jobs behind different grants, so a tier
   // can hold one without the other and the nav should say which.
   { label: "Admin Dashboard", href: "/admin/dashboard", icon: PersonGear, authRequired: true, feature: "AdminDashboard" },
+  // Team administration — same grant as the team dashboard, which already
+  // exposes rosters and per-member hours.
+  { label: "Teams", href: "/admin/teams", icon: Persons, authRequired: true, feature: "AdminDashboard" },
   { label: "Dashboard", href: "/dashboard", icon: House, authRequired: true, feature: "Dashboard" },
   // Promoted out of the dashboard's report submenu. Keeps the Dashboard
   // grant it already had — see the note in components/Calendar/CalendarPage.tsx.

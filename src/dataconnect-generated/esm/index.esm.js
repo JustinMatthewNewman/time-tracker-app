@@ -322,6 +322,42 @@ export function deleteGoogleCalendarConnection(dcOrVars, vars) {
   return executeMutation(deleteGoogleCalendarConnectionRef(dcInstance, inputVars));
 }
 
+export const adminUpdateTeamRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'AdminUpdateTeam', inputVars);
+}
+adminUpdateTeamRef.operationName = 'AdminUpdateTeam';
+
+export function adminUpdateTeam(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(adminUpdateTeamRef(dcInstance, inputVars));
+}
+
+export const adminAddTeamMemberRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'AdminAddTeamMember', inputVars);
+}
+adminAddTeamMemberRef.operationName = 'AdminAddTeamMember';
+
+export function adminAddTeamMember(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(adminAddTeamMemberRef(dcInstance, inputVars));
+}
+
+export const adminRemoveTeamMemberRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'AdminRemoveTeamMember', inputVars);
+}
+adminRemoveTeamMemberRef.operationName = 'AdminRemoveTeamMember';
+
+export function adminRemoveTeamMember(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(adminRemoveTeamMemberRef(dcInstance, inputVars));
+}
+
 export const listUsersRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();

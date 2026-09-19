@@ -641,3 +641,25 @@ mutation TouchGoogleCalendarLastSynced($userId: UUID!) @auth(level: NO_ACCESS) {
 mutation DeleteGoogleCalendarConnection($userId: UUID!) @auth(level: NO_ACCESS) {
   googleCalendarConnection_delete(key: { userId: $userId })
 }
+
+# ── Team administration ──────────────────────────────────────────────────────
+# All NO_ACCESS: these write across users, so they belong behind
+# requireFeature() on the server rather than anywhere a browser can reach.
+# Same reasoning as AdminListTimeEntriesForUsers and SetUserType.
+
+mutation AdminUpdateTeam($teamId: UUID!, $name: String!, $description: String)
+@auth(level: NO_ACCESS) {
+  team_update(id: $teamId, data: { name: $name, description: $description })
+}
+
+# TeamMember's key is the (team, user) pair, so an insert is idempotent-ish
+# only in the sense that a duplicate violates the primary key — the route
+# checks membership first and returns a clear 409 rather than surfacing a
+# constraint error.
+mutation AdminAddTeamMember($teamId: UUID!, $userId: UUID!) @auth(level: NO_ACCESS) {
+  teamMember_insert(data: { teamId: $teamId, userId: $userId })
+}
+
+mutation AdminRemoveTeamMember($teamId: UUID!, $userId: UUID!) @auth(level: NO_ACCESS) {
+  teamMember_delete(key: { teamId: $teamId, userId: $userId })
+}

@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  aggregateDailyByMember,
   aggregateMembers,
   aggregateTeam,
+  daysInRange,
   type MetricEntry,
   type TeamMemberInput,
 } from "./adminTeamMetrics";
@@ -149,5 +151,99 @@ describe("aggregateTeam", () => {
 
   it("handles a team with no members at all", () => {
     expect(aggregateTeam([], [])).toMatchObject({ memberCount: 0, activeMembers: 0 });
+  });
+});
+
+describe("daysInRange", () => {
+  it("is inclusive of both ends", () => {
+    expect(daysInRange("2026-09-01", "2026-09-03")).toEqual([
+      "2026-09-01",
+      "2026-09-02",
+      "2026-09-03",
+    ]);
+  });
+
+  it("returns a single day when start equals end", () => {
+    expect(daysInRange("2026-09-07", "2026-09-07")).toEqual(["2026-09-07"]);
+  });
+
+  it("crosses a month boundary", () => {
+    expect(daysInRange("2026-08-30", "2026-09-02")).toEqual([
+      "2026-08-30",
+      "2026-08-31",
+      "2026-09-01",
+      "2026-09-02",
+    ]);
+  });
+});
+
+describe("aggregateDailyByMember", () => {
+  const range = ["2026-09-01", "2026-09-03"] as const;
+
+  it("returns every day for every member, including empty ones", () => {
+    // A chart that drops quiet days compresses its x-axis and misleads.
+    const daily = aggregateDailyByMember([alice, bob], [entry("u1", "2026-09-02", 9, 2, 100)], ...range);
+    expect(Object.keys(daily).sort()).toEqual(["u1", "u2"]);
+    expect(daily.u1.map((d) => d.date)).toEqual(["2026-09-01", "2026-09-02", "2026-09-03"]);
+    expect(daily.u2.every((d) => d.totalMinutes === 0 && d.segments.length === 0)).toBe(true);
+  });
+
+  it("sums a ticket's entries within a day into one segment", () => {
+    const daily = aggregateDailyByMember(
+      [alice],
+      [entry("u1", "2026-09-01", 9, 2, 100), entry("u1", "2026-09-01", 13, 1, 100)],
+      ...range
+    );
+    const day = daily.u1[0];
+    expect(day.segments).toHaveLength(1);
+    expect(day.segments[0]).toMatchObject({ ticketNumber: 100, minutes: 180 });
+    expect(day.totalMinutes).toBe(180);
+  });
+
+  it("keeps separate tickets as separate segments, largest first", () => {
+    const daily = aggregateDailyByMember(
+      [alice],
+      [
+        entry("u1", "2026-09-01", 9, 1, 100),
+        entry("u1", "2026-09-01", 10, 3, 200),
+        entry("u1", "2026-09-01", 14, 2, 300),
+      ],
+      ...range
+    );
+    expect(daily.u1[0].segments.map((s) => s.ticketNumber)).toEqual([200, 300, 100]);
+    expect(daily.u1[0].totalMinutes).toBe(360);
+  });
+
+  it("buckets unticketed time into its own segment", () => {
+    const daily = aggregateDailyByMember(
+      [alice],
+      [entry("u1", "2026-09-01", 9, 2), entry("u1", "2026-09-01", 11, 1, 100)],
+      ...range
+    );
+    const seg = daily.u1[0].segments.find((s) => s.ticketNumber === null);
+    expect(seg?.minutes).toBe(120);
+  });
+
+  it("splits the same ticket across different days", () => {
+    const daily = aggregateDailyByMember(
+      [alice],
+      [entry("u1", "2026-09-01", 9, 2, 100), entry("u1", "2026-09-03", 9, 1, 100)],
+      ...range
+    );
+    expect(daily.u1.map((d) => d.totalMinutes)).toEqual([120, 0, 60]);
+  });
+
+  it("truncates timestamp dates to a day key", () => {
+    // TimeEntry.date is a Timestamp, so it arrives as a full ISO string.
+    const e = entry("u1", "2026-09-02", 9, 1, 100);
+    e.date = "2026-09-02T00:00:00.000Z";
+    const daily = aggregateDailyByMember([alice], [e], ...range);
+    expect(daily.u1[1].totalMinutes).toBe(60);
+  });
+
+  it("ignores entries from users outside the roster", () => {
+    const daily = aggregateDailyByMember([alice], [entry("u9", "2026-09-01", 9, 8, 100)], ...range);
+    expect(daily.u9).toBeUndefined();
+    expect(daily.u1.every((d) => d.totalMinutes === 0)).toBe(true);
   });
 });

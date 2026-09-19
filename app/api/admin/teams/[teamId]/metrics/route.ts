@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireFeature } from "@/lib/featureAccess";
 import { badRequest, notFound, serverError } from "@/lib/auth-middleware";
 import { fetchAllPages } from "@/lib/dataconnectPagination";
-import { aggregateMembers, aggregateTeam, type MetricEntry } from "@/lib/adminTeamMetrics";
+import {
+  aggregateDailyByMember,
+  aggregateMembers,
+  aggregateTeam,
+  type MetricEntry,
+} from "@/lib/adminTeamMetrics";
 import { adminGetTeam, adminListTimeEntriesForUsers } from "@/src/dataconnect-admin-generated";
 import type {
   AdminListTimeEntriesForUsersData,
@@ -19,6 +24,16 @@ const DAY_KEY = /^\d{4}-\d{2}-\d{2}$/;
  * roster is an easy way to make one request page through the whole table.
  */
 const MAX_RANGE_DAYS = 366;
+
+/**
+ * Widest range that still gets a per-day, per-ticket breakdown.
+ *
+ * The aggregate totals are a fixed size whatever the range; `daily` is not —
+ * it grows with days x members x tickets. A year of it for a large team is a
+ * payload nobody asked for, and the chart it feeds is unreadable past a month
+ * of bars anyway, so beyond this the field is omitted and the client says so.
+ */
+const MAX_DAILY_DAYS = 31;
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -96,6 +111,10 @@ export async function GET(
       range: { start, end },
       totals: aggregateTeam(members, entries),
       members: aggregateMembers(members, entries),
+      // Inclusive span, so a single-day range is 1 day, not 0.
+      daily:
+        span + 1 <= MAX_DAILY_DAYS ? aggregateDailyByMember(members, entries, start, end) : null,
+      dailyLimitDays: MAX_DAILY_DAYS,
     });
   } catch (err) {
     console.error("Error building team metrics:", err);

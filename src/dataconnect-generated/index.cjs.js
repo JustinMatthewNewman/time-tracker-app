@@ -377,6 +377,48 @@ exports.deleteGoogleCalendarConnection = function deleteGoogleCalendarConnection
 }
 ;
 
+const adminUpdateTeamRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'AdminUpdateTeam', inputVars);
+}
+adminUpdateTeamRef.operationName = 'AdminUpdateTeam';
+exports.adminUpdateTeamRef = adminUpdateTeamRef;
+
+exports.adminUpdateTeam = function adminUpdateTeam(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(adminUpdateTeamRef(dcInstance, inputVars));
+}
+;
+
+const adminAddTeamMemberRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'AdminAddTeamMember', inputVars);
+}
+adminAddTeamMemberRef.operationName = 'AdminAddTeamMember';
+exports.adminAddTeamMemberRef = adminAddTeamMemberRef;
+
+exports.adminAddTeamMember = function adminAddTeamMember(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(adminAddTeamMemberRef(dcInstance, inputVars));
+}
+;
+
+const adminRemoveTeamMemberRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'AdminRemoveTeamMember', inputVars);
+}
+adminRemoveTeamMemberRef.operationName = 'AdminRemoveTeamMember';
+exports.adminRemoveTeamMemberRef = adminRemoveTeamMemberRef;
+
+exports.adminRemoveTeamMember = function adminRemoveTeamMember(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(adminRemoveTeamMemberRef(dcInstance, inputVars));
+}
+;
+
 const listUsersRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
