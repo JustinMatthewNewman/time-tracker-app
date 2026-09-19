@@ -24,12 +24,7 @@ import type { DaySegment, MemberDay } from "@/lib/adminTeamMetrics";
 
 export interface IsoStackedBarChartProps {
   days: MemberDay[];
-  /**
-   * Called when a day's axis label is activated. Omit to leave the axis inert
-   * — which is the right default here, because the only page that can show a
-   * day's work log shows the *signed-in user's* logs (ListWorkLogs binds to
-   * auth.uid), so it cannot open a teammate's.
-   */
+  /** Called when a day's axis label is activated. Omit to leave the axis inert. */
   onDaySelect?: (day: MemberDay) => void;
   /** Height of the tallest bar, in user units. */
   maxBarHeight?: number;
@@ -240,15 +235,18 @@ export function IsoStackedBarChart({
                   </>
                 );
 
-                // Only a day that actually has a work log is actionable; an
-                // empty day would navigate to nothing.
-                if (!onDaySelect || !day.workLogId) return axis;
+                // Actionable whenever there is something to show. Gating on
+                // day.workLogId instead made a teammate's whole axis inert,
+                // which reads as a broken link rather than as a rule — and a
+                // work log is optional on a TimeEntry anyway, so it was
+                // possible to have a full day and no link even on your own row.
+                if (!onDaySelect || day.totalMinutes === 0) return axis;
 
                 return (
                   <g
                     role="button"
                     tabIndex={0}
-                    aria-label={`Open the work log for ${label.weekday} ${label.day}`}
+                    aria-label={`Show ${label.weekday} ${label.day} in detail`}
                     className="cursor-pointer outline-none [&:focus-visible>rect]:stroke-accent [&:focus-visible>rect]:[stroke-width:2]"
                     onClick={() => onDaySelect(day)}
                     onKeyDown={(e) => {

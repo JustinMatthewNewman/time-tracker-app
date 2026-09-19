@@ -13,6 +13,7 @@ import { SideNavListBox } from "@/components/Utilities/SideNavListBox";
 import type { MemberDay, MemberMetrics, TeamMetrics } from "@/lib/adminTeamMetrics";
 import { AdminShell } from "./AdminShell";
 import { IsoStackedBarChart } from "./IsoStackedBarChart";
+import { MemberDayDialog } from "./MemberDayDialog";
 import { MemberStatStrip, TeamStatStrip } from "./TeamStats";
 import { TeamRangeToggle } from "./TeamRangeToggle";
 import { defaultTeamRange, isRangeInvalid, resolveRange, type TeamRange } from "./teamRange";
@@ -91,6 +92,7 @@ export function AdminTeamsPage() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [busyMemberId, setBusyMemberId] = useState<string | null>(null);
+  const [openDay, setOpenDay] = useState<MemberDay | null>(null);
   const [editing, setEditing] = useState(false);
 
   const startEditing = () => {
@@ -394,32 +396,7 @@ export function AdminTeamsPage() {
                       Tickets per day
                     </p>
                     {memberDays ? (
-                      <>
-                        <IsoStackedBarChart
-                          days={memberDays}
-                          // Only wired up for your own row. /worklogs lists the
-                          // signed-in user's logs (ListWorkLogs binds to
-                          // auth.uid), so there is nowhere to send an admin
-                          // looking at a teammate's day — a link that quietly
-                          // opened the admin's *own* log for that date would be
-                          // worse than no link.
-                          onDaySelect={
-                            selectedMember && myUserId && selectedMember.id === myUserId
-                              ? (day) => {
-                                  if (!day.workLogId) return;
-                                  setSelectedWorkLogId(day.workLogId);
-                                  router.push("/worklogs");
-                                }
-                              : undefined
-                          }
-                        />
-                        {selectedMember && myUserId && selectedMember.id !== myUserId && (
-                          <p className="mt-1 text-xs text-foreground/40">
-                            Work logs are private to their owner, so a teammate&apos;s day
-                            can&apos;t be opened from here.
-                          </p>
-                        )}
-                      </>
+                      <IsoStackedBarChart days={memberDays} onDaySelect={setOpenDay} />
                     ) : (
                       <p className="text-sm text-foreground/60">
                         Pick a range of {metricsQuery.data.dailyLimitDays} days or fewer to see the
@@ -535,6 +512,19 @@ export function AdminTeamsPage() {
 
         </div>
       )}
+      <MemberDayDialog
+        isOpen={!!openDay}
+        memberName={selectedMember?.username ?? ""}
+        isSelf={!!myUserId && selectedMember?.id === myUserId}
+        day={openDay}
+        ticketColorsEnabled={ticketColorsEnabled}
+        onClose={() => setOpenDay(null)}
+        onOpenWorkLog={() => {
+          if (!openDay?.workLogId) return;
+          setSelectedWorkLogId(openDay.workLogId);
+          router.push("/worklogs");
+        }}
+      />
     </AdminShell>
   );
 }
