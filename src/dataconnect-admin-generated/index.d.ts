@@ -312,6 +312,32 @@ export interface ListColorSchemesData {
   } & ColorScheme_Key)[];
 }
 
+export interface ListMyTimeEntriesByDateRangeData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      office?: string | null;
+      ticketTitle?: string | null;
+      ticketLink?: string | null;
+    } & Ticket_Key;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+
+export interface ListMyTimeEntriesByDateRangeVariables {
+  startDate: DateString;
+  endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
+}
+
 export interface ListMyTimeEntriesData {
   timeEntries: ({
     id: UUIDString;
@@ -914,4 +940,9 @@ export function adminListTeams(options?: OperationOptions): Promise<ExecuteOpera
 export function getGoogleCalendarConnection(dc: DataConnect, vars: GetGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetGoogleCalendarConnectionData>>;
 /** Generated Node Admin SDK operation action function for the 'GetGoogleCalendarConnection' Query. Allow users to pass in custom DataConnect instances. */
 export function getGoogleCalendarConnection(vars: GetGoogleCalendarConnectionVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<GetGoogleCalendarConnectionData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntriesByDateRange' Query. Allow users to execute without passing in DataConnect. */
+export function listMyTimeEntriesByDateRange(dc: DataConnect, vars: ListMyTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesByDateRangeData>>;
+/** Generated Node Admin SDK operation action function for the 'ListMyTimeEntriesByDateRange' Query. Allow users to pass in custom DataConnect instances. */
+export function listMyTimeEntriesByDateRange(vars: ListMyTimeEntriesByDateRangeVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesByDateRangeData>>;
 

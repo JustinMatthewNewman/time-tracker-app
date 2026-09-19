@@ -29,6 +29,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*AdminGetUser*](#admingetuser)
   - [*AdminListTeams*](#adminlistteams)
   - [*GetGoogleCalendarConnection*](#getgooglecalendarconnection)
+  - [*ListMyTimeEntriesByDateRange*](#listmytimeentriesbydaterange)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*SetUserType*](#setusertype)
@@ -2286,6 +2287,139 @@ console.log(data.googleCalendarConnection);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.googleCalendarConnection);
+});
+```
+
+## ListMyTimeEntriesByDateRange
+You can execute the `ListMyTimeEntriesByDateRange` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listMyTimeEntriesByDateRange(vars: ListMyTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+
+interface ListMyTimeEntriesByDateRangeRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListMyTimeEntriesByDateRangeVariables): QueryRef<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+}
+export const listMyTimeEntriesByDateRangeRef: ListMyTimeEntriesByDateRangeRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listMyTimeEntriesByDateRange(dc: DataConnect, vars: ListMyTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+
+interface ListMyTimeEntriesByDateRangeRef {
+  ...
+  (dc: DataConnect, vars: ListMyTimeEntriesByDateRangeVariables): QueryRef<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+}
+export const listMyTimeEntriesByDateRangeRef: ListMyTimeEntriesByDateRangeRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listMyTimeEntriesByDateRangeRef:
+```typescript
+const name = listMyTimeEntriesByDateRangeRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListMyTimeEntriesByDateRange` query requires an argument of type `ListMyTimeEntriesByDateRangeVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ListMyTimeEntriesByDateRangeVariables {
+  startDate: DateString;
+  endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
+}
+```
+### Return Type
+Recall that executing the `ListMyTimeEntriesByDateRange` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListMyTimeEntriesByDateRangeData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListMyTimeEntriesByDateRangeData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      office?: string | null;
+      ticketTitle?: string | null;
+      ticketLink?: string | null;
+    } & Ticket_Key;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+```
+### Using `ListMyTimeEntriesByDateRange`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listMyTimeEntriesByDateRange, ListMyTimeEntriesByDateRangeVariables } from '@dataconnect/generated';
+
+// The `ListMyTimeEntriesByDateRange` query requires an argument of type `ListMyTimeEntriesByDateRangeVariables`:
+const listMyTimeEntriesByDateRangeVars: ListMyTimeEntriesByDateRangeVariables = {
+  startDate: ..., 
+  endDate: ..., 
+  limit: ..., // optional
+  offset: ..., // optional
+};
+
+// Call the `listMyTimeEntriesByDateRange()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listMyTimeEntriesByDateRange(listMyTimeEntriesByDateRangeVars);
+// Variables can be defined inline as well.
+const { data } = await listMyTimeEntriesByDateRange({ startDate: ..., endDate: ..., limit: ..., offset: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listMyTimeEntriesByDateRange(dataConnect, listMyTimeEntriesByDateRangeVars);
+
+console.log(data.timeEntries);
+
+// Or, you can use the `Promise` API.
+listMyTimeEntriesByDateRange(listMyTimeEntriesByDateRangeVars).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntries);
+});
+```
+
+### Using `ListMyTimeEntriesByDateRange`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listMyTimeEntriesByDateRangeRef, ListMyTimeEntriesByDateRangeVariables } from '@dataconnect/generated';
+
+// The `ListMyTimeEntriesByDateRange` query requires an argument of type `ListMyTimeEntriesByDateRangeVariables`:
+const listMyTimeEntriesByDateRangeVars: ListMyTimeEntriesByDateRangeVariables = {
+  startDate: ..., 
+  endDate: ..., 
+  limit: ..., // optional
+  offset: ..., // optional
+};
+
+// Call the `listMyTimeEntriesByDateRangeRef()` function to get a reference to the query.
+const ref = listMyTimeEntriesByDateRangeRef(listMyTimeEntriesByDateRangeVars);
+// Variables can be defined inline as well.
+const ref = listMyTimeEntriesByDateRangeRef({ startDate: ..., endDate: ..., limit: ..., offset: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listMyTimeEntriesByDateRangeRef(dataConnect, listMyTimeEntriesByDateRangeVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.timeEntries);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntries);
 });
 ```
 

@@ -87,7 +87,10 @@ query ListTickets($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
   }
 }
 
-query ListTimeEntries($userId: UUID!) @auth(level: USER) {
+# NO_ACCESS: filters on a caller-supplied $userId with nothing tying that id
+# to the caller, so at USER level any signed-in account could read any other
+# account's entries by passing a different UUID. Server-only (Admin SDK).
+query ListTimeEntries($userId: UUID!) @auth(level: NO_ACCESS) {
   timeEntries(
     where: { user: { id: { eq: $userId } } }
     orderBy: [{ startTime: DESC }]
@@ -249,7 +252,11 @@ query ListMyTimeEntries($limit: Int = 500, $offset: Int = 0) @auth(level: USER) 
 # $limit/$offset default so existing no-arg call sites stay source-compatible;
 # see lib/dataconnectPagination.ts for why callers page through this instead
 # of trusting a single large `limit`.
-query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Date!, $limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
+# NO_ACCESS for the same reason as ListTimeEntries: $userId is caller-supplied
+# and unbound. Reached only by the Admin SDK (lib/googleCalendar/sync.ts, and
+# admin aggregates behind requireFeature). Browsers use
+# ListMyTimeEntriesByDateRange below, which binds the filter to auth.uid.
+query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Date!, $limit: Int = 500, $offset: Int = 0) @auth(level: NO_ACCESS) {
   timeEntries(
     limit: $limit
     offset: $offset
@@ -409,5 +416,44 @@ query GetGoogleCalendarConnection($userId: UUID!) @auth(level: NO_ACCESS) {
     includeDescription
     connectedAt
     lastSyncedAt
+  }
+}
+
+# The browser's date-windowed fetch. Unlike ListTimeEntriesByDateRange there is
+# no $userId parameter to get wrong: the row filter is bound to auth.uid, so the
+# scope is decided by the verified token rather than by what the client asks
+# for. Same $limit/$offset paging contract as ListMyTimeEntries.
+query ListMyTimeEntriesByDateRange(
+  $startDate: Date!
+  $endDate: Date!
+  $limit: Int = 500
+  $offset: Int = 0
+) @auth(level: USER) {
+  timeEntries(
+    limit: $limit
+    offset: $offset
+    where: {
+      _and: [
+        { user: { googleUid: { eq_expr: "auth.uid" } } }
+        { date: { ge: $startDate } }
+        { date: { le: $endDate } }
+      ]
+    }
+    orderBy: [{ startTime: DESC }]
+  ) {
+    id
+    startTime
+    endTime
+    date
+    description
+    ticket {
+      id
+      ticketNumber
+      office
+      ticketTitle
+      ticketLink
+    }
+    officeNumber
+    createdAt
   }
 }

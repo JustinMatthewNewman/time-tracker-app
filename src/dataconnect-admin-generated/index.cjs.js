@@ -315,3 +315,10 @@ function getGoogleCalendarConnection(dcOrVarsOrOptions, varsOrOptions, options) 
 }
 exports.getGoogleCalendarConnection = getGoogleCalendarConnection;
 
+function listMyTimeEntriesByDateRange(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListMyTimeEntriesByDateRange', inputVars, inputOpts);
+}
+exports.listMyTimeEntriesByDateRange = listMyTimeEntriesByDateRange;
+

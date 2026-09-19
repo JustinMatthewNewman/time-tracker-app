@@ -270,3 +270,9 @@ export function getGoogleCalendarConnection(dcOrVarsOrOptions, varsOrOptions, op
   return dcInstance.executeQuery('GetGoogleCalendarConnection', inputVars, inputOpts);
 }
 
+export function listMyTimeEntriesByDateRange(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListMyTimeEntriesByDateRange', inputVars, inputOpts);
+}
+

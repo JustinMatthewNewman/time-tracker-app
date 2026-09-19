@@ -315,6 +315,32 @@ export interface ListColorSchemesData {
   } & ColorScheme_Key)[];
 }
 
+export interface ListMyTimeEntriesByDateRangeData {
+  timeEntries: ({
+    id: UUIDString;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    ticket?: {
+      id: UUIDString;
+      ticketNumber: number;
+      office?: string | null;
+      ticketTitle?: string | null;
+      ticketLink?: string | null;
+    } & Ticket_Key;
+    officeNumber?: string | null;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+
+export interface ListMyTimeEntriesByDateRangeVariables {
+  startDate: DateString;
+  endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
+}
+
 export interface ListMyTimeEntriesData {
   timeEntries: ({
     id: UUIDString;
@@ -1225,4 +1251,16 @@ export const getGoogleCalendarConnectionRef: GetGoogleCalendarConnectionRef;
 
 export function getGoogleCalendarConnection(vars: GetGoogleCalendarConnectionVariables, options?: ExecuteQueryOptions): QueryPromise<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
 export function getGoogleCalendarConnection(dc: DataConnect, vars: GetGoogleCalendarConnectionVariables, options?: ExecuteQueryOptions): QueryPromise<GetGoogleCalendarConnectionData, GetGoogleCalendarConnectionVariables>;
+
+interface ListMyTimeEntriesByDateRangeRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListMyTimeEntriesByDateRangeVariables): QueryRef<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListMyTimeEntriesByDateRangeVariables): QueryRef<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+  operationName: string;
+}
+export const listMyTimeEntriesByDateRangeRef: ListMyTimeEntriesByDateRangeRef;
+
+export function listMyTimeEntriesByDateRange(vars: ListMyTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+export function listMyTimeEntriesByDateRange(dc: DataConnect, vars: ListMyTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
 

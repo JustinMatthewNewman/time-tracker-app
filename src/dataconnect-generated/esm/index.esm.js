@@ -557,3 +557,16 @@ export function getGoogleCalendarConnection(dcOrVars, varsOrOptions, options) {
   return executeQuery(getGoogleCalendarConnectionRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
 }
 
+export const listMyTimeEntriesByDateRangeRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListMyTimeEntriesByDateRange', inputVars);
+}
+listMyTimeEntriesByDateRangeRef.operationName = 'ListMyTimeEntriesByDateRange';
+
+export function listMyTimeEntriesByDateRange(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(listMyTimeEntriesByDateRangeRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+
