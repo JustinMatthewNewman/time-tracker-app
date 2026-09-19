@@ -52,10 +52,19 @@ export const FEATURE_DEFINITIONS: Record<
   },
   AdminDashboard: {
     // Distinct from AdminPage: that one opens the admin page at all, this one
-    // adds the Teams tab inside it. Separate grants so a tier can be given the
-    // team view without the user-management surface, or vice versa.
-    description: "View teams and their members on the admin page.",
-    defaultTiers: ["Admin"],
+    // opens the Dashboard's Admin report and the Teams page. Separate grants so
+    // a tier can be given the team view without the user-management surface,
+    // or vice versa.
+    //
+    // "Elevated and above" means Elevated, Premium and Admin. The tiers are a
+    // flat set with no rank (see USER_TYPE_NAMES), so this list *is* the
+    // definition rather than a derivation from one — spelled out for the same
+    // reason Dashboard's is.
+    //
+    // Note what this grants: per-member hours for every user on a team. It is
+    // a visibility-into-colleagues grant, not a convenience one.
+    description: "View teams, their members, and per-member time totals.",
+    defaultTiers: ["Admin", "Elevated", "Premium"],
   },
   UserTypeControl: {
     // Separate from AdminPage on purpose: reading who exists and changing what
