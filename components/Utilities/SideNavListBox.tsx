@@ -21,6 +21,13 @@ interface SideNavListBoxProps {
   heading?: ReactNode;
   headingAside?: ReactNode;
   emptyMessage?: string;
+  /**
+   * Optional action rendered directly beneath the heading, e.g. "Add member".
+   * Deliberately above the list rather than below it: the list panel stretches
+   * to full height, so a footer ends up far from the rows it acts on whenever
+   * the list is short.
+   */
+  action?: ReactNode;
 }
 
 /**
@@ -47,6 +54,7 @@ export function SideNavListBox({
   heading,
   headingAside,
   emptyMessage = "Nothing here yet.",
+  action,
 }: SideNavListBoxProps) {
   const { bordersEnabled } = useBorders();
 
@@ -64,6 +72,8 @@ export function SideNavListBox({
           )}
         </div>
       )}
+
+      {action && <div className="shrink-0">{action}</div>}
 
       <div className="min-h-0 flex-1">
         {items.length === 0 ? (
@@ -116,6 +126,7 @@ export function SideNavListBox({
           </Tabs>
         )}
       </div>
+
     </div>
   );
 }

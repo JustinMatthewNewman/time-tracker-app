@@ -66,6 +66,9 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*UpdateGoogleCalendarSyncPrefs*](#updategooglecalendarsyncprefs)
   - [*TouchGoogleCalendarLastSynced*](#touchgooglecalendarlastsynced)
   - [*DeleteGoogleCalendarConnection*](#deletegooglecalendarconnection)
+  - [*AdminUpdateTeam*](#adminupdateteam)
+  - [*AdminAddTeamMember*](#adminaddteammember)
+  - [*AdminRemoveTeamMember*](#adminremoveteammember)
 
 # TanStack Query Firebase & TanStack React Query
 This SDK provides [React](https://react.dev/) hooks generated specific to your application, for the operations found in the connector `example`. These hooks are generated using [TanStack Query Firebase](https://react-query-firebase.invertase.dev/) by our partners at Invertase, a library built on top of [TanStack React Query v5](https://tanstack.com/query/v5/docs/framework/react/overview).
@@ -4780,6 +4783,296 @@ export default function DeleteGoogleCalendarConnectionComponent() {
   // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
   if (mutation.isSuccess) {
     console.log(mutation.data.googleCalendarConnection_delete);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminUpdateTeam
+You can execute the `AdminUpdateTeam` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useAdminUpdateTeam(options?: useDataConnectMutationOptions<AdminUpdateTeamData, FirebaseError, AdminUpdateTeamVariables>): UseDataConnectMutationResult<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useAdminUpdateTeam(dc: DataConnect, options?: useDataConnectMutationOptions<AdminUpdateTeamData, FirebaseError, AdminUpdateTeamVariables>): UseDataConnectMutationResult<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+```
+
+### Variables
+The `AdminUpdateTeam` Mutation requires an argument of type `AdminUpdateTeamVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface AdminUpdateTeamVariables {
+  teamId: UUIDString;
+  name: string;
+  description?: string | null;
+}
+```
+### Return Type
+Recall that calling the `AdminUpdateTeam` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `AdminUpdateTeam` Mutation is of type `AdminUpdateTeamData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminUpdateTeamData {
+  team_update?: Team_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `AdminUpdateTeam`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, AdminUpdateTeamVariables } from '@dataconnect/generated';
+import { useAdminUpdateTeam } from '@dataconnect/generated/react'
+
+export default function AdminUpdateTeamComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useAdminUpdateTeam();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useAdminUpdateTeam(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useAdminUpdateTeam(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useAdminUpdateTeam(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useAdminUpdateTeam` Mutation requires an argument of type `AdminUpdateTeamVariables`:
+  const adminUpdateTeamVars: AdminUpdateTeamVariables = {
+    teamId: ..., 
+    name: ..., 
+    description: ..., // optional
+  };
+  mutation.mutate(adminUpdateTeamVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ teamId: ..., name: ..., description: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(adminUpdateTeamVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.team_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminAddTeamMember
+You can execute the `AdminAddTeamMember` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useAdminAddTeamMember(options?: useDataConnectMutationOptions<AdminAddTeamMemberData, FirebaseError, AdminAddTeamMemberVariables>): UseDataConnectMutationResult<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useAdminAddTeamMember(dc: DataConnect, options?: useDataConnectMutationOptions<AdminAddTeamMemberData, FirebaseError, AdminAddTeamMemberVariables>): UseDataConnectMutationResult<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+```
+
+### Variables
+The `AdminAddTeamMember` Mutation requires an argument of type `AdminAddTeamMemberVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface AdminAddTeamMemberVariables {
+  teamId: UUIDString;
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `AdminAddTeamMember` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `AdminAddTeamMember` Mutation is of type `AdminAddTeamMemberData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminAddTeamMemberData {
+  teamMember_insert: TeamMember_Key;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `AdminAddTeamMember`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, AdminAddTeamMemberVariables } from '@dataconnect/generated';
+import { useAdminAddTeamMember } from '@dataconnect/generated/react'
+
+export default function AdminAddTeamMemberComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useAdminAddTeamMember();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useAdminAddTeamMember(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useAdminAddTeamMember(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useAdminAddTeamMember(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useAdminAddTeamMember` Mutation requires an argument of type `AdminAddTeamMemberVariables`:
+  const adminAddTeamMemberVars: AdminAddTeamMemberVariables = {
+    teamId: ..., 
+    userId: ..., 
+  };
+  mutation.mutate(adminAddTeamMemberVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ teamId: ..., userId: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(adminAddTeamMemberVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.teamMember_insert);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## AdminRemoveTeamMember
+You can execute the `AdminRemoveTeamMember` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useAdminRemoveTeamMember(options?: useDataConnectMutationOptions<AdminRemoveTeamMemberData, FirebaseError, AdminRemoveTeamMemberVariables>): UseDataConnectMutationResult<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useAdminRemoveTeamMember(dc: DataConnect, options?: useDataConnectMutationOptions<AdminRemoveTeamMemberData, FirebaseError, AdminRemoveTeamMemberVariables>): UseDataConnectMutationResult<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
+```
+
+### Variables
+The `AdminRemoveTeamMember` Mutation requires an argument of type `AdminRemoveTeamMemberVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface AdminRemoveTeamMemberVariables {
+  teamId: UUIDString;
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `AdminRemoveTeamMember` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `AdminRemoveTeamMember` Mutation is of type `AdminRemoveTeamMemberData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface AdminRemoveTeamMemberData {
+  teamMember_delete?: TeamMember_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `AdminRemoveTeamMember`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, AdminRemoveTeamMemberVariables } from '@dataconnect/generated';
+import { useAdminRemoveTeamMember } from '@dataconnect/generated/react'
+
+export default function AdminRemoveTeamMemberComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useAdminRemoveTeamMember();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useAdminRemoveTeamMember(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useAdminRemoveTeamMember(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useAdminRemoveTeamMember(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useAdminRemoveTeamMember` Mutation requires an argument of type `AdminRemoveTeamMemberVariables`:
+  const adminRemoveTeamMemberVars: AdminRemoveTeamMemberVariables = {
+    teamId: ..., 
+    userId: ..., 
+  };
+  mutation.mutate(adminRemoveTeamMemberVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ teamId: ..., userId: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(adminRemoveTeamMemberVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.teamMember_delete);
   }
   return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
 }

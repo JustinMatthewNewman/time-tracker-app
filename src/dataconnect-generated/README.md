@@ -59,6 +59,9 @@ This README will guide you through the process of using the generated JavaScript
   - [*UpdateGoogleCalendarSyncPrefs*](#updategooglecalendarsyncprefs)
   - [*TouchGoogleCalendarLastSynced*](#touchgooglecalendarlastsynced)
   - [*DeleteGoogleCalendarConnection*](#deletegooglecalendarconnection)
+  - [*AdminUpdateTeam*](#adminupdateteam)
+  - [*AdminAddTeamMember*](#adminaddteammember)
+  - [*AdminRemoveTeamMember*](#adminremoveteammember)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -5803,6 +5806,345 @@ console.log(data.googleCalendarConnection_delete);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.googleCalendarConnection_delete);
+});
+```
+
+## AdminUpdateTeam
+You can execute the `AdminUpdateTeam` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminUpdateTeam(vars: AdminUpdateTeamVariables): MutationPromise<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+
+interface AdminUpdateTeamRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminUpdateTeamVariables): MutationRef<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+}
+export const adminUpdateTeamRef: AdminUpdateTeamRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+adminUpdateTeam(dc: DataConnect, vars: AdminUpdateTeamVariables): MutationPromise<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+
+interface AdminUpdateTeamRef {
+  ...
+  (dc: DataConnect, vars: AdminUpdateTeamVariables): MutationRef<AdminUpdateTeamData, AdminUpdateTeamVariables>;
+}
+export const adminUpdateTeamRef: AdminUpdateTeamRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminUpdateTeamRef:
+```typescript
+const name = adminUpdateTeamRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminUpdateTeam` mutation requires an argument of type `AdminUpdateTeamVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface AdminUpdateTeamVariables {
+  teamId: UUIDString;
+  name: string;
+  description?: string | null;
+}
+```
+### Return Type
+Recall that executing the `AdminUpdateTeam` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminUpdateTeamData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminUpdateTeamData {
+  team_update?: Team_Key | null;
+}
+```
+### Using `AdminUpdateTeam`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminUpdateTeam, AdminUpdateTeamVariables } from '@dataconnect/generated';
+
+// The `AdminUpdateTeam` mutation requires an argument of type `AdminUpdateTeamVariables`:
+const adminUpdateTeamVars: AdminUpdateTeamVariables = {
+  teamId: ..., 
+  name: ..., 
+  description: ..., // optional
+};
+
+// Call the `adminUpdateTeam()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminUpdateTeam(adminUpdateTeamVars);
+// Variables can be defined inline as well.
+const { data } = await adminUpdateTeam({ teamId: ..., name: ..., description: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminUpdateTeam(dataConnect, adminUpdateTeamVars);
+
+console.log(data.team_update);
+
+// Or, you can use the `Promise` API.
+adminUpdateTeam(adminUpdateTeamVars).then((response) => {
+  const data = response.data;
+  console.log(data.team_update);
+});
+```
+
+### Using `AdminUpdateTeam`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, adminUpdateTeamRef, AdminUpdateTeamVariables } from '@dataconnect/generated';
+
+// The `AdminUpdateTeam` mutation requires an argument of type `AdminUpdateTeamVariables`:
+const adminUpdateTeamVars: AdminUpdateTeamVariables = {
+  teamId: ..., 
+  name: ..., 
+  description: ..., // optional
+};
+
+// Call the `adminUpdateTeamRef()` function to get a reference to the mutation.
+const ref = adminUpdateTeamRef(adminUpdateTeamVars);
+// Variables can be defined inline as well.
+const ref = adminUpdateTeamRef({ teamId: ..., name: ..., description: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminUpdateTeamRef(dataConnect, adminUpdateTeamVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.team_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.team_update);
+});
+```
+
+## AdminAddTeamMember
+You can execute the `AdminAddTeamMember` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminAddTeamMember(vars: AdminAddTeamMemberVariables): MutationPromise<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+
+interface AdminAddTeamMemberRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminAddTeamMemberVariables): MutationRef<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+}
+export const adminAddTeamMemberRef: AdminAddTeamMemberRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+adminAddTeamMember(dc: DataConnect, vars: AdminAddTeamMemberVariables): MutationPromise<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+
+interface AdminAddTeamMemberRef {
+  ...
+  (dc: DataConnect, vars: AdminAddTeamMemberVariables): MutationRef<AdminAddTeamMemberData, AdminAddTeamMemberVariables>;
+}
+export const adminAddTeamMemberRef: AdminAddTeamMemberRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminAddTeamMemberRef:
+```typescript
+const name = adminAddTeamMemberRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminAddTeamMember` mutation requires an argument of type `AdminAddTeamMemberVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface AdminAddTeamMemberVariables {
+  teamId: UUIDString;
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `AdminAddTeamMember` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminAddTeamMemberData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminAddTeamMemberData {
+  teamMember_insert: TeamMember_Key;
+}
+```
+### Using `AdminAddTeamMember`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminAddTeamMember, AdminAddTeamMemberVariables } from '@dataconnect/generated';
+
+// The `AdminAddTeamMember` mutation requires an argument of type `AdminAddTeamMemberVariables`:
+const adminAddTeamMemberVars: AdminAddTeamMemberVariables = {
+  teamId: ..., 
+  userId: ..., 
+};
+
+// Call the `adminAddTeamMember()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminAddTeamMember(adminAddTeamMemberVars);
+// Variables can be defined inline as well.
+const { data } = await adminAddTeamMember({ teamId: ..., userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminAddTeamMember(dataConnect, adminAddTeamMemberVars);
+
+console.log(data.teamMember_insert);
+
+// Or, you can use the `Promise` API.
+adminAddTeamMember(adminAddTeamMemberVars).then((response) => {
+  const data = response.data;
+  console.log(data.teamMember_insert);
+});
+```
+
+### Using `AdminAddTeamMember`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, adminAddTeamMemberRef, AdminAddTeamMemberVariables } from '@dataconnect/generated';
+
+// The `AdminAddTeamMember` mutation requires an argument of type `AdminAddTeamMemberVariables`:
+const adminAddTeamMemberVars: AdminAddTeamMemberVariables = {
+  teamId: ..., 
+  userId: ..., 
+};
+
+// Call the `adminAddTeamMemberRef()` function to get a reference to the mutation.
+const ref = adminAddTeamMemberRef(adminAddTeamMemberVars);
+// Variables can be defined inline as well.
+const ref = adminAddTeamMemberRef({ teamId: ..., userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminAddTeamMemberRef(dataConnect, adminAddTeamMemberVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.teamMember_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.teamMember_insert);
+});
+```
+
+## AdminRemoveTeamMember
+You can execute the `AdminRemoveTeamMember` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminRemoveTeamMember(vars: AdminRemoveTeamMemberVariables): MutationPromise<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
+
+interface AdminRemoveTeamMemberRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminRemoveTeamMemberVariables): MutationRef<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
+}
+export const adminRemoveTeamMemberRef: AdminRemoveTeamMemberRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+adminRemoveTeamMember(dc: DataConnect, vars: AdminRemoveTeamMemberVariables): MutationPromise<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
+
+interface AdminRemoveTeamMemberRef {
+  ...
+  (dc: DataConnect, vars: AdminRemoveTeamMemberVariables): MutationRef<AdminRemoveTeamMemberData, AdminRemoveTeamMemberVariables>;
+}
+export const adminRemoveTeamMemberRef: AdminRemoveTeamMemberRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminRemoveTeamMemberRef:
+```typescript
+const name = adminRemoveTeamMemberRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminRemoveTeamMember` mutation requires an argument of type `AdminRemoveTeamMemberVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface AdminRemoveTeamMemberVariables {
+  teamId: UUIDString;
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `AdminRemoveTeamMember` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminRemoveTeamMemberData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminRemoveTeamMemberData {
+  teamMember_delete?: TeamMember_Key | null;
+}
+```
+### Using `AdminRemoveTeamMember`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminRemoveTeamMember, AdminRemoveTeamMemberVariables } from '@dataconnect/generated';
+
+// The `AdminRemoveTeamMember` mutation requires an argument of type `AdminRemoveTeamMemberVariables`:
+const adminRemoveTeamMemberVars: AdminRemoveTeamMemberVariables = {
+  teamId: ..., 
+  userId: ..., 
+};
+
+// Call the `adminRemoveTeamMember()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminRemoveTeamMember(adminRemoveTeamMemberVars);
+// Variables can be defined inline as well.
+const { data } = await adminRemoveTeamMember({ teamId: ..., userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminRemoveTeamMember(dataConnect, adminRemoveTeamMemberVars);
+
+console.log(data.teamMember_delete);
+
+// Or, you can use the `Promise` API.
+adminRemoveTeamMember(adminRemoveTeamMemberVars).then((response) => {
+  const data = response.data;
+  console.log(data.teamMember_delete);
+});
+```
+
+### Using `AdminRemoveTeamMember`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, adminRemoveTeamMemberRef, AdminRemoveTeamMemberVariables } from '@dataconnect/generated';
+
+// The `AdminRemoveTeamMember` mutation requires an argument of type `AdminRemoveTeamMemberVariables`:
+const adminRemoveTeamMemberVars: AdminRemoveTeamMemberVariables = {
+  teamId: ..., 
+  userId: ..., 
+};
+
+// Call the `adminRemoveTeamMemberRef()` function to get a reference to the mutation.
+const ref = adminRemoveTeamMemberRef(adminRemoveTeamMemberVars);
+// Variables can be defined inline as well.
+const ref = adminRemoveTeamMemberRef({ teamId: ..., userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminRemoveTeamMemberRef(dataConnect, adminRemoveTeamMemberVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.teamMember_delete);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.teamMember_delete);
 });
 ```
 
