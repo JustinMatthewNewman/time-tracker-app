@@ -379,6 +379,8 @@ query AdminListTeams @auth(level: NO_ACCESS) {
     id
     name
     description
+    color
+    weeklyTargetHours
     createdAt
     members: teamMembers_on_team {
       user {
@@ -514,6 +516,8 @@ query AdminGetTeam($teamId: UUID!) @auth(level: NO_ACCESS) {
     id
     name
     description
+    color
+    weeklyTargetHours
     createdAt
     members: teamMembers_on_team {
       user {

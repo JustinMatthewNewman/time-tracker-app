@@ -106,10 +106,17 @@ export async function GET(
         id: team.id,
         name: team.name,
         description: team.description ?? null,
+        color: team.color ?? null,
+        weeklyTargetHours: team.weeklyTargetHours ?? null,
         createdAt: team.createdAt,
       },
       range: { start, end },
-      totals: aggregateTeam(members, entries),
+      totals: aggregateTeam(members, entries, {
+        weeklyTargetHours: team.weeklyTargetHours ?? null,
+        // Inclusive, so a single-day range is 1 rather than 0 and the target
+        // prorates to a day instead of to nothing.
+        rangeDays: span + 1,
+      }),
       members: aggregateMembers(members, entries),
       // Inclusive span, so a single-day range is 1 day, not 0.
       daily:

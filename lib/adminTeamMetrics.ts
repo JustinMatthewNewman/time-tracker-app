@@ -52,6 +52,10 @@ export interface TeamMetrics {
   /** Mean over *active* members only; averaging in zeroes buries the signal. */
   avgMinutesPerActiveMember: number;
   topTicket: TopTicket | null;
+  /** Prorated from the team's weekly target; null when no target is set. */
+  targetMinutes: number | null;
+  /** Percent of target logged, rounded; null when no target is set. */
+  attainmentPct: number | null;
 }
 
 function summariseTickets(entries: MetricEntry[]): { count: number; top: TopTicket | null } {
@@ -133,9 +137,17 @@ export function aggregateMembers(
  * rows, so team-wide distinct counts (days, tickets) are genuinely distinct
  * instead of double-counting a day or ticket two people both touched.
  */
+export interface TeamTargetInput {
+  /** Team.weeklyTargetHours, or null when unset. */
+  weeklyTargetHours: number | null;
+  /** Days covered by the range, inclusive. */
+  rangeDays: number;
+}
+
 export function aggregateTeam(
   members: TeamMemberInput[],
-  entries: MetricEntry[]
+  entries: MetricEntry[],
+  target?: TeamTargetInput
 ): TeamMetrics {
   let totalMinutes = 0;
   const days = new Set<string>();
@@ -152,6 +164,14 @@ export function aggregateTeam(
   const rosterIds = new Set(members.map((m) => m.id));
   const activeMembers = [...activeUsers].filter((id) => rosterIds.has(id)).length;
 
+  // The target is weekly but the range is arbitrary, so it is prorated by days
+  // rather than compared whole — otherwise a single-day view reads as 14% of
+  // target on a day that was in fact fully worked.
+  const targetMinutes =
+    target && target.weeklyTargetHours != null && target.weeklyTargetHours > 0 && target.rangeDays > 0
+      ? Math.round((target.weeklyTargetHours * 60 * target.rangeDays) / 7)
+      : null;
+
   return {
     totalMinutes,
     entryCount: entries.length,
@@ -161,6 +181,8 @@ export function aggregateTeam(
     ticketCount: tickets.count,
     avgMinutesPerActiveMember: activeMembers === 0 ? 0 : Math.round(totalMinutes / activeMembers),
     topTicket: tickets.top,
+    targetMinutes,
+    attainmentPct: targetMinutes ? Math.round((totalMinutes / targetMinutes) * 100) : null,
   };
 }
 

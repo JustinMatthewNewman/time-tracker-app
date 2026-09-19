@@ -334,6 +334,30 @@ export function adminUpdateTeam(dcOrVars, vars) {
   return executeMutation(adminUpdateTeamRef(dcInstance, inputVars));
 }
 
+export const adminCreateTeamRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'AdminCreateTeam', inputVars);
+}
+adminCreateTeamRef.operationName = 'AdminCreateTeam';
+
+export function adminCreateTeam(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(adminCreateTeamRef(dcInstance, inputVars));
+}
+
+export const adminDeleteTeamRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'AdminDeleteTeam', inputVars);
+}
+adminDeleteTeamRef.operationName = 'AdminDeleteTeam';
+
+export function adminDeleteTeam(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(adminDeleteTeamRef(dcInstance, inputVars));
+}
+
 export const adminAddTeamMemberRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

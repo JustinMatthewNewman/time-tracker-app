@@ -1,17 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { Persons, Shield } from "@gravity-ui/icons";
+import { Persons, PersonGear, Shield } from "@gravity-ui/icons";
 import { AdminUsersPanel } from "./AdminUsersPanel";
 import { AdminUserTypesPanel } from "./AdminUserTypesPanel";
+import { AdminDepartmentPanel } from "./AdminDepartmentPanel";
 import { SideNavListBox } from "@/components/Utilities/SideNavListBox";
 import { AdminShell } from "./AdminShell";
 
-type ManageId = "users" | "userTypes";
+type ManageId = "users" | "userTypes" | "department";
 
 const SECTIONS = [
   { id: "users", label: "Users", description: "Everyone, and their tier", icon: Persons },
   { id: "userTypes", label: "User Types", description: "Tiers and their grants", icon: Shield },
+  {
+    id: "department",
+    label: "Department",
+    description: "Teams and team-wide settings",
+    icon: PersonGear,
+  },
 ] as const;
 
 /**
@@ -51,6 +58,7 @@ export function AdminManagePage() {
       {/* `enabled` defers each panel's fetch until it's actually opened. */}
       {section === "users" && <AdminUsersPanel enabled />}
       {section === "userTypes" && <AdminUserTypesPanel enabled />}
+      {section === "department" && <AdminDepartmentPanel enabled />}
     </AdminShell>
   );
 }

@@ -647,9 +647,33 @@ mutation DeleteGoogleCalendarConnection($userId: UUID!) @auth(level: NO_ACCESS) 
 # requireFeature() on the server rather than anywhere a browser can reach.
 # Same reasoning as AdminListTimeEntriesForUsers and SetUserType.
 
-mutation AdminUpdateTeam($teamId: UUID!, $name: String!, $description: String)
-@auth(level: NO_ACCESS) {
-  team_update(id: $teamId, data: { name: $name, description: $description })
+mutation AdminUpdateTeam(
+  $teamId: UUID!
+  $name: String!
+  $description: String
+  $color: String
+  $weeklyTargetHours: Int
+) @auth(level: NO_ACCESS) {
+  team_update(
+    id: $teamId
+    data: {
+      name: $name
+      description: $description
+      color: $color
+      weeklyTargetHours: $weeklyTargetHours
+    }
+  )
+}
+
+mutation AdminCreateTeam($name: String!, $description: String) @auth(level: NO_ACCESS) {
+  team_insert(data: { name: $name, description: $description })
+}
+
+# TeamMember has ON DELETE CASCADE on its team ref, so this drops the team's
+# memberships with it. Users and their time entries are untouched — a TimeEntry
+# has no team reference at all; team membership is only ever the join table.
+mutation AdminDeleteTeam($teamId: UUID!) @auth(level: NO_ACCESS) {
+  team_delete(id: $teamId)
 }
 
 # TeamMember's key is the (team, user) pair, so an insert is idempotent-ish

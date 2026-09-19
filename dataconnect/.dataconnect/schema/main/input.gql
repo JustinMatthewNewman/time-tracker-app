@@ -960,6 +960,14 @@ input Team_Data {
   """
   id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `Team`.`color` of type `String`
+  """
+  color: String
+  """
+  ✨ `_expr` server value variant of `color` (✨ Generated from Field `Team`.`color` of type `String`)
+  """
+  color_expr: String_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `Team`.`createdAt` of type `Timestamp!`
   """
   createdAt: Timestamp
@@ -992,6 +1000,18 @@ input Team_Data {
   """
   name_expr: String_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `Team`.`weeklyTargetHours` of type `Int`
+  """
+  weeklyTargetHours: Int
+  """
+  ✨ `_expr` server value variant of `weeklyTargetHours` (✨ Generated from Field `Team`.`weeklyTargetHours` of type `Int`)
+  """
+  weeklyTargetHours_expr: Int_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `weeklyTargetHours` (✨ Generated from Field `Team`.`weeklyTargetHours` of type `Int`)
+  """
+  weeklyTargetHours_update: [Int_Update!] @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `Team`.`teamMembers_on_team` of type `[TeamMember!]!`
   """
   teamMembers_on_team: [TeamMember_Data!]
@@ -1017,6 +1037,10 @@ input Team_Filter {
   """
   id: UUID_Filter
   """
+  ✨ Generated from Field `Team`.`color` of type `String`
+  """
+  color: String_Filter
+  """
   ✨ Generated from Field `Team`.`createdAt` of type `Timestamp!`
   """
   createdAt: Timestamp_Filter
@@ -1028,6 +1052,10 @@ input Team_Filter {
   ✨ Generated from Field `Team`.`name` of type `String!`
   """
   name: String_Filter
+  """
+  ✨ Generated from Field `Team`.`weeklyTargetHours` of type `Int`
+  """
+  weeklyTargetHours: Int_Filter
   """
   ✨ Generated from Field `Team`.`teamMembers_on_team` of type `[TeamMember!]!`
   """
@@ -1075,6 +1103,10 @@ input Team_Having {
   """
   _count: Int_Filter
   """
+  ✨ Generated from Field `Team`.`color_count` of type `Int!`
+  """
+  color_count: Int_Filter
+  """
   ✨ Generated from Field `Team`.`createdAt_count` of type `Int!`
   """
   createdAt_count: Int_Filter
@@ -1091,13 +1123,33 @@ input Team_Having {
   """
   name_count: Int_Filter
   """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_count` of type `Int!`
+  """
+  weeklyTargetHours_count: Int_Filter
+  """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_sum` of type `Int`
+  """
+  weeklyTargetHours_sum: Int_Filter
+  """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_avg` of type `Float`
+  """
+  weeklyTargetHours_avg: Float_Filter
+  """
   ✨ Generated from Field `Team`.`createdAt_min` of type `Timestamp`
   """
   createdAt_min: Timestamp_Filter
   """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_min` of type `Int`
+  """
+  weeklyTargetHours_min: Int_Filter
+  """
   ✨ Generated from Field `Team`.`createdAt_max` of type `Timestamp`
   """
   createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_max` of type `Int`
+  """
+  weeklyTargetHours_max: Int_Filter
 }
 """
 ✨ Generated key input type for table 'Team'. It represents the primary key fields used to uniquely identify a row in the table.
@@ -1134,6 +1186,10 @@ input Team_Order {
   """
   id: OrderDirection
   """
+  ✨ Generated from Field `Team`.`color` of type `String`
+  """
+  color: OrderDirection
+  """
   ✨ Generated from Field `Team`.`createdAt` of type `Timestamp!`
   """
   createdAt: OrderDirection
@@ -1146,9 +1202,17 @@ input Team_Order {
   """
   name: OrderDirection
   """
+  ✨ Generated from Field `Team`.`weeklyTargetHours` of type `Int`
+  """
+  weeklyTargetHours: OrderDirection
+  """
   ✨ Generated from Field `Team`.`_count` of type `Int!`
   """
   _count: OrderDirection
+  """
+  ✨ Generated from Field `Team`.`color_count` of type `Int!`
+  """
+  color_count: OrderDirection
   """
   ✨ Generated from Field `Team`.`createdAt_count` of type `Int!`
   """
@@ -1166,13 +1230,33 @@ input Team_Order {
   """
   name_count: OrderDirection
   """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_count` of type `Int!`
+  """
+  weeklyTargetHours_count: OrderDirection
+  """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_sum` of type `Int`
+  """
+  weeklyTargetHours_sum: OrderDirection
+  """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_avg` of type `Float`
+  """
+  weeklyTargetHours_avg: OrderDirection
+  """
   ✨ Generated from Field `Team`.`createdAt_min` of type `Timestamp`
   """
   createdAt_min: OrderDirection
   """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_min` of type `Int`
+  """
+  weeklyTargetHours_min: OrderDirection
+  """
   ✨ Generated from Field `Team`.`createdAt_max` of type `Timestamp`
   """
   createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Team`.`weeklyTargetHours_max` of type `Int`
+  """
+  weeklyTargetHours_max: OrderDirection
 }
 """
 ✨ Generated data input type for table 'TeamMember'. It includes all necessary fields for creating or upserting rows into table.
