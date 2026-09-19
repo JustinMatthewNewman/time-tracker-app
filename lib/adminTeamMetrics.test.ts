@@ -152,6 +152,60 @@ describe("aggregateTeam", () => {
   it("handles a team with no members at all", () => {
     expect(aggregateTeam([], [])).toMatchObject({ memberCount: 0, activeMembers: 0 });
   });
+
+  it("reports no target when the team has not set one", () => {
+    const team = aggregateTeam([alice], [entry("u1", "2026-09-01", 9, 4)], {
+      weeklyTargetHours: null,
+      rangeDays: 7,
+    });
+    expect(team.targetMinutes).toBeNull();
+    expect(team.attainmentPct).toBeNull();
+  });
+
+  it("compares a full week against the whole weekly target", () => {
+    // 20h logged against a 40h weekly target over 7 days.
+    const team = aggregateTeam([alice], [entry("u1", "2026-09-01", 0, 20)], {
+      weeklyTargetHours: 40,
+      rangeDays: 7,
+    });
+    expect(team.targetMinutes).toBe(40 * 60);
+    expect(team.attainmentPct).toBe(50);
+  });
+
+  it("prorates the target for a range shorter than a week", () => {
+    // A single fully-worked day must not read as 14% of target.
+    const team = aggregateTeam([alice], [entry("u1", "2026-09-01", 0, 8)], {
+      weeklyTargetHours: 70,
+      rangeDays: 1,
+    });
+    expect(team.targetMinutes).toBe(600); // 70h / 7 days = 10h
+    expect(team.attainmentPct).toBe(80);
+  });
+
+  it("prorates the target for a range longer than a week", () => {
+    const team = aggregateTeam([alice], [entry("u1", "2026-09-01", 0, 14)], {
+      weeklyTargetHours: 40,
+      rangeDays: 14,
+    });
+    expect(team.targetMinutes).toBe(80 * 60);
+  });
+
+  it("treats a zero target as no target rather than dividing by zero", () => {
+    const team = aggregateTeam([alice], [entry("u1", "2026-09-01", 9, 4)], {
+      weeklyTargetHours: 0,
+      rangeDays: 7,
+    });
+    expect(team.targetMinutes).toBeNull();
+    expect(team.attainmentPct).toBeNull();
+  });
+
+  it("can report over 100% when a team beats its target", () => {
+    const team = aggregateTeam([alice], [entry("u1", "2026-09-01", 0, 12)], {
+      weeklyTargetHours: 70,
+      rangeDays: 1,
+    });
+    expect(team.attainmentPct).toBe(120);
+  });
 });
 
 describe("daysInRange", () => {

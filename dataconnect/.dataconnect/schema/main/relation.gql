@@ -457,6 +457,15 @@ extend type Team {
   """
   _count: Int! @fdc_generated(from: "Team.", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `Team` table where the `color` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  color_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Team.color", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `Team` table where the `createdAt` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   createdAt_count(
@@ -493,13 +502,48 @@ extend type Team {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "Team.name", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `Team` table where the `weeklyTargetHours` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  weeklyTargetHours_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Team.weeklyTargetHours", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `weeklyTargetHours` field in the `Team` table.
+  """
+  weeklyTargetHours_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "Team.weeklyTargetHours", purpose: QUERY_SUM)
+  """
+  ✨ Average the `weeklyTargetHours` field in the `Team` table.
+  """
+  weeklyTargetHours_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "Team.weeklyTargetHours", purpose: QUERY_AVG)
+  """
   ✨ Minimum of the `createdAt` field in the `Team` table.
   """
   createdAt_min: Timestamp @fdc_generated(from: "Team.createdAt", purpose: QUERY_MIN)
   """
+  ✨ Minimum of the `weeklyTargetHours` field in the `Team` table.
+  """
+  weeklyTargetHours_min: Int @fdc_generated(from: "Team.weeklyTargetHours", purpose: QUERY_MIN)
+  """
   ✨ Maximum of the `createdAt` field in the `Team` table.
   """
   createdAt_max: Timestamp @fdc_generated(from: "Team.createdAt", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `weeklyTargetHours` field in the `Team` table.
+  """
+  weeklyTargetHours_max: Int @fdc_generated(from: "Team.weeklyTargetHours", purpose: QUERY_MAX)
   """
   A generated field that is used for caching results in SDKs.
   """

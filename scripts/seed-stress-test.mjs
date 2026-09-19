@@ -81,18 +81,25 @@ const TEAM_DEFS = [
     key: "local-dev",
     name: "Local Dev",
     description: "Sample team seeded for local development.",
+    color: "#2F6FEB",
+    weeklyTargetHours: 120,
     members: ["__TEST_USER__", "dana", "elias", "jo"],
   },
   {
     key: "engineering",
     name: "Engineering",
     description: "Builds and maintains the product.",
+    color: "#1F9D55",
+    weeklyTargetHours: 160,
     members: ["farrah", "gus", "hana", "dana"],
   },
   {
     key: "technical-support",
     name: "Technical Support",
-    description: "Front line for customer-reported issues.",
+    // No color or target on purpose: the Department panel and the team stats
+    // both have to read correctly for a team that has set neither.
+    color: null,
+    weeklyTargetHours: null,
     members: ["__TEST_USER__", "ivan", "hana"],
   },
 ];
@@ -566,7 +573,11 @@ async function main() {
     TEAM_DEFS.map((team) => ({
       id: id("team", team.key),
       name: team.name,
-      description: team.description,
+      // Uniform column list across the batch — null, never undefined (see the
+      // note in the entry generator).
+      description: team.description ?? null,
+      color: team.color ?? null,
+      weeklyTargetHours: team.weeklyTargetHours ?? null,
       createdAt: new Date().toISOString(),
     }))
   );

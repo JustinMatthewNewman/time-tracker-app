@@ -168,6 +168,18 @@ export function adminUpdateTeam(dcOrVarsOrOptions, varsOrOptions, options) {
   return dcInstance.executeMutation('AdminUpdateTeam', inputVars, inputOpts);
 }
 
+export function adminCreateTeam(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('AdminCreateTeam', inputVars, inputOpts);
+}
+
+export function adminDeleteTeam(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('AdminDeleteTeam', inputVars, inputOpts);
+}
+
 export function adminAddTeamMember(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);

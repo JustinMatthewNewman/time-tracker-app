@@ -123,6 +123,15 @@ type Team @table {
   id: UUID! @default(expr: "uuidV4()")
   name: String! @unique
   description: String
+  # Identity color, same "#rrggbb" convention as Ticket.color. Nullable: a team
+  # without one falls back to a neutral swatch rather than being assigned a
+  # color by a migration.
+  color: String
+  # Hours the whole team is expected to log in a week, used to show attainment
+  # alongside the team's totals. Nullable because most teams won't set one, and
+  # a default here would invent a target nobody agreed to — attainment is simply
+  # not shown until it is set.
+  weeklyTargetHours: Int
   createdAt: Timestamp! @default(expr: "request.time")
 }
 

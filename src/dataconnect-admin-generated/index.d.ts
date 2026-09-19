@@ -17,11 +17,30 @@ export interface AdminAddTeamMemberVariables {
   userId: UUIDString;
 }
 
+export interface AdminCreateTeamData {
+  team_insert: Team_Key;
+}
+
+export interface AdminCreateTeamVariables {
+  name: string;
+  description?: string | null;
+}
+
+export interface AdminDeleteTeamData {
+  team_delete?: Team_Key | null;
+}
+
+export interface AdminDeleteTeamVariables {
+  teamId: UUIDString;
+}
+
 export interface AdminGetTeamData {
   team?: {
     id: UUIDString;
     name: string;
     description?: string | null;
+    color?: string | null;
+    weeklyTargetHours?: number | null;
     createdAt: TimestampString;
     members: ({
       user: {
@@ -68,6 +87,8 @@ export interface AdminListTeamsData {
     id: UUIDString;
     name: string;
     description?: string | null;
+    color?: string | null;
+    weeklyTargetHours?: number | null;
     createdAt: TimestampString;
     members: ({
       user: {
@@ -147,6 +168,8 @@ export interface AdminUpdateTeamVariables {
   teamId: UUIDString;
   name: string;
   description?: string | null;
+  color?: string | null;
+  weeklyTargetHours?: number | null;
 }
 
 export interface ClearMyColorSchemeData {
@@ -940,6 +963,16 @@ export function deleteGoogleCalendarConnection(vars: DeleteGoogleCalendarConnect
 export function adminUpdateTeam(dc: DataConnect, vars: AdminUpdateTeamVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminUpdateTeamData>>;
 /** Generated Node Admin SDK operation action function for the 'AdminUpdateTeam' Mutation. Allow users to pass in custom DataConnect instances. */
 export function adminUpdateTeam(vars: AdminUpdateTeamVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminUpdateTeamData>>;
+
+/** Generated Node Admin SDK operation action function for the 'AdminCreateTeam' Mutation. Allow users to execute without passing in DataConnect. */
+export function adminCreateTeam(dc: DataConnect, vars: AdminCreateTeamVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminCreateTeamData>>;
+/** Generated Node Admin SDK operation action function for the 'AdminCreateTeam' Mutation. Allow users to pass in custom DataConnect instances. */
+export function adminCreateTeam(vars: AdminCreateTeamVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminCreateTeamData>>;
+
+/** Generated Node Admin SDK operation action function for the 'AdminDeleteTeam' Mutation. Allow users to execute without passing in DataConnect. */
+export function adminDeleteTeam(dc: DataConnect, vars: AdminDeleteTeamVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminDeleteTeamData>>;
+/** Generated Node Admin SDK operation action function for the 'AdminDeleteTeam' Mutation. Allow users to pass in custom DataConnect instances. */
+export function adminDeleteTeam(vars: AdminDeleteTeamVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminDeleteTeamData>>;
 
 /** Generated Node Admin SDK operation action function for the 'AdminAddTeamMember' Mutation. Allow users to execute without passing in DataConnect. */
 export function adminAddTeamMember(dc: DataConnect, vars: AdminAddTeamMemberVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<AdminAddTeamMemberData>>;

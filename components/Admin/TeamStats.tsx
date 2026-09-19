@@ -44,7 +44,15 @@ export function TeamStat({ label, value, hint }: { label: string; value: string;
 export function TeamStatStrip({ totals, enabled }: { totals: TeamMetrics; enabled: boolean }) {
   return (
     <div className="flex flex-wrap items-start gap-x-8 gap-y-4">
-      <TeamStat label="Total logged" value={formatDuration(totals.totalMinutes)} />
+      <TeamStat
+        label="Total logged"
+        value={formatDuration(totals.totalMinutes)}
+        hint={
+          totals.attainmentPct != null && totals.targetMinutes != null
+            ? `${totals.attainmentPct}% of ${formatDuration(totals.targetMinutes)} target`
+            : undefined
+        }
+      />
       <TeamStat
         label="Active members"
         value={`${totals.activeMembers} of ${totals.memberCount}`}
