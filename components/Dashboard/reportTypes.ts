@@ -1,6 +1,8 @@
-import { ChartLine, Ticket, ClockFill, Calendar } from "@gravity-ui/icons";
+import { ChartLine, Ticket, ClockFill } from "@gravity-ui/icons";
 
-export type ReportId = "overview" | "tickets" | "worklogs" | "calendar";
+// "calendar" was removed when the calendar moved to its own top-level
+// route (app/calendar) — it is no longer one of the dashboard reports.
+export type ReportId = "overview" | "tickets" | "worklogs";
 
 export interface ReportDef {
   id: ReportId;
@@ -13,5 +15,4 @@ export const REPORTS: ReportDef[] = [
   { id: "overview", label: "Overview", description: "Weekly trends & totals", icon: ChartLine },
   { id: "tickets", label: "Tickets", description: "Breakdown by ticket", icon: Ticket },
   { id: "worklogs", label: "Work Logs", description: "Breakdown by work log", icon: ClockFill },
-  { id: "calendar", label: "Calendar", description: "Daily breakdown by day", icon: Calendar },
 ];
