@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Card, EmptyState, ListBox, Select, Skeleton } from "@heroui/react";
-import { Person, Persons, TrashBin } from "@gravity-ui/icons";
+import { Check, Pencil, Person, Persons, TrashBin, Xmark } from "@gravity-ui/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
 import { useTicketColorsSetting } from "@/context/TicketColorsContext";
@@ -85,6 +85,24 @@ export function AdminTeamsPage() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [busyMemberId, setBusyMemberId] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+
+  const startEditing = () => {
+    // Seed from the server's copy, not whatever was left in state from a
+    // previous cancelled edit.
+    setName(team?.name ?? "");
+    setDescription(team?.description ?? "");
+    setSaveError(null);
+    setSaved(false);
+    setEditing(true);
+  };
+
+  const cancelEditing = () => {
+    setName(team?.name ?? "");
+    setDescription(team?.description ?? "");
+    setSaveError(null);
+    setEditing(false);
+  };
 
   // Reload the form whenever the selected team changes or the list refetches.
   // Keyed on the team's own values rather than a mount key so a save that
@@ -104,6 +122,7 @@ export function AdminTeamsPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSaveError(null);
     setSaved(false);
+    setEditing(false);
   }, [team?.id]);
 
   const request = useCallback(
@@ -141,6 +160,7 @@ export function AdminTeamsPage() {
       // something that was never saved.
       await refetch();
       setSaved(true);
+      setEditing(false);
     } catch (err) {
       setSaveError(err instanceof Error ? err.message : "Failed to save team");
     } finally {
@@ -407,46 +427,77 @@ export function AdminTeamsPage() {
               <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">
                 Team details
               </p>
-              <span className="text-xs text-foreground/50">
-                Created {new Date(team.createdAt).toLocaleDateString()}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-foreground/50">
+                  Created {new Date(team.createdAt).toLocaleDateString()}
+                </span>
+                {!editing && (
+                  <button
+                    type="button"
+                    aria-label="Edit team details"
+                    onClick={startEditing}
+                    className="rounded p-1 text-foreground/40 hover:bg-default hover:text-foreground"
+                  >
+                    <Pencil className="size-3.5" aria-hidden />
+                  </button>
+                )}
+              </div>
             </div>
 
-            <label className="flex flex-col gap-1 text-xs text-foreground/60">
-              Name
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                maxLength={80}
-                className="rounded-lg border border-default-200 px-3 py-2 text-sm text-foreground"
-              />
-            </label>
+            {editing ? (
+              <>
+                <label className="flex flex-col gap-1 text-xs text-foreground/60">
+                  Name
+                  <input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    maxLength={80}
+                    autoFocus
+                    className="rounded-lg border border-default-200 px-3 py-2 text-sm text-foreground"
+                  />
+                </label>
 
-            <label className="flex flex-col gap-1 text-xs text-foreground/60">
-              Description
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={3}
-                maxLength={500}
-                className="resize-y rounded-lg border border-default-200 px-3 py-2 text-sm text-foreground"
-              />
-            </label>
+                <label className="flex flex-col gap-1 text-xs text-foreground/60">
+                  Description
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={3}
+                    maxLength={500}
+                    className="resize-y rounded-lg border border-default-200 px-3 py-2 text-sm text-foreground"
+                  />
+                </label>
 
-            <div className="flex items-center gap-3">
-              <Button
-                size="sm"
-                variant="primary"
-                onPress={saveDetails}
-                isDisabled={saving || !dirty || name.trim().length === 0}
-              >
-                {saving ? "Saving…" : "Save"}
-              </Button>
-              {/* Only meaningful while the form still matches what was saved —
-                  it would otherwise sit there contradicting unsaved edits. */}
-              {saved && !dirty && <span className="text-xs text-success">Saved</span>}
-              {dirty && !saving && <span className="text-xs text-foreground/50">Unsaved changes</span>}
-            </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    onPress={saveDetails}
+                    isDisabled={saving || !dirty || name.trim().length === 0}
+                  >
+                    <Check className="size-4" aria-hidden /> {saving ? "Saving…" : "Save"}
+                  </Button>
+                  <Button size="sm" variant="outline" onPress={cancelEditing} isDisabled={saving}>
+                    <Xmark className="size-4" aria-hidden /> Cancel
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col gap-1">
+                <p className="text-base font-medium text-foreground">{team.name}</p>
+                <p
+                  className={`text-sm ${
+                    team.description ? "text-foreground/60" : "italic text-foreground/40"
+                  }`}
+                >
+                  {team.description || "No description"}
+                </p>
+                {/* Shown in read mode only: in edit mode the buttons say what
+                    state the form is in, and "Saved" next to a Cancel button
+                    reads as though the cancel was saved. */}
+                {saved && <span className="text-xs text-success">Saved</span>}
+              </div>
+            )}
 
             {saveError && <p className="text-sm text-danger">{saveError}</p>}
           </Card>
