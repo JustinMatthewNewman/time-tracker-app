@@ -322,3 +322,17 @@ function listMyTimeEntriesByDateRange(dcOrVarsOrOptions, varsOrOptions, options)
 }
 exports.listMyTimeEntriesByDateRange = listMyTimeEntriesByDateRange;
 
+function adminListTimeEntriesForUsers(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('AdminListTimeEntriesForUsers', inputVars, inputOpts);
+}
+exports.adminListTimeEntriesForUsers = adminListTimeEntriesForUsers;
+
+function adminGetTeam(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('AdminGetTeam', inputVars, inputOpts);
+}
+exports.adminGetTeam = adminGetTeam;
+

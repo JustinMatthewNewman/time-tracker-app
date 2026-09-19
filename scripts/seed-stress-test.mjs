@@ -51,6 +51,52 @@ const TEST_USER_TYPE = "Admin";
 // that it never changes between runs.
 const ID_NAMESPACE = "9b1f7c3a-9d34-4c6e-8f5a-2f6f2e1d7a10";
 
+// Teammates for the admin team dashboard. The test user alone made every team
+// a single-card page, which is useless for judging a layout built around
+// comparing people. These get a much shorter history than the test user
+// (TEAMMATE_DAYS, not YEARS_BACK) — the dashboard reads a date range, so depth
+// buys nothing here and costs seed time on every reset.
+//
+// They are Auth-less User rows on purpose: nobody signs in as them, they exist
+// to be counted. Volume is varied per teammate so the member cards differ
+// enough to show whether the layout actually ranks and compares.
+const TEAMMATES = [
+  { key: "dana",  username: "Dana Whitfield",  email: "dana@local.dev",  tier: "Regular", load: 1.0 },
+  { key: "elias", username: "Elias Bergstrom", email: "elias@local.dev", tier: "Regular", load: 0.8 },
+  { key: "farrah", username: "Farrah Nasser",  email: "farrah@local.dev", tier: "Admin",  load: 1.15 },
+  { key: "gus",   username: "Gus Okafor",      email: "gus@local.dev",   tier: "Regular", load: 0.55 },
+  { key: "hana",  username: "Hana Lindqvist",  email: "hana@local.dev",  tier: "Regular", load: 0.95 },
+  { key: "ivan",  username: "Ivan Petrov",     email: "ivan@local.dev",  tier: "Regular", load: 0.3 },
+  // Deliberately logs nothing: the member cards must show an inactive member
+  // rather than silently omitting them.
+  { key: "jo",    username: "Jo Ramirez",      email: "jo@local.dev",    tier: "Regular", load: 0 },
+];
+
+const TEAMMATE_DAYS = Number(process.env.SEED_TEAMMATE_DAYS ?? 60);
+
+// Membership is deliberately overlapping — a user can be on several teams, and
+// the dashboard's per-team totals must not assume otherwise.
+const TEAM_DEFS = [
+  {
+    key: "local-dev",
+    name: "Local Dev",
+    description: "Sample team seeded for local development.",
+    members: ["__TEST_USER__", "dana", "elias", "jo"],
+  },
+  {
+    key: "engineering",
+    name: "Engineering",
+    description: "Builds and maintains the product.",
+    members: ["farrah", "gus", "hana", "dana"],
+  },
+  {
+    key: "technical-support",
+    name: "Technical Support",
+    description: "Front line for customer-reported issues.",
+    members: ["__TEST_USER__", "ivan", "hana"],
+  },
+];
+
 const YEARS_BACK = Number(process.env.SEED_YEARS ?? 2);
 const RNG_SEED = Number(process.env.SEED_RNG_SEED ?? 20260723);
 
@@ -264,6 +310,86 @@ function generateWorkLogsAndEntries(userId, ticketPool) {
   return { workLogs, timeEntries };
 }
 
+// A lighter version of generateWorkLogsAndEntries for teammates: a short
+// window, and every id namespaced by the teammate's key.
+//
+// That namespacing is the whole reason this is a separate function rather than
+// a parameter on the original — that one derives ids from the date alone
+// (`id("worklog", dateKey)`), which is fine for one user and silently collides
+// the moment a second one shares a date.
+function generateTeammateData(mate, userId, ticketPool) {
+  const workLogs = [];
+  const timeEntries = [];
+  if (mate.load <= 0) return { workLogs, timeEntries };
+
+  const today = new Date();
+  const end = localMidnight(today.getFullYear(), today.getMonth(), today.getDate());
+  const start = new Date(end);
+  start.setDate(start.getDate() - TEAMMATE_DAYS);
+
+  for (const day of weekdaysBetween(start, end)) {
+    // Higher-load teammates also show up more often, not just for longer.
+    if (chance(0.12 / Math.max(mate.load, 0.25))) continue;
+
+    const dateKey = day.toISOString().slice(0, 10);
+    const workLogId = id("worklog", mate.key, dateKey);
+    const dayStart = addMinutes(day, 8 * 60);
+    const isoDate = day.toISOString();
+
+    const numBlocks = Math.max(1, Math.round((chance(0.85) ? 8 : 5) * mate.load));
+
+    workLogs.push({
+      id: workLogId,
+      userId,
+      name: `Daily Work Log - ${dateKey}`,
+      workLogDate: isoDate,
+      createdAt: dayStart.toISOString(),
+      isDeleted: false,
+    });
+
+    let lastTicket = null;
+    let entryIndex = 0;
+
+    for (let block = 0; block < numBlocks; block++) {
+      const blockStart = addMinutes(dayStart, block * 60);
+      let offset = 0;
+      for (const duration of pick(BLOCK_PATTERNS)) {
+        const entryStart = addMinutes(blockStart, offset);
+        const entryEnd = addMinutes(entryStart, duration);
+        offset += duration;
+
+        let ticketNumber = null;
+        let description;
+        if (chance(0.85)) {
+          ticketNumber =
+            lastTicket != null && chance(0.4) ? lastTicket : pick(ticketPool).ticketNumber;
+          lastTicket = ticketNumber;
+          description = pick(TICKETED_TEMPLATES)();
+        } else {
+          lastTicket = null;
+          description = pick(UNTICKETED_TEMPLATES)();
+        }
+
+        timeEntries.push({
+          id: id("entry", mate.key, dateKey, entryIndex++),
+          userId,
+          workLogId,
+          startTime: entryStart.toISOString(),
+          endTime: entryEnd.toISOString(),
+          date: isoDate,
+          // Same uniform-column-list rule as the main generator: null, never
+          // undefined.
+          description: description || null,
+          ticketTicketNumber: ticketNumber ?? null,
+          createdAt: entryStart.toISOString(),
+        });
+      }
+    }
+  }
+
+  return { workLogs, timeEntries };
+}
+
 // ---------------------------------------------------------------------------
 // Safety guardrails — this must never run against a real project.
 // ---------------------------------------------------------------------------
@@ -303,6 +429,21 @@ async function main() {
 
   console.log(`Generated ${workLogs.length} work logs and ${timeEntries.length} time entries ` +
     `across ${ticketPool.length} tickets (${YEARS_BACK} years back from today, weekdays only, seed=${RNG_SEED}).`);
+
+  // Teammates, each with their own short history, appended to the same batches
+  // so the existing chunked upserts cover them without a second write path.
+  const teammateRows = TEAMMATES.map((mate) => {
+    const mateId = id("user", `teammate:${mate.key}`);
+    const generated = generateTeammateData(mate, mateId, ticketPool);
+    workLogs.push(...generated.workLogs);
+    timeEntries.push(...generated.timeEntries);
+    return { mate, id: mateId, entryCount: generated.timeEntries.length };
+  });
+  console.log(
+    `Teammates: ${teammateRows.length} users, ` +
+    `${teammateRows.reduce((n, r) => n + r.entryCount, 0)} entries over ${TEAMMATE_DAYS} days ` +
+    `(${teammateRows.filter((r) => r.entryCount === 0).length} with none, on purpose).`
+  );
 
   if (DRY_RUN) {
     console.log("--dry-run: no emulator calls made. Sample day:");
@@ -400,22 +541,44 @@ async function main() {
     },
   ]);
 
-  // 6. A sample team containing the test user, so the admin page's Teams tab
-  // renders something real instead of an empty state. Team id is derived from
-  // a fixed key (like every other id here) so reruns upsert the same row.
-  const teamId = id("team", "local-dev");
-  await dc.upsertMany("Team", [
-    {
-      id: teamId,
-      name: "Local Dev",
-      description: "Sample team seeded for local development.",
+  // 5b. Teammate User rows. No Auth accounts — nobody signs in as these; they
+  // exist so the admin team dashboard has more than one person to compare.
+  await dc.upsertMany(
+    "User",
+    teammateRows.map(({ mate, id: mateId }) => ({
+      id: mateId,
+      googleUid: `teammate-${mate.key}-local-uid`,
+      username: mate.username,
+      email: mate.email,
+      userTypeName: mate.tier,
       createdAt: new Date().toISOString(),
-    },
-  ]);
-  await dc.upsertMany("TeamMember", [
-    { teamId, userId: userRowId, createdAt: new Date().toISOString() },
-  ]);
-  console.log("Teams: 1 row, 1 membership");
+    }))
+  );
+
+  // 6. Teams and memberships. Ids derive from fixed keys (like every other id
+  // here) so reruns upsert the same rows. Rosters overlap deliberately — see
+  // TEAM_DEFS.
+  const userIdForKey = new Map(teammateRows.map(({ mate, id: mateId }) => [mate.key, mateId]));
+  userIdForKey.set("__TEST_USER__", userRowId);
+
+  await dc.upsertMany(
+    "Team",
+    TEAM_DEFS.map((team) => ({
+      id: id("team", team.key),
+      name: team.name,
+      description: team.description,
+      createdAt: new Date().toISOString(),
+    }))
+  );
+  const memberships = TEAM_DEFS.flatMap((team) =>
+    team.members.map((memberKey) => ({
+      teamId: id("team", team.key),
+      userId: userIdForKey.get(memberKey),
+      createdAt: new Date().toISOString(),
+    }))
+  );
+  await dc.upsertMany("TeamMember", memberships);
+  console.log(`Teams: ${TEAM_DEFS.length} rows, ${memberships.length} memberships`);
 
   // 7. Tickets (parent table before TimeEntry references them).
   for (const [i, batch] of chunk(ticketPool, TICKET_CHUNK).entries()) {

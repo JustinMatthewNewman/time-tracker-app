@@ -11,6 +11,29 @@ export type DateString = string;
 
 
 
+export interface AdminGetTeamData {
+  team?: {
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    createdAt: TimestampString;
+    members: ({
+      user: {
+        id: UUIDString;
+        username: string;
+        email?: string | null;
+        userType: {
+          name: string;
+        } & UserType_Key;
+      } & User_Key;
+    })[];
+  } & Team_Key;
+}
+
+export interface AdminGetTeamVariables {
+  teamId: UUIDString;
+}
+
 export interface AdminGetUserData {
   user?: {
     id: UUIDString;
@@ -51,6 +74,31 @@ export interface AdminListTeamsData {
       } & User_Key;
     })[];
   } & Team_Key)[];
+}
+
+export interface AdminListTimeEntriesForUsersData {
+  timeEntries: ({
+    id: UUIDString;
+    user: {
+      id: UUIDString;
+    } & User_Key;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    ticket?: {
+      ticketNumber: number;
+      ticketTitle?: string | null;
+      color?: string | null;
+    } & Ticket_Key;
+  } & TimeEntry_Key)[];
+}
+
+export interface AdminListTimeEntriesForUsersVariables {
+  userIds: UUIDString[];
+  startDate: DateString;
+  endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
 }
 
 export interface AdminListUserTypesData {
@@ -1263,4 +1311,28 @@ export const listMyTimeEntriesByDateRangeRef: ListMyTimeEntriesByDateRangeRef;
 
 export function listMyTimeEntriesByDateRange(vars: ListMyTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
 export function listMyTimeEntriesByDateRange(dc: DataConnect, vars: ListMyTimeEntriesByDateRangeVariables, options?: ExecuteQueryOptions): QueryPromise<ListMyTimeEntriesByDateRangeData, ListMyTimeEntriesByDateRangeVariables>;
+
+interface AdminListTimeEntriesForUsersRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminListTimeEntriesForUsersVariables): QueryRef<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: AdminListTimeEntriesForUsersVariables): QueryRef<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+  operationName: string;
+}
+export const adminListTimeEntriesForUsersRef: AdminListTimeEntriesForUsersRef;
+
+export function adminListTimeEntriesForUsers(vars: AdminListTimeEntriesForUsersVariables, options?: ExecuteQueryOptions): QueryPromise<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+export function adminListTimeEntriesForUsers(dc: DataConnect, vars: AdminListTimeEntriesForUsersVariables, options?: ExecuteQueryOptions): QueryPromise<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+
+interface AdminGetTeamRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminGetTeamVariables): QueryRef<AdminGetTeamData, AdminGetTeamVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: AdminGetTeamVariables): QueryRef<AdminGetTeamData, AdminGetTeamVariables>;
+  operationName: string;
+}
+export const adminGetTeamRef: AdminGetTeamRef;
+
+export function adminGetTeam(vars: AdminGetTeamVariables, options?: ExecuteQueryOptions): QueryPromise<AdminGetTeamData, AdminGetTeamVariables>;
+export function adminGetTeam(dc: DataConnect, vars: AdminGetTeamVariables, options?: ExecuteQueryOptions): QueryPromise<AdminGetTeamData, AdminGetTeamVariables>;
 

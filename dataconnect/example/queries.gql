@@ -457,3 +457,72 @@ query ListMyTimeEntriesByDateRange(
     createdAt
   }
 }
+
+# Time entries for a set of users over a date range, for the admin team
+# dashboard's per-member totals.
+#
+# NO_ACCESS on purpose, and this is the whole reason the operation exists
+# separately from anything the browser can call: it reads across users, so the
+# only safe home for it is behind requireFeature() on the server. See the note
+# on ListTimeEntriesByDateRange — a client-callable query taking a user id is
+# exactly the shape that let any signed-in account read anyone's entries.
+#
+# Deliberately thin: no description, no work log. Totals need durations and an
+# owner to group by, and the descriptions are the sensitive part of an entry —
+# an admin counting a teammate's hours has no reason to receive the text of
+# what they wrote.
+query AdminListTimeEntriesForUsers(
+  $userIds: [UUID!]!
+  $startDate: Date!
+  $endDate: Date!
+  $limit: Int = 500
+  $offset: Int = 0
+) @auth(level: NO_ACCESS) {
+  timeEntries(
+    limit: $limit
+    offset: $offset
+    where: {
+      _and: [
+        { user: { id: { in: $userIds } } }
+        { date: { ge: $startDate } }
+        { date: { le: $endDate } }
+      ]
+    }
+    orderBy: [{ date: DESC }]
+  ) {
+    id
+    user {
+      id
+    }
+    startTime
+    endTime
+    date
+    ticket {
+      ticketNumber
+      ticketTitle
+      color
+    }
+  }
+}
+
+# One team with its members. AdminListTeams already returns every team with
+# rosters, but the team dashboard needs only the selected team, and pulling all
+# of them to find one gets worse with every team added.
+query AdminGetTeam($teamId: UUID!) @auth(level: NO_ACCESS) {
+  team(id: $teamId) {
+    id
+    name
+    description
+    createdAt
+    members: teamMembers_on_team {
+      user {
+        id
+        username
+        email
+        userType {
+          name
+        }
+      }
+    }
+  }
+}

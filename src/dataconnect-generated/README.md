@@ -30,6 +30,8 @@ This README will guide you through the process of using the generated JavaScript
   - [*AdminListTeams*](#adminlistteams)
   - [*GetGoogleCalendarConnection*](#getgooglecalendarconnection)
   - [*ListMyTimeEntriesByDateRange*](#listmytimeentriesbydaterange)
+  - [*AdminListTimeEntriesForUsers*](#adminlisttimeentriesforusers)
+  - [*AdminGetTeam*](#admingetteam)
 - [**Mutations**](#mutations)
   - [*CreateUserFromGoogle*](#createuserfromgoogle)
   - [*SetUserType*](#setusertype)
@@ -2420,6 +2422,264 @@ console.log(data.timeEntries);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.timeEntries);
+});
+```
+
+## AdminListTimeEntriesForUsers
+You can execute the `AdminListTimeEntriesForUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminListTimeEntriesForUsers(vars: AdminListTimeEntriesForUsersVariables, options?: ExecuteQueryOptions): QueryPromise<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+
+interface AdminListTimeEntriesForUsersRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminListTimeEntriesForUsersVariables): QueryRef<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+}
+export const adminListTimeEntriesForUsersRef: AdminListTimeEntriesForUsersRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+adminListTimeEntriesForUsers(dc: DataConnect, vars: AdminListTimeEntriesForUsersVariables, options?: ExecuteQueryOptions): QueryPromise<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+
+interface AdminListTimeEntriesForUsersRef {
+  ...
+  (dc: DataConnect, vars: AdminListTimeEntriesForUsersVariables): QueryRef<AdminListTimeEntriesForUsersData, AdminListTimeEntriesForUsersVariables>;
+}
+export const adminListTimeEntriesForUsersRef: AdminListTimeEntriesForUsersRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminListTimeEntriesForUsersRef:
+```typescript
+const name = adminListTimeEntriesForUsersRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminListTimeEntriesForUsers` query requires an argument of type `AdminListTimeEntriesForUsersVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface AdminListTimeEntriesForUsersVariables {
+  userIds: UUIDString[];
+  startDate: DateString;
+  endDate: DateString;
+  limit?: number | null;
+  offset?: number | null;
+}
+```
+### Return Type
+Recall that executing the `AdminListTimeEntriesForUsers` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminListTimeEntriesForUsersData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminListTimeEntriesForUsersData {
+  timeEntries: ({
+    id: UUIDString;
+    user: {
+      id: UUIDString;
+    } & User_Key;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    ticket?: {
+      ticketNumber: number;
+      ticketTitle?: string | null;
+      color?: string | null;
+    } & Ticket_Key;
+  } & TimeEntry_Key)[];
+}
+```
+### Using `AdminListTimeEntriesForUsers`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminListTimeEntriesForUsers, AdminListTimeEntriesForUsersVariables } from '@dataconnect/generated';
+
+// The `AdminListTimeEntriesForUsers` query requires an argument of type `AdminListTimeEntriesForUsersVariables`:
+const adminListTimeEntriesForUsersVars: AdminListTimeEntriesForUsersVariables = {
+  userIds: ..., 
+  startDate: ..., 
+  endDate: ..., 
+  limit: ..., // optional
+  offset: ..., // optional
+};
+
+// Call the `adminListTimeEntriesForUsers()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminListTimeEntriesForUsers(adminListTimeEntriesForUsersVars);
+// Variables can be defined inline as well.
+const { data } = await adminListTimeEntriesForUsers({ userIds: ..., startDate: ..., endDate: ..., limit: ..., offset: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminListTimeEntriesForUsers(dataConnect, adminListTimeEntriesForUsersVars);
+
+console.log(data.timeEntries);
+
+// Or, you can use the `Promise` API.
+adminListTimeEntriesForUsers(adminListTimeEntriesForUsersVars).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntries);
+});
+```
+
+### Using `AdminListTimeEntriesForUsers`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, adminListTimeEntriesForUsersRef, AdminListTimeEntriesForUsersVariables } from '@dataconnect/generated';
+
+// The `AdminListTimeEntriesForUsers` query requires an argument of type `AdminListTimeEntriesForUsersVariables`:
+const adminListTimeEntriesForUsersVars: AdminListTimeEntriesForUsersVariables = {
+  userIds: ..., 
+  startDate: ..., 
+  endDate: ..., 
+  limit: ..., // optional
+  offset: ..., // optional
+};
+
+// Call the `adminListTimeEntriesForUsersRef()` function to get a reference to the query.
+const ref = adminListTimeEntriesForUsersRef(adminListTimeEntriesForUsersVars);
+// Variables can be defined inline as well.
+const ref = adminListTimeEntriesForUsersRef({ userIds: ..., startDate: ..., endDate: ..., limit: ..., offset: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminListTimeEntriesForUsersRef(dataConnect, adminListTimeEntriesForUsersVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.timeEntries);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.timeEntries);
+});
+```
+
+## AdminGetTeam
+You can execute the `AdminGetTeam` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+adminGetTeam(vars: AdminGetTeamVariables, options?: ExecuteQueryOptions): QueryPromise<AdminGetTeamData, AdminGetTeamVariables>;
+
+interface AdminGetTeamRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: AdminGetTeamVariables): QueryRef<AdminGetTeamData, AdminGetTeamVariables>;
+}
+export const adminGetTeamRef: AdminGetTeamRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+adminGetTeam(dc: DataConnect, vars: AdminGetTeamVariables, options?: ExecuteQueryOptions): QueryPromise<AdminGetTeamData, AdminGetTeamVariables>;
+
+interface AdminGetTeamRef {
+  ...
+  (dc: DataConnect, vars: AdminGetTeamVariables): QueryRef<AdminGetTeamData, AdminGetTeamVariables>;
+}
+export const adminGetTeamRef: AdminGetTeamRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the adminGetTeamRef:
+```typescript
+const name = adminGetTeamRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `AdminGetTeam` query requires an argument of type `AdminGetTeamVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface AdminGetTeamVariables {
+  teamId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `AdminGetTeam` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `AdminGetTeamData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface AdminGetTeamData {
+  team?: {
+    id: UUIDString;
+    name: string;
+    description?: string | null;
+    createdAt: TimestampString;
+    members: ({
+      user: {
+        id: UUIDString;
+        username: string;
+        email?: string | null;
+        userType: {
+          name: string;
+        } & UserType_Key;
+      } & User_Key;
+    })[];
+  } & Team_Key;
+}
+```
+### Using `AdminGetTeam`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, adminGetTeam, AdminGetTeamVariables } from '@dataconnect/generated';
+
+// The `AdminGetTeam` query requires an argument of type `AdminGetTeamVariables`:
+const adminGetTeamVars: AdminGetTeamVariables = {
+  teamId: ..., 
+};
+
+// Call the `adminGetTeam()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await adminGetTeam(adminGetTeamVars);
+// Variables can be defined inline as well.
+const { data } = await adminGetTeam({ teamId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await adminGetTeam(dataConnect, adminGetTeamVars);
+
+console.log(data.team);
+
+// Or, you can use the `Promise` API.
+adminGetTeam(adminGetTeamVars).then((response) => {
+  const data = response.data;
+  console.log(data.team);
+});
+```
+
+### Using `AdminGetTeam`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, adminGetTeamRef, AdminGetTeamVariables } from '@dataconnect/generated';
+
+// The `AdminGetTeam` query requires an argument of type `AdminGetTeamVariables`:
+const adminGetTeamVars: AdminGetTeamVariables = {
+  teamId: ..., 
+};
+
+// Call the `adminGetTeamRef()` function to get a reference to the query.
+const ref = adminGetTeamRef(adminGetTeamVars);
+// Variables can be defined inline as well.
+const ref = adminGetTeamRef({ teamId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = adminGetTeamRef(dataConnect, adminGetTeamVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.team);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.team);
 });
 ```
 
