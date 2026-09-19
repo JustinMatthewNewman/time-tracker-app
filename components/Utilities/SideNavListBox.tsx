@@ -28,6 +28,12 @@ interface SideNavListBoxProps {
    * the list is short.
    */
   action?: ReactNode;
+  /**
+   * Optional control pinned below the list, e.g. a context switcher. Distinct
+   * from `action`: this one belongs at the bottom, away from the rows, because
+   * it changes what the list shows rather than acting on it.
+   */
+  footer?: ReactNode;
 }
 
 /**
@@ -55,6 +61,7 @@ export function SideNavListBox({
   headingAside,
   emptyMessage = "Nothing here yet.",
   action,
+  footer,
 }: SideNavListBoxProps) {
   const { bordersEnabled } = useBorders();
 
@@ -127,6 +134,7 @@ export function SideNavListBox({
         )}
       </div>
 
+      {footer && <div className="shrink-0">{footer}</div>}
     </div>
   );
 }

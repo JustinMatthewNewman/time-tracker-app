@@ -157,6 +157,40 @@ export function AdminTeamsPage() {
     (u) => !members.some((m) => m.id === u.id)
   );
 
+  const teamPicker = (
+    <div className="flex flex-col gap-1 border-t border-default-200 pt-3">
+      <span className="text-xs font-medium uppercase tracking-wide text-foreground/40">Team</span>
+      <Select
+        aria-label="Team"
+        selectedKey={activeTeamId ?? undefined}
+        onSelectionChange={(key) => {
+          if (key == null) return;
+          setSelectedTeamId(String(key));
+          // The member selection belongs to the old team, so it can't survive
+          // the switch.
+          setSelectedMemberId(null);
+          setAddingOpen(false);
+        }}
+        isDisabled={teams.length === 0}
+        placeholder="Pick a team"
+      >
+        <Select.Trigger className="h-9 w-full text-sm">
+          <Select.Value />
+          <Select.Indicator />
+        </Select.Trigger>
+        <Select.Popover>
+          <ListBox>
+            {teams.map((t) => (
+              <ListBox.Item key={t.id} id={t.id} textValue={t.name}>
+                {t.name}
+              </ListBox.Item>
+            ))}
+          </ListBox>
+        </Select.Popover>
+      </Select>
+    </div>
+  );
+
   const nav = (
     <SideNavListBox
       ariaLabel="Team members"
@@ -171,6 +205,7 @@ export function AdminTeamsPage() {
       selectedId={selectedMemberId}
       onSelect={setSelectedMemberId}
       emptyMessage={loading ? "Loading…" : "No members on this team yet."}
+      footer={teamPicker}
       action={
         team && (
           <div className="flex flex-col gap-2">
@@ -214,45 +249,6 @@ export function AdminTeamsPage() {
     />
   );
 
-  const teamPicker = (
-    <div className="flex flex-wrap items-center gap-3">
-      <Select
-        aria-label="Team"
-        selectedKey={activeTeamId ?? undefined}
-        onSelectionChange={(key) => {
-          if (key == null) return;
-          setSelectedTeamId(String(key));
-          // The member selection belongs to the old team, so it can't survive
-          // the switch.
-          setSelectedMemberId(null);
-          setAddingOpen(false);
-        }}
-        isDisabled={teams.length === 0}
-        placeholder="Pick a team"
-      >
-        <Select.Trigger className="h-9 min-w-56 text-sm">
-          <Select.Value />
-          <Select.Indicator />
-        </Select.Trigger>
-        <Select.Popover>
-          <ListBox>
-            {teams.map((t) => (
-              <ListBox.Item key={t.id} id={t.id} textValue={t.name}>
-                {t.name}
-              </ListBox.Item>
-            ))}
-          </ListBox>
-        </Select.Popover>
-      </Select>
-      {team && (
-        <span className="text-xs text-foreground/50">
-          {members.length} {members.length === 1 ? "member" : "members"} · created{" "}
-          {new Date(team.createdAt).toLocaleDateString()}
-        </span>
-      )}
-    </div>
-  );
-
   return (
     <AdminShell
       feature="AdminDashboard"
@@ -260,7 +256,6 @@ export function AdminTeamsPage() {
       nav={nav}
       heading={team?.name ?? "Teams"}
       description="View and edit team details"
-      headerExtra={teamPicker}
     >
       {error && (
         <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
@@ -283,9 +278,14 @@ export function AdminTeamsPage() {
       {team && (
         <div className="flex max-w-3xl flex-col gap-4">
           <Card className="flex flex-col gap-3 p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">
-              Team details
-            </p>
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">
+                Team details
+              </p>
+              <span className="text-xs text-foreground/50">
+                Created {new Date(team.createdAt).toLocaleDateString()}
+              </span>
+            </div>
 
             <label className="flex flex-col gap-1 text-xs text-foreground/60">
               Name
