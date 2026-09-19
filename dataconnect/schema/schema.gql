@@ -104,6 +104,10 @@ type User @table {
   # because Ticket.color is shared across users while this switch is per
   # account, so one person muting the tints can't affect anyone else's view.
   ticketColorsEnabled: Boolean @default(expr: "true")
+  # Squares off corners app-wide (see the .square-corners rules in
+  # globals.css). Defaults false so existing accounts keep the rounded look
+  # they already have rather than being restyled by a migration.
+  squareCorners: Boolean @default(expr: "false")
   createdAt: Timestamp!
 }
 

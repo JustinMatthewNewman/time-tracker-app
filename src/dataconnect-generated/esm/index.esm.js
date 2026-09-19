@@ -190,6 +190,18 @@ export function selectMyCardStyle(dcOrVars, vars) {
   return executeMutation(selectMyCardStyleRef(dcInstance, inputVars));
 }
 
+export const selectMySquareCornersRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SelectMySquareCorners', inputVars);
+}
+selectMySquareCornersRef.operationName = 'SelectMySquareCorners';
+
+export function selectMySquareCorners(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(selectMySquareCornersRef(dcInstance, inputVars));
+}
+
 export const selectMyBordersEnabledRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

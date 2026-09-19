@@ -282,6 +282,7 @@ export interface GetMyUserData {
     cardBlur?: number | null;
     bordersEnabled?: boolean | null;
     ticketColorsEnabled?: boolean | null;
+    squareCorners?: boolean | null;
   } & User_Key;
 }
 
@@ -620,6 +621,14 @@ export interface SelectMyPerformanceModeVariables {
   performanceMode: boolean;
 }
 
+export interface SelectMySquareCornersData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMySquareCornersVariables {
+  squareCorners: boolean;
+}
+
 export interface SelectMyTicketColorsEnabledData {
   user_update?: User_Key | null;
 }
@@ -843,6 +852,11 @@ export function selectMyExternalTicketLinkTemplate(vars?: SelectMyExternalTicket
 export function selectMyCardStyle(dc: DataConnect, vars: SelectMyCardStyleVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyCardStyleData>>;
 /** Generated Node Admin SDK operation action function for the 'SelectMyCardStyle' Mutation. Allow users to pass in custom DataConnect instances. */
 export function selectMyCardStyle(vars: SelectMyCardStyleVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyCardStyleData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SelectMySquareCorners' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMySquareCorners(dc: DataConnect, vars: SelectMySquareCornersVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMySquareCornersData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMySquareCorners' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMySquareCorners(vars: SelectMySquareCornersVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMySquareCornersData>>;
 
 /** Generated Node Admin SDK operation action function for the 'SelectMyBordersEnabled' Mutation. Allow users to execute without passing in DataConnect. */
 export function selectMyBordersEnabled(dc: DataConnect, vars: SelectMyBordersEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBordersEnabledData>>;

@@ -268,3 +268,22 @@ body {
   background-color: var(--muted);
   border-radius: 9999px;
 }
+
+/* Square corners (Settings → "Square corners", per-account).
+   Every rounded-* utility in this build derives from a single --radius
+   (rounded-lg is calc(var(--radius) * 1), rounded-md * .75, rounded-xl * 1.5,
+   and so on), so zeroing that one variable squares the whole app — cards,
+   inputs, buttons, panels — without enumerating components.
+   The class lands on <html>, so `html.square-corners` outranks the :root
+   declaration HeroUI ships. */
+html.square-corners {
+  --radius: 0rem;
+}
+/* `.rounded` is the one utility with a hardcoded length (.25rem) rather than
+   a --radius multiple, so it needs its own rule. */
+html.square-corners .rounded {
+  border-radius: 0;
+}
+/* rounded-full is deliberately untouched: it compiles to an effectively
+   infinite radius, not a --radius multiple, and it's what makes avatars,
+   pills and toggles round. Squaring those turns switches into rectangles. */

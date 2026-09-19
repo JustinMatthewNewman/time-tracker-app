@@ -10,6 +10,7 @@ import { usePerformanceMode } from '@/context/PerformanceModeContext'
 import { useBackgroundOpacity } from '@/context/BackgroundOpacityContext'
 import { useCardStyle } from '@/context/CardStyleContext'
 import { useBorders } from '@/context/BordersContext'
+import { useSquareCorners } from '@/context/SquareCornersContext'
 import { useTicketColorsSetting } from '@/context/TicketColorsContext'
 import { useUserSettings } from '@/context/UserSettingsContext'
 import { useSelectMyExternalTicketLinkTemplate } from '@/src/dataconnect-generated/react'
@@ -44,6 +45,7 @@ function SettingsCard() {
   const { backgroundOpacity, setBackgroundOpacity } = useBackgroundOpacity()
   const { cardOpacity, setCardOpacity, cardBlur, setCardBlur } = useCardStyle()
   const { bordersEnabled, setBordersEnabled } = useBorders()
+  const { squareCorners, setSquareCorners } = useSquareCorners()
   const { ticketColorsEnabled, setTicketColorsEnabled } = useTicketColorsSetting()
   const { externalTicketLinkTemplate, refetch: refetchUserSettings } = useUserSettings()
   const selectTemplateMutation = useSelectMyExternalTicketLinkTemplate()
@@ -331,6 +333,29 @@ function SettingsCard() {
             isSelected={bordersEnabled}
             onChange={setBordersEnabled}
             aria-label="Show borders"
+          >
+            <Switch.Content>
+              <Switch.Control>
+                <Switch.Thumb />
+              </Switch.Control>
+            </Switch.Content>
+          </Switch>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between gap-4 rounded-lg bg-default-100 p-3">
+          <div>
+            <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <Square className="size-4" /> Square corners
+            </p>
+            <p className="text-xs text-foreground/60">
+              Squares off rounded corners across the app — cards, inputs, buttons and panels.
+              Avatars, pills and switches stay round.
+            </p>
+          </div>
+          <Switch
+            isSelected={squareCorners}
+            onChange={setSquareCorners}
+            aria-label="Square corners"
           >
             <Switch.Content>
               <Switch.Control>

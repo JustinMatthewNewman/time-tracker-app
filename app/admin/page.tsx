@@ -1,7 +1,7 @@
-import AdminDashboard from "@/components/Admin/AdminDashboard";
+import AdminManagePage from "@/components/Admin/AdminManagePage";
 
 function Admin() {
-  return <AdminDashboard />;
+  return <AdminManagePage />;
 }
 
 export default Admin;

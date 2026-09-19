@@ -48,6 +48,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*SelectMyBackgroundOpacity*](#selectmybackgroundopacity)
   - [*SelectMyExternalTicketLinkTemplate*](#selectmyexternalticketlinktemplate)
   - [*SelectMyCardStyle*](#selectmycardstyle)
+  - [*SelectMySquareCorners*](#selectmysquarecorners)
   - [*SelectMyBordersEnabled*](#selectmybordersenabled)
   - [*SelectMyTicketColorsEnabled*](#selectmyticketcolorsenabled)
   - [*UpdateWorkLog*](#updateworklog)
@@ -260,6 +261,7 @@ export interface GetMyUserData {
     cardBlur?: number | null;
     bordersEnabled?: boolean | null;
     ticketColorsEnabled?: boolean | null;
+    squareCorners?: boolean | null;
   } & User_Key;
 }
 ```
@@ -4389,6 +4391,115 @@ const ref = selectMyCardStyleRef({ cardOpacity: ..., cardBlur: ..., });
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = selectMyCardStyleRef(dataConnect, selectMyCardStyleVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMySquareCorners
+You can execute the `SelectMySquareCorners` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMySquareCorners(vars: SelectMySquareCornersVariables): MutationPromise<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+
+interface SelectMySquareCornersRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMySquareCornersVariables): MutationRef<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+}
+export const selectMySquareCornersRef: SelectMySquareCornersRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMySquareCorners(dc: DataConnect, vars: SelectMySquareCornersVariables): MutationPromise<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+
+interface SelectMySquareCornersRef {
+  ...
+  (dc: DataConnect, vars: SelectMySquareCornersVariables): MutationRef<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+}
+export const selectMySquareCornersRef: SelectMySquareCornersRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMySquareCornersRef:
+```typescript
+const name = selectMySquareCornersRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMySquareCorners` mutation requires an argument of type `SelectMySquareCornersVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMySquareCornersVariables {
+  squareCorners: boolean;
+}
+```
+### Return Type
+Recall that executing the `SelectMySquareCorners` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMySquareCornersData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMySquareCornersData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMySquareCorners`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMySquareCorners, SelectMySquareCornersVariables } from '@dataconnect/generated';
+
+// The `SelectMySquareCorners` mutation requires an argument of type `SelectMySquareCornersVariables`:
+const selectMySquareCornersVars: SelectMySquareCornersVariables = {
+  squareCorners: ..., 
+};
+
+// Call the `selectMySquareCorners()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMySquareCorners(selectMySquareCornersVars);
+// Variables can be defined inline as well.
+const { data } = await selectMySquareCorners({ squareCorners: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMySquareCorners(dataConnect, selectMySquareCornersVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMySquareCorners(selectMySquareCornersVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMySquareCorners`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMySquareCornersRef, SelectMySquareCornersVariables } from '@dataconnect/generated';
+
+// The `SelectMySquareCorners` mutation requires an argument of type `SelectMySquareCornersVariables`:
+const selectMySquareCornersVars: SelectMySquareCornersVariables = {
+  squareCorners: ..., 
+};
+
+// Call the `selectMySquareCornersRef()` function to get a reference to the mutation.
+const ref = selectMySquareCornersRef(selectMySquareCornersVars);
+// Variables can be defined inline as well.
+const ref = selectMySquareCornersRef({ squareCorners: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMySquareCornersRef(dataConnect, selectMySquareCornersVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.

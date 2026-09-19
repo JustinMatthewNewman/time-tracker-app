@@ -285,6 +285,7 @@ export interface GetMyUserData {
     cardBlur?: number | null;
     bordersEnabled?: boolean | null;
     ticketColorsEnabled?: boolean | null;
+    squareCorners?: boolean | null;
   } & User_Key;
 }
 
@@ -623,6 +624,14 @@ export interface SelectMyPerformanceModeVariables {
   performanceMode: boolean;
 }
 
+export interface SelectMySquareCornersData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMySquareCornersVariables {
+  squareCorners: boolean;
+}
+
 export interface SelectMyTicketColorsEnabledData {
   user_update?: User_Key | null;
 }
@@ -951,6 +960,18 @@ export const selectMyCardStyleRef: SelectMyCardStyleRef;
 
 export function selectMyCardStyle(vars: SelectMyCardStyleVariables): MutationPromise<SelectMyCardStyleData, SelectMyCardStyleVariables>;
 export function selectMyCardStyle(dc: DataConnect, vars: SelectMyCardStyleVariables): MutationPromise<SelectMyCardStyleData, SelectMyCardStyleVariables>;
+
+interface SelectMySquareCornersRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMySquareCornersVariables): MutationRef<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SelectMySquareCornersVariables): MutationRef<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+  operationName: string;
+}
+export const selectMySquareCornersRef: SelectMySquareCornersRef;
+
+export function selectMySquareCorners(vars: SelectMySquareCornersVariables): MutationPromise<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+export function selectMySquareCorners(dc: DataConnect, vars: SelectMySquareCornersVariables): MutationPromise<SelectMySquareCornersData, SelectMySquareCornersVariables>;
 
 interface SelectMyBordersEnabledRef {
   /* Allow users to create refs without passing in DataConnect */

@@ -41,6 +41,7 @@ query GetMyUser @auth(level: USER) {
     cardBlur
     bordersEnabled
     ticketColorsEnabled
+    squareCorners
   }
 }
 

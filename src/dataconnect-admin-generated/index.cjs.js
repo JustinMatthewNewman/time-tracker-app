@@ -112,6 +112,13 @@ function selectMyCardStyle(dcOrVarsOrOptions, varsOrOptions, options) {
 }
 exports.selectMyCardStyle = selectMyCardStyle;
 
+function selectMySquareCorners(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SelectMySquareCorners', inputVars, inputOpts);
+}
+exports.selectMySquareCorners = selectMySquareCorners;
+
 function selectMyBordersEnabled(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
