@@ -240,3 +240,31 @@ body {
   -webkit-text-fill-color: transparent;
   animation: glisten 3.5s linear infinite;
 }
+/* Calendar day cells scroll through their full ticket list on hover (see
+   components/Dashboard/CalendarReport.tsx). This is the one place in the app
+   that deliberately opts back in to a visible scrollbar, overriding the
+   global hide above — hence the !important, which exists purely to beat that
+   rule's own !important, not to win against anything else.
+   
+   The exception is warranted because a 128px cell has no room for another
+   affordance, and a clipped list is otherwise indistinguishable from a
+   complete one. It only appears while hovered, so the app's scrollbar-free
+   look is unchanged at rest. */
+.calendar-day-scroll:hover {
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--muted) transparent;
+}
+
+.calendar-day-scroll:hover::-webkit-scrollbar {
+  display: block !important;
+  width: 6px;
+}
+
+.calendar-day-scroll:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.calendar-day-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: var(--muted);
+  border-radius: 9999px;
+}

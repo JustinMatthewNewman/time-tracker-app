@@ -10,6 +10,8 @@ import { TicketTitleSuffix } from "@/components/Dashboard/TicketTitleSuffix";
 import { ArrowUpRightFromSquare, Copy, CopyCheck } from "@gravity-ui/icons";
 import { useBorders } from "@/context/BordersContext";
 import { useTickets } from "@/context/TicketsContext";
+import { useUserSettings } from "@/context/UserSettingsContext";
+import { resolveExternalTicketLink } from "@/lib/externalTicketLink";
 import { DonutChart } from "./DonutChart";
 import { TicketBarChart } from "./TicketBarChart";
 
@@ -57,6 +59,7 @@ export function TicketBreakdown({
 }: TicketBreakdownProps) {
   const { bordersEnabled } = useBorders();
   const { tickets } = useTickets();
+  const { externalTicketLinkTemplate } = useUserSettings();
   const ticketColors = useTicketColors();
   const totals = useMemo(() => groupByTicket(entries), [entries]);
   const ticketTitleByNumber = useMemo(() => buildTicketTitleMap(tickets), [tickets]);
@@ -145,6 +148,10 @@ export function TicketBreakdown({
           <tbody>
             {totals.map((t) => {
               const hoursKey = `${t.ticket}-hours`;
+              const externalLink =
+                t.ticket === UNASSIGNED_TICKET
+                  ? null
+                  : resolveExternalTicketLink(Number(t.ticket), t.ticketLink, externalTicketLinkTemplate);
               const rowStyle = ticketColors.rowStyle(t.ticket);
               const edgeStyle = ticketColors.edgeStyle(t.ticket);
               return (
@@ -184,7 +191,12 @@ export function TicketBreakdown({
                       />
                       <span className="flex h-5 min-w-0 items-center">
                         {t.ticket !== UNASSIGNED_TICKET ? (
-                          <Link href={`/ticket/${t.ticket}`} className="text-primary underline">
+                          <Link
+                            href={`/ticket/${t.ticket}`}
+                            title={`View ticket ${t.ticket} in Time Tracker`}
+                            aria-label={`View ticket ${t.ticket} in Time Tracker`}
+                            className="text-primary underline"
+                          >
                             {t.ticket}
                           </Link>
                         ) : (
@@ -194,15 +206,23 @@ export function TicketBreakdown({
                           title={t.ticket !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(t.ticket)) : null}
                         />
                       </span>
-                      {t.ticketLink && (
+                      {/* Two destinations, deliberately not interchangeable:
+                          the number itself is the in-app ticket page, and this
+                          icon leaves for the external tracker. Distinguished by
+                          shape and behaviour, not colour alone — an outward
+                          arrow that opens a new tab versus underlined text that
+                          navigates in place. */}
+                      {externalLink && (
                         <a
-                          href={t.ticketLink}
+                          href={externalLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          aria-label={`Open external link for ticket ${t.ticket}`}
-                          className="flex size-5 shrink-0 items-center justify-center text-foreground/40 hover:text-foreground"
+                          title={`Open ticket ${t.ticket} in the external ticket system`}
+                          aria-label={`Open ticket ${t.ticket} in the external ticket system (opens in a new tab)`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex size-5 shrink-0 items-center justify-center rounded text-foreground/40 hover:bg-default hover:text-accent"
                         >
-                          <ArrowUpRightFromSquare className="size-3" />
+                          <ArrowUpRightFromSquare className="size-3.5" />
                         </a>
                       )}
                       <button

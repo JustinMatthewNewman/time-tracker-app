@@ -58,8 +58,6 @@ function describeDonutSlice(
 export function DonutChart({ data, size = 140, thickness = 30, centerLabel, centerSubLabel }: DonutChartProps) {
   const { bordersEnabled } = useBorders();
   const total = data.reduce((sum, d) => sum + d.value, 0);
-  const outerRadius = size / 2;
-  const innerRadius = outerRadius - thickness;
   const cx = size / 2;
   const cy = size / 2;
   // Slice outlines are an SVG stroke, not a CSS `border`, so the global
@@ -67,15 +65,49 @@ export function DonutChart({ data, size = 140, thickness = 30, centerLabel, cent
   // them — this has to gate the stroke itself.
   const borderWidth = bordersEnabled ? 3 : 0;
 
+  // Inset the drawing rather than letting it run to the viewBox edge.
+  //
+  // An SVG stroke straddles the path: half its width falls *outside* the
+  // geometry. With the outer radius at exactly size/2 that half landed past
+  // the viewBox and got clipped flat, so the donut showed shaved edges at the
+  // top, bottom, left and right — the four points where the circle meets its
+  // bounding box. The extra pixel covers antialiasing, which bleeds a
+  // fraction further still.
+  //
+  // Insetting keeps the component's footprint exactly `size` (callers lay out
+  // against that) and gives back a hair of radius instead, which is invisible;
+  // growing the viewBox would have scaled the donut down by the same amount
+  // anyway.
+  const pad = borderWidth / 2 + 1;
+  const outerRadius = size / 2 - pad;
+  // Guards a degenerate negative radius if a caller ever passes a thickness
+  // greater than the available radius.
+  const innerRadius = Math.max(0, outerRadius - thickness);
+
   const visibleSlices = data.filter((d) => d.value > 0);
 
   let angle = -Math.PI / 2; // start at the top, sweep clockwise
 
   return (
     <div className="relative inline-block" style={{ width: size, height: size }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        // Curved edges at this size are visibly faceted under the default
+        // speed-biased rasterizer; the cost is negligible for a handful of paths.
+        shapeRendering="geometricPrecision"
+        className="block overflow-visible"
+      >
         {total <= 0 && (
-          <circle cx={cx} cy={cy} r={(outerRadius + innerRadius) / 2} fill="none" stroke="var(--default)" strokeWidth={thickness} />
+          <circle
+            cx={cx}
+            cy={cy}
+            r={(outerRadius + innerRadius) / 2}
+            fill="none"
+            stroke="var(--default)"
+            strokeWidth={Math.min(thickness, outerRadius - innerRadius)}
+          />
         )}
 
         {total > 0 &&

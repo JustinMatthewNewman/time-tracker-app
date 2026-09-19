@@ -58,6 +58,9 @@ const NAV_LINKS: NavLink[] = [
   // still starts at Dashboard exactly as before.
   { label: "Admin", href: "/admin", icon: Shield, authRequired: true, feature: "AdminPage" },
   { label: "Dashboard", href: "/dashboard", icon: House, authRequired: true, feature: "Dashboard" },
+  // Promoted out of the dashboard's report submenu. Keeps the Dashboard
+  // grant it already had — see the note in components/Calendar/CalendarPage.tsx.
+  { label: "Calendar", href: "/calendar", icon: Calendar, authRequired: true, feature: "Dashboard" },
   { label: "Work Logs", href: "/worklogs", icon: ClockFill, authRequired: true },
   { label: "Tickets", href: "/tickets", icon: Ticket, authRequired: true },
   { label: "Profile", href: "/profile", icon: Person, authRequired: true },

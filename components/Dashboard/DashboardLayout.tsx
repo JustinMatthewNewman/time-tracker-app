@@ -10,7 +10,6 @@ import { REPORTS, type ReportId } from "./reportTypes";
 import { OverviewReport } from "./OverviewReport";
 import { TicketsReport } from "./TicketsReport";
 import { WorkLogsReport } from "./WorkLogsReport";
-import { CalendarReport } from "./CalendarReport";
 
 function DashboardLayout() {
   const { isOpen, toggle: toggleSidebar } = useSidebar();
@@ -74,7 +73,6 @@ function DashboardLayout() {
                 {selectedReportId === "overview" && <OverviewReport />}
                 {selectedReportId === "tickets" && <TicketsReport />}
                 {selectedReportId === "worklogs" && <WorkLogsReport />}
-                {selectedReportId === "calendar" && <CalendarReport />}
               </div>
             </Card>
           </div>
