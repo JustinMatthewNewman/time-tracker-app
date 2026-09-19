@@ -10,7 +10,7 @@ import { useBorders } from "@/context/BordersContext";
 import { useTickets } from "@/context/TicketsContext";
 import { useTicketColors } from "@/hooks/useTicketColors";
 import { groupByTicket, formatDuration, buildTicketTitleMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
-import { getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "./chartColor";
+import { CATEGORICAL_HUE_COUNT, getSeriesColor, NEUTRAL_SERIES_COLOR, type SeriesColor } from "./chartColor";
 import { startOfMonth, buildMonthGrid, type MonthGridDay } from "@/lib/monthBuckets";
 import { normalizeDayKey } from "@/lib/dayKeys";
 import { ChartTooltip, useChartTooltip } from "./ChartTooltip";
@@ -25,6 +25,12 @@ const HIDE_WEEKENDS_STORAGE_KEY = "calendar-hide-weekends";
 // its own small copy here since the two live in different report widgets.
 function sliceStyle(ticket: string, colorIndex: number): SeriesColor {
   if (ticket === UNASSIGNED_TICKET) return NEUTRAL_SERIES_COLOR;
+  // chartColor.ts budgets a fixed number of categorical hues and is explicit
+  // that a series past that must never get a repeated one. Now that a day
+  // cell lists every ticket rather than the top five, that ceiling is
+  // reachable, so the tail falls back to neutral instead of silently
+  // recycling a hue that already means another ticket.
+  if (colorIndex >= CATEGORICAL_HUE_COUNT) return NEUTRAL_SERIES_COLOR;
   return getSeriesColor(colorIndex);
 }
 
@@ -42,7 +48,9 @@ interface TicketShare {
 
 interface DayTotal {
   totalMinutes: number;
-  topTickets: TicketShare[];
+  /** Every ticket for the day, ranked. The cell scrolls through them. */
+  tickets: TicketShare[];
+  /** How many fall past the visible fold — drives the "+N more" hint. */
   overflowCount: number;
 }
 
@@ -54,7 +62,7 @@ function summarizeDay(
 ): DayTotal {
   const totals = groupByTicket(entries).sort((a, b) => b.totalMinutes - a.totalMinutes);
   const totalMinutes = totals.reduce((sum, t) => sum + t.totalMinutes, 0);
-  const topTickets = totals.slice(0, TOP_TICKETS_PER_DAY).map((t, i) => {
+  const tickets = totals.map((t, i) => {
     const assigned = colorFor(t.ticket);
     return {
       ticket: t.ticket,
@@ -63,7 +71,7 @@ function summarizeDay(
       ...(assigned ? { color: assigned } : sliceStyle(t.ticket, i)),
     };
   });
-  return { totalMinutes, topTickets, overflowCount: Math.max(0, totals.length - TOP_TICKETS_PER_DAY) };
+  return { totalMinutes, tickets, overflowCount: Math.max(0, totals.length - TOP_TICKETS_PER_DAY) };
 }
 
 export function CalendarReport() {
@@ -181,7 +189,10 @@ export function CalendarReport() {
               const dayEntries = entriesByDay.get(day.dayKey) ?? [];
               const summary = summarizeDay(dayEntries, ticketColors.colorFor);
               const workLogId = workLogIdByDate.get(day.dayKey);
-              const clickable = day.isCurrentMonth && !!workLogId;
+              // Adjacent-month days are clickable too: they show real data, so
+              // refusing the click would be a dead end on a cell that plainly
+              // has something behind it.
+              const clickable = !!workLogId;
 
               return (
                 <button
@@ -189,52 +200,73 @@ export function CalendarReport() {
                   type="button"
                   disabled={!clickable}
                   onClick={() => goToDay(day.dayKey)}
-                  onPointerEnter={(e) => day.isCurrentMonth && showAt(e, { day, summary })}
+                  onPointerEnter={(e) => showAt(e, { day, summary })}
                   onPointerLeave={hide}
-                  className={`flex h-32 w-full flex-col items-stretch gap-1 rounded-lg p-1.5 text-left transition-colors ${
-                    day.isCurrentMonth ? "" : "opacity-30"
+                  className={`group flex h-32 w-full flex-col items-stretch gap-1 rounded-lg p-1.5 text-left transition-colors ${
+                    // Muted rather than near-invisible. These now carry real
+                    // data, and the old opacity-30 left it unreadable — enough
+                    // to read, dim enough to stay clearly outside the month.
+                    day.isCurrentMonth ? "" : "bg-default-50/50 opacity-60"
                   } ${bordersEnabled ? "border border-default-200" : ""} ${
                     clickable ? "cursor-pointer hover:bg-accent-soft" : "cursor-default"
                   }`}
                 >
                   <div className="flex items-baseline justify-between gap-1">
-                    <span className="text-[11px] tabular-nums text-foreground/60">{day.date.getDate()}</span>
-                    {day.isCurrentMonth && summary.totalMinutes > 0 && (
+                    <span
+                      className={`text-[11px] tabular-nums ${
+                        day.isCurrentMonth ? "text-foreground/60" : "text-foreground/40"
+                      }`}
+                    >
+                      {day.date.getDate()}
+                    </span>
+                    {summary.totalMinutes > 0 && (
                       <span className="truncate text-[10px] tabular-nums text-foreground/40">
                         {formatDuration(summary.totalMinutes)}
                       </span>
                     )}
                   </div>
 
-                  {day.isCurrentMonth && (
-                    <div className="flex min-h-0 flex-1 flex-col justify-start gap-0.5 overflow-hidden">
-                      {summary.topTickets.length === 0 ? (
+                  {/* Clipped at rest, scrollable while hovered. The list holds
+                      every ticket for the day, so the overflow is real content
+                      to reach rather than a fixed truncation. `relative` anchors
+                      the "+N more" hint below. */}
+                  <div className="relative flex min-h-0 flex-1 flex-col">
+                    <div className="calendar-day-scroll flex min-h-0 flex-1 flex-col justify-start gap-0.5 overflow-hidden group-hover:overflow-y-auto">
+                      {summary.tickets.length === 0 ? (
                         <span className="text-[10px] text-foreground/30">No hours</span>
                       ) : (
-                        <>
-                          {summary.topTickets.map((t) => (
-                            <div key={t.ticket} className="flex min-w-0 items-center gap-1 text-[10px] leading-tight">
-                              <span
-                                className="size-1.5 shrink-0 rounded-full"
-                                style={{ backgroundColor: t.color, filter: t.filter }}
-                                aria-hidden
+                        summary.tickets.map((t) => (
+                          <div key={t.ticket} className="flex min-w-0 items-center gap-1 text-[10px] leading-tight">
+                            <span
+                              className="size-1.5 shrink-0 rounded-full"
+                              style={{ backgroundColor: t.color, filter: t.filter }}
+                              aria-hidden
+                            />
+                            <span className="min-w-0 flex-1 truncate text-foreground/80">
+                              {t.ticket}
+                              <TicketTitleSuffix
+                                title={t.ticket !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(t.ticket)) : null}
                               />
-                              <span className="min-w-0 flex-1 truncate text-foreground/80">
-                                {t.ticket}
-                                <TicketTitleSuffix
-                                  title={t.ticket !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(t.ticket)) : null}
-                                />
-                              </span>
-                              <span className="shrink-0 tabular-nums text-foreground/50">{t.pct}%</span>
-                            </div>
-                          ))}
-                          {summary.overflowCount > 0 && (
-                            <span className="text-[10px] text-foreground/30">+{summary.overflowCount} more</span>
-                          )}
-                        </>
+                            </span>
+                            <span className="shrink-0 tabular-nums text-foreground/50">{t.pct}%</span>
+                          </div>
+                        ))
                       )}
                     </div>
-                  )}
+
+                    {/* Overlaid, not in flow: as a list item it would itself be
+                        scrolled out of view, which is the opposite of a hint
+                        that there is more below. Hidden on hover, when the
+                        scrollbar takes over the same job. */}
+                    {summary.overflowCount > 0 && (
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-surface via-surface to-transparent pt-2 text-[10px] text-foreground/40 group-hover:hidden"
+                      >
+                        +{summary.overflowCount} more
+                      </span>
+                    )}
+                  </div>
                 </button>
               );
             })}
