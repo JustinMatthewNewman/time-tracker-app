@@ -93,7 +93,22 @@ query ListTickets($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
 # account's entries by passing a different UUID. Server-only (Admin SDK).
 query ListTimeEntries($userId: UUID!) @auth(level: NO_ACCESS) {
   timeEntries(
-    where: { user: { id: { eq: $userId } } }
+    where: {
+      _and: [
+        { user: { id: { eq: $userId } } }
+        # A soft-deleted work log keeps all of its time entries: DeleteWorkLog
+        # only flips isDeleted, so RestoreWorkLog can bring the day back.
+        # ListWorkLogs used to be the only query that filtered on it, so a day
+        # that was logged, deleted and logged again counted twice in every
+        # total while the work logs page showed it once. Entries with no work
+        # log were never deleted, so they stay.
+        { _or: [
+            { workLog: { isDeleted: { eq: false } } }
+            { workLog: { isDeleted: { isNull: true } } }
+            { workLogId: { isNull: true } }
+          ] }
+      ]
+    }
     orderBy: [{ startTime: DESC }, { id: ASC }]
   ) {
     id
@@ -204,6 +219,12 @@ query ListTimeEntriesByTicket($ticketNumber: Int!) @auth(level: USER) {
       _and: [
         { ticket: { ticketNumber: { eq: $ticketNumber } } }
         { user: { googleUid: { eq_expr: "auth.uid" } } }
+        # Skip soft-deleted work logs' entries — see ListTimeEntries.
+        { _or: [
+            { workLog: { isDeleted: { eq: false } } }
+            { workLog: { isDeleted: { isNull: true } } }
+            { workLogId: { isNull: true } }
+          ] }
       ]
     }
     orderBy: [{ startTime: DESC }, { id: ASC }]
@@ -228,7 +249,17 @@ query ListMyTimeEntries($limit: Int = 500, $offset: Int = 0) @auth(level: USER) 
   timeEntries(
     limit: $limit
     offset: $offset
-    where: { user: { googleUid: { eq_expr: "auth.uid" } } }
+    where: {
+      _and: [
+        { user: { googleUid: { eq_expr: "auth.uid" } } }
+        # Skip soft-deleted work logs' entries — see ListTimeEntries.
+        { _or: [
+            { workLog: { isDeleted: { eq: false } } }
+            { workLog: { isDeleted: { isNull: true } } }
+            { workLogId: { isNull: true } }
+          ] }
+      ]
+    }
     orderBy: [{ startTime: DESC }, { id: ASC }]
   ) {
     id
@@ -266,6 +297,12 @@ query ListTimeEntriesByDateRange($userId: UUID!, $startDate: Date!, $endDate: Da
         { user: { id: { eq: $userId } } }
         { date: { ge: $startDate } }
         { date: { le: $endDate } }
+        # Skip soft-deleted work logs' entries — see ListTimeEntries.
+        { _or: [
+            { workLog: { isDeleted: { eq: false } } }
+            { workLog: { isDeleted: { isNull: true } } }
+            { workLogId: { isNull: true } }
+          ] }
       ]
     }
     orderBy: [{ startTime: DESC }, { id: ASC }]
@@ -440,6 +477,12 @@ query ListMyTimeEntriesByDateRange(
         { user: { googleUid: { eq_expr: "auth.uid" } } }
         { date: { ge: $startDate } }
         { date: { le: $endDate } }
+        # Skip soft-deleted work logs' entries — see ListTimeEntries.
+        { _or: [
+            { workLog: { isDeleted: { eq: false } } }
+            { workLog: { isDeleted: { isNull: true } } }
+            { workLogId: { isNull: true } }
+          ] }
       ]
     }
     orderBy: [{ startTime: DESC }, { id: ASC }]
@@ -496,6 +539,12 @@ query AdminListTimeEntriesForUsers(
         { user: { id: { in: $userIds } } }
         { date: { ge: $startDate } }
         { date: { le: $endDate } }
+        # Skip soft-deleted work logs' entries — see ListTimeEntries.
+        { _or: [
+            { workLog: { isDeleted: { eq: false } } }
+            { workLog: { isDeleted: { isNull: true } } }
+            { workLogId: { isNull: true } }
+          ] }
       ]
     }
     orderBy: [{ date: DESC }, { id: ASC }]
