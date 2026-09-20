@@ -2496,6 +2496,7 @@ export interface AdminListTimeEntriesForUsersData {
       ticketNumber: number;
       ticketTitle?: string | null;
       color?: string | null;
+      ticketLink?: string | null;
     } & Ticket_Key;
   } & TimeEntry_Key)[];
 }

@@ -1,6 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { Button, Card } from "@heroui/react";
+import { ArrowUpRightFromSquare } from "@gravity-ui/icons";
+import { useUserSettings } from "@/context/UserSettingsContext";
+import { resolveExternalTicketLink } from "@/lib/externalTicketLink";
 import { formatDuration } from "@/lib/timeTotals";
 import type { MemberDay } from "@/lib/adminTeamMetrics";
 import { TicketChip } from "./TeamStats";
@@ -29,6 +33,11 @@ function dayHeading(dayKey: string): string {
 /**
  * A day's breakdown for one team member.
  *
+ * Ticket rows carry both destinations the rest of the app offers: the chip
+ * opens the ticket in Time Tracker, the arrow opens it in the external system.
+ * The in-app link closes the dialog on the way out — it is a fixed overlay, so
+ * navigating beneath it would leave it covering the destination.
+ *
  * This exists because "open the work log for this day" cannot be done for
  * anyone but yourself: ListWorkLogs binds to auth.uid, so /worklogs only ever
  * shows the signed-in user's logs. Rather than leave a teammate's axis inert —
@@ -49,6 +58,8 @@ export function MemberDayDialog({
   onClose,
   onOpenWorkLog,
 }: MemberDayDialogProps) {
+  const { externalTicketLinkTemplate } = useUserSettings();
+
   if (!isOpen || !day) return null;
 
   return (
@@ -56,7 +67,17 @@ export function MemberDayDialog({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       onClick={onClose}
     >
-      <Card className="w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
+      {/* Dialog semantics so assistive tech announces this as a modal rather
+          than as more page content — and so the ticket links inside it are
+          addressable apart from the identical-looking links in the chart
+          underneath. */}
+      <Card
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${memberName}, ${dayHeading(day.date)}`}
+        className="w-full max-w-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex flex-col gap-4 p-6">
           <div>
             <h2 className="text-xl font-semibold text-foreground">{dayHeading(day.date)}</h2>
@@ -69,31 +90,64 @@ export function MemberDayDialog({
             <p className="text-sm text-foreground/60">Nothing logged on this day.</p>
           ) : (
             <ul className="flex max-h-80 flex-col gap-2 overflow-y-auto">
-              {day.segments.map((seg, i) => (
-                <li key={i} className="flex items-center justify-between gap-3">
-                  <span className="min-w-0">
-                    {seg.ticketNumber == null ? (
-                      <span className="text-sm text-foreground/60">No ticket</span>
-                    ) : (
-                      <TicketChip
-                        ticket={{
-                          ticketNumber: seg.ticketNumber,
-                          ticketTitle: seg.ticketTitle,
-                          color: seg.color,
-                          totalMinutes: seg.minutes,
-                        }}
-                        enabled={ticketColorsEnabled}
-                      />
-                    )}
-                  </span>
-                  <span className="shrink-0 text-sm tabular-nums text-foreground">
-                    {formatDuration(seg.minutes)}
-                    <span className="ml-2 text-xs text-foreground/50">
-                      {Math.round((seg.minutes / day.totalMinutes) * 100)}%
+              {day.segments.map((seg, i) => {
+                // Same two-destination treatment as the work log rows: the
+                // chip goes to the ticket in this app, the arrow leaves for the
+                // external system. Different glyphs so the distinction is
+                // visible rather than implied by the href.
+                const externalLink = resolveExternalTicketLink(
+                  seg.ticketNumber ?? undefined,
+                  seg.ticketLink,
+                  externalTicketLinkTemplate
+                );
+                return (
+                  <li key={i} className="flex items-center justify-between gap-3">
+                    <span className="flex min-w-0 items-center gap-1">
+                      {seg.ticketNumber == null ? (
+                        <span className="text-sm text-foreground/60">No ticket</span>
+                      ) : (
+                        <>
+                          <Link
+                            href={`/ticket/${seg.ticketNumber}`}
+                            title={`View ticket ${seg.ticketNumber} in Time Tracker`}
+                            aria-label={`View ticket ${seg.ticketNumber} in Time Tracker`}
+                            onClick={onClose}
+                            className="min-w-0 rounded hover:underline"
+                          >
+                            <TicketChip
+                              ticket={{
+                                ticketNumber: seg.ticketNumber,
+                                ticketTitle: seg.ticketTitle,
+                                color: seg.color,
+                                totalMinutes: seg.minutes,
+                              }}
+                              enabled={ticketColorsEnabled}
+                            />
+                          </Link>
+                          {externalLink && (
+                            <a
+                              href={externalLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`Open ticket ${seg.ticketNumber} in the external ticket system`}
+                              aria-label={`Open ticket ${seg.ticketNumber} in the external ticket system (opens in a new tab)`}
+                              className="shrink-0 rounded p-1 text-foreground/40 hover:bg-default hover:text-accent"
+                            >
+                              <ArrowUpRightFromSquare className="size-3.5" />
+                            </a>
+                          )}
+                        </>
+                      )}
                     </span>
-                  </span>
-                </li>
-              ))}
+                    <span className="shrink-0 text-sm tabular-nums text-foreground">
+                      {formatDuration(seg.minutes)}
+                      <span className="ml-2 text-xs text-foreground/50">
+                        {Math.round((seg.minutes / day.totalMinutes) * 100)}%
+                      </span>
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           )}
 

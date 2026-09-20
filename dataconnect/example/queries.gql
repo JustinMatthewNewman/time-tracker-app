@@ -517,6 +517,10 @@ query AdminListTimeEntriesForUsers(
       ticketNumber
       ticketTitle
       color
+      # So the day breakdown can link out with the same precedence as the rest
+      # of the app: a ticket's own saved link beats the user's URL template
+      # (see lib/externalTicketLink.ts). Ticket metadata, not personal data.
+      ticketLink
     }
   }
 }

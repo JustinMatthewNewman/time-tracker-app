@@ -14,7 +14,12 @@ export interface MetricEntry {
   endTime: string;
   date: string;
   workLog?: { id: string } | null;
-  ticket?: { ticketNumber: number; ticketTitle?: string | null; color?: string | null } | null;
+  ticket?: {
+    ticketNumber: number;
+    ticketTitle?: string | null;
+    color?: string | null;
+    ticketLink?: string | null;
+  } | null;
 }
 
 export interface TeamMemberInput {
@@ -193,6 +198,8 @@ export interface DaySegment {
   ticketNumber: number | null;
   ticketTitle: string | null;
   color: string | null;
+  /** The ticket's own external URL, if it has one. */
+  ticketLink: string | null;
   minutes: number;
 }
 
@@ -273,6 +280,7 @@ export function aggregateDailyByMember(
         ticketNumber: entry.ticket?.ticketNumber ?? null,
         ticketTitle: entry.ticket?.ticketTitle ?? null,
         color: entry.ticket?.color ?? null,
+        ticketLink: entry.ticket?.ticketLink ?? null,
         minutes,
       });
     }
