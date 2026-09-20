@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Card, EmptyState, ListBox, Select, Skeleton } from "@heroui/react";
 import { Check, Pencil, Person, Persons, TrashBin, Xmark } from "@gravity-ui/icons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
@@ -51,6 +51,13 @@ interface TeamMetricsResponse {
 export function AdminTeamsPage() {
   const { user } = useAuth();
   const router = useRouter();
+  // Deep links from the dashboard's Admin report: ?team=<id>&member=<id>.
+  // Read as the *initial* selection only — once someone picks something here,
+  // local state wins, so the stale URL can't yank them back on the next
+  // render.
+  const searchParams = useSearchParams();
+  const initialTeamId = searchParams.get("team");
+  const initialMemberId = searchParams.get("member");
   const { userId: myUserId } = useFeatures();
   const { setSelectedWorkLogId } = useSelectedWorkLog();
   const { ticketColorsEnabled } = useTicketColorsSetting();
@@ -65,8 +72,8 @@ export function AdminTeamsPage() {
 
   const teams = useMemo(() => data?.teams ?? [], [data]);
 
-  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
-  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(initialTeamId);
+  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(initialMemberId);
   const activeTeamId = selectedTeamId ?? teams[0]?.id ?? null;
   const team = teams.find((t) => t.id === activeTeamId) ?? null;
 

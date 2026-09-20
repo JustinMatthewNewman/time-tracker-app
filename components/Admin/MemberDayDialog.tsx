@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Button, Card } from "@heroui/react";
 import { ArrowUpRightFromSquare } from "@gravity-ui/icons";
 import { useUserSettings } from "@/context/UserSettingsContext";
@@ -107,23 +106,16 @@ export function MemberDayDialog({
                         <span className="text-sm text-foreground/60">No ticket</span>
                       ) : (
                         <>
-                          <Link
-                            href={`/ticket/${seg.ticketNumber}`}
-                            title={`View ticket ${seg.ticketNumber} in Time Tracker`}
-                            aria-label={`View ticket ${seg.ticketNumber} in Time Tracker`}
-                            onClick={onClose}
-                            className="min-w-0 rounded hover:underline"
-                          >
-                            <TicketChip
-                              ticket={{
-                                ticketNumber: seg.ticketNumber,
-                                ticketTitle: seg.ticketTitle,
-                                color: seg.color,
-                                totalMinutes: seg.minutes,
-                              }}
-                              enabled={ticketColorsEnabled}
-                            />
-                          </Link>
+                          <TicketChip
+                            ticket={{
+                              ticketNumber: seg.ticketNumber,
+                              ticketTitle: seg.ticketTitle,
+                              color: seg.color,
+                              totalMinutes: seg.minutes,
+                            }}
+                            enabled={ticketColorsEnabled}
+                            onNavigate={onClose}
+                          />
                           {externalLink && (
                             <a
                               href={externalLink}

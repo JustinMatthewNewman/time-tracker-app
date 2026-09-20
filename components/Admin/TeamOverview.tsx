@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { Card, EmptyState, Skeleton } from "@heroui/react";
 import { Persons } from "@gravity-ui/icons";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
@@ -22,13 +23,30 @@ interface TeamOverviewProps {
   range: TeamRange;
 }
 
-function MemberCard({ member, enabled }: { member: MemberMetrics; enabled: boolean }) {
+function MemberCard({
+  member,
+  enabled,
+  teamId,
+}: {
+  member: MemberMetrics;
+  enabled: boolean;
+  teamId: string;
+}) {
   const inactive = member.entryCount === 0;
   return (
     <Card className={`flex flex-col gap-3 p-4 ${inactive ? "opacity-60" : ""}`}>
       <div className="flex items-baseline justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate font-medium text-foreground">{member.username}</p>
+          {/* The name is the link, not the whole card: the card also holds a
+              ticket chip that links elsewhere, and an anchor inside an anchor
+              is invalid and wrecks keyboard order. */}
+          <Link
+            href={`/admin/teams?team=${teamId}&member=${member.id}`}
+            title={`Open ${member.username} on the Teams page`}
+            className="block truncate font-medium text-foreground hover:underline"
+          >
+            {member.username}
+          </Link>
           <p className="truncate text-xs text-foreground/50">{member.email ?? "No email"}</p>
         </div>
         <span className="shrink-0 rounded-full bg-default-100 px-2 py-0.5 text-[10px] uppercase tracking-wide text-foreground/60">
@@ -155,7 +173,12 @@ export function TeamOverview({ teamId, range }: TeamOverviewProps) {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {members.map((member) => (
-              <MemberCard key={member.id} member={member} enabled={ticketColorsEnabled} />
+              <MemberCard
+                key={member.id}
+                member={member}
+                enabled={ticketColorsEnabled}
+                teamId={teamId}
+              />
             ))}
           </div>
         )}
