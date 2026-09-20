@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { effectiveTicketColor, ticketRowTint } from "@/lib/ticketColor";
 import { formatDuration } from "@/lib/timeTotals";
 import type { MemberMetrics, TeamMetrics, TopTicket } from "@/lib/adminTeamMetrics";
@@ -12,11 +13,31 @@ import type { MemberMetrics, TeamMetrics, TopTicket } from "@/lib/adminTeamMetri
  * pages show the same numbers, and two sets of markup would drift.
  */
 
-export function TicketChip({ ticket, enabled }: { ticket: TopTicket; enabled: boolean }) {
+/**
+ * A ticket's identity chip, linking to the ticket in Time Tracker.
+ *
+ * The chip is the link rather than something wrapping it: these appear inside
+ * cards that are themselves navigable, and nesting an anchor in an anchor is
+ * invalid and breaks keyboard order. `onNavigate` lets a caller inside an
+ * overlay dismiss it on the way out.
+ */
+export function TicketChip({
+  ticket,
+  enabled,
+  onNavigate,
+}: {
+  ticket: TopTicket;
+  enabled: boolean;
+  onNavigate?: () => void;
+}) {
   const color = enabled ? effectiveTicketColor(ticket.color, ticket.ticketNumber) : null;
   return (
-    <span
-      className="inline-flex max-w-full items-center gap-1.5 rounded-full px-2 py-0.5 text-xs"
+    <Link
+      href={`/ticket/${ticket.ticketNumber}`}
+      title={`View ticket ${ticket.ticketNumber} in Time Tracker`}
+      aria-label={`View ticket ${ticket.ticketNumber} in Time Tracker`}
+      onClick={onNavigate}
+      className="inline-flex max-w-full items-center gap-1.5 rounded-full px-2 py-0.5 text-xs transition hover:underline"
       style={color ? { backgroundColor: ticketRowTint(color, 22) } : undefined}
     >
       {color && (
@@ -26,7 +47,7 @@ export function TicketChip({ ticket, enabled }: { ticket: TopTicket; enabled: bo
         #{ticket.ticketNumber}
         {ticket.ticketTitle ? ` · ${ticket.ticketTitle}` : ""}
       </span>
-    </span>
+    </Link>
   );
 }
 

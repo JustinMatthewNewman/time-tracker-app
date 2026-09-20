@@ -24,6 +24,8 @@ import type { DaySegment, MemberDay } from "@/lib/adminTeamMetrics";
 
 export interface IsoStackedBarChartProps {
   days: MemberDay[];
+  /** Called when a day's axis label is activated. Omit to leave the axis inert. */
+  onDaySelect?: (day: MemberDay) => void;
   /** Height of the tallest bar, in user units. */
   maxBarHeight?: number;
   className?: string;
@@ -76,6 +78,7 @@ interface HoverData {
 
 export function IsoStackedBarChart({
   days,
+  onDaySelect,
   maxBarHeight = 130,
   className,
 }: IsoStackedBarChartProps) {
@@ -210,22 +213,64 @@ export function IsoStackedBarChart({
                 {formatDuration(day.totalMinutes)}
               </text>
 
-              <text
-                x={x + BAR_WIDTH / 2}
-                y={baseline + 16}
-                textAnchor="middle"
-                className="pointer-events-none fill-foreground/60 text-[10px]"
-              >
-                {label.weekday}
-              </text>
-              <text
-                x={x + BAR_WIDTH / 2}
-                y={baseline + 28}
-                textAnchor="middle"
-                className="pointer-events-none fill-foreground/40 text-[10px] tabular-nums"
-              >
-                {label.day}
-              </text>
+              {(() => {
+                const axis = (
+                  <>
+                    <text
+                      x={x + BAR_WIDTH / 2}
+                      y={baseline + 16}
+                      textAnchor="middle"
+                      className="pointer-events-none fill-foreground/60 text-[10px]"
+                    >
+                      {label.weekday}
+                    </text>
+                    <text
+                      x={x + BAR_WIDTH / 2}
+                      y={baseline + 28}
+                      textAnchor="middle"
+                      className="pointer-events-none fill-foreground/40 text-[10px] tabular-nums"
+                    >
+                      {label.day}
+                    </text>
+                  </>
+                );
+
+                // Actionable whenever there is something to show. Gating on
+                // day.workLogId instead made a teammate's whole axis inert,
+                // which reads as a broken link rather than as a rule — and a
+                // work log is optional on a TimeEntry anyway, so it was
+                // possible to have a full day and no link even on your own row.
+                if (!onDaySelect || day.totalMinutes === 0) return axis;
+
+                return (
+                  <g
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Show ${label.weekday} ${label.day} in detail`}
+                    className="cursor-pointer outline-none [&:focus-visible>rect]:stroke-accent [&:focus-visible>rect]:[stroke-width:2]"
+                    onClick={() => onDaySelect(day)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onDaySelect(day);
+                      }
+                    }}
+                  >
+                    {/* A transparent hit area: the two labels alone are a
+                        sliver of text and awkward to hit. */}
+                    <rect
+                      x={x - 2}
+                      y={baseline + 4}
+                      width={BAR_WIDTH + 4}
+                      height={30}
+                      rx={4}
+                      fill="transparent"
+                      className="hover:fill-default-100"
+                    />
+                    {axis}
+                  </g>
+                );
+              })()}
             </g>
           );
         })}

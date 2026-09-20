@@ -13,7 +13,13 @@ export interface MetricEntry {
   startTime: string;
   endTime: string;
   date: string;
-  ticket?: { ticketNumber: number; ticketTitle?: string | null; color?: string | null } | null;
+  workLog?: { id: string } | null;
+  ticket?: {
+    ticketNumber: number;
+    ticketTitle?: string | null;
+    color?: string | null;
+    ticketLink?: string | null;
+  } | null;
 }
 
 export interface TeamMemberInput {
@@ -192,12 +198,21 @@ export interface DaySegment {
   ticketNumber: number | null;
   ticketTitle: string | null;
   color: string | null;
+  /** The ticket's own external URL, if it has one. */
+  ticketLink: string | null;
   minutes: number;
 }
 
 export interface MemberDay {
   /** Day key, YYYY-MM-DD. */
   date: string;
+  /**
+   * The work log this member's entries for the day belong to, so the chart's
+   * day axis can link to it. Null when the day is empty, or when its entries
+   * carry no work log. If a day somehow spans several, the first is used —
+   * the app creates one per user per day.
+   */
+  workLogId: string | null;
   totalMinutes: number;
   /** Largest share first, so a stacked bar reads bottom-heavy. */
   segments: DaySegment[];
@@ -238,6 +253,8 @@ export function aggregateDailyByMember(
 
   // userId -> dayKey -> ticketKey -> segment
   const byUser = new Map<string, Map<string, Map<string, DaySegment>>>();
+  // userId -> dayKey -> workLogId
+  const workLogs = new Map<string, Map<string, string>>();
   for (const entry of entries) {
     const dayKey = entry.date.slice(0, 10);
     const minutes = minutesBetween(entry.startTime, entry.endTime);
@@ -248,6 +265,12 @@ export function aggregateDailyByMember(
     let byTicket = byDay.get(dayKey);
     if (!byTicket) byDay.set(dayKey, (byTicket = new Map()));
 
+    if (entry.workLog?.id) {
+      let days = workLogs.get(entry.user.id);
+      if (!days) workLogs.set(entry.user.id, (days = new Map()));
+      if (!days.has(dayKey)) days.set(dayKey, entry.workLog.id);
+    }
+
     const ticketKey = entry.ticket ? String(entry.ticket.ticketNumber) : "none";
     const existing = byTicket.get(ticketKey);
     if (existing) {
@@ -257,6 +280,7 @@ export function aggregateDailyByMember(
         ticketNumber: entry.ticket?.ticketNumber ?? null,
         ticketTitle: entry.ticket?.ticketTitle ?? null,
         color: entry.ticket?.color ?? null,
+        ticketLink: entry.ticket?.ticketLink ?? null,
         minutes,
       });
     }
@@ -274,6 +298,7 @@ export function aggregateDailyByMember(
       );
       return {
         date,
+        workLogId: workLogs.get(member.id)?.get(date) ?? null,
         totalMinutes: segments.reduce((sum, seg) => sum + seg.minutes, 0),
         segments,
       };

@@ -300,4 +300,23 @@ describe("aggregateDailyByMember", () => {
     expect(daily.u9).toBeUndefined();
     expect(daily.u1.every((d) => d.totalMinutes === 0)).toBe(true);
   });
+
+  it("carries the day's work log id, for the chart's day axis", () => {
+    const a = entry("u1", "2026-09-01", 9, 2, 100);
+    const b = entry("u1", "2026-09-01", 13, 1, 200);
+    a.workLog = { id: "wl-1" };
+    b.workLog = { id: "wl-1" };
+    const daily = aggregateDailyByMember([alice], [a, b], ...range);
+    expect(daily.u1[0].workLogId).toBe("wl-1");
+  });
+
+  it("leaves the work log id null on an empty day", () => {
+    const daily = aggregateDailyByMember([alice], [], ...range);
+    expect(daily.u1.every((d) => d.workLogId === null)).toBe(true);
+  });
+
+  it("leaves it null when entries carry no work log", () => {
+    const daily = aggregateDailyByMember([alice], [entry("u1", "2026-09-01", 9, 2, 100)], ...range);
+    expect(daily.u1[0].workLogId).toBeNull();
+  });
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { EmptyState, ListBox, Select, Skeleton } from "@heroui/react";
 import { PersonGear } from "@gravity-ui/icons";
 import { useAdminFetch } from "@/hooks/useAdminFetch";
@@ -71,7 +72,17 @@ export function AdminReport() {
           </Select.Popover>
         </Select>
 
-        <TeamRangeToggle value={range} onChange={setRange} />
+        <div className="flex flex-wrap items-center gap-3">
+          <TeamRangeToggle value={range} onChange={setRange} />
+          {activeTeamId && (
+            <Link
+              href={`/admin/teams?team=${activeTeamId}`}
+              className="text-xs text-foreground/60 hover:text-accent hover:underline"
+            >
+              Manage this team →
+            </Link>
+          )}
+        </div>
       </div>
 
       {activeTeamId && <TeamOverview key={activeTeamId} teamId={activeTeamId} range={range} />}
