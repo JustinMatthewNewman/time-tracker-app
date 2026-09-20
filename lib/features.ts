@@ -22,7 +22,7 @@ import type { UserTypeName } from "./userTypes";
 // is keyed on `name`, and UserTypeFeature's foreign key references it, so the
 // old row and its grants have to be replaced rather than edited in place.
 // See the "renaming a feature" note on SeedFeatures in seed_data.gql.
-export const FEATURE_NAMES = ["AdminPage", "Dashboard", "UserTypeControl", "AdminDashboard"] as const;
+export const FEATURE_NAMES = ["AdminPage", "Dashboard", "UserTypeControl", "AdminDashboard", "TicketAllUsers"] as const;
 
 export type FeatureName = (typeof FEATURE_NAMES)[number];
 
@@ -74,6 +74,18 @@ export const FEATURE_DEFINITIONS: Record<
     // read-only auditor tier can hold AdminPage without it.
     description: "Change which tier a user belongs to.",
     defaultTiers: ["Admin"],
+  },
+  TicketAllUsers: {
+    // A ticket page normally shows only the viewer's own entries. This opens it
+    // to everyone's, so you can see who else worked the ticket and for how
+    // long, with your own rows highlighted.
+    //
+    // Like AdminDashboard, this is a visibility-into-colleagues grant, not a
+    // convenience one — it exposes other people's descriptions, which are
+    // free-text notes they wrote. Same "Elevated and above" list, spelled out
+    // rather than derived because the tiers have no rank (see USER_TYPE_NAMES).
+    description: "See every user's time entries on a ticket, not just your own.",
+    defaultTiers: ["Admin", "Elevated", "Premium"],
   },
   Dashboard: {
     // Every current tier: this gated an already-shipped page, so the starting

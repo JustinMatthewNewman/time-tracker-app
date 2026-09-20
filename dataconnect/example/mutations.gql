@@ -94,7 +94,19 @@ mutation UpdateTimeEntry(
   $entryId: UUID!
   $description: String
   $ticketNumber: Int!
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+  # Ownership check, matching UpdateWorkLog/DeleteWorkLog. Without it any
+  # authenticated caller could edit any entry by id. That was unexploitable while
+  # every query bound rows to auth.uid; the ticket page's all-users view puts
+  # other people's entry ids in the browser, so the guard has to be real.
+  query @redact {
+    timeEntry(key: { id: $entryId }) {
+      id
+      user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to modify this time entry") {
+        googleUid
+      }
+    }
+  }
   timeEntry_update(
     id: $entryId
     data: {
@@ -110,7 +122,19 @@ mutation UpdateTimeEntry(
 mutation UpdateTimeEntryClearTicket(
   $entryId: UUID!
   $description: String
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+  # Ownership check, matching UpdateWorkLog/DeleteWorkLog. Without it any
+  # authenticated caller could edit any entry by id. That was unexploitable while
+  # every query bound rows to auth.uid; the ticket page's all-users view puts
+  # other people's entry ids in the browser, so the guard has to be real.
+  query @redact {
+    timeEntry(key: { id: $entryId }) {
+      id
+      user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to modify this time entry") {
+        googleUid
+      }
+    }
+  }
   timeEntry_update(
     id: $entryId
     data: {
@@ -120,7 +144,19 @@ mutation UpdateTimeEntryClearTicket(
   )
 }
 
-mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) {
+mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) @transaction {
+  # Ownership check, matching UpdateWorkLog/DeleteWorkLog. Without it any
+  # authenticated caller could delete any entry by id. That was unexploitable while
+  # every query bound rows to auth.uid; the ticket page's all-users view puts
+  # other people's entry ids in the browser, so the guard has to be real.
+  query @redact {
+    timeEntry(key: { id: $entryId }) {
+      id
+      user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to delete this time entry") {
+        googleUid
+      }
+    }
+  }
   timeEntry_delete(id: $entryId)
 }
 

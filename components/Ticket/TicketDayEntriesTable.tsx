@@ -9,6 +9,12 @@ import { useTicketColors } from "@/hooks/useTicketColors";
 
 interface TicketDayEntriesTableProps {
   entries: TicketTimeEntry[];
+  /**
+   * Whether this table is showing more than just the viewer's own entries.
+   * Adds the "Who" column: in the own-only view every row is the viewer's, so
+   * naming them on each row is noise.
+   */
+  allUsers?: boolean;
   // Every entry rendered here already belongs to this ticket (the page's own
   // ticket) — unlike WorkLogTimeEntryCardTable, there's no per-row ticket to
   // read/clear, so UpdateTimeEntry's required ticketNumber is just this one.
@@ -27,6 +33,7 @@ function formatTime(isoDate: string) {
 
 export function TicketDayEntriesTable({
   entries,
+  allUsers = false,
   ticketNumber,
   onEntryUpdated,
   onViewWorkLog,
@@ -99,44 +106,83 @@ export function TicketDayEntriesTable({
         <thead>
           <tr>
             <th className="w-40 border p-2 text-left">Time</th>
+            {allUsers && <th className="w-40 border p-2 text-left">Who</th>}
             <th className="w-56 border p-2 text-left">Work Log</th>
             <th className="border p-2 text-left">Description</th>
           </tr>
         </thead>
 
         <tbody>
-          {entries.map((entry) => (
-            <tr key={entry.id} style={rowStyle}>
-              <td className="border p-2 whitespace-nowrap" style={edgeStyle}>
-                {formatTime(entry.startTime)} - {formatTime(entry.endTime)}
-              </td>
+          {entries.map((entry) => {
+            // In the all-users view the ticket tint becomes the "this one is
+            // yours" signal rather than ticket identity — every row on this
+            // page is the same ticket, so the tint carries no information here
+            // otherwise. Other people's rows go plain and slightly muted.
+            // Colour is never the only cue: the Who column says "You".
+            const mine = entry.isMine;
+            const tinted = !allUsers || mine;
 
-              <td className="border p-2">
-                <div className="flex items-center gap-2">
-                  <span className="truncate">{entry.workLog?.name ?? "—"}</span>
-                  {entry.workLog && (
-                    <button
-                      type="button"
-                      aria-label={`View entry in ${entry.workLog.name}`}
-                      onClick={() => onViewWorkLog(entry)}
-                      className="shrink-0 rounded p-1 text-foreground/40 hover:bg-default hover:text-foreground"
-                    >
-                      <ArrowUpRightFromSquare className="size-3.5" />
-                    </button>
+            return (
+              <tr
+                key={entry.id}
+                style={tinted ? rowStyle : undefined}
+                className={mine ? undefined : "text-foreground/70"}
+              >
+                <td className="border p-2 whitespace-nowrap" style={tinted ? edgeStyle : undefined}>
+                  {formatTime(entry.startTime)} - {formatTime(entry.endTime)}
+                </td>
+
+                {allUsers && (
+                  <td className="border p-2">
+                    {mine ? (
+                      <span className="rounded bg-accent-soft px-1.5 py-0.5 text-xs font-semibold text-accent">
+                        You
+                      </span>
+                    ) : (
+                      <span className="truncate">{entry.username ?? "—"}</span>
+                    )}
+                  </td>
+                )}
+
+                <td className="border p-2">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate">{entry.workLog?.name ?? entry.workLogName ?? "—"}</span>
+                    {/* Only the owner can open a work log (ListWorkLogs binds
+                        to auth.uid), and the API withholds the id for everyone
+                        else's rows, so there is nothing to navigate to. */}
+                    {mine && entry.workLog && (
+                      <button
+                        type="button"
+                        aria-label={`View entry in ${entry.workLog.name}`}
+                        onClick={() => onViewWorkLog(entry)}
+                        className="shrink-0 rounded p-1 text-foreground/40 hover:bg-default hover:text-foreground"
+                      >
+                        <ArrowUpRightFromSquare className="size-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </td>
+
+                <td className="border p-2">
+                  {mine ? (
+                    <textarea
+                      className="w-full rounded border p-2"
+                      rows={2}
+                      value={getDescription(entry)}
+                      onChange={(e) => setDescriptionDraft(entry.id, e.target.value)}
+                    />
+                  ) : (
+                    // Read-only, and not a disabled textarea: this is someone
+                    // else's note, not a field of yours that happens to be
+                    // locked. UpdateTimeEntry also refuses it server-side now.
+                    <p className="whitespace-pre-wrap break-words">
+                      {entry.description || <span className="text-foreground/40">—</span>}
+                    </p>
                   )}
-                </div>
-              </td>
-
-              <td className="border p-2">
-                <textarea
-                  className="w-full rounded border p-2"
-                  rows={2}
-                  value={getDescription(entry)}
-                  onChange={(e) => setDescriptionDraft(entry.id, e.target.value)}
-                />
-              </td>
-            </tr>
-          ))}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

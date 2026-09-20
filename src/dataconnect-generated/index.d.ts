@@ -351,6 +351,7 @@ export interface GetTimeEntryData {
       id: UUIDString;
       username: string;
       email?: string | null;
+      googleUid: string;
     } & User_Key;
     startTime: TimestampString;
     endTime: TimestampString;
@@ -581,6 +582,31 @@ export interface ListTimeEntriesData {
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
+}
+
+export interface ListTimeEntriesForTicketData {
+  timeEntries: ({
+    id: UUIDString;
+    user: {
+      id: UUIDString;
+      username: string;
+    } & User_Key;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    workLog?: {
+      id: UUIDString;
+      name: string;
+    } & WorkLog_Key;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+
+export interface ListTimeEntriesForTicketVariables {
+  ticketNumber: number;
+  limit?: number | null;
+  offset?: number | null;
 }
 
 export interface ListTimeEntriesVariables {
@@ -1315,6 +1341,18 @@ export const listTimeEntriesByTicketRef: ListTimeEntriesByTicketRef;
 
 export function listTimeEntriesByTicket(vars: ListTimeEntriesByTicketVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
 export function listTimeEntriesByTicket(dc: DataConnect, vars: ListTimeEntriesByTicketVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesByTicketData, ListTimeEntriesByTicketVariables>;
+
+interface ListTimeEntriesForTicketRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ListTimeEntriesForTicketVariables): QueryRef<ListTimeEntriesForTicketData, ListTimeEntriesForTicketVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: ListTimeEntriesForTicketVariables): QueryRef<ListTimeEntriesForTicketData, ListTimeEntriesForTicketVariables>;
+  operationName: string;
+}
+export const listTimeEntriesForTicketRef: ListTimeEntriesForTicketRef;
+
+export function listTimeEntriesForTicket(vars: ListTimeEntriesForTicketVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesForTicketData, ListTimeEntriesForTicketVariables>;
+export function listTimeEntriesForTicket(dc: DataConnect, vars: ListTimeEntriesForTicketVariables, options?: ExecuteQueryOptions): QueryPromise<ListTimeEntriesForTicketData, ListTimeEntriesForTicketVariables>;
 
 interface ListMyTimeEntriesRef {
   /* Allow users to create refs without passing in DataConnect */

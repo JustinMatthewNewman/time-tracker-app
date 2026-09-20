@@ -15,6 +15,13 @@ interface TicketTotalsProps {
   /** Day keys, newest first (the page's existing sort order). */
   days: DayKey[];
   loading?: boolean;
+  /**
+   * True when the buckets hold more than the viewer's own entries, in which
+   * case the headline total is the whole team's and needs a "yours" figure
+   * beside it — otherwise it silently changes meaning for anyone holding the
+   * TicketAllUsers grant.
+   */
+  allUsers?: boolean;
 }
 
 const DAY_OPTION_FORMAT: Intl.DateTimeFormatOptions = {
@@ -72,7 +79,7 @@ function ValueRow({ minutes, copyLabel }: { minutes: number; copyLabel: string }
   );
 }
 
-export function TicketTotals({ entriesByDay, days, loading }: TicketTotalsProps) {
+export function TicketTotals({ entriesByDay, days, loading, allUsers = false }: TicketTotalsProps) {
   const today = todayDayKey();
 
   const minutesByDay = useMemo(() => {
@@ -90,6 +97,17 @@ export function TicketTotals({ entriesByDay, days, loading }: TicketTotalsProps)
     () => [...minutesByDay.values()].reduce((sum, minutes) => sum + minutes, 0),
     [minutesByDay]
   );
+
+  const myMinutes = useMemo(() => {
+    if (!allUsers) return 0;
+    let total = 0;
+    for (const dayEntries of entriesByDay.values()) {
+      for (const entry of dayEntries) {
+        if (entry.isMine) total += minutesBetween(entry.startTime, entry.endTime);
+      }
+    }
+    return total;
+  }, [entriesByDay, allUsers]);
 
   // Today is always offered, even with nothing logged against this ticket
   // today — this picker absorbed the old standalone "Today" readout, so today
@@ -127,8 +145,17 @@ export function TicketTotals({ entriesByDay, days, loading }: TicketTotalsProps)
         {/* h-9 matches the Select trigger's own min-height beside it, so the
             plain label and the trigger share a baseline — otherwise the two
             value rows underneath sit at different heights. */}
-        <span className={`flex h-9 items-center ${FIELD_LABEL}`}>Total time on ticket</span>
+        <span className={`flex h-9 items-center ${FIELD_LABEL}`}>
+          {allUsers ? "Total time, everyone" : "Total time on ticket"}
+        </span>
         <ValueRow minutes={totalMinutes} copyLabel="Copy total hours on ticket" />
+        {/* The copyable number stays the one people paste into a timesheet;
+            this is a plain readout so the two can't be confused. */}
+        {allUsers && (
+          <span className="text-sm tabular-nums text-foreground/50">
+            yours: {formatDuration(myMinutes)}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-col items-end gap-1">

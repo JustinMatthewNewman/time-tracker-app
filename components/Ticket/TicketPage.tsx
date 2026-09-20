@@ -43,7 +43,7 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
     externalTicketLinkTemplate
   );
 
-  const { entries, loading: entriesLoading, refetch: refetchEntries } = useTimeEntriesByTicket(
+  const { entries, loading: entriesLoading, refetch: refetchEntries, allUsers } = useTimeEntriesByTicket(
     isValidTicketNumber ? ticketNumber : null
   );
 
@@ -335,7 +335,7 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
                   )}
                 </div>
 
-                <TicketTotals entriesByDay={entriesByDay} days={days} loading={entriesLoading} />
+                <TicketTotals entriesByDay={entriesByDay} days={days} loading={entriesLoading} allUsers={allUsers} />
               </div>
             </Card>
 
@@ -351,7 +351,11 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
                   </div>
                 ) : entries.length === 0 ? (
                   <EmptyState className="p-8">
-                    <p className="text-sm text-foreground/60">No time entries reference this ticket yet.</p>
+                    <p className="text-sm text-foreground/60">
+                      {allUsers
+                        ? "Nobody has logged time against this ticket yet."
+                        : "No time entries reference this ticket yet."}
+                    </p>
                   </EmptyState>
                 ) : (
                   <Accordion
@@ -381,6 +385,7 @@ export function TicketPage({ ticketNumberParam }: TicketPageProps) {
                               {isExpanded && (
                                 <TicketDayEntriesTable
                                   entries={dayEntries}
+                                  allUsers={allUsers}
                                   ticketNumber={ticket.ticketNumber}
                                   onEntryUpdated={refetchEntries}
                                   onViewWorkLog={goToEntryWorkLog}

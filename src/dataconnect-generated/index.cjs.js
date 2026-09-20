@@ -582,6 +582,21 @@ exports.listTimeEntriesByTicket = function listTimeEntriesByTicket(dcOrVars, var
 }
 ;
 
+const listTimeEntriesForTicketRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListTimeEntriesForTicket', inputVars);
+}
+listTimeEntriesForTicketRef.operationName = 'ListTimeEntriesForTicket';
+exports.listTimeEntriesForTicketRef = listTimeEntriesForTicketRef;
+
+exports.listTimeEntriesForTicket = function listTimeEntriesForTicket(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(listTimeEntriesForTicketRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+}
+;
+
 const listMyTimeEntriesRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();

@@ -348,6 +348,7 @@ export interface GetTimeEntryData {
       id: UUIDString;
       username: string;
       email?: string | null;
+      googleUid: string;
     } & User_Key;
     startTime: TimestampString;
     endTime: TimestampString;
@@ -578,6 +579,31 @@ export interface ListTimeEntriesData {
     officeNumber?: string | null;
     createdAt: TimestampString;
   } & TimeEntry_Key)[];
+}
+
+export interface ListTimeEntriesForTicketData {
+  timeEntries: ({
+    id: UUIDString;
+    user: {
+      id: UUIDString;
+      username: string;
+    } & User_Key;
+    startTime: TimestampString;
+    endTime: TimestampString;
+    date: DateString;
+    description?: string | null;
+    workLog?: {
+      id: UUIDString;
+      name: string;
+    } & WorkLog_Key;
+    createdAt: TimestampString;
+  } & TimeEntry_Key)[];
+}
+
+export interface ListTimeEntriesForTicketVariables {
+  ticketNumber: number;
+  limit?: number | null;
+  offset?: number | null;
 }
 
 export interface ListTimeEntriesVariables {
@@ -1032,6 +1058,11 @@ export function listTimeEntriesByWorkLog(vars: ListTimeEntriesByWorkLogVariables
 export function listTimeEntriesByTicket(dc: DataConnect, vars: ListTimeEntriesByTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByTicketData>>;
 /** Generated Node Admin SDK operation action function for the 'ListTimeEntriesByTicket' Query. Allow users to pass in custom DataConnect instances. */
 export function listTimeEntriesByTicket(vars: ListTimeEntriesByTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesByTicketData>>;
+
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesForTicket' Query. Allow users to execute without passing in DataConnect. */
+export function listTimeEntriesForTicket(dc: DataConnect, vars: ListTimeEntriesForTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesForTicketData>>;
+/** Generated Node Admin SDK operation action function for the 'ListTimeEntriesForTicket' Query. Allow users to pass in custom DataConnect instances. */
+export function listTimeEntriesForTicket(vars: ListTimeEntriesForTicketVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListTimeEntriesForTicketData>>;
 
 /** Generated Node Admin SDK operation action function for the 'ListMyTimeEntries' Query. Allow users to execute without passing in DataConnect. */
 export function listMyTimeEntries(dc: DataConnect, vars?: ListMyTimeEntriesVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<ListMyTimeEntriesData>>;

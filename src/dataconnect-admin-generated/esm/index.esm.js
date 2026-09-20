@@ -246,6 +246,12 @@ export function listTimeEntriesByTicket(dcOrVarsOrOptions, varsOrOptions, option
   return dcInstance.executeQuery('ListTimeEntriesByTicket', inputVars, inputOpts);
 }
 
+export function listTimeEntriesForTicket(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListTimeEntriesForTicket', inputVars, inputOpts);
+}
+
 export function listMyTimeEntries(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, false);
   dcInstance.useGen(true);

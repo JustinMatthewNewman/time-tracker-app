@@ -235,6 +235,10 @@ mutation SeedFeatures @transaction {
     name: "Dashboard"
     description: "Access to the dashboard tab and its reports."
   })
+  ticketAllUsers: feature_upsert(data: {
+    name: "TicketAllUsers"
+    description: "See every user's time entries on a ticket, not just your own."
+  })
 
   # Only Admin holds AdminPage. Granting it to another tier is an INSERT here,
   # not a code change — that's the whole point of the xref.
@@ -256,6 +260,13 @@ mutation SeedFeatures @transaction {
   # here is a privacy decision, not a convenience one.
   adminDashboardForElevated: userTypeFeature_upsert(data: { userTypeName: "Elevated", featureName: "AdminDashboard" })
   adminDashboardForPremium: userTypeFeature_upsert(data: { userTypeName: "Premium", featureName: "AdminDashboard" })
+
+  # Same "Elevated and above" list as AdminDashboard, and for the same reason:
+  # this one shows other people's time entries and the notes they wrote on a
+  # ticket. Mirrors FEATURE_DEFINITIONS.TicketAllUsers in lib/features.ts.
+  ticketAllUsersForAdmin: userTypeFeature_upsert(data: { userTypeName: "Admin", featureName: "TicketAllUsers" })
+  ticketAllUsersForElevated: userTypeFeature_upsert(data: { userTypeName: "Elevated", featureName: "TicketAllUsers" })
+  ticketAllUsersForPremium: userTypeFeature_upsert(data: { userTypeName: "Premium", featureName: "TicketAllUsers" })
 
   # Dashboard goes to every tier. Bringing an already-shipped page under
   # feature control has to start from "everyone keeps what they had" —

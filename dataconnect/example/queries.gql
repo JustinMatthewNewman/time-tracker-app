@@ -136,10 +136,17 @@ query ListTimeEntries($userId: UUID!) @auth(level: NO_ACCESS) {
 query GetTimeEntry($entryId: UUID!) @auth(level: USER) {
   timeEntry(id: $entryId) {
     id
-    user {
+    # Bound to the owner rather than to any authenticated caller: this takes a
+    # bare entry id, and the ticket page now shows entries belonging to other
+    # people, so their ids reach the browser.
+    user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to view this time entry") {
       id
       username
       email
+      # Selected because @check can only reference fields in the selection set.
+      # It is the caller's own row by the time the check passes, so this
+      # discloses nothing they don't already have.
+      googleUid
     }
     startTime
     endTime
@@ -245,6 +252,55 @@ query ListTimeEntriesByTicket($ticketNumber: Int!) @auth(level: USER) {
 # $limit/$offset default so existing no-arg call sites stay source-compatible;
 # see lib/dataconnectPagination.ts for why callers page through this instead
 # of trusting a single large `limit`.
+# Every user's time on one ticket, for the ticket page's all-users view.
+#
+# NO_ACCESS and unreachable from a browser: this is cross-user visibility, so
+# the only way in is GET /api/tickets/[ticket_number]/entries, which gates on
+# the TicketAllUsers feature via requireFeature(). Same rule as
+# AdminListTimeEntriesForUsers — a client-callable query taking a user id is
+# what the earlier IDOR fix removed.
+#
+# The route deliberately does NOT pass each entry's user id through to the
+# client: the username is what gets displayed, and CreateTimeEntry still trusts
+# a client-supplied $userId, so handing out other people's ids would widen that.
+query ListTimeEntriesForTicket(
+  $ticketNumber: Int!
+  $limit: Int = 500
+  $offset: Int = 0
+) @auth(level: NO_ACCESS) {
+  timeEntries(
+    limit: $limit
+    offset: $offset
+    where: {
+      _and: [
+        { ticket: { ticketNumber: { eq: $ticketNumber } } }
+        # Skip soft-deleted work logs' entries — see ListTimeEntries.
+        { _or: [
+            { workLog: { isDeleted: { eq: false } } }
+            { workLog: { isDeleted: { isNull: true } } }
+            { workLogId: { isNull: true } }
+          ] }
+      ]
+    }
+    orderBy: [{ startTime: DESC }, { id: ASC }]
+  ) {
+    id
+    user {
+      id
+      username
+    }
+    startTime
+    endTime
+    date
+    description
+    workLog {
+      id
+      name
+    }
+    createdAt
+  }
+}
+
 query ListMyTimeEntries($limit: Int = 500, $offset: Int = 0) @auth(level: USER) {
   timeEntries(
     limit: $limit
