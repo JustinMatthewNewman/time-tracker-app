@@ -118,6 +118,13 @@ type User @table {
   # always counted in week totals, this only decides whether they get their
   # own columns.
   dashboardShowWeekends: Boolean @default(expr: "false")
+  # Which layout the dashboard Overview's weekday breakdown uses: false (the
+  # default) ranks each day's tickets by time spent; true lays the day out as
+  # consecutive 15-minute slots showing what each one was booked to.
+  #
+  # Same kind of per-account display preference as dashboardShowWeekends — it
+  # changes how the same entries are drawn, never which ones are counted.
+  dashboardTimelineView: Boolean @default(expr: "false")
   createdAt: Timestamp!
 }
 

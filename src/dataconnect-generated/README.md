@@ -50,6 +50,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*SelectMyCardStyle*](#selectmycardstyle)
   - [*SelectMySquareCorners*](#selectmysquarecorners)
   - [*SelectMyDashboardShowWeekends*](#selectmydashboardshowweekends)
+  - [*SelectMyDashboardTimelineView*](#selectmydashboardtimelineview)
   - [*SelectMyBordersEnabled*](#selectmybordersenabled)
   - [*SelectMyTicketColorsEnabled*](#selectmyticketcolorsenabled)
   - [*UpdateWorkLog*](#updateworklog)
@@ -269,6 +270,7 @@ export interface GetMyUserData {
     ticketColorsEnabled?: boolean | null;
     squareCorners?: boolean | null;
     dashboardShowWeekends?: boolean | null;
+    dashboardTimelineView?: boolean | null;
   } & User_Key;
 }
 ```
@@ -4624,6 +4626,115 @@ const ref = selectMyDashboardShowWeekendsRef({ dashboardShowWeekends: ..., });
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = selectMyDashboardShowWeekendsRef(dataConnect, selectMyDashboardShowWeekendsVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMyDashboardTimelineView
+You can execute the `SelectMyDashboardTimelineView` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyDashboardTimelineView(vars: SelectMyDashboardTimelineViewVariables): MutationPromise<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
+
+interface SelectMyDashboardTimelineViewRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyDashboardTimelineViewVariables): MutationRef<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
+}
+export const selectMyDashboardTimelineViewRef: SelectMyDashboardTimelineViewRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyDashboardTimelineView(dc: DataConnect, vars: SelectMyDashboardTimelineViewVariables): MutationPromise<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
+
+interface SelectMyDashboardTimelineViewRef {
+  ...
+  (dc: DataConnect, vars: SelectMyDashboardTimelineViewVariables): MutationRef<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
+}
+export const selectMyDashboardTimelineViewRef: SelectMyDashboardTimelineViewRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyDashboardTimelineViewRef:
+```typescript
+const name = selectMyDashboardTimelineViewRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyDashboardTimelineView` mutation requires an argument of type `SelectMyDashboardTimelineViewVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyDashboardTimelineViewVariables {
+  dashboardTimelineView: boolean;
+}
+```
+### Return Type
+Recall that executing the `SelectMyDashboardTimelineView` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyDashboardTimelineViewData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyDashboardTimelineViewData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyDashboardTimelineView`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyDashboardTimelineView, SelectMyDashboardTimelineViewVariables } from '@dataconnect/generated';
+
+// The `SelectMyDashboardTimelineView` mutation requires an argument of type `SelectMyDashboardTimelineViewVariables`:
+const selectMyDashboardTimelineViewVars: SelectMyDashboardTimelineViewVariables = {
+  dashboardTimelineView: ..., 
+};
+
+// Call the `selectMyDashboardTimelineView()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyDashboardTimelineView(selectMyDashboardTimelineViewVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyDashboardTimelineView({ dashboardTimelineView: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyDashboardTimelineView(dataConnect, selectMyDashboardTimelineViewVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyDashboardTimelineView(selectMyDashboardTimelineViewVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyDashboardTimelineView`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyDashboardTimelineViewRef, SelectMyDashboardTimelineViewVariables } from '@dataconnect/generated';
+
+// The `SelectMyDashboardTimelineView` mutation requires an argument of type `SelectMyDashboardTimelineViewVariables`:
+const selectMyDashboardTimelineViewVars: SelectMyDashboardTimelineViewVariables = {
+  dashboardTimelineView: ..., 
+};
+
+// Call the `selectMyDashboardTimelineViewRef()` function to get a reference to the mutation.
+const ref = selectMyDashboardTimelineViewRef(selectMyDashboardTimelineViewVars);
+// Variables can be defined inline as well.
+const ref = selectMyDashboardTimelineViewRef({ dashboardTimelineView: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyDashboardTimelineViewRef(dataConnect, selectMyDashboardTimelineViewVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.

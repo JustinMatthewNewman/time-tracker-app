@@ -2,12 +2,18 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useSelectMyDashboardShowWeekends } from "@/src/dataconnect-generated/react";
+import {
+  useSelectMyDashboardShowWeekends,
+  useSelectMyDashboardTimelineView,
+} from "@/src/dataconnect-generated/react";
 import { useUserSettings } from "./UserSettingsContext";
 
 type DashboardPrefsContextType = {
   showWeekends: boolean;
   setShowWeekends: (value: boolean) => void;
+  /** False = ranked tickets per day; true = 15-minute slot timeline. */
+  timelineView: boolean;
+  setTimelineView: (value: boolean) => void;
 };
 
 const DashboardPrefsContext = createContext<DashboardPrefsContextType | null>(null);
@@ -22,15 +28,27 @@ const DashboardPrefsContext = createContext<DashboardPrefsContextType | null>(nu
 // back to 5, which reads as a glitch.
 export function DashboardPrefsProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const { dashboardShowWeekends: dbShowWeekends, refetch } = useUserSettings();
+  const {
+    dashboardShowWeekends: dbShowWeekends,
+    dashboardTimelineView: dbTimelineView,
+    refetch,
+  } = useUserSettings();
   const [showWeekends, setShowWeekendsState] = useState(false);
+  const [timelineView, setTimelineViewState] = useState(false);
   const selectMutation = useSelectMyDashboardShowWeekends();
+  const timelineMutation = useSelectMyDashboardTimelineView();
 
   useEffect(() => {
     if (dbShowWeekends == null) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setShowWeekendsState(dbShowWeekends);
   }, [dbShowWeekends]);
+
+  useEffect(() => {
+    if (dbTimelineView == null) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTimelineViewState(dbTimelineView);
+  }, [dbTimelineView]);
 
   const setShowWeekends = useCallback(
     (value: boolean) => {
@@ -44,8 +62,18 @@ export function DashboardPrefsProvider({ children }: { children: React.ReactNode
     [user?.uid, selectMutation, refetch]
   );
 
+  const setTimelineView = useCallback(
+    (value: boolean) => {
+      setTimelineViewState(value);
+      if (user?.uid) {
+        timelineMutation.mutate({ dashboardTimelineView: value }, { onSuccess: () => refetch() });
+      }
+    },
+    [user?.uid, timelineMutation, refetch]
+  );
+
   return (
-    <DashboardPrefsContext.Provider value={{ showWeekends, setShowWeekends }}>
+    <DashboardPrefsContext.Provider value={{ showWeekends, setShowWeekends, timelineView, setTimelineView }}>
       {children}
     </DashboardPrefsContext.Provider>
   );

@@ -2959,6 +2959,14 @@ input User_Data {
   """
   dashboardShowWeekends_expr: Boolean_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `User`.`dashboardTimelineView` of type `Boolean`
+  """
+  dashboardTimelineView: Boolean
+  """
+  ✨ `_expr` server value variant of `dashboardTimelineView` (✨ Generated from Field `User`.`dashboardTimelineView` of type `Boolean`)
+  """
+  dashboardTimelineView_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `User`.`email` of type `String`
   """
   email: String
@@ -3092,6 +3100,10 @@ input User_Filter {
   """
   dashboardShowWeekends: Boolean_Filter
   """
+  ✨ Generated from Field `User`.`dashboardTimelineView` of type `Boolean`
+  """
+  dashboardTimelineView: Boolean_Filter
+  """
   ✨ Generated from Field `User`.`email` of type `String`
   """
   email: String_Filter
@@ -3205,6 +3217,10 @@ input User_Having {
   ✨ Generated from Field `User`.`dashboardShowWeekends_count` of type `Int!`
   """
   dashboardShowWeekends_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`dashboardTimelineView_count` of type `Int!`
+  """
+  dashboardTimelineView_count: Int_Filter
   """
   ✨ Generated from Field `User`.`email_count` of type `Int!`
   """
@@ -3373,6 +3389,10 @@ input User_Order {
   """
   dashboardShowWeekends: OrderDirection
   """
+  ✨ Generated from Field `User`.`dashboardTimelineView` of type `Boolean`
+  """
+  dashboardTimelineView: OrderDirection
+  """
   ✨ Generated from Field `User`.`email` of type `String`
   """
   email: OrderDirection
@@ -3432,6 +3452,10 @@ input User_Order {
   ✨ Generated from Field `User`.`dashboardShowWeekends_count` of type `Int!`
   """
   dashboardShowWeekends_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`dashboardTimelineView_count` of type `Int!`
+  """
+  dashboardTimelineView_count: OrderDirection
   """
   ✨ Generated from Field `User`.`email_count` of type `Int!`
   """

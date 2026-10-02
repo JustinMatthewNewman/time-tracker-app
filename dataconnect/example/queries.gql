@@ -43,6 +43,7 @@ query GetMyUser @auth(level: USER) {
     ticketColorsEnabled
     squareCorners
     dashboardShowWeekends
+    dashboardTimelineView
   }
 }
 

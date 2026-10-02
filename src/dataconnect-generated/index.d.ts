@@ -342,6 +342,7 @@ export interface GetMyUserData {
     ticketColorsEnabled?: boolean | null;
     squareCorners?: boolean | null;
     dashboardShowWeekends?: boolean | null;
+    dashboardTimelineView?: boolean | null;
   } & User_Key;
 }
 
@@ -670,6 +671,14 @@ export interface SelectMyDashboardShowWeekendsData {
 
 export interface SelectMyDashboardShowWeekendsVariables {
   dashboardShowWeekends: boolean;
+}
+
+export interface SelectMyDashboardTimelineViewData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyDashboardTimelineViewVariables {
+  dashboardTimelineView: boolean;
 }
 
 export interface SelectMyExternalTicketLinkTemplateData {
@@ -1048,6 +1057,18 @@ export const selectMyDashboardShowWeekendsRef: SelectMyDashboardShowWeekendsRef;
 
 export function selectMyDashboardShowWeekends(vars: SelectMyDashboardShowWeekendsVariables): MutationPromise<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
 export function selectMyDashboardShowWeekends(dc: DataConnect, vars: SelectMyDashboardShowWeekendsVariables): MutationPromise<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
+
+interface SelectMyDashboardTimelineViewRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyDashboardTimelineViewVariables): MutationRef<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SelectMyDashboardTimelineViewVariables): MutationRef<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
+  operationName: string;
+}
+export const selectMyDashboardTimelineViewRef: SelectMyDashboardTimelineViewRef;
+
+export function selectMyDashboardTimelineView(vars: SelectMyDashboardTimelineViewVariables): MutationPromise<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
+export function selectMyDashboardTimelineView(dc: DataConnect, vars: SelectMyDashboardTimelineViewVariables): MutationPromise<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
 
 interface SelectMyBordersEnabledRef {
   /* Allow users to create refs without passing in DataConnect */

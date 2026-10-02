@@ -249,6 +249,15 @@ mutation SelectMyDashboardShowWeekends($dashboardShowWeekends: Boolean!) @auth(l
   )
 }
 
+# Switches the weekday breakdown between the ranked-ticket and 15-minute
+# timeline layouts. Mirrors SelectMyDashboardShowWeekends.
+mutation SelectMyDashboardTimelineView($dashboardTimelineView: Boolean!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { dashboardTimelineView: $dashboardTimelineView }
+  )
+}
+
 mutation SelectMyBordersEnabled($bordersEnabled: Boolean!) @auth(level: USER) {
   user_update(
     first: { where: { googleUid: { eq_expr: "auth.uid" } } }
