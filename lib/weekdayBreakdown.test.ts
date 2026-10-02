@@ -6,6 +6,9 @@ import {
   groupTicketsByOffice,
   NO_OFFICE_LABEL,
   totalMinutesOf,
+  buildWeekSlotGrid,
+  formatSlotTime,
+  SLOT_MINUTES,
   type BreakdownEntry,
 } from "./weekdayBreakdown";
 import { UNASSIGNED_TICKET } from "./timeTotals";
@@ -236,5 +239,104 @@ describe("groupTicketsByOffice", () => {
 
   it("returns nothing for no entries", () => {
     expect(groupTicketsByOffice([], offices)).toEqual([]);
+  });
+});
+
+describe("buildWeekSlotGrid", () => {
+  const dayKeys = buildWeekDayKeys(new Date(2026, 8, 21), false);
+  const titles = new Map([[1234, "Fix the thing"]]);
+
+  it("builds a shared axis from first start to last end, in 15-minute steps", () => {
+    const entries = [
+      entry("2026-09-21", 9, 60, 1234), // 09:00-10:00
+      entry("2026-09-22", 8, 30, 5678), // 08:00-08:30
+    ];
+    const { slotStarts } = buildWeekSlotGrid(entries, dayKeys, titles);
+    // 08:00 (480) through 10:00 (600), exclusive of the end.
+    expect(slotStarts[0]).toBe(8 * 60);
+    expect(slotStarts.at(-1)).toBe(9 * 60 + 45);
+    expect(slotStarts).toHaveLength(8);
+    expect(slotStarts.every((m, i) => i === 0 || m - slotStarts[i - 1] === SLOT_MINUTES)).toBe(true);
+  });
+
+  it("gives every day the same number of slots so rows line up", () => {
+    const entries = [entry("2026-09-21", 9, 60, 1234), entry("2026-09-22", 8, 30, 5678)];
+    const { slotStarts, byDay } = buildWeekSlotGrid(entries, dayKeys, titles);
+    expect([...byDay.keys()]).toEqual(dayKeys);
+    for (const key of dayKeys) {
+      expect(byDay.get(key)).toHaveLength(slotStarts.length);
+    }
+  });
+
+  it("spreads a multi-slot entry across every slot it covers", () => {
+    const { byDay } = buildWeekSlotGrid([entry("2026-09-21", 9, 45, 1234)], dayKeys, titles);
+    const monday = byDay.get("2026-09-21")!;
+    expect(monday.map((s) => s.ticket)).toEqual(["1234", "1234", "1234"]);
+    expect(monday.map((s) => s.startMinute)).toEqual([540, 555, 570]);
+    expect(monday[0].title).toBe("Fix the thing");
+  });
+
+  it("leaves unbooked slots null rather than dropping the row", () => {
+    const entries = [
+      entry("2026-09-21", 9, 15, 1234), // 09:00-09:15
+      entry("2026-09-21", 10, 15, 5678), // 10:00-10:15 — 09:15-10:00 is a gap
+    ];
+    const monday = buildWeekSlotGrid(entries, dayKeys, titles).byDay.get("2026-09-21")!;
+    expect(monday).toHaveLength(5);
+    expect(monday.map((s) => s.ticket)).toEqual(["1234", null, null, null, "5678"]);
+  });
+
+  it("marks untickted time rather than treating it as a gap", () => {
+    const monday = buildWeekSlotGrid([entry("2026-09-21", 9, 30)], dayKeys, titles).byDay.get("2026-09-21")!;
+    expect(monday.map((s) => s.ticket)).toEqual([UNASSIGNED_TICKET, UNASSIGNED_TICKET]);
+  });
+
+  it("gives a day with no entries all-null slots, not an empty array", () => {
+    const { slotStarts, byDay } = buildWeekSlotGrid([entry("2026-09-21", 9, 30, 1234)], dayKeys, titles);
+    const tuesday = byDay.get("2026-09-22")!;
+    expect(tuesday).toHaveLength(slotStarts.length);
+    expect(tuesday.every((s) => s.ticket === null)).toBe(true);
+  });
+
+  it("returns an empty axis when the week has nothing logged", () => {
+    const { slotStarts, byDay } = buildWeekSlotGrid([], dayKeys, titles);
+    expect(slotStarts).toEqual([]);
+    expect([...byDay.keys()]).toEqual(dayKeys);
+  });
+
+  it("ignores zero-length entries instead of stretching the axis to them", () => {
+    const entries = [entry("2026-09-21", 9, 30, 1234), entry("2026-09-21", 6, 0, 5678)];
+    const { slotStarts } = buildWeekSlotGrid(entries, dayKeys, titles);
+    expect(slotStarts[0]).toBe(9 * 60);
+    expect(slotStarts).toHaveLength(2);
+  });
+
+  it("ignores entries outside the requested days", () => {
+    const { slotStarts } = buildWeekSlotGrid([entry("2026-09-26", 9, 60, 1234)], dayKeys, titles);
+    expect(slotStarts).toEqual([]);
+  });
+
+  it("snaps a ragged start down and a ragged end up to the grid", () => {
+    // 09:07 -> 09:00, and 09:07+20m = 09:27 -> 09:30.
+    const e = entry("2026-09-21", 9, 20, 1234);
+    const start = new Date(2026, 8, 21, 9, 7, 0);
+    e.startTime = start.toISOString();
+    e.endTime = new Date(start.getTime() + 20 * 60000).toISOString();
+    const { slotStarts } = buildWeekSlotGrid([e], dayKeys, titles);
+    expect(slotStarts).toEqual([540, 555]);
+  });
+
+  it("gives an overlapped slot to the earlier entry rather than double-counting", () => {
+    const entries = [entry("2026-09-21", 9, 60, 1234), entry("2026-09-21", 9, 30, 5678)];
+    const monday = buildWeekSlotGrid(entries, dayKeys, titles).byDay.get("2026-09-21")!;
+    expect(monday.every((s) => s.ticket === "1234")).toBe(true);
+  });
+});
+
+describe("formatSlotTime", () => {
+  it("formats a minute-of-day as a clock time", () => {
+    // Locale-dependent, so assert the shape rather than an exact string.
+    expect(formatSlotTime(8 * 60)).toMatch(/\b8[:.]00/);
+    expect(formatSlotTime(13 * 60 + 45)).toMatch(/\b(1|13)[:.]45/);
   });
 });

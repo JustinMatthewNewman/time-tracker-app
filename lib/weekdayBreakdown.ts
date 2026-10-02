@@ -199,3 +199,129 @@ export function ticketAxisLabel(ticket: string, title: string | null): string {
   if (ticket === UNASSIGNED_TICKET) return ticket;
   return title ? `${ticket} · ${truncateTicketTitle(title)}` : ticket;
 }
+
+// --- 15-minute slot timeline ----------------------------------------------
+//
+// The second layout for the weekday breakdown: instead of ranking each day's
+// tickets, lay the day out as consecutive 15-minute slots and show what each
+// one was booked to.
+//
+// 15 minutes is the app's own granularity, not an arbitrary choice: the
+// CreateWorkLog mutation inserts a day as fixed 15-minute segments, and
+// scripts/seed-stress-test.mjs builds entries from 15/30/45/60-minute blocks
+// on 15-minute boundaries. So every entry lands cleanly on this grid.
+
+export const SLOT_MINUTES = 15;
+
+export interface TimelineSlot {
+  /** Minutes from local midnight at which the slot starts. */
+  startMinute: number;
+  /** Ticket number as a string, UNASSIGNED_TICKET, or null for an unbooked gap. */
+  ticket: string | null;
+  title: string | null;
+}
+
+export interface WeekSlotGrid {
+  /**
+   * Slot start times shared by every day column, so rows line up horizontally
+   * across the week. Empty when the week has no entries at all.
+   */
+  slotStarts: number[];
+  /** One array per day, index-aligned with `slotStarts`. */
+  byDay: Map<DayKey, TimelineSlot[]>;
+}
+
+/** Minutes from local midnight. Local, because that's how the day is displayed. */
+function localMinuteOfDay(iso: string): number {
+  const d = new Date(iso);
+  return d.getHours() * 60 + d.getMinutes();
+}
+
+const floorToSlot = (m: number) => Math.floor(m / SLOT_MINUTES) * SLOT_MINUTES;
+const ceilToSlot = (m: number) => Math.ceil(m / SLOT_MINUTES) * SLOT_MINUTES;
+
+/**
+ * A 15-minute grid across the given days, on one shared time axis.
+ *
+ * The axis spans the earliest start to the latest end *across the whole week*
+ * rather than per day, so a given row is the same clock time in every column
+ * and the days can be compared by eye. It starts at the first logged slot
+ * rather than at midnight — a grid from 00:00 would be ~32 empty rows before
+ * anyone's working day begins.
+ *
+ * A slot is attributed to the entry covering its start instant. Entries are
+ * 15-minute aligned in practice (see above), so this is exact; if two entries
+ * ever overlap, the earlier-starting one wins rather than the slot being
+ * double-counted.
+ */
+export function buildWeekSlotGrid<T extends BreakdownEntry>(
+  entries: T[],
+  dayKeys: DayKey[],
+  ticketTitleByNumber: Map<number, string>
+): WeekSlotGrid {
+  const wanted = new Set(dayKeys);
+  const byDayEntries = new Map<DayKey, T[]>();
+  for (const entry of entries) {
+    const key = normalizeDayKey(entry.date);
+    if (!wanted.has(key)) continue;
+    const bucket = byDayEntries.get(key);
+    if (bucket) bucket.push(entry);
+    else byDayEntries.set(key, [entry]);
+  }
+
+  let min = Number.POSITIVE_INFINITY;
+  let max = Number.NEGATIVE_INFINITY;
+  for (const list of byDayEntries.values()) {
+    for (const e of list) {
+      const start = localMinuteOfDay(e.startTime);
+      const end = localMinuteOfDay(e.endTime);
+      // A zero-length entry occupies no slot and must not stretch the axis.
+      if (end <= start) continue;
+      if (start < min) min = start;
+      if (end > max) max = end;
+    }
+  }
+
+  if (!Number.isFinite(min) || !Number.isFinite(max)) {
+    return { slotStarts: [], byDay: new Map(dayKeys.map((k) => [k, []])) };
+  }
+
+  const gridStart = floorToSlot(min);
+  const gridEnd = ceilToSlot(max);
+  const slotStarts: number[] = [];
+  for (let m = gridStart; m < gridEnd; m += SLOT_MINUTES) slotStarts.push(m);
+
+  const byDay = new Map<DayKey, TimelineSlot[]>();
+  for (const dayKey of dayKeys) {
+    const list = (byDayEntries.get(dayKey) ?? [])
+      .map((e) => ({
+        start: localMinuteOfDay(e.startTime),
+        end: localMinuteOfDay(e.endTime),
+        ticket: e.ticket ? String(e.ticket.ticketNumber) : UNASSIGNED_TICKET,
+        title: e.ticket ? ticketTitleByNumber.get(e.ticket.ticketNumber) ?? null : null,
+      }))
+      .filter((e) => e.end > e.start)
+      .sort((a, b) => a.start - b.start);
+
+    byDay.set(
+      dayKey,
+      slotStarts.map((startMinute) => {
+        const hit = list.find((e) => e.start <= startMinute && startMinute < e.end);
+        return {
+          startMinute,
+          ticket: hit ? hit.ticket : null,
+          title: hit ? hit.title : null,
+        };
+      })
+    );
+  }
+
+  return { slotStarts, byDay };
+}
+
+/** "8:00 AM" — matches the format used by the work log and ticket tables. */
+export function formatSlotTime(minuteOfDay: number): string {
+  const d = new Date();
+  d.setHours(Math.floor(minuteOfDay / 60), minuteOfDay % 60, 0, 0);
+  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}

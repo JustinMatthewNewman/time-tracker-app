@@ -339,6 +339,7 @@ export interface GetMyUserData {
     ticketColorsEnabled?: boolean | null;
     squareCorners?: boolean | null;
     dashboardShowWeekends?: boolean | null;
+    dashboardTimelineView?: boolean | null;
   } & User_Key;
 }
 
@@ -669,6 +670,14 @@ export interface SelectMyDashboardShowWeekendsVariables {
   dashboardShowWeekends: boolean;
 }
 
+export interface SelectMyDashboardTimelineViewData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyDashboardTimelineViewVariables {
+  dashboardTimelineView: boolean;
+}
+
 export interface SelectMyExternalTicketLinkTemplateData {
   user_update?: User_Key | null;
 }
@@ -926,6 +935,11 @@ export function selectMySquareCorners(vars: SelectMySquareCornersVariables, opti
 export function selectMyDashboardShowWeekends(dc: DataConnect, vars: SelectMyDashboardShowWeekendsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyDashboardShowWeekendsData>>;
 /** Generated Node Admin SDK operation action function for the 'SelectMyDashboardShowWeekends' Mutation. Allow users to pass in custom DataConnect instances. */
 export function selectMyDashboardShowWeekends(vars: SelectMyDashboardShowWeekendsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyDashboardShowWeekendsData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SelectMyDashboardTimelineView' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyDashboardTimelineView(dc: DataConnect, vars: SelectMyDashboardTimelineViewVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyDashboardTimelineViewData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyDashboardTimelineView' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyDashboardTimelineView(vars: SelectMyDashboardTimelineViewVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyDashboardTimelineViewData>>;
 
 /** Generated Node Admin SDK operation action function for the 'SelectMyBordersEnabled' Mutation. Allow users to execute without passing in DataConnect. */
 export function selectMyBordersEnabled(dc: DataConnect, vars: SelectMyBordersEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBordersEnabledData>>;

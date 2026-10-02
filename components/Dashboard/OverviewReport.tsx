@@ -45,7 +45,7 @@ function defaultWeekStart(): Date {
 export function OverviewReport() {
   const [weekStart, setWeekStart] = useState(defaultWeekStart);
   const [trendWindow, setTrendWindow] = useState<TrendWindow>("12w");
-  const { showWeekends, setShowWeekends } = useDashboardPrefs();
+  const { showWeekends, setShowWeekends, timelineView, setTimelineView } = useDashboardPrefs();
 
   // Week-scoped fetch: the selected week plus the one before it. The prior
   // week isn't displayed on its own — it's what the stat tiles compare
@@ -102,13 +102,22 @@ export function OverviewReport() {
       {/* One filter row above the charts, holding every control that scopes
           the week-level widgets. */}
       <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+        {/* Control and Content are SIBLINGS: `.switch` is the row
+            (inline-flex items-center gap-3) while `.switch__content` is a
+            COLUMN meant for a label over a description. Nesting Control
+            inside Content stacks the track above the label. */}
         <Switch
           isSelected={showWeekends}
           onChange={setShowWeekends}
           size="sm"
           aria-label="Show weekends in the weekday breakdown"
         >
-          <span className="text-sm text-foreground/70">Show weekends</span>
+          <Switch.Control>
+            <Switch.Thumb />
+          </Switch.Control>
+          <Switch.Content>
+            <span className="text-sm text-foreground/70">Show weekends</span>
+          </Switch.Content>
         </Switch>
         <WeekSelector weekStart={weekStart} onChange={setWeekStart} />
       </div>
@@ -120,6 +129,8 @@ export function OverviewReport() {
         loading={weekLoading}
         weekStart={weekStart}
         showWeekends={showWeekends}
+        timelineView={timelineView}
+        onTimelineViewChange={setTimelineView}
       />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

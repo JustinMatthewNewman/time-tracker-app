@@ -1293,6 +1293,15 @@ extend type User {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "User.dashboardShowWeekends", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `User` table where the `dashboardTimelineView` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  dashboardTimelineView_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "User.dashboardTimelineView", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `User` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   email_count(

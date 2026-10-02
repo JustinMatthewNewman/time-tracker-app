@@ -251,6 +251,20 @@ exports.selectMyDashboardShowWeekends = function selectMyDashboardShowWeekends(d
 }
 ;
 
+const selectMyDashboardTimelineViewRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SelectMyDashboardTimelineView', inputVars);
+}
+selectMyDashboardTimelineViewRef.operationName = 'SelectMyDashboardTimelineView';
+exports.selectMyDashboardTimelineViewRef = selectMyDashboardTimelineViewRef;
+
+exports.selectMyDashboardTimelineView = function selectMyDashboardTimelineView(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(selectMyDashboardTimelineViewRef(dcInstance, inputVars));
+}
+;
+
 const selectMyBordersEnabledRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

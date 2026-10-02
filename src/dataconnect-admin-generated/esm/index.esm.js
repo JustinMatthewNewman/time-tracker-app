@@ -108,6 +108,12 @@ export function selectMyDashboardShowWeekends(dcOrVarsOrOptions, varsOrOptions, 
   return dcInstance.executeMutation('SelectMyDashboardShowWeekends', inputVars, inputOpts);
 }
 
+export function selectMyDashboardTimelineView(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SelectMyDashboardTimelineView', inputVars, inputOpts);
+}
+
 export function selectMyBordersEnabled(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
