@@ -8,7 +8,15 @@ export interface HoursBarDatum {
   // Optional — only ticket-labeled callers (TicketsReport) have a title to
   // offer; the work-log-labeled caller (WorkLogsReport) leaves it undefined.
   title?: string | null;
-  totalMinutes: number;
+  /**
+   * The magnitude this bar encodes. Minutes for the hours-by-X callers (the
+   * default `formatValue` is formatDuration), but deliberately NOT named
+   * `totalMinutes`: the tickets-by-office caller passes a ticket *count*, and
+   * a field called minutes holding "8 tickets" is a trap for the next reader.
+   */
+  value: number;
+  /** Optional second tooltip line, e.g. "12h 30m · 8 entries". */
+  detail?: string | null;
 }
 
 interface HoursBarChartProps {
@@ -18,13 +26,22 @@ interface HoursBarChartProps {
   // Ranking views (hours by ticket/work log) want largest-first; chronological
   // views (hours by month) need to keep the caller's own order instead.
   sortByValue?: boolean;
+  /** Defaults to duration formatting; counts pass their own. */
+  formatValue?: (value: number) => string;
   loading?: boolean;
 }
 
-export function HoursBarChart({ title, data, emptyMessage = "No data yet.", sortByValue = true, loading }: HoursBarChartProps) {
+export function HoursBarChart({
+  title,
+  data,
+  emptyMessage = "No data yet.",
+  sortByValue = true,
+  formatValue = formatDuration,
+  loading,
+}: HoursBarChartProps) {
   const { tooltip, showAt, hide } = useChartTooltip<HoursBarDatum>();
-  const ordered = sortByValue ? [...data].sort((a, b) => b.totalMinutes - a.totalMinutes) : data;
-  const max = Math.max(0, ...ordered.map((d) => d.totalMinutes));
+  const ordered = sortByValue ? [...data].sort((a, b) => b.value - a.value) : data;
+  const max = Math.max(0, ...ordered.map((d) => d.value));
 
   return (
     <Card className="p-4">
@@ -45,12 +62,12 @@ export function HoursBarChart({ title, data, emptyMessage = "No data yet.", sort
       ) : (
         <div className="relative flex flex-col gap-2">
           {ordered.map((d) => {
-            const widthPct = max > 0 ? (d.totalMinutes / max) * 100 : 0;
+            const widthPct = max > 0 ? (d.value / max) * 100 : 0;
             return (
               <div
                 key={d.label}
                 className="group flex items-center gap-3"
-                title={`${ticketLabelWithTitle(d.label, d.title)}: ${formatDuration(d.totalMinutes)}`}
+                title={`${ticketLabelWithTitle(d.label, d.title)}: ${formatValue(d.value)}`}
                 onPointerEnter={(e) => showAt(e, d)}
                 onPointerLeave={hide}
               >
@@ -64,7 +81,7 @@ export function HoursBarChart({ title, data, emptyMessage = "No data yet.", sort
                   />
                 </div>
                 <span className="w-16 shrink-0 text-right text-sm font-medium text-foreground tabular-nums">
-                  {formatDuration(d.totalMinutes)}
+                  {formatValue(d.value)}
                 </span>
               </div>
             );
@@ -76,7 +93,8 @@ export function HoursBarChart({ title, data, emptyMessage = "No data yet.", sort
                 {tooltip.data.label}
                 <TicketTitleSuffix title={tooltip.data.title} />
               </div>
-              <div className="text-foreground/60">{formatDuration(tooltip.data.totalMinutes)}</div>
+              <div className="text-foreground/60">{formatValue(tooltip.data.value)}</div>
+              {tooltip.data.detail && <div className="text-foreground/50">{tooltip.data.detail}</div>}
             </ChartTooltip>
           )}
         </div>

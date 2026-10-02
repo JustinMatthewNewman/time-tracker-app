@@ -5,12 +5,31 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* How much of a ticket's identity color goes into its chip on the dashboard
+     weekday breakdown (see lib/ticketColor.ts's ticketChipTint). Lives here
+     rather than as a constant because the two themes need genuinely different
+     numbers, and because "lighter" inverts between them:
+
+       - light mode mixes toward a near-white --surface, so LESS color is
+         lighter -> the leading segment takes the smaller share;
+       - dark mode mixes toward a near-black --surface (pinned to --background
+         below), so MORE color is lighter -> the leading segment takes the
+         larger share, and both need to be well above the light-mode values
+         or every chip collapses into the background. */
+  --ticket-chip-mix: 14%;
+  --ticket-chip-lead-mix: 5%;
 }
 
 /* Dark theme */
 .dark {
   --background: #0a0a0a;
   --foreground: #ededed;
+
+  /* See the note in :root. Much higher than light mode, and inverted between
+     body and leading segment, because --surface is near-black here. */
+  --ticket-chip-mix: 30%;
+  --ticket-chip-lead-mix: 46%;
 
   /* HeroUI's own dark variables.css sets --surface/--overlay to a
      lighter grey (oklch ~21%) than our --background above, so anything

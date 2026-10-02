@@ -240,6 +240,15 @@ mutation SelectMySquareCorners($squareCorners: Boolean!) @auth(level: USER) {
   )
 }
 
+# Toggles the weekend columns on the dashboard Overview's weekday breakdown.
+# Mirrors SelectMySquareCorners — an instant per-account display boolean.
+mutation SelectMyDashboardShowWeekends($dashboardShowWeekends: Boolean!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { dashboardShowWeekends: $dashboardShowWeekends }
+  )
+}
+
 mutation SelectMyBordersEnabled($bordersEnabled: Boolean!) @auth(level: USER) {
   user_update(
     first: { where: { googleUid: { eq_expr: "auth.uid" } } }

@@ -31,7 +31,7 @@ export function TicketsReport() {
         data={byTicket.map((t) => ({
           label: t.ticket,
           title: t.ticket !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(t.ticket)) : null,
-          totalMinutes: t.totalMinutes,
+          value: t.totalMinutes,
         }))}
         emptyMessage="No time entries yet."
         loading={loading}

@@ -1,22 +1,22 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Card, Skeleton, Tabs } from "@heroui/react";
 import { scaleLinear, scalePoint } from "d3-scale";
 import { line as d3line, area as d3area, curveMonotoneX } from "d3-shape";
-import { useTimeEntriesByDateRange } from "@/hooks/useTimeEntriesByDateRange";
 import { minutesBetween, formatDuration } from "@/lib/timeTotals";
 import { startOfWeek, weekKey, weekLabel } from "@/lib/weekBuckets";
+import { normalizeDayKey, parseDayKey } from "@/lib/dayKeys";
 import { ChartTooltip, useChartTooltip } from "./ChartTooltip";
+import type { BreakdownEntry } from "@/lib/weekdayBreakdown";
 
-type Window = "12w" | "6m" | "1y";
+export type TrendWindow = "12w" | "6m" | "1y";
 
-const WINDOW_WEEKS: Record<Window, number> = { "12w": 12, "6m": 26, "1y": 52 };
-const WINDOW_LABEL: Record<Window, string> = { "12w": "12 weeks", "6m": "6 months", "1y": "1 year" };
+/** The widest window — what the shell's long-horizon fetch must cover. */
+export const MAX_TREND_WEEKS = 52;
 
-function isoLocalMidnight(d: Date) {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString();
-}
+const WINDOW_WEEKS: Record<TrendWindow, number> = { "12w": 12, "6m": 26, "1y": MAX_TREND_WEEKS };
+const WINDOW_LABEL: Record<TrendWindow, string> = { "12w": "12 weeks", "6m": "6 months", "1y": "1 year" };
 
 interface WeekPoint {
   key: string;
@@ -28,39 +28,50 @@ const WIDTH = 640;
 const HEIGHT = 220;
 const MARGIN = { top: 16, right: 16, bottom: 28, left: 16 };
 
-export function WeeklyTrendChart() {
-  const [window, setWindow] = useState<Window>("12w");
+interface WeeklyTrendChartProps {
+  /**
+   * The shared long-horizon entry set, covering MAX_TREND_WEEKS. Narrowing to
+   * the selected window happens here, in the week walk below, so switching
+   * window is now instant instead of issuing another fetch.
+   */
+  entries: BreakdownEntry[];
+  loading?: boolean;
+  window: TrendWindow;
+  onWindowChange: (window: TrendWindow) => void;
+}
+
+export function WeeklyTrendChart({ entries, loading, window, onWindowChange }: WeeklyTrendChartProps) {
   const { tooltip, showAt, hide } = useChartTooltip<WeekPoint>();
-
-  const { startDate, endDate } = useMemo(() => {
-    const today = new Date();
-    const weeks = WINDOW_WEEKS[window];
-    const start = startOfWeek(new Date(today.getFullYear(), today.getMonth(), today.getDate() - weeks * 7));
-    return { startDate: isoLocalMidnight(start), endDate: isoLocalMidnight(today) };
-  }, [window]);
-
-  const { entries, loading } = useTimeEntriesByDateRange(startDate, endDate);
 
   const points = useMemo<WeekPoint[]>(() => {
     const totals = new Map<string, number>();
     for (const entry of entries) {
-      const key = weekKey(new Date(entry.startTime));
+      // Week derived from `date` via dayKeys rather than from `startTime`, so
+      // an entry near a week boundary can't land in a different week here
+      // than it does in the stat tiles or the breakdown row.
+      const key = weekKey(parseDayKey(normalizeDayKey(entry.date)));
       totals.set(key, (totals.get(key) ?? 0) + minutesBetween(entry.startTime, entry.endTime));
     }
 
     // Walk every week in the window (not just weeks with data) so gaps show
     // as a dip to zero rather than silently skipping — a line chart that
-    // skips missing categories misrepresents the trend.
+    // skips missing categories misrepresents the trend. The walk is also what
+    // clips the shared 52-week entry set down to the selected window: weeks
+    // before `cursor` are simply never emitted.
+    const today = new Date();
+    const cursor = startOfWeek(
+      new Date(today.getFullYear(), today.getMonth(), today.getDate() - WINDOW_WEEKS[window] * 7)
+    );
+    const end = startOfWeek(today);
+
     const weeks: WeekPoint[] = [];
-    const cursor = startOfWeek(new Date(startDate));
-    const end = startOfWeek(new Date(endDate));
     while (cursor <= end) {
       const key = weekKey(cursor);
       weeks.push({ key, start: new Date(cursor), totalMinutes: totals.get(key) ?? 0 });
       cursor.setDate(cursor.getDate() + 7);
     }
     return weeks;
-  }, [entries, startDate, endDate]);
+  }, [entries, window]);
 
   const innerWidth = WIDTH - MARGIN.left - MARGIN.right;
   const innerHeight = HEIGHT - MARGIN.top - MARGIN.bottom;
@@ -103,12 +114,12 @@ export function WeeklyTrendChart() {
         <h2 className="text-lg font-semibold">Weekly hours</h2>
         <Tabs
           selectedKey={window}
-          onSelectionChange={(key) => setWindow(String(key) as Window)}
+          onSelectionChange={(key) => onWindowChange(String(key) as TrendWindow)}
           aria-label="Trend window"
         >
           <Tabs.ListContainer>
             <Tabs.List className="text-xs">
-              {(Object.keys(WINDOW_WEEKS) as Window[]).map((w) => (
+              {(Object.keys(WINDOW_WEEKS) as TrendWindow[]).map((w) => (
                 <Tabs.Tab key={w} id={w} className="px-2.5 py-1 text-xs">
                   {WINDOW_LABEL[w]}
                   <Tabs.Indicator />
@@ -116,7 +127,7 @@ export function WeeklyTrendChart() {
               ))}
             </Tabs.List>
           </Tabs.ListContainer>
-          {(Object.keys(WINDOW_WEEKS) as Window[]).map((w) => (
+          {(Object.keys(WINDOW_WEEKS) as TrendWindow[]).map((w) => (
             <Tabs.Panel key={w} id={w} className="hidden">
               {null}
             </Tabs.Panel>

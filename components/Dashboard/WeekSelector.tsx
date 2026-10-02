@@ -2,7 +2,7 @@
 
 import { Button } from "@heroui/react";
 import { ChevronLeft, ChevronRight } from "@gravity-ui/icons";
-import { startOfWeek, weekKey, weekLabel } from "@/lib/weekBuckets";
+import { startOfWeek, weekKey, weekLabel, getRelativeWeekLabel } from "@/lib/weekBuckets";
 
 interface WeekSelectorProps {
   weekStart: Date;
@@ -31,8 +31,12 @@ export function WeekSelector({ weekStart, onChange }: WeekSelectorProps) {
         <ChevronLeft className="size-4" aria-hidden />
       </Button>
 
-      <span className="min-w-[11rem] text-center text-sm font-medium tabular-nums">
-        {weekLabel(weekStart)}
+      {/* The date range alone can't tell you *which* week you're on at a
+          glance, and the Overview opens on last week rather than this one —
+          so the relative label sits under it to make that unambiguous. */}
+      <span className="flex min-w-[11rem] flex-col items-center leading-tight">
+        <span className="text-sm font-medium tabular-nums">{weekLabel(weekStart)}</span>
+        <span className="text-[11px] text-foreground/50">{getRelativeWeekLabel(weekStart)}</span>
       </span>
 
       <Button

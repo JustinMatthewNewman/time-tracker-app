@@ -15,6 +15,7 @@ type UserSettingsState = {
   bordersEnabled: boolean | null;
   ticketColorsEnabled: boolean | null;
   squareCorners: boolean | null;
+  dashboardShowWeekends: boolean | null;
 };
 
 type UserSettingsContextType = UserSettingsState & {
@@ -32,6 +33,7 @@ const EMPTY_STATE: UserSettingsState = {
   bordersEnabled: null,
   ticketColorsEnabled: null,
   squareCorners: null,
+  dashboardShowWeekends: null,
 };
 
 const UserSettingsContext = createContext<UserSettingsContextType | null>(null);
@@ -68,6 +70,7 @@ export function UserSettingsProvider({ children }: { children: React.ReactNode }
         bordersEnabled: dbUser?.bordersEnabled ?? true,
         ticketColorsEnabled: dbUser?.ticketColorsEnabled ?? true,
         squareCorners: dbUser?.squareCorners ?? false,
+        dashboardShowWeekends: dbUser?.dashboardShowWeekends ?? false,
       });
     } finally {
       setLoading(false);

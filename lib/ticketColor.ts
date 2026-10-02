@@ -179,3 +179,24 @@ export function ticketRowTintStrong(color: TicketColor): string {
 export function ticketRowAccent(color: TicketColor): string {
   return color;
 }
+
+/**
+ * The two tones of a ticket chip on the dashboard weekday breakdown: the body
+ * wash, and the lighter leading segment that sits under the dot and number.
+ *
+ * The mix strengths come from CSS custom properties (`--ticket-chip-mix` /
+ * `--ticket-chip-lead-mix`, defined in app/globals.css) rather than from
+ * numbers here, because the two themes need different values *and* the
+ * relationship between them inverts. Light mode mixes toward a near-white
+ * surface, so a lighter leading segment means less color; dark mode mixes
+ * toward near-black, so a lighter leading segment means more. Branching on
+ * the theme in JS instead would mean reading it during render, which flashes
+ * the wrong tone on hydration.
+ */
+export function ticketChipTint(color: TicketColor): string {
+  return `color-mix(in oklch, ${color} var(--ticket-chip-mix), var(--surface))`;
+}
+
+export function ticketChipLeadTint(color: TicketColor): string {
+  return `color-mix(in oklch, ${color} var(--ticket-chip-lead-mix), var(--surface))`;
+}
