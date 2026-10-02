@@ -2,18 +2,18 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { Card, Skeleton } from "@heroui/react";
+import { Card, Chip, Skeleton } from "@heroui/react";
 import { useTickets } from "@/context/TicketsContext";
 import { useTicketColors } from "@/hooks/useTicketColors";
 import { buildTicketTitleMap, formatDuration, truncateTicketTitle, UNASSIGNED_TICKET } from "@/lib/timeTotals";
 import { formatDayKey, todayDayKey } from "@/lib/dayKeys";
-import { buildDayBreakdowns, buildWeekDayKeys, type DayBreakdown } from "@/lib/weekdayBreakdown";
-
-// How many ticket rows a day column lists before folding the rest into a
-// "+N more" line. Five is what the Calendar day dialog settled on for the
-// same job — enough to see where the day actually went without the column
-// becoming a scrolling list.
-const TICKETS_PER_DAY = 5;
+import { ticketChipLeadTint, ticketChipTint } from "@/lib/ticketColor";
+import {
+  buildDayBreakdowns,
+  buildWeekDayKeys,
+  type DayBreakdown,
+  type DayTicketTotal,
+} from "@/lib/weekdayBreakdown";
 
 interface WeekdayBreakdownProps {
   /**
@@ -137,8 +137,6 @@ interface DayColumnProps {
 }
 
 function DayColumn({ day, isToday, busiestMinutes, colorFor }: DayColumnProps) {
-  const shown = day.tickets.slice(0, TICKETS_PER_DAY);
-  const overflow = day.tickets.length - shown.length;
   const barPct = busiestMinutes > 0 ? (day.totalMinutes / busiestMinutes) * 100 : 0;
 
   const weekday = formatDayKey(day.dayKey, { weekday: "short" });
@@ -147,7 +145,10 @@ function DayColumn({ day, isToday, busiestMinutes, colorFor }: DayColumnProps) {
   return (
     <div
       role="listitem"
-      className={`flex min-w-0 flex-col gap-2 rounded-lg p-2 transition-colors ${
+      // h-full so every column is as tall as the row — which the grid sizes
+      // to the day with the most tickets. Without it a short day's "today"
+      // highlight would stop part way down while its neighbours ran on.
+      className={`flex h-full min-w-0 flex-col gap-2 rounded-lg p-2 transition-colors ${
         isToday ? "bg-accent/8 ring-1 ring-accent/30" : ""
       }`}
     >
@@ -178,46 +179,83 @@ function DayColumn({ day, isToday, busiestMinutes, colorFor }: DayColumnProps) {
         <p className="text-[11px] text-foreground/40">No time logged</p>
       ) : (
         <ul className="flex flex-col gap-1">
-          {shown.map((t) => {
-            const color = colorFor(t.ticket);
-            const isUnassigned = t.ticket === UNASSIGNED_TICKET;
-            return (
-              <li key={t.ticket} className="flex min-w-0 items-center gap-1.5 text-[11px]">
-                <span
-                  className="size-1.5 shrink-0 rounded-full"
-                  style={{ backgroundColor: color ?? "var(--muted)" }}
-                  aria-hidden
-                />
-                <span className="min-w-0 flex-1 truncate">
-                  {isUnassigned ? (
-                    <span className="text-foreground/50">{UNASSIGNED_TICKET}</span>
-                  ) : (
-                    <Link
-                      href={`/ticket/${t.ticket}`}
-                      className="text-foreground/80 hover:text-foreground hover:underline"
-                      title={t.title ? `${t.ticket} - ${t.title}` : t.ticket}
-                    >
-                      {t.ticket}
-                      {t.title && (
-                        <span className="text-foreground/40"> {truncateTicketTitle(t.title)}</span>
-                      )}
-                    </Link>
-                  )}
-                </span>
-                <span className="shrink-0 text-foreground/50 tabular-nums">
-                  {Math.round(t.percentOfDay)}%
-                </span>
-              </li>
-            );
-          })}
-          {overflow > 0 && (
-            <li className="text-[11px] text-foreground/40">
-              +{overflow} more ticket{overflow === 1 ? "" : "s"}
+          {day.tickets.map((t) => (
+            <li key={t.ticket}>
+              <TicketChipRow ticket={t} color={colorFor(t.ticket)} />
             </li>
-          )}
+          ))}
         </ul>
       )}
     </div>
+  );
+}
+
+/**
+ * One ticket as a chip, tinted with that ticket's identity color.
+ *
+ * This is a real HeroUI `Chip`, not a lookalike: the chip's background is
+ * driven by a `--chip-bg` custom property (see chip.css), so overriding that
+ * one token inline gives an arbitrary per-ticket color while keeping HeroUI's
+ * own geometry, typography and theming. Rebuilding the look by hand would
+ * drift from Chip the moment HeroUI changes it.
+ *
+ * The 12% `ticketRowTint` is used rather than the 22% "strong" variant that
+ * the admin TicketChip uses: these stack 15-deep in a narrow column, where 22%
+ * reads as a wall of color. Hover goes to the stronger wash via a brightness
+ * filter, which works on any computed background without needing a second
+ * custom property.
+ */
+function TicketChipRow({ ticket: t, color }: { ticket: DayTicketTotal; color: string | null }) {
+  const isUnassigned = t.ticket === UNASSIGNED_TICKET;
+  // Now that every ticket is listed rather than the top five, a long day can
+  // hold shares that round to "0%" — which reads as a bug, not as "a sliver".
+  const pct = t.percentOfDay > 0 && t.percentOfDay < 0.5 ? "<1%" : `${Math.round(t.percentOfDay)}%`;
+  const label = t.title ? `${t.ticket} - ${t.title}` : t.ticket;
+
+  const chip = (
+    <Chip
+      variant="soft"
+      // overflow-hidden so the leading segment below is clipped to the chip's
+      // own pill radius instead of needing to re-declare it.
+      className="w-full gap-0 overflow-hidden transition hover:brightness-95 dark:hover:brightness-110"
+      // Only set when there's a color to set: left alone, the chip keeps
+      // HeroUI's own --default-soft, which is the right neutral for
+      // "(No ticket)" and for when Ticket Colors is switched off.
+      style={color ? ({ "--chip-bg": ticketChipTint(color) } as React.CSSProperties) : undefined}
+    >
+      {/* Leading segment: a lighter block behind the dot and ticket number,
+          meeting the body on a hard edge. It's a real element rather than a
+          gradient stop so the split lands exactly at the end of the number
+          whatever its width, instead of at some fixed percentage that would
+          cut through the title. The negative margins cancel .chip's own
+          px-2/py-0.5 so it bleeds to the chip's edges. */}
+      <span
+        className="-my-0.5 -ml-2 flex shrink-0 items-center gap-1.5 self-stretch px-2"
+        style={color ? { backgroundColor: ticketChipLeadTint(color) } : undefined}
+      >
+        {color && (
+          // Full-strength dot alongside the wash: a dark or desaturated color
+          // mixed down this far is nearly invisible on its own.
+          <span className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: color }} aria-hidden />
+        )}
+        <span className={isUnassigned ? "text-foreground/50" : undefined}>
+          {isUnassigned ? UNASSIGNED_TICKET : t.ticket}
+        </span>
+      </span>
+
+      <Chip.Label className="min-w-0 flex-1 truncate pl-1.5 text-left font-normal text-foreground/50">
+        {t.title ? truncateTicketTitle(t.title) : ""}
+      </Chip.Label>
+      <span className="shrink-0 pr-0.5 text-foreground/50 tabular-nums">{pct}</span>
+    </Chip>
+  );
+
+  if (isUnassigned) return chip;
+
+  return (
+    <Link href={`/ticket/${t.ticket}`} className="block" title={label} aria-label={`View ticket ${label}`}>
+      {chip}
+    </Link>
   );
 }
 
