@@ -80,7 +80,7 @@ export function WorkLogsReport() {
 
       <HoursBarChart
         title={`Hours by work log (all time, top ${TOP_N_ALL_TIME})`}
-        data={byWorkLog}
+        data={byWorkLog.map((w) => ({ label: w.label, value: w.totalMinutes }))}
         emptyMessage="No time entries yet."
         loading={loading}
       />

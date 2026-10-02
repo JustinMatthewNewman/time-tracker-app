@@ -108,6 +108,16 @@ type User @table {
   # globals.css). Defaults false so existing accounts keep the rounded look
   # they already have rather than being restyled by a migration.
   squareCorners: Boolean @default(expr: "false")
+  # Whether the dashboard Overview's weekday breakdown row extends through
+  # Saturday and Sunday. Defaults false — a Mon–Fri row is the common case,
+  # and weekend columns are mostly empty for most accounts, so they'd dilute
+  # the row rather than add to it.
+  #
+  # A per-account *display* preference like squareCorners/bordersEnabled, not
+  # a filter on the underlying data: weekend time entries always exist and are
+  # always counted in week totals, this only decides whether they get their
+  # own columns.
+  dashboardShowWeekends: Boolean @default(expr: "false")
   createdAt: Timestamp!
 }
 

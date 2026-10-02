@@ -341,6 +341,7 @@ export interface GetMyUserData {
     bordersEnabled?: boolean | null;
     ticketColorsEnabled?: boolean | null;
     squareCorners?: boolean | null;
+    dashboardShowWeekends?: boolean | null;
   } & User_Key;
 }
 
@@ -661,6 +662,14 @@ export interface SelectMyColorSchemeData {
 
 export interface SelectMyColorSchemeVariables {
   colorSchemeId: UUIDString;
+}
+
+export interface SelectMyDashboardShowWeekendsData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyDashboardShowWeekendsVariables {
+  dashboardShowWeekends: boolean;
 }
 
 export interface SelectMyExternalTicketLinkTemplateData {
@@ -1027,6 +1036,18 @@ export const selectMySquareCornersRef: SelectMySquareCornersRef;
 
 export function selectMySquareCorners(vars: SelectMySquareCornersVariables): MutationPromise<SelectMySquareCornersData, SelectMySquareCornersVariables>;
 export function selectMySquareCorners(dc: DataConnect, vars: SelectMySquareCornersVariables): MutationPromise<SelectMySquareCornersData, SelectMySquareCornersVariables>;
+
+interface SelectMyDashboardShowWeekendsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyDashboardShowWeekendsVariables): MutationRef<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SelectMyDashboardShowWeekendsVariables): MutationRef<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
+  operationName: string;
+}
+export const selectMyDashboardShowWeekendsRef: SelectMyDashboardShowWeekendsRef;
+
+export function selectMyDashboardShowWeekends(vars: SelectMyDashboardShowWeekendsVariables): MutationPromise<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
+export function selectMyDashboardShowWeekends(dc: DataConnect, vars: SelectMyDashboardShowWeekendsVariables): MutationPromise<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
 
 interface SelectMyBordersEnabledRef {
   /* Allow users to create refs without passing in DataConnect */

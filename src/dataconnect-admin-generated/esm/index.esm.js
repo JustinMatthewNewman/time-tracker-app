@@ -102,6 +102,12 @@ export function selectMySquareCorners(dcOrVarsOrOptions, varsOrOptions, options)
   return dcInstance.executeMutation('SelectMySquareCorners', inputVars, inputOpts);
 }
 
+export function selectMyDashboardShowWeekends(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SelectMyDashboardShowWeekends', inputVars, inputOpts);
+}
+
 export function selectMyBordersEnabled(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);

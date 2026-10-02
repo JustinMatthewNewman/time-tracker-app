@@ -42,6 +42,7 @@ query GetMyUser @auth(level: USER) {
     bordersEnabled
     ticketColorsEnabled
     squareCorners
+    dashboardShowWeekends
   }
 }
 

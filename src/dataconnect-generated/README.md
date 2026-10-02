@@ -49,6 +49,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*SelectMyExternalTicketLinkTemplate*](#selectmyexternalticketlinktemplate)
   - [*SelectMyCardStyle*](#selectmycardstyle)
   - [*SelectMySquareCorners*](#selectmysquarecorners)
+  - [*SelectMyDashboardShowWeekends*](#selectmydashboardshowweekends)
   - [*SelectMyBordersEnabled*](#selectmybordersenabled)
   - [*SelectMyTicketColorsEnabled*](#selectmyticketcolorsenabled)
   - [*UpdateWorkLog*](#updateworklog)
@@ -267,6 +268,7 @@ export interface GetMyUserData {
     bordersEnabled?: boolean | null;
     ticketColorsEnabled?: boolean | null;
     squareCorners?: boolean | null;
+    dashboardShowWeekends?: boolean | null;
   } & User_Key;
 }
 ```
@@ -4513,6 +4515,115 @@ const ref = selectMySquareCornersRef({ squareCorners: ..., });
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = selectMySquareCornersRef(dataConnect, selectMySquareCornersVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMyDashboardShowWeekends
+You can execute the `SelectMyDashboardShowWeekends` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyDashboardShowWeekends(vars: SelectMyDashboardShowWeekendsVariables): MutationPromise<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
+
+interface SelectMyDashboardShowWeekendsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyDashboardShowWeekendsVariables): MutationRef<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
+}
+export const selectMyDashboardShowWeekendsRef: SelectMyDashboardShowWeekendsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyDashboardShowWeekends(dc: DataConnect, vars: SelectMyDashboardShowWeekendsVariables): MutationPromise<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
+
+interface SelectMyDashboardShowWeekendsRef {
+  ...
+  (dc: DataConnect, vars: SelectMyDashboardShowWeekendsVariables): MutationRef<SelectMyDashboardShowWeekendsData, SelectMyDashboardShowWeekendsVariables>;
+}
+export const selectMyDashboardShowWeekendsRef: SelectMyDashboardShowWeekendsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyDashboardShowWeekendsRef:
+```typescript
+const name = selectMyDashboardShowWeekendsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyDashboardShowWeekends` mutation requires an argument of type `SelectMyDashboardShowWeekendsVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyDashboardShowWeekendsVariables {
+  dashboardShowWeekends: boolean;
+}
+```
+### Return Type
+Recall that executing the `SelectMyDashboardShowWeekends` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyDashboardShowWeekendsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyDashboardShowWeekendsData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyDashboardShowWeekends`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyDashboardShowWeekends, SelectMyDashboardShowWeekendsVariables } from '@dataconnect/generated';
+
+// The `SelectMyDashboardShowWeekends` mutation requires an argument of type `SelectMyDashboardShowWeekendsVariables`:
+const selectMyDashboardShowWeekendsVars: SelectMyDashboardShowWeekendsVariables = {
+  dashboardShowWeekends: ..., 
+};
+
+// Call the `selectMyDashboardShowWeekends()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyDashboardShowWeekends(selectMyDashboardShowWeekendsVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyDashboardShowWeekends({ dashboardShowWeekends: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyDashboardShowWeekends(dataConnect, selectMyDashboardShowWeekendsVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyDashboardShowWeekends(selectMyDashboardShowWeekendsVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyDashboardShowWeekends`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyDashboardShowWeekendsRef, SelectMyDashboardShowWeekendsVariables } from '@dataconnect/generated';
+
+// The `SelectMyDashboardShowWeekends` mutation requires an argument of type `SelectMyDashboardShowWeekendsVariables`:
+const selectMyDashboardShowWeekendsVars: SelectMyDashboardShowWeekendsVariables = {
+  dashboardShowWeekends: ..., 
+};
+
+// Call the `selectMyDashboardShowWeekendsRef()` function to get a reference to the mutation.
+const ref = selectMyDashboardShowWeekendsRef(selectMyDashboardShowWeekendsVars);
+// Variables can be defined inline as well.
+const ref = selectMyDashboardShowWeekendsRef({ dashboardShowWeekends: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyDashboardShowWeekendsRef(dataConnect, selectMyDashboardShowWeekendsVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.

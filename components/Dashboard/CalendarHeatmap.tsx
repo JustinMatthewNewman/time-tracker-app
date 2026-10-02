@@ -2,21 +2,18 @@
 
 import { useMemo } from "react";
 import { Card, Skeleton } from "@heroui/react";
-import { useTimeEntriesByDateRange } from "@/hooks/useTimeEntriesByDateRange";
 import { minutesBetween, formatDuration } from "@/lib/timeTotals";
 import { weekKey } from "@/lib/weekBuckets";
+import { normalizeDayKey, toDayKey } from "@/lib/dayKeys";
 import { sequentialStepColor, SEQUENTIAL_STEP_COUNT } from "./chartColor";
 import { ChartTooltip, useChartTooltip } from "./ChartTooltip";
+import type { BreakdownEntry } from "@/lib/weekdayBreakdown";
 
 const CELL = 11;
 const GAP = 3;
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 // Monday-indexed row labels (0=Mon..6=Sun), matching lib/weekBuckets' week start.
 const DAY_ROW_LABELS = ["Mon", "", "Wed", "", "Fri", "", ""];
-
-function isoLocalMidnight(d: Date) {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString();
-}
 
 interface DayCell {
   key: string; // yyyy-mm-dd
@@ -46,21 +43,30 @@ function buildBucketer(nonZeroValues: number[]): (minutes: number) => number {
   };
 }
 
-export function CalendarHeatmap() {
+interface CalendarHeatmapProps {
+  /**
+   * The shared long-horizon entry set. It reaches further back than this grid
+   * shows, which needs no filtering: the grid only ever looks up the day keys
+   * it renders, so out-of-range entries simply go unread.
+   */
+  entries: BreakdownEntry[];
+  loading?: boolean;
+}
+
+export function CalendarHeatmap({ entries, loading }: CalendarHeatmapProps) {
   const { tooltip, showAt, hide } = useChartTooltip<DayCell>();
 
-  const { startDate, endDate, year } = useMemo(() => {
+  const { gridStart, gridEnd, year } = useMemo(() => {
     const today = new Date();
-    const jan1 = new Date(today.getFullYear(), 0, 1);
-    return { startDate: isoLocalMidnight(jan1), endDate: isoLocalMidnight(today), year: today.getFullYear() };
+    const start = new Date(today.getFullYear(), 0, 1);
+    const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return { gridStart: start, gridEnd: end, year: today.getFullYear() };
   }, []);
-
-  const { entries, loading } = useTimeEntriesByDateRange(startDate, endDate);
 
   const dayTotals = useMemo(() => {
     const totals = new Map<string, number>();
     for (const entry of entries) {
-      const key = entry.date.slice(0, 10);
+      const key = normalizeDayKey(entry.date);
       totals.set(key, (totals.get(key) ?? 0) + minutesBetween(entry.startTime, entry.endTime));
     }
     return totals;
@@ -68,19 +74,22 @@ export function CalendarHeatmap() {
 
   const { cells, weekKeys } = useMemo(() => {
     const bucketOf = buildBucketer([...dayTotals.values()].filter((m) => m > 0));
-    const start = new Date(startDate);
-    const end = new Date(endDate);
     const days: DayCell[] = [];
-    const cursor = new Date(start);
-    while (cursor <= end) {
-      const key = cursor.toISOString().slice(0, 10);
+    const cursor = new Date(gridStart);
+    while (cursor <= gridEnd) {
+      // toDayKey, not cursor.toISOString().slice(0, 10) — `cursor` is a
+      // local-midnight Date, and toISOString() converts to UTC first, so for
+      // any timezone *ahead* of UTC the key landed on the previous day and
+      // every cell read the wrong day's minutes. Exactly the trap
+      // lib/dayKeys.ts exists to prevent.
+      const key = toDayKey(cursor);
       const totalMinutes = dayTotals.get(key) ?? 0;
       days.push({ key, date: new Date(cursor), totalMinutes, bucket: bucketOf(totalMinutes) });
       cursor.setDate(cursor.getDate() + 1);
     }
     const weeks = Array.from(new Set(days.map((d) => weekKey(d.date))));
     return { cells: days, weekKeys: weeks };
-  }, [dayTotals, startDate, endDate]);
+  }, [dayTotals, gridStart, gridEnd]);
 
   const weekIndex = useMemo(() => new Map(weekKeys.map((k, i) => [k, i])), [weekKeys]);
 

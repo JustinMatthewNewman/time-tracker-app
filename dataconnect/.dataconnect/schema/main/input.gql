@@ -2951,6 +2951,14 @@ input User_Data {
   """
   createdAt_update: [Timestamp_Update!] @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `User`.`dashboardShowWeekends` of type `Boolean`
+  """
+  dashboardShowWeekends: Boolean
+  """
+  ✨ `_expr` server value variant of `dashboardShowWeekends` (✨ Generated from Field `User`.`dashboardShowWeekends` of type `Boolean`)
+  """
+  dashboardShowWeekends_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `User`.`email` of type `String`
   """
   email: String
@@ -3080,6 +3088,10 @@ input User_Filter {
   """
   createdAt: Timestamp_Filter
   """
+  ✨ Generated from Field `User`.`dashboardShowWeekends` of type `Boolean`
+  """
+  dashboardShowWeekends: Boolean_Filter
+  """
   ✨ Generated from Field `User`.`email` of type `String`
   """
   email: String_Filter
@@ -3189,6 +3201,10 @@ input User_Having {
   ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
   """
   createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`dashboardShowWeekends_count` of type `Int!`
+  """
+  dashboardShowWeekends_count: Int_Filter
   """
   ✨ Generated from Field `User`.`email_count` of type `Int!`
   """
@@ -3353,6 +3369,10 @@ input User_Order {
   """
   createdAt: OrderDirection
   """
+  ✨ Generated from Field `User`.`dashboardShowWeekends` of type `Boolean`
+  """
+  dashboardShowWeekends: OrderDirection
+  """
   ✨ Generated from Field `User`.`email` of type `String`
   """
   email: OrderDirection
@@ -3408,6 +3428,10 @@ input User_Order {
   ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
   """
   createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`dashboardShowWeekends_count` of type `Int!`
+  """
+  dashboardShowWeekends_count: OrderDirection
   """
   ✨ Generated from Field `User`.`email_count` of type `Int!`
   """

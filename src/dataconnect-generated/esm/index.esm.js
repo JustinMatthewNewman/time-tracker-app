@@ -202,6 +202,18 @@ export function selectMySquareCorners(dcOrVars, vars) {
   return executeMutation(selectMySquareCornersRef(dcInstance, inputVars));
 }
 
+export const selectMyDashboardShowWeekendsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SelectMyDashboardShowWeekends', inputVars);
+}
+selectMyDashboardShowWeekendsRef.operationName = 'SelectMyDashboardShowWeekends';
+
+export function selectMyDashboardShowWeekends(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(selectMyDashboardShowWeekendsRef(dcInstance, inputVars));
+}
+
 export const selectMyBordersEnabledRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
