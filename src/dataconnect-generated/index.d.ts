@@ -343,11 +343,12 @@ export interface GetMyUserData {
     squareCorners?: boolean | null;
     dashboardShowWeekends?: boolean | null;
     dashboardTimelineView?: boolean | null;
+    showEntryCounts?: boolean | null;
   } & User_Key;
 }
 
 export interface GetTimeEntryData {
-  timeEntry?: {
+  timeEntries: ({
     id: UUIDString;
     user: {
       id: UUIDString;
@@ -367,7 +368,7 @@ export interface GetTimeEntryData {
     } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
-  } & TimeEntry_Key;
+  } & TimeEntry_Key)[];
 }
 
 export interface GetTimeEntryVariables {
@@ -695,6 +696,14 @@ export interface SelectMyPerformanceModeData {
 
 export interface SelectMyPerformanceModeVariables {
   performanceMode: boolean;
+}
+
+export interface SelectMyShowEntryCountsData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyShowEntryCountsVariables {
+  showEntryCounts: boolean;
 }
 
 export interface SelectMySquareCornersData {
@@ -1069,6 +1078,18 @@ export const selectMyDashboardTimelineViewRef: SelectMyDashboardTimelineViewRef;
 
 export function selectMyDashboardTimelineView(vars: SelectMyDashboardTimelineViewVariables): MutationPromise<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
 export function selectMyDashboardTimelineView(dc: DataConnect, vars: SelectMyDashboardTimelineViewVariables): MutationPromise<SelectMyDashboardTimelineViewData, SelectMyDashboardTimelineViewVariables>;
+
+interface SelectMyShowEntryCountsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyShowEntryCountsVariables): MutationRef<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: SelectMyShowEntryCountsVariables): MutationRef<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
+  operationName: string;
+}
+export const selectMyShowEntryCountsRef: SelectMyShowEntryCountsRef;
+
+export function selectMyShowEntryCounts(vars: SelectMyShowEntryCountsVariables): MutationPromise<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
+export function selectMyShowEntryCounts(dc: DataConnect, vars: SelectMyShowEntryCountsVariables): MutationPromise<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
 
 interface SelectMyBordersEnabledRef {
   /* Allow users to create refs without passing in DataConnect */

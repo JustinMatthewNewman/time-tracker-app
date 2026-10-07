@@ -31,7 +31,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
   const { bordersEnabled } = useBorders();
   const { selectedWorkLogId, focusEntryId, setFocusEntryId } = useSelectedWorkLog();
   const { entries, loading, error, refetch } = useTimeEntriesByWorkLog(selectedWorkLogId);
-  const { workLogs, loading: workLogsLoading, error: workLogsError, createWorkLog, renameWorkLog, deleteWorkLog } = useWorkLogs();
+  const { workLogs, loading: workLogsLoading, error: workLogsError, createWorkLog, duplicateWorkLog, renameWorkLog, deleteWorkLog } = useWorkLogs();
   const { entries: allEntries } = useMyTimeEntries();
   const selectedWorkLog = workLogs.find((log) => log.id === selectedWorkLogId) ?? null;
 
@@ -131,6 +131,7 @@ function WorkLogTimeEntryCardLayout({ showBreakdown = false, onToggleBreakdown }
             loading={workLogsLoading}
             error={workLogsError}
             createWorkLog={createWorkLog}
+            duplicateWorkLog={duplicateWorkLog}
             renameWorkLog={renameWorkLog}
             deleteWorkLog={deleteWorkLog}
             entries={allEntries}

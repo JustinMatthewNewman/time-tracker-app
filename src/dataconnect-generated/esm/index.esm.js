@@ -226,6 +226,18 @@ export function selectMyDashboardTimelineView(dcOrVars, vars) {
   return executeMutation(selectMyDashboardTimelineViewRef(dcInstance, inputVars));
 }
 
+export const selectMyShowEntryCountsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'SelectMyShowEntryCounts', inputVars);
+}
+selectMyShowEntryCountsRef.operationName = 'SelectMyShowEntryCounts';
+
+export function selectMyShowEntryCounts(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(selectMyShowEntryCountsRef(dcInstance, inputVars));
+}
+
 export const selectMyBordersEnabledRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

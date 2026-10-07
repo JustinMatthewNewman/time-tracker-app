@@ -30,6 +30,11 @@ mutation SetUserType($userId: UUID!, $userTypeName: String!) @auth(level: NO_ACC
   user_update(id: $userId, data: { userTypeName: $userTypeName })
 }
 
+# $userId is bound to the caller by the @check below, exactly as
+# CreateWorkLog/CreateWorkLogOnly already do. Without it, USER level alone only
+# proves *someone* is signed in — any account could insert time entries
+# attributed to any other user id, which would silently corrupt that person's
+# totals, their team's metrics and their calendar sync.
 mutation CreateTimeEntry(
   $userId: UUID!
   $workLogId: UUID
@@ -39,7 +44,14 @@ mutation CreateTimeEntry(
   $createdAt: Timestamp!
   $description: String
   $ticketNumber: Int
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+  query @redact {
+    user(key: { id: $userId })
+      @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to create time entries for this user") {
+      id
+      googleUid
+    }
+  }
   timeEntry_insert(data: {
     user: { id: $userId }
     workLogId: $workLogId
@@ -94,7 +106,18 @@ mutation UpdateTimeEntry(
   $entryId: UUID!
   $description: String
   $ticketNumber: Int!
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+  # Ownership check, same shape as UpdateWorkLog's. An entry id is the only
+  # argument here, so USER level alone would let any signed-in account rewrite
+  # any entry in the database given its UUID.
+  query @redact {
+    timeEntry(id: $entryId) {
+      id
+      user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to modify this time entry") {
+        googleUid
+      }
+    }
+  }
   timeEntry_update(
     id: $entryId
     data: {
@@ -110,7 +133,15 @@ mutation UpdateTimeEntry(
 mutation UpdateTimeEntryClearTicket(
   $entryId: UUID!
   $description: String
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+  query @redact {
+    timeEntry(id: $entryId) {
+      id
+      user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to modify this time entry") {
+        googleUid
+      }
+    }
+  }
   timeEntry_update(
     id: $entryId
     data: {
@@ -120,7 +151,15 @@ mutation UpdateTimeEntryClearTicket(
   )
 }
 
-mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) {
+mutation DeleteTimeEntry($entryId: UUID!) @auth(level: USER) @transaction {
+  query @redact {
+    timeEntry(id: $entryId) {
+      id
+      user @check(expr: "this != null && this.googleUid == auth.uid", message: "Not authorized to delete this time entry") {
+        googleUid
+      }
+    }
+  }
   timeEntry_delete(id: $entryId)
 }
 
@@ -255,6 +294,15 @@ mutation SelectMyDashboardTimelineView($dashboardTimelineView: Boolean!) @auth(l
   user_update(
     first: { where: { googleUid: { eq_expr: "auth.uid" } } }
     data: { dashboardTimelineView: $dashboardTimelineView }
+  )
+}
+
+# Toggles the "Entries" count column in ticket breakdowns. Mirrors
+# SelectMyDashboardShowWeekends — an instant per-account display boolean.
+mutation SelectMyShowEntryCounts($showEntryCounts: Boolean!) @auth(level: USER) {
+  user_update(
+    first: { where: { googleUid: { eq_expr: "auth.uid" } } }
+    data: { showEntryCounts: $showEntryCounts }
   )
 }
 

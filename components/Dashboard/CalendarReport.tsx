@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Card, Skeleton } from "@heroui/react";
+import { Card, Skeleton, ToggleButton, ToggleButtonGroup, Tooltip } from "@heroui/react";
+import { Calendar as CalendarIcon } from "@gravity-ui/icons";
 import { useTimeEntriesByDateRange, type RangeTimeEntry } from "@/hooks/useTimeEntriesByDateRange";
 import { useWorkLogs } from "@/hooks/useWorkLogs";
 import { useSelectedWorkLog } from "@/context/SelectedWorkLogContext";
@@ -160,14 +161,34 @@ export function CalendarReport() {
 
       <div className="flex items-center justify-between gap-3">
         <MonthSelector monthStart={monthStart} onChange={setMonthStart} />
-        <Button
-          variant={hideWeekends ? "primary" : "outline"}
+        {/* Icon toggle, same control and same icon as the dashboard
+            Overview's weekend switch — the two do the same thing to two
+            different grids, so they should not look like different kinds of
+            control. Note the sense is inverted here (this state is
+            hideWeekends, the Overview's is showWeekends), so the selected key
+            is derived rather than passed straight through. */}
+        <ToggleButtonGroup
+          selectionMode="multiple"
+          selectedKeys={hideWeekends ? [] : ["weekends"]}
+          onSelectionChange={(keys) => {
+            if (keys.has("weekends") === hideWeekends) toggleHideWeekends();
+          }}
           size="sm"
-          aria-pressed={hideWeekends}
-          onClick={toggleHideWeekends}
+          aria-label="Calendar columns"
         >
-          {hideWeekends ? "Show weekends" : "Hide weekends"}
-        </Button>
+          <Tooltip>
+            <Tooltip.Trigger>
+              <ToggleButton
+                id="weekends"
+                isIconOnly
+                aria-label={hideWeekends ? "Show weekends" : "Hide weekends"}
+              >
+                <CalendarIcon className="size-4" aria-hidden />
+              </ToggleButton>
+            </Tooltip.Trigger>
+            <Tooltip.Content>{hideWeekends ? "Show weekends" : "Hide weekends"}</Tooltip.Content>
+          </Tooltip>
+        </ToggleButtonGroup>
       </div>
 
       <Card className="p-4">

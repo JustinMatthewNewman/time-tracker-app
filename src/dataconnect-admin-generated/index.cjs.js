@@ -133,6 +133,13 @@ function selectMyDashboardTimelineView(dcOrVarsOrOptions, varsOrOptions, options
 }
 exports.selectMyDashboardTimelineView = selectMyDashboardTimelineView;
 
+function selectMyShowEntryCounts(dcOrVarsOrOptions, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
+  dcInstance.useGen(true);
+  return dcInstance.executeMutation('SelectMyShowEntryCounts', inputVars, inputOpts);
+}
+exports.selectMyShowEntryCounts = selectMyShowEntryCounts;
+
 function selectMyBordersEnabled(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);

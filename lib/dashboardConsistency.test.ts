@@ -94,14 +94,24 @@ describe("day-key consistency: entry.date field vs. local calendar date of start
   // range filter uses) and using it everywhere instead of re-deriving from
   // `startTime` client-side.
   it("currently diverge when an entry's date field disagrees with its startTime's local calendar day", () => {
+    // Built from *local* components rather than from a fixed UTC instant.
+    //
+    // A hardcoded "2026-08-10T04:30:00.000Z" only lands on a different local
+    // day than the `date` field in some zones: in US Pacific (UTC-7 in August)
+    // it reads back as Aug 9 21:30, so the two keys agreed and this test —
+    // whose entire subject is them *dis*agreeing — failed for a reason that
+    // had nothing to do with the behaviour it pins. Anchoring to local noon on
+    // the following day makes the mismatch real in every timezone.
+    const localNoonAug10 = new Date(2026, 7, 10, 12, 0);
     const mismatched: EntryFixture = {
       date: "2026-08-09",
-      // Local calendar date of this instant depends on the runtime's
-      // timezone; the fixture only needs *some* offset that lands on a
-      // different local day than the `date` field claims.
-      startTime: "2026-08-10T04:30:00.000Z",
-      endTime: "2026-08-10T05:00:00.000Z",
+      startTime: localNoonAug10.toISOString(),
+      endTime: new Date(localNoonAug10.getTime() + 30 * 60_000).toISOString(),
     };
+
+    // Guard the fixture itself: if these ever coincide the assertions below
+    // would pass vacuously, which is how this went unnoticed in the first place.
+    expect(localDateKey(mismatched.startTime)).not.toBe(mismatched.date);
 
     const byDateField = sumByDateField([mismatched]);
     const byLocalStart = sumByLocalStartTime([mismatched]);

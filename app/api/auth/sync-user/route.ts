@@ -40,10 +40,20 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, message: "Auth sync completed" });
   } catch (err: any) {
+    // Logged in full server-side, but deliberately NOT echoed to the client.
+    // This handler also catches verifyIdToken failures, and the messages on
+    // that path describe the token and the project; the database errors it
+    // catches name tables, columns and constraints. Both are free
+    // reconnaissance for an unauthenticated caller — this route is reachable
+    // before any token is verified, since the token arrives in the body.
     console.error("SQL Connect Sync Error:", err);
+    // 401 rather than 500 when the token itself is the problem: an invalid or
+    // expired token is the caller's, and reporting it as a server fault sends
+    // the client retrying against something that will never succeed.
+    const isAuthError = typeof err?.code === "string" && err.code.startsWith("auth/");
     return NextResponse.json(
-      { error: "Internal Server Error", details: err.message }, 
-      { status: 500 }
+      { error: isAuthError ? "Invalid or expired ID token" : "Internal Server Error" },
+      { status: isAuthError ? 401 : 500 }
     );
   }
 }

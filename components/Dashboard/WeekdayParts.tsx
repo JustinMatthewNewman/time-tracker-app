@@ -120,7 +120,12 @@ export function TicketChipRow({ ticket: t, color }: { ticket: DayTicketTotal; co
         </span>
       }
     >
-      <Chip.Label className="min-w-0 flex-1 truncate pl-1.5 text-left font-normal text-foreground/50">
+      {/* A step smaller than the ticket number beside it, and truncating
+          rather than wrapping: the day columns are sized to one line per
+          ticket, so a title that wrapped would push every chip below it down
+          and make this column taller than its neighbours for no extra
+          information. */}
+      <Chip.Label className="min-w-0 flex-1 truncate pl-1.5 text-left text-[11px] font-normal text-foreground/50">
         {t.title ? truncateTicketTitle(t.title) : ""}
       </Chip.Label>
       <span className="shrink-0 pr-0.5 text-foreground/50 tabular-nums">{pct}</span>

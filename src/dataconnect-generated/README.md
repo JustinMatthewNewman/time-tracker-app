@@ -51,6 +51,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*SelectMySquareCorners*](#selectmysquarecorners)
   - [*SelectMyDashboardShowWeekends*](#selectmydashboardshowweekends)
   - [*SelectMyDashboardTimelineView*](#selectmydashboardtimelineview)
+  - [*SelectMyShowEntryCounts*](#selectmyshowentrycounts)
   - [*SelectMyBordersEnabled*](#selectmybordersenabled)
   - [*SelectMyTicketColorsEnabled*](#selectmyticketcolorsenabled)
   - [*UpdateWorkLog*](#updateworklog)
@@ -271,6 +272,7 @@ export interface GetMyUserData {
     squareCorners?: boolean | null;
     dashboardShowWeekends?: boolean | null;
     dashboardTimelineView?: boolean | null;
+    showEntryCounts?: boolean | null;
   } & User_Key;
 }
 ```
@@ -731,7 +733,7 @@ Recall that executing the `GetTimeEntry` query returns a `QueryPromise` that res
 The `data` property is an object of type `GetTimeEntryData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface GetTimeEntryData {
-  timeEntry?: {
+  timeEntries: ({
     id: UUIDString;
     user: {
       id: UUIDString;
@@ -751,7 +753,7 @@ export interface GetTimeEntryData {
     } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
-  } & TimeEntry_Key;
+  } & TimeEntry_Key)[];
 }
 ```
 ### Using `GetTimeEntry`'s action shortcut function
@@ -775,12 +777,12 @@ const { data } = await getTimeEntry({ entryId: ..., });
 const dataConnect = getDataConnect(connectorConfig);
 const { data } = await getTimeEntry(dataConnect, getTimeEntryVars);
 
-console.log(data.timeEntry);
+console.log(data.timeEntries);
 
 // Or, you can use the `Promise` API.
 getTimeEntry(getTimeEntryVars).then((response) => {
   const data = response.data;
-  console.log(data.timeEntry);
+  console.log(data.timeEntries);
 });
 ```
 
@@ -808,12 +810,12 @@ const ref = getTimeEntryRef(dataConnect, getTimeEntryVars);
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await executeQuery(ref);
 
-console.log(data.timeEntry);
+console.log(data.timeEntries);
 
 // Or, you can use the `Promise` API.
 executeQuery(ref).then((response) => {
   const data = response.data;
-  console.log(data.timeEntry);
+  console.log(data.timeEntries);
 });
 ```
 
@@ -4735,6 +4737,115 @@ const ref = selectMyDashboardTimelineViewRef({ dashboardTimelineView: ..., });
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = selectMyDashboardTimelineViewRef(dataConnect, selectMyDashboardTimelineViewVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+## SelectMyShowEntryCounts
+You can execute the `SelectMyShowEntryCounts` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+selectMyShowEntryCounts(vars: SelectMyShowEntryCountsVariables): MutationPromise<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
+
+interface SelectMyShowEntryCountsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: SelectMyShowEntryCountsVariables): MutationRef<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
+}
+export const selectMyShowEntryCountsRef: SelectMyShowEntryCountsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+selectMyShowEntryCounts(dc: DataConnect, vars: SelectMyShowEntryCountsVariables): MutationPromise<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
+
+interface SelectMyShowEntryCountsRef {
+  ...
+  (dc: DataConnect, vars: SelectMyShowEntryCountsVariables): MutationRef<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
+}
+export const selectMyShowEntryCountsRef: SelectMyShowEntryCountsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the selectMyShowEntryCountsRef:
+```typescript
+const name = selectMyShowEntryCountsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `SelectMyShowEntryCounts` mutation requires an argument of type `SelectMyShowEntryCountsVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface SelectMyShowEntryCountsVariables {
+  showEntryCounts: boolean;
+}
+```
+### Return Type
+Recall that executing the `SelectMyShowEntryCounts` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `SelectMyShowEntryCountsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface SelectMyShowEntryCountsData {
+  user_update?: User_Key | null;
+}
+```
+### Using `SelectMyShowEntryCounts`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, selectMyShowEntryCounts, SelectMyShowEntryCountsVariables } from '@dataconnect/generated';
+
+// The `SelectMyShowEntryCounts` mutation requires an argument of type `SelectMyShowEntryCountsVariables`:
+const selectMyShowEntryCountsVars: SelectMyShowEntryCountsVariables = {
+  showEntryCounts: ..., 
+};
+
+// Call the `selectMyShowEntryCounts()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await selectMyShowEntryCounts(selectMyShowEntryCountsVars);
+// Variables can be defined inline as well.
+const { data } = await selectMyShowEntryCounts({ showEntryCounts: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await selectMyShowEntryCounts(dataConnect, selectMyShowEntryCountsVars);
+
+console.log(data.user_update);
+
+// Or, you can use the `Promise` API.
+selectMyShowEntryCounts(selectMyShowEntryCountsVars).then((response) => {
+  const data = response.data;
+  console.log(data.user_update);
+});
+```
+
+### Using `SelectMyShowEntryCounts`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, selectMyShowEntryCountsRef, SelectMyShowEntryCountsVariables } from '@dataconnect/generated';
+
+// The `SelectMyShowEntryCounts` mutation requires an argument of type `SelectMyShowEntryCountsVariables`:
+const selectMyShowEntryCountsVars: SelectMyShowEntryCountsVariables = {
+  showEntryCounts: ..., 
+};
+
+// Call the `selectMyShowEntryCountsRef()` function to get a reference to the mutation.
+const ref = selectMyShowEntryCountsRef(selectMyShowEntryCountsVars);
+// Variables can be defined inline as well.
+const ref = selectMyShowEntryCountsRef({ showEntryCounts: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = selectMyShowEntryCountsRef(dataConnect, selectMyShowEntryCountsVars);
 
 // Call `executeMutation()` on the reference to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.

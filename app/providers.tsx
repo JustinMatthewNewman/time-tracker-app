@@ -15,6 +15,7 @@ import { BordersProvider } from "@/context/BordersContext";
 import { TicketColorsProvider } from "@/context/TicketColorsContext";
 import { SquareCornersProvider } from "@/context/SquareCornersContext";
 import { DashboardPrefsProvider } from "@/context/DashboardPrefsContext";
+import { EntryCountsProvider } from "@/context/EntryCountsContext";
 import { ThemeProvider } from "next-themes";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -39,6 +40,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                   <BordersProvider>
                     <SquareCornersProvider>
                     <DashboardPrefsProvider>
+                    <EntryCountsProvider>
                     <ThemeSelectionProvider>
                       <TicketsProvider>
                         <TicketColorsProvider>
@@ -53,6 +55,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                         </TicketColorsProvider>
                       </TicketsProvider>
                     </ThemeSelectionProvider>
+                    </EntryCountsProvider>
                     </DashboardPrefsProvider>
                     </SquareCornersProvider>
                   </BordersProvider>
