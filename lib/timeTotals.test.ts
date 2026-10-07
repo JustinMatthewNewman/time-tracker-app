@@ -5,7 +5,10 @@ import {
   groupByTicket,
   formatDuration,
   formatDecimalHours,
+  capTicketTotals,
+  isOtherTicketLabel,
   UNASSIGNED_TICKET,
+  type TicketTotal,
 } from "./timeTotals";
 
 describe("minutesBetween", () => {
@@ -149,5 +152,97 @@ describe("buildTicketColorMap", () => {
 
   it("returns an empty map for no tickets", () => {
     expect(buildTicketColorMap([]).size).toBe(0);
+  });
+});
+
+describe("capTicketTotals", () => {
+  const totals = (n: number, opts: { unassigned?: boolean } = {}) => {
+    const rows: TicketTotal[] = Array.from({ length: n }, (_, i) => ({
+      ticket: String(100 + i),
+      entryCount: 2,
+      // Descending, matching groupByTicket's own output order, which
+      // capTicketTotals assumes.
+      totalMinutes: (n - i) * 10,
+    }));
+    if (opts.unassigned) {
+      rows.push({ ticket: UNASSIGNED_TICKET, entryCount: 5, totalMinutes: 5 });
+    }
+    return rows;
+  };
+
+  it("returns the input untouched when it fits in the budget", () => {
+    const input = totals(3);
+    expect(capTicketTotals(input, 8)).toBe(input);
+  });
+
+  it("returns the input untouched when it exactly fills the budget", () => {
+    const input = totals(8);
+    expect(capTicketTotals(input, 8)).toBe(input);
+  });
+
+  it("keeps the largest rows and folds the rest into one Other bucket", () => {
+    const result = capTicketTotals(totals(10), 8);
+    expect(result).toHaveLength(9);
+    expect(result.slice(0, 8).map((t) => t.ticket)).toEqual([
+      "100", "101", "102", "103", "104", "105", "106", "107",
+    ]);
+    expect(result[8].ticket).toBe("Other (2 tickets)");
+  });
+
+  it("sums the overflow's minutes and entry counts into the bucket", () => {
+    const result = capTicketTotals(totals(10), 8);
+    const other = result[result.length - 1];
+    // The two smallest rows: 20 and 10 minutes, 2 entries each.
+    expect(other.totalMinutes).toBe(30);
+    expect(other.entryCount).toBe(4);
+  });
+
+  it("conserves the grand total — nothing is dropped or double counted", () => {
+    const input = totals(25, { unassigned: true });
+    const sum = (rows: TicketTotal[]) => rows.reduce((acc, t) => acc + t.totalMinutes, 0);
+    expect(sum(capTicketTotals(input, 8))).toBe(sum(input));
+  });
+
+  it("conserves the entry count as well as the minutes", () => {
+    const input = totals(25, { unassigned: true });
+    const sum = (rows: TicketTotal[]) => rows.reduce((acc, t) => acc + t.entryCount, 0);
+    expect(sum(capTicketTotals(input, 8))).toBe(sum(input));
+  });
+
+  it("never folds the unassigned bucket into Other, since it costs no hue", () => {
+    const result = capTicketTotals(totals(20, { unassigned: true }), 8);
+    expect(result.map((t) => t.ticket)).toContain(UNASSIGNED_TICKET);
+  });
+
+  it("does not count the unassigned bucket against the hue budget", () => {
+    // 8 real tickets plus the unassigned row is 9 rows but only 8 hues, so it
+    // must pass through uncapped.
+    const input = totals(8, { unassigned: true });
+    expect(capTicketTotals(input, 8)).toBe(input);
+  });
+
+  it("emits at most one Other bucket however large the overflow", () => {
+    const result = capTicketTotals(totals(200), 8);
+    expect(result.filter((t) => isOtherTicketLabel(t.ticket))).toHaveLength(1);
+    expect(result).toHaveLength(9);
+  });
+
+  it("handles an empty input", () => {
+    expect(capTicketTotals([], 8)).toEqual([]);
+  });
+});
+
+describe("isOtherTicketLabel", () => {
+  it("matches the bucket capTicketTotals actually produces", () => {
+    const other = capTicketTotals(
+      Array.from({ length: 10 }, (_, i) => ({ ticket: String(i), entryCount: 1, totalMinutes: 10 - i })),
+      8
+    ).at(-1)!;
+    expect(isOtherTicketLabel(other.ticket)).toBe(true);
+  });
+
+  it("does not match a plain ticket number or the unassigned label", () => {
+    expect(isOtherTicketLabel("19620")).toBe(false);
+    expect(isOtherTicketLabel(UNASSIGNED_TICKET)).toBe(false);
   });
 });

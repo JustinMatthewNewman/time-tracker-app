@@ -128,8 +128,11 @@ export function TicketDayEntriesTable({
               </td>
 
               <td className="border p-2">
+                {/* text-sm/leading-snug to match the work log table: more
+                    characters per line means fewer wrapped descriptions, so
+                    the rows stay the height of the time they describe. */}
                 <textarea
-                  className="w-full rounded border p-2"
+                  className="w-full resize-y rounded border p-2 text-sm leading-snug"
                   rows={2}
                   value={getDescription(entry)}
                   onChange={(e) => setDescriptionDraft(entry.id, e.target.value)}

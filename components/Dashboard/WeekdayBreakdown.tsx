@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { Card, Skeleton, Switch } from "@heroui/react";
+import { Card, Skeleton, ToggleButton, ToggleButtonGroup, Tooltip } from "@heroui/react";
+import { Clock } from "@gravity-ui/icons";
 import { useTickets } from "@/context/TicketsContext";
 import { useTicketColors } from "@/hooks/useTicketColors";
 import { buildTicketTitleMap, formatDuration } from "@/lib/timeTotals";
@@ -69,21 +70,34 @@ export function WeekdayBreakdown({
       <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <h2 className="text-lg font-semibold">Weekday breakdown</h2>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-          {/* Control and Content are siblings — see the note in
-              OverviewReport: .switch__content is a column. */}
-          <Switch
-            isSelected={timelineView}
-            onChange={onTimelineViewChange}
+          {/* Icon toggle, matching the weekend control in the filter row
+              above — see the note there on why these stopped being labelled
+              switches. The accessible name spells out both the layout it
+              switches to and what that layout is. */}
+          <ToggleButtonGroup
+            selectionMode="multiple"
+            selectedKeys={timelineView ? ["timeline"] : []}
+            onSelectionChange={(keys) => onTimelineViewChange(keys.has("timeline"))}
             size="sm"
-            aria-label="Show the day as 15-minute time slots"
+            aria-label="Weekday breakdown layout"
           >
-            <Switch.Control>
-              <Switch.Thumb />
-            </Switch.Control>
-            <Switch.Content>
-              <span className="text-sm text-foreground/70">Time slots</span>
-            </Switch.Content>
-          </Switch>
+            <Tooltip>
+              <Tooltip.Trigger>
+                <ToggleButton
+                  id="timeline"
+                  isIconOnly
+                  aria-label={
+                    timelineView
+                      ? "Show each day's tickets ranked by time"
+                      : "Show each day as 15-minute time slots"
+                  }
+                >
+                  <Clock className="size-4" aria-hidden />
+                </ToggleButton>
+              </Tooltip.Trigger>
+              <Tooltip.Content>{timelineView ? "Ranked tickets" : "Time slots"}</Tooltip.Content>
+            </Tooltip>
+          </ToggleButtonGroup>
           <span className="text-sm text-foreground/60 tabular-nums">
             {formatDuration(weekTotalMinutes)} across {showWeekends ? 7 : 5} days
           </span>

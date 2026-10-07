@@ -125,6 +125,16 @@ type User @table {
   # Same kind of per-account display preference as dashboardShowWeekends — it
   # changes how the same entries are drawn, never which ones are counted.
   dashboardTimelineView: Boolean @default(expr: "false")
+  # Whether ticket breakdowns show their "Entries" count column alongside the
+  # time totals. Defaults true so existing accounts keep the table they
+  # already have.
+  #
+  # A per-account *display* preference in the same family as
+  # dashboardShowWeekends: the counts are still computed and still read out in
+  # tooltips and the screen-reader table, this only decides whether the column
+  # and the paired bar take up room next to the durations — which is what most
+  # people are actually reading the breakdown for.
+  showEntryCounts: Boolean @default(expr: "true")
   createdAt: Timestamp!
 }
 

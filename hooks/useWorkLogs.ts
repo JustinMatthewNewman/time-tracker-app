@@ -24,6 +24,7 @@ import type {
   DeleteWorkLogVariables,
 } from "@/src/dataconnect-generated";
 import { fetchAllPages } from "@/lib/dataconnectPagination";
+import { shiftEntryToDate } from "@/lib/workLogDuplicate";
 
 export interface WorkLogData {
   id: string;
@@ -164,6 +165,82 @@ export function useWorkLogs() {
     [myUserQuery.data, createMutation, createWorkLogOnlyMutation, createTimeEntryMutation, ensureTicketsExist, refetch]
   );
 
+  /**
+   * Copies a work log and every time entry on it onto another date.
+   *
+   * The caller supplies the source entries rather than this hook re-fetching
+   * them: the only caller (the work logs sidebar) is already holding the full
+   * set from useMyTimeEntries for its per-week subtotals, so re-querying by
+   * work log id would be a second round trip for rows already in memory.
+   *
+   * Entries are moved by the whole-day delta between the two dates, not
+   * rebuilt from a time-of-day offset. That keeps each entry at the same wall
+   * clock time it had on the source day — including across a DST boundary,
+   * where adding a fixed number of milliseconds would shift every entry by an
+   * hour. The delta is computed from the two local midnights for the same
+   * reason.
+   */
+  const duplicateWorkLog = useCallback(
+    async (data: {
+      name: string;
+      /** Local-midnight ISO instant for the new work log's date. */
+      workLogDate: string;
+      /** Local-midnight ISO instant the source entries are offset from. */
+      sourceWorkLogDate: string;
+      description?: string | null;
+      entries: {
+        startTime: string;
+        endTime: string;
+        description?: string | null;
+        ticketNumber?: number | null;
+      }[];
+    }) => {
+      const myUserId = myUserQuery.data?.user?.id;
+      if (!myUserId) throw new Error("User profile not found");
+
+      const workLogId = crypto.randomUUID();
+      await createWorkLogOnlyMutation.mutateAsync({
+        userId: myUserId,
+        workLogId,
+        name: data.name,
+        workLogDate: data.workLogDate,
+        description: data.description || undefined,
+      } as CreateWorkLogOnlyVariables);
+
+      if (data.entries.length > 0) {
+        const shift = (iso: string) =>
+          shiftEntryToDate(iso, data.sourceWorkLogDate, data.workLogDate);
+
+        const ticketNumbers = data.entries
+          .map((entry) => entry.ticketNumber)
+          .filter((n): n is number => n != null);
+        await ensureTicketsExist(ticketNumbers);
+
+        const now = new Date().toISOString();
+        await Promise.all(
+          data.entries.map((entry) =>
+            createTimeEntryMutation.mutateAsync({
+              userId: myUserId,
+              workLogId,
+              startTime: shift(entry.startTime),
+              endTime: shift(entry.endTime),
+              date: data.workLogDate,
+              createdAt: now,
+              description: entry.description || undefined,
+              ticketNumber: entry.ticketNumber ?? undefined,
+            } as CreateTimeEntryVariables)
+          )
+        );
+      }
+
+      await refetch();
+      // Hyphens stripped to match what Data Connect returns — see the note on
+      // the same line in createWorkLog.
+      return { workLogId: workLogId.replace(/-/g, "") };
+    },
+    [myUserQuery.data, createWorkLogOnlyMutation, createTimeEntryMutation, ensureTicketsExist, refetch]
+  );
+
   const renameWorkLog = useCallback(
     async (workLogId: string, name: string) => {
       await updateMutation.mutateAsync({ workLogId, name } as UpdateWorkLogVariables);
@@ -186,6 +263,7 @@ export function useWorkLogs() {
     error,
     refetch,
     createWorkLog,
+    duplicateWorkLog,
     renameWorkLog,
     deleteWorkLog,
   };

@@ -391,6 +391,10 @@ export default function AppNavbar() {
       dashboard: "/dashboard",
       worklogs: "/worklogs",
       settings: "/settings",
+      // The appearance controls are the first section of the settings page,
+      // so this is the same destination — kept as its own key so the menu can
+      // name it without the two drifting apart if it ever gets its own route.
+      appearance: "/settings",
       profile: "/profile",
     };
 

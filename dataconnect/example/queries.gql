@@ -44,6 +44,7 @@ query GetMyUser @auth(level: USER) {
     squareCorners
     dashboardShowWeekends
     dashboardTimelineView
+    showEntryCounts
   }
 }
 
@@ -135,8 +136,23 @@ query ListTimeEntries($userId: UUID!) @auth(level: NO_ACCESS) {
   }
 }
 
+# Deliberately a filtered list rather than `timeEntry(id: $entryId)`.
+#
+# The by-key form takes only an entry id, so at USER level any signed-in
+# account could read any entry in the database — including the `user` block
+# below, which carries the owner's username and email. That is the same IDOR
+# class already fixed for ListTimeEntries/ListTimeEntriesByDateRange on
+# 2026-09-18; this single-row read was missed at the time because it reads one
+# row rather than a list. The auth.uid filter makes the scope structural: there
+# is no argument a caller can change to reach someone else's row, so a
+# non-owner gets an empty list rather than a refusal.
 query GetTimeEntry($entryId: UUID!) @auth(level: USER) {
-  timeEntry(id: $entryId) {
+  timeEntries(
+    where: {
+      _and: [{ id: { eq: $entryId } }, { user: { googleUid: { eq_expr: "auth.uid" } } }]
+    }
+    limit: 1
+  ) {
     id
     user {
       id

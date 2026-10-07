@@ -340,11 +340,12 @@ export interface GetMyUserData {
     squareCorners?: boolean | null;
     dashboardShowWeekends?: boolean | null;
     dashboardTimelineView?: boolean | null;
+    showEntryCounts?: boolean | null;
   } & User_Key;
 }
 
 export interface GetTimeEntryData {
-  timeEntry?: {
+  timeEntries: ({
     id: UUIDString;
     user: {
       id: UUIDString;
@@ -364,7 +365,7 @@ export interface GetTimeEntryData {
     } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
-  } & TimeEntry_Key;
+  } & TimeEntry_Key)[];
 }
 
 export interface GetTimeEntryVariables {
@@ -694,6 +695,14 @@ export interface SelectMyPerformanceModeVariables {
   performanceMode: boolean;
 }
 
+export interface SelectMyShowEntryCountsData {
+  user_update?: User_Key | null;
+}
+
+export interface SelectMyShowEntryCountsVariables {
+  showEntryCounts: boolean;
+}
+
 export interface SelectMySquareCornersData {
   user_update?: User_Key | null;
 }
@@ -940,6 +949,11 @@ export function selectMyDashboardShowWeekends(vars: SelectMyDashboardShowWeekend
 export function selectMyDashboardTimelineView(dc: DataConnect, vars: SelectMyDashboardTimelineViewVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyDashboardTimelineViewData>>;
 /** Generated Node Admin SDK operation action function for the 'SelectMyDashboardTimelineView' Mutation. Allow users to pass in custom DataConnect instances. */
 export function selectMyDashboardTimelineView(vars: SelectMyDashboardTimelineViewVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyDashboardTimelineViewData>>;
+
+/** Generated Node Admin SDK operation action function for the 'SelectMyShowEntryCounts' Mutation. Allow users to execute without passing in DataConnect. */
+export function selectMyShowEntryCounts(dc: DataConnect, vars: SelectMyShowEntryCountsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyShowEntryCountsData>>;
+/** Generated Node Admin SDK operation action function for the 'SelectMyShowEntryCounts' Mutation. Allow users to pass in custom DataConnect instances. */
+export function selectMyShowEntryCounts(vars: SelectMyShowEntryCountsVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyShowEntryCountsData>>;
 
 /** Generated Node Admin SDK operation action function for the 'SelectMyBordersEnabled' Mutation. Allow users to execute without passing in DataConnect. */
 export function selectMyBordersEnabled(dc: DataConnect, vars: SelectMyBordersEnabledVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<SelectMyBordersEnabledData>>;

@@ -327,9 +327,16 @@ export function WorkLogTimeEntryCardTable({
                             </td>
 
                             <td className="border p-2">
+                                {/* Two rows at text-sm, not three at the base
+                                    size: the description is what sets this
+                                    row's height, and a taller box mostly held
+                                    blank space. The smaller type also fits
+                                    noticeably more characters per line, so
+                                    fewer descriptions wrap at all. Still
+                                    resizable for the long ones. */}
                                 <textarea
-                                    className="w-full rounded border p-2"
-                                    rows={3}
+                                    className="w-full resize-y rounded border p-2 text-sm leading-snug"
+                                    rows={2}
                                     value={getDescription(entry)}
                                     onChange={(e) => setDescriptionDraft(entry.id, e.target.value)}
                                 />

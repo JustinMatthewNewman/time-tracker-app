@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Switch } from "@heroui/react";
+import { ToggleButton, ToggleButtonGroup, Tooltip } from "@heroui/react";
+import { Calendar } from "@gravity-ui/icons";
 import { useMyTimeEntries } from "@/hooks/useMyTimeEntries";
 import { useTimeEntriesByDateRange } from "@/hooks/useTimeEntriesByDateRange";
 import { useDashboardPrefs } from "@/context/DashboardPrefsContext";
@@ -101,24 +102,33 @@ export function OverviewReport() {
 
       {/* One filter row above the charts, holding every control that scopes
           the week-level widgets. */}
-      <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
-        {/* Control and Content are SIBLINGS: `.switch` is the row
-            (inline-flex items-center gap-3) while `.switch__content` is a
-            COLUMN meant for a label over a description. Nesting Control
-            inside Content stacks the track above the label. */}
-        <Switch
-          isSelected={showWeekends}
-          onChange={setShowWeekends}
+      <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2">
+        {/* An icon toggle rather than a labelled switch: it sits in a row of
+            icon-sized controls (the week stepper beside it), and a switch
+            dragging a text label along made this row read as a settings form
+            rather than as a toolbar. The label survives as the accessible
+            name and the hover title, both of which state the *action* the
+            press will take, so the control still says what it does. */}
+        <ToggleButtonGroup
+          selectionMode="multiple"
+          selectedKeys={showWeekends ? ["weekends"] : []}
+          onSelectionChange={(keys) => setShowWeekends(keys.has("weekends"))}
           size="sm"
-          aria-label="Show weekends in the weekday breakdown"
+          aria-label="Weekday breakdown columns"
         >
-          <Switch.Control>
-            <Switch.Thumb />
-          </Switch.Control>
-          <Switch.Content>
-            <span className="text-sm text-foreground/70">Show weekends</span>
-          </Switch.Content>
-        </Switch>
+          <Tooltip>
+            <Tooltip.Trigger>
+              <ToggleButton
+                id="weekends"
+                isIconOnly
+                aria-label={showWeekends ? "Hide weekends" : "Show weekends"}
+              >
+                <Calendar className="size-4" aria-hidden />
+              </ToggleButton>
+            </Tooltip.Trigger>
+            <Tooltip.Content>{showWeekends ? "Hide weekends" : "Show weekends"}</Tooltip.Content>
+          </Tooltip>
+        </ToggleButtonGroup>
         <WeekSelector weekStart={weekStart} onChange={setWeekStart} />
       </div>
 
@@ -133,20 +143,26 @@ export function OverviewReport() {
         onTimelineViewChange={setTimelineView}
       />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <WeeklyTicketColumns entries={weekEntries} loading={weekLoading} weekStart={weekStart} />
-        <TicketsByOffice entries={weekEntries} loading={weekLoading} weekStart={weekStart} />
-      </div>
+      {/* Full width, alone on its row. Column height is the whole encoding and
+          this is the widget with the most categories on the page (up to twelve
+          tickets), so at half width the columns were a few pixels wide each
+          while the office chart beside it — which rarely has more than three
+          bars — had the same room. */}
+      <WeeklyTicketColumns entries={weekEntries} loading={weekLoading} weekStart={weekStart} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <TicketsByOffice entries={weekEntries} loading={weekLoading} weekStart={weekStart} />
         <WeeklyTrendChart
           entries={longEntries}
           loading={longLoading}
           window={trendWindow}
           onWindowChange={setTrendWindow}
         />
-        <CalendarHeatmap entries={longEntries} loading={longLoading} />
       </div>
+
+      {/* Also full width: a year-to-date grid is 53 columns wide, so halving
+          its width halves the size of every cell in it. */}
+      <CalendarHeatmap entries={longEntries} loading={longLoading} />
 
       <MonthlyHoursBar entries={longEntries} loading={longLoading} year={longRange.year} />
 

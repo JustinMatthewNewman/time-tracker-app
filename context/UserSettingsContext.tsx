@@ -17,6 +17,7 @@ type UserSettingsState = {
   squareCorners: boolean | null;
   dashboardShowWeekends: boolean | null;
   dashboardTimelineView: boolean | null;
+  showEntryCounts: boolean | null;
 };
 
 type UserSettingsContextType = UserSettingsState & {
@@ -36,6 +37,7 @@ const EMPTY_STATE: UserSettingsState = {
   squareCorners: null,
   dashboardShowWeekends: null,
   dashboardTimelineView: null,
+  showEntryCounts: null,
 };
 
 const UserSettingsContext = createContext<UserSettingsContextType | null>(null);
@@ -74,6 +76,7 @@ export function UserSettingsProvider({ children }: { children: React.ReactNode }
         squareCorners: dbUser?.squareCorners ?? false,
         dashboardShowWeekends: dbUser?.dashboardShowWeekends ?? false,
         dashboardTimelineView: dbUser?.dashboardTimelineView ?? false,
+        showEntryCounts: dbUser?.showEntryCounts ?? true,
       });
     } finally {
       setLoading(false);

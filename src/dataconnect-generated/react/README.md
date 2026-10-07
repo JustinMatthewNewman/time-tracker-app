@@ -58,6 +58,7 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*SelectMySquareCorners*](#selectmysquarecorners)
   - [*SelectMyDashboardShowWeekends*](#selectmydashboardshowweekends)
   - [*SelectMyDashboardTimelineView*](#selectmydashboardtimelineview)
+  - [*SelectMyShowEntryCounts*](#selectmyshowentrycounts)
   - [*SelectMyBordersEnabled*](#selectmybordersenabled)
   - [*SelectMyTicketColorsEnabled*](#selectmyticketcolorsenabled)
   - [*UpdateWorkLog*](#updateworklog)
@@ -285,6 +286,7 @@ export interface GetMyUserData {
     squareCorners?: boolean | null;
     dashboardShowWeekends?: boolean | null;
     dashboardTimelineView?: boolean | null;
+    showEntryCounts?: boolean | null;
   } & User_Key;
 }
 ```
@@ -648,7 +650,7 @@ To check the status of a Query, use the `UseQueryResult.status` field. You can a
 To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetTimeEntry` Query is of type `GetTimeEntryData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface GetTimeEntryData {
-  timeEntry?: {
+  timeEntries: ({
     id: UUIDString;
     user: {
       id: UUIDString;
@@ -668,7 +670,7 @@ export interface GetTimeEntryData {
     } & Ticket_Key;
     officeNumber?: string | null;
     createdAt: TimestampString;
-  } & TimeEntry_Key;
+  } & TimeEntry_Key)[];
 }
 ```
 
@@ -717,7 +719,7 @@ export default function GetTimeEntryComponent() {
 
   // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
   if (query.isSuccess) {
-    console.log(query.data.timeEntry);
+    console.log(query.data.timeEntries);
   }
   return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
 }
@@ -3940,6 +3942,100 @@ export default function SelectMyDashboardTimelineViewComponent() {
     onSuccess: () => { console.log('Mutation succeeded!'); }
   };
   mutation.mutate(selectMyDashboardTimelineViewVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.user_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## SelectMyShowEntryCounts
+You can execute the `SelectMyShowEntryCounts` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useSelectMyShowEntryCounts(options?: useDataConnectMutationOptions<SelectMyShowEntryCountsData, FirebaseError, SelectMyShowEntryCountsVariables>): UseDataConnectMutationResult<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useSelectMyShowEntryCounts(dc: DataConnect, options?: useDataConnectMutationOptions<SelectMyShowEntryCountsData, FirebaseError, SelectMyShowEntryCountsVariables>): UseDataConnectMutationResult<SelectMyShowEntryCountsData, SelectMyShowEntryCountsVariables>;
+```
+
+### Variables
+The `SelectMyShowEntryCounts` Mutation requires an argument of type `SelectMyShowEntryCountsVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface SelectMyShowEntryCountsVariables {
+  showEntryCounts: boolean;
+}
+```
+### Return Type
+Recall that calling the `SelectMyShowEntryCounts` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `SelectMyShowEntryCounts` Mutation is of type `SelectMyShowEntryCountsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface SelectMyShowEntryCountsData {
+  user_update?: User_Key | null;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `SelectMyShowEntryCounts`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, SelectMyShowEntryCountsVariables } from '@dataconnect/generated';
+import { useSelectMyShowEntryCounts } from '@dataconnect/generated/react'
+
+export default function SelectMyShowEntryCountsComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useSelectMyShowEntryCounts();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useSelectMyShowEntryCounts(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyShowEntryCounts(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useSelectMyShowEntryCounts(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useSelectMyShowEntryCounts` Mutation requires an argument of type `SelectMyShowEntryCountsVariables`:
+  const selectMyShowEntryCountsVars: SelectMyShowEntryCountsVariables = {
+    showEntryCounts: ..., 
+  };
+  mutation.mutate(selectMyShowEntryCountsVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ showEntryCounts: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(selectMyShowEntryCountsVars, options);
 
   // Then, you can render your component dynamically based on the status of the Mutation.
   if (mutation.isPending) {

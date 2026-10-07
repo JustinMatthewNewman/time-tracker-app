@@ -2999,6 +2999,14 @@ input User_Data {
   """
   performanceMode_expr: Boolean_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `User`.`showEntryCounts` of type `Boolean`
+  """
+  showEntryCounts: Boolean
+  """
+  ✨ `_expr` server value variant of `showEntryCounts` (✨ Generated from Field `User`.`showEntryCounts` of type `Boolean`)
+  """
+  showEntryCounts_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `User`.`squareCorners` of type `Boolean`
   """
   squareCorners: Boolean
@@ -3119,6 +3127,10 @@ input User_Filter {
   ✨ Generated from Field `User`.`performanceMode` of type `Boolean`
   """
   performanceMode: Boolean_Filter
+  """
+  ✨ Generated from Field `User`.`showEntryCounts` of type `Boolean`
+  """
+  showEntryCounts: Boolean_Filter
   """
   ✨ Generated from Field `User`.`squareCorners` of type `Boolean`
   """
@@ -3241,6 +3253,10 @@ input User_Having {
   ✨ Generated from Field `User`.`performanceMode_count` of type `Int!`
   """
   performanceMode_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`showEntryCounts_count` of type `Int!`
+  """
+  showEntryCounts_count: Int_Filter
   """
   ✨ Generated from Field `User`.`squareCorners_count` of type `Int!`
   """
@@ -3409,6 +3425,10 @@ input User_Order {
   """
   performanceMode: OrderDirection
   """
+  ✨ Generated from Field `User`.`showEntryCounts` of type `Boolean`
+  """
+  showEntryCounts: OrderDirection
+  """
   ✨ Generated from Field `User`.`squareCorners` of type `Boolean`
   """
   squareCorners: OrderDirection
@@ -3476,6 +3496,10 @@ input User_Order {
   ✨ Generated from Field `User`.`performanceMode_count` of type `Int!`
   """
   performanceMode_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`showEntryCounts_count` of type `Int!`
+  """
+  showEntryCounts_count: OrderDirection
   """
   ✨ Generated from Field `User`.`squareCorners_count` of type `Int!`
   """

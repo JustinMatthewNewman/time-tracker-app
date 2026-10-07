@@ -13,9 +13,19 @@ import { weekKey, weekLabel, getRelativeWeekLabel, groupByWeek } from "@/lib/wee
 import { NewWorkLogDialog } from "./NewWorkLogDialog";
 import { RenameWorkLogDialog } from "./RenameWorkLogDialog";
 import { DeleteWorkLogDialog } from "./DeleteWorkLogDialog";
+import { DuplicateWorkLogDialog } from "./DuplicateWorkLogDialog";
+import { WorkLogDetailsDialog } from "./WorkLogDetailsDialog";
 
 function formatDate(isoDate: string) {
   return new Date(isoDate).toISOString().split("T")[0]; // yyyy-mm-dd
+}
+
+// `new Date("yyyy-mm-dd")` parses as UTC midnight, not local midnight, which
+// would land the duplicated entries on the wrong calendar day for anyone west
+// of UTC. Same conversion (and same reason) as NewWorkLogDialog's.
+function toLocalMidnightISOString(dateString: string) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day).toISOString();
 }
 
 // Accepts useWorkLogs()'s result as props rather than calling the hook
@@ -30,7 +40,13 @@ function formatDate(isoDate: string) {
 // call from a second location (OverviewReport.tsx does), unlike useWorkLogs().
 type WorkLogListBoxProps = Pick<
   ReturnType<typeof useWorkLogs>,
-  "workLogs" | "loading" | "error" | "createWorkLog" | "renameWorkLog" | "deleteWorkLog"
+  | "workLogs"
+  | "loading"
+  | "error"
+  | "createWorkLog"
+  | "duplicateWorkLog"
+  | "renameWorkLog"
+  | "deleteWorkLog"
 > & {
   entries: MyTimeEntry[];
 };
@@ -54,6 +70,7 @@ export function WorkLogListBox({
   loading,
   error,
   createWorkLog,
+  duplicateWorkLog,
   renameWorkLog,
   deleteWorkLog,
   entries,
@@ -63,6 +80,8 @@ export function WorkLogListBox({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
 
   const items = useMemo<WorkLogItem[]>(
     () =>
@@ -153,6 +172,22 @@ export function WorkLogListBox({
   );
 
   const selectedItem = items.find((item) => item.id === selectedWorkLogId) ?? null;
+
+  // The selected log's own entries, from the same already-fetched set the week
+  // subtotals above use — so Duplicate and Details cost no extra round trip.
+  const selectedEntries = useMemo(
+    () => (selectedWorkLogId ? entries.filter((e) => e.workLogId === selectedWorkLogId) : []),
+    [entries, selectedWorkLogId]
+  );
+  const selectedSummary = useMemo(() => {
+    const tickets = new Set<number>();
+    let totalMinutes = 0;
+    for (const entry of selectedEntries) {
+      totalMinutes += minutesBetween(entry.startTime, entry.endTime);
+      if (entry.ticket) tickets.add(entry.ticket.ticketNumber);
+    }
+    return { entryCount: selectedEntries.length, totalMinutes, ticketCount: tickets.size };
+  }, [selectedEntries]);
 
   const handleSelectionChange = (key: Key) => {
     setSelectedWorkLogId(key != null ? String(key) : null);
@@ -275,6 +310,12 @@ export function WorkLogListBox({
             <Pencil width={16} height={16} />
           </Button>
 
+          {/* Edit is listed here as well as on the pencil button beside it.
+              That duplication is deliberate: the pencil is the shortcut for
+              the one action people take constantly, and a menu of
+              Duplicate/Details/Delete with the most common operation
+              conspicuously missing reads as though renaming lives somewhere
+              else entirely. */}
           <Dropdown>
             <Dropdown.Trigger aria-label="Work log actions" isDisabled={!selectedItem}>
               <Ellipsis width={16} height={16} />
@@ -282,9 +323,15 @@ export function WorkLogListBox({
             <Dropdown.Popover>
               <Dropdown.Menu
                 onAction={(key) => {
+                  if (key === "edit") setIsRenameDialogOpen(true);
+                  if (key === "duplicate") setIsDuplicateDialogOpen(true);
+                  if (key === "details") setIsDetailsDialogOpen(true);
                   if (key === "delete") setIsDeleteDialogOpen(true);
                 }}
               >
+                <Dropdown.Item id="edit">Edit</Dropdown.Item>
+                <Dropdown.Item id="duplicate">Duplicate</Dropdown.Item>
+                <Dropdown.Item id="details">View details</Dropdown.Item>
                 <Dropdown.Item id="delete">Delete</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown.Popover>
@@ -307,6 +354,45 @@ export function WorkLogListBox({
           initialName={selectedItem.label}
           onClose={() => setIsRenameDialogOpen(false)}
           onRename={(name) => renameWorkLog(selectedItem.id, name)}
+        />
+      )}
+
+      {selectedItem && (
+        <DuplicateWorkLogDialog
+          isOpen={isDuplicateDialogOpen}
+          sourceName={selectedItem.label}
+          sourceDate={formatDate(selectedItem.date)}
+          entryCount={selectedSummary.entryCount}
+          totalMinutes={selectedSummary.totalMinutes}
+          onClose={() => setIsDuplicateDialogOpen(false)}
+          onDuplicate={async ({ name, date }) => {
+            const { workLogId } = await duplicateWorkLog({
+              name,
+              workLogDate: toLocalMidnightISOString(date),
+              sourceWorkLogDate: selectedItem.date,
+              description: selectedItem.description,
+              entries: selectedEntries.map((entry) => ({
+                startTime: entry.startTime,
+                endTime: entry.endTime,
+                description: entry.description,
+                ticketNumber: entry.ticket?.ticketNumber ?? null,
+              })),
+            });
+            setSelectedWorkLogId(workLogId);
+          }}
+        />
+      )}
+
+      {selectedItem && (
+        <WorkLogDetailsDialog
+          isOpen={isDetailsDialogOpen}
+          name={selectedItem.label}
+          date={formatDate(selectedItem.date)}
+          description={selectedItem.description}
+          entryCount={selectedSummary.entryCount}
+          totalMinutes={selectedSummary.totalMinutes}
+          ticketCount={selectedSummary.ticketCount}
+          onClose={() => setIsDetailsDialogOpen(false)}
         />
       )}
 

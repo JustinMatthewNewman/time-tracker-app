@@ -12,6 +12,7 @@ import { useCardStyle } from '@/context/CardStyleContext'
 import { useBorders } from '@/context/BordersContext'
 import { useSquareCorners } from '@/context/SquareCornersContext'
 import { useTicketColorsSetting } from '@/context/TicketColorsContext'
+import { useEntryCounts } from '@/context/EntryCountsContext'
 import { useUserSettings } from '@/context/UserSettingsContext'
 import { useSelectMyExternalTicketLinkTemplate } from '@/src/dataconnect-generated/react'
 import {
@@ -26,6 +27,7 @@ import {
   SquareDashed,
   Square,
   Palette,
+  ListUl,
   Link as LinkIcon,
   CircleInfo,
   ShieldKeyhole,
@@ -47,6 +49,7 @@ function SettingsCard() {
   const { bordersEnabled, setBordersEnabled } = useBorders()
   const { squareCorners, setSquareCorners } = useSquareCorners()
   const { ticketColorsEnabled, setTicketColorsEnabled } = useTicketColorsSetting()
+  const { showEntryCounts, setShowEntryCounts } = useEntryCounts()
   const { externalTicketLinkTemplate, refetch: refetchUserSettings } = useUserSettings()
   const selectTemplateMutation = useSelectMyExternalTicketLinkTemplate()
 
@@ -380,6 +383,30 @@ function SettingsCard() {
             isSelected={ticketColorsEnabled}
             onChange={setTicketColorsEnabled}
             aria-label="Ticket Colors"
+          >
+            <Switch.Content>
+              <Switch.Control>
+                <Switch.Thumb />
+              </Switch.Control>
+            </Switch.Content>
+          </Switch>
+        </div>
+        <div className="mt-3 flex items-center justify-between gap-4 rounded-lg bg-default-100 p-3">
+          <div>
+            <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <ListUl className="size-4" /> Entry counts
+            </p>
+            <p className="text-xs text-foreground/60">
+              Shows the per-ticket entry count next to the time totals in ticket breakdowns.
+              Turning this off leaves the durations and totals exactly as they are — it only
+              drops the count column and its bar, for anyone who reads these tables for hours
+              rather than for how many segments those hours were logged in.
+            </p>
+          </div>
+          <Switch
+            isSelected={showEntryCounts}
+            onChange={setShowEntryCounts}
+            aria-label="Entry counts"
           >
             <Switch.Content>
               <Switch.Control>

@@ -1,8 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Button, Card, EmptyState, ListBox, Select, Skeleton } from "@heroui/react";
-import { Check, Pencil, Person, Persons, TrashBin, Xmark } from "@gravity-ui/icons";
+import {
+  Button,
+  Card,
+  EmptyState,
+  ListBox,
+  Select,
+  Skeleton,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+} from "@heroui/react";
+import { Calendar, Check, Pencil, Person, Persons, TrashBin, Xmark } from "@gravity-ui/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
@@ -101,6 +111,20 @@ export function AdminTeamsPage() {
   const [busyMemberId, setBusyMemberId] = useState<string | null>(null);
   const [openDay, setOpenDay] = useState<MemberDay | null>(null);
   const [editing, setEditing] = useState(false);
+
+  // Two view toggles for the body below, both view-scoped rather than
+  // persisted: they are things you flip while looking at one team, not an
+  // account preference like the dashboard's own weekend switch.
+  //
+  // hideWeekends drops Saturday and Sunday from the per-day chart only. It
+  // deliberately does NOT re-scope the metrics: the team stat strip above is
+  // computed server-side for the selected range, and quietly excluding two
+  // days from the chart while the totals beside it still counted them would
+  // make the two disagree. The chart's own label says so.
+  const [hideWeekends, setHideWeekends] = useState(false);
+  // hideMembers collapses the per-member card, for reading the team's own
+  // numbers without a specific person's beside them.
+  const [hideMembers, setHideMembers] = useState(false);
 
   const startEditing = () => {
     // Seed from the server's copy, not whatever was left in state from a
@@ -227,8 +251,19 @@ export function AdminTeamsPage() {
   const selectedMember = members.find((m) => m.id === selectedMemberId) ?? null;
   const memberMetrics =
     (selectedMember && metricsQuery.data?.members.find((m) => m.id === selectedMember.id)) || null;
-  const memberDays =
+  const rawMemberDays =
     (selectedMember && metricsQuery.data?.daily?.[selectedMember.id]) || null;
+  // Day keys are produced in UTC (see lib/adminTeamMetrics.ts), so the weekday
+  // has to be read in UTC too — getDay() on a local parse of the same string
+  // lands on the previous day for anyone west of UTC, which would drop Friday
+  // and keep Sunday.
+  const memberDays = useMemo(() => {
+    if (!rawMemberDays || !hideWeekends) return rawMemberDays;
+    return rawMemberDays.filter((day) => {
+      const weekday = new Date(`${day.date}T00:00:00Z`).getUTCDay();
+      return weekday !== 0 && weekday !== 6;
+    });
+  }, [rawMemberDays, hideWeekends]);
   const addableUsers = (usersQuery.data?.users ?? []).filter(
     (u) => !members.some((m) => m.id === u.id)
   );
@@ -332,7 +367,56 @@ export function AdminTeamsPage() {
       nav={nav}
       heading={team?.name ?? "Teams"}
       description="View and edit team details"
-      headerExtra={team ? <TeamRangeToggle value={range} onChange={setRange} /> : undefined}
+      headerExtra={
+        team ? (
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <TeamRangeToggle value={range} onChange={setRange} />
+            {/* Icon toggles, matching the dashboard's weekend/layout controls
+                rather than this page's own text buttons — these change what is
+                drawn, while the buttons beside them change what is counted. */}
+            <ToggleButtonGroup
+              selectionMode="multiple"
+              selectedKeys={[
+                ...(hideWeekends ? [] : ["weekends"]),
+                ...(hideMembers ? [] : ["members"]),
+              ]}
+              onSelectionChange={(keys) => {
+                setHideWeekends(!keys.has("weekends"));
+                setHideMembers(!keys.has("members"));
+              }}
+              size="sm"
+              aria-label="Team view options"
+            >
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <ToggleButton
+                    id="weekends"
+                    isIconOnly
+                    aria-label={hideWeekends ? "Show weekends" : "Hide weekends"}
+                  >
+                    <Calendar className="size-4" aria-hidden />
+                  </ToggleButton>
+                </Tooltip.Trigger>
+                <Tooltip.Content>{hideWeekends ? "Show weekends" : "Hide weekends"}</Tooltip.Content>
+              </Tooltip>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <ToggleButton
+                    id="members"
+                    isIconOnly
+                    aria-label={hideMembers ? "Show member details" : "Hide member details"}
+                  >
+                    <Persons className="size-4" aria-hidden />
+                  </ToggleButton>
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  {hideMembers ? "Show member details" : "Hide member details"}
+                </Tooltip.Content>
+              </Tooltip>
+            </ToggleButtonGroup>
+          </div>
+        ) : undefined
+      }
     >
       {error && (
         <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
@@ -372,6 +456,7 @@ export function AdminTeamsPage() {
             )}
           </Card>
 
+          {!hideMembers && (
           <Card className="flex flex-col gap-3 p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">
               {selectedMember ? "Member" : "Members"}
@@ -401,6 +486,14 @@ export function AdminTeamsPage() {
                   <div className="mt-1">
                     <p className="mb-2 text-xs font-medium uppercase tracking-wide text-foreground/40">
                       Tickets per day
+                      {hideWeekends && (
+                        // Stated rather than left implicit: the stat strip above
+                        // still counts weekend hours, so without this the chart
+                        // and the totals look like they disagree.
+                        <span className="ml-2 font-normal normal-case tracking-normal text-foreground/50">
+                          weekends hidden
+                        </span>
+                      )}
                     </p>
                     {memberDays ? (
                       <IsoStackedBarChart days={memberDays} onDaySelect={setOpenDay} />
@@ -437,6 +530,7 @@ export function AdminTeamsPage() {
               </p>
             )}
           </Card>
+          )}
           <Card className="flex flex-col gap-3 p-4">
             <div className="flex items-baseline justify-between gap-3">
               <p className="text-xs font-medium uppercase tracking-wide text-foreground/40">

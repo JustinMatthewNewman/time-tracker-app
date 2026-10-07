@@ -113,3 +113,41 @@ export function buildTicketColorMap(tickets: TicketWithColor[]): Map<number, str
 export function ticketLabelWithTitle(ticket: string, title?: string | null): string {
   return title ? `${ticket} - ${truncateTicketTitle(title)}` : ticket;
 }
+
+export const OTHER_TICKET_LABEL = "Other";
+
+// Folds everything past `maxCategories` into one "Other (N tickets)" row.
+//
+// Hoisted out of components/Dashboard/TicketBreakdownWeekly.tsx, which had the
+// only copy, once the work-log/all-tickets breakdown needed the same cap: those
+// views list every ticket a range touched, which on a busy month is well over a
+// hundred, and a donut of hundred hairline slices encodes nothing. The cap is a
+// hard requirement of the categorical palette rather than a nicety —
+// chartColor.ts budgets a fixed number of hues and must never cycle them, so a
+// series past the budget would otherwise be handed a hue that already means a
+// different ticket.
+//
+// "(No ticket)" is deliberately exempt: it carries the neutral token rather
+// than a rotation slot, so it costs no hue and folding it into Other would
+// merge two genuinely different things.
+//
+// Input is assumed sorted by totalMinutes descending (groupByTicket's output),
+// so the kept rows are the largest ones.
+export function capTicketTotals(totals: TicketTotal[], maxCategories: number): TicketTotal[] {
+  const ticketed = totals.filter((t) => t.ticket !== UNASSIGNED_TICKET);
+  const unassigned = totals.filter((t) => t.ticket === UNASSIGNED_TICKET);
+  if (ticketed.length <= maxCategories) return totals;
+
+  const kept = ticketed.slice(0, maxCategories);
+  const overflow = ticketed.slice(maxCategories);
+  const other: TicketTotal = {
+    ticket: `${OTHER_TICKET_LABEL} (${overflow.length} tickets)`,
+    entryCount: overflow.reduce((sum, t) => sum + t.entryCount, 0),
+    totalMinutes: overflow.reduce((sum, t) => sum + t.totalMinutes, 0),
+  };
+  return [...kept, ...unassigned, other];
+}
+
+export function isOtherTicketLabel(ticket: string): boolean {
+  return ticket.startsWith(OTHER_TICKET_LABEL);
+}

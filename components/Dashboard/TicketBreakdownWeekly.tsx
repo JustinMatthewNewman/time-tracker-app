@@ -5,43 +5,28 @@ import { Card, Skeleton, Tabs } from "@heroui/react";
 import { useTimeEntriesByDateRange } from "@/hooks/useTimeEntriesByDateRange";
 import { useTickets } from "@/context/TicketsContext";
 import { useTicketColors } from "@/hooks/useTicketColors";
-import { groupByTicket, formatDuration, buildTicketTitleMap, UNASSIGNED_TICKET } from "@/lib/timeTotals";
+import {
+  capTicketTotals,
+  groupByTicket,
+  formatDuration,
+  buildTicketTitleMap,
+  isOtherTicketLabel,
+  UNASSIGNED_TICKET,
+} from "@/lib/timeTotals";
 import { startOfWeek, endOfWeek } from "@/lib/weekBuckets";
+import { useEntryCounts } from "@/context/EntryCountsContext";
 import { getSeriesColor, NEUTRAL_SERIES_COLOR, CATEGORICAL_HUE_COUNT } from "./chartColor";
 import { DonutChart } from "@/components/WorkLogs/DonutChart";
 import { TicketBarChart } from "@/components/WorkLogs/TicketBarChart";
-import type { TicketTotal } from "@/lib/timeTotals";
 
 type Window = "week" | "month";
-
-const OTHER_LABEL = "Other";
 
 function isoLocalMidnight(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString();
 }
 
-// Hues are a fixed, non-cycling set (see chartColor.ts) — a week/month
-// window can easily surface more distinct tickets than there are hues, so
-// anything past the budget folds into one "Other" bucket rather than
-// silently reusing an earlier ticket's color (per the dataviz color
-// formula's non-negotiable: never cycle categorical hues).
-function capToOther(totals: TicketTotal[]): TicketTotal[] {
-  const ticketed = totals.filter((t) => t.ticket !== UNASSIGNED_TICKET);
-  const unassigned = totals.filter((t) => t.ticket === UNASSIGNED_TICKET);
-  if (ticketed.length <= CATEGORICAL_HUE_COUNT) return totals;
-
-  const kept = ticketed.slice(0, CATEGORICAL_HUE_COUNT);
-  const overflow = ticketed.slice(CATEGORICAL_HUE_COUNT);
-  const other: TicketTotal = {
-    ticket: `${OTHER_LABEL} (${overflow.length} tickets)`,
-    entryCount: overflow.reduce((sum, t) => sum + t.entryCount, 0),
-    totalMinutes: overflow.reduce((sum, t) => sum + t.totalMinutes, 0),
-  };
-  return [...kept, ...unassigned, other];
-}
-
 function sliceStyle(ticket: string, colorIndex: number) {
-  return ticket === UNASSIGNED_TICKET || ticket.startsWith(OTHER_LABEL)
+  return ticket === UNASSIGNED_TICKET || isOtherTicketLabel(ticket)
     ? NEUTRAL_SERIES_COLOR
     : getSeriesColor(colorIndex);
 }
@@ -65,11 +50,12 @@ export function TicketBreakdownWeekly() {
   }, [window]);
 
   const { entries, loading } = useTimeEntriesByDateRange(startDate, endDate);
+  const { showEntryCounts } = useEntryCounts();
   const { tickets } = useTickets();
   const ticketColors = useTicketColors();
   const ticketTitleByNumber = useMemo(() => buildTicketTitleMap(tickets), [tickets]);
   const rawTotals = useMemo(() => groupByTicket(entries), [entries]);
-  const totals = useMemo(() => capToOther(rawTotals), [rawTotals]);
+  const totals = useMemo(() => capTicketTotals(rawTotals, CATEGORICAL_HUE_COUNT), [rawTotals]);
   const grandTotalMinutes = totals.reduce((sum, t) => sum + t.totalMinutes, 0);
 
   const chartData = totals.map((t, i) => {
@@ -119,20 +105,50 @@ export function TicketBreakdownWeekly() {
       ) : totals.length === 0 ? (
         <p className="py-10 text-center text-sm text-foreground/60">No time entries in this window yet.</p>
       ) : (
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-          <DonutChart data={chartData} centerLabel={formatDuration(grandTotalMinutes)} centerSubLabel="total" />
-          <div className="w-full flex-1">
-            <TicketBarChart
-              data={totals.map((t) => ({
-                label: t.ticket,
-                title: t.ticket !== UNASSIGNED_TICKET ? ticketTitleByNumber.get(Number(t.ticket)) : null,
-                entryCount: t.entryCount,
-                totalMinutes: t.totalMinutes,
-                ...styleByTicket.get(t.ticket)!,
-              }))}
-              formatDuration={formatDuration}
+        <div className="flex flex-col gap-5">
+          {/* Donut over a legend, as a compact part-of-whole header — the
+              bars below carry the comparison, so the donut only has to answer
+              "how is the week split" and doesn't need half the card's width. */}
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+            <DonutChart
+              data={chartData}
+              centerLabel={formatDuration(grandTotalMinutes)}
+              centerSubLabel="total"
+              formatValue={formatDuration}
             />
+            <div className="grid w-full flex-1 grid-cols-2 gap-x-4 gap-y-1.5 text-xs sm:grid-cols-3">
+              {chartData.map((d) => (
+                <div key={d.label} className="flex min-w-0 items-center gap-2">
+                  <span
+                    className="size-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: d.color, filter: d.filter }}
+                    aria-hidden
+                  />
+                  <span className="min-w-0 flex-1 truncate text-foreground/80">{d.label}</span>
+                  <span className="shrink-0 tabular-nums text-foreground/50">
+                    {grandTotalMinutes > 0 ? Math.round((d.value / grandTotalMinutes) * 100) : 0}%
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
+
+          {/* Full width: bar length is the entire encoding, and sharing the row
+              with the donut left these bars a few dozen pixels long. */}
+          <TicketBarChart
+            data={totals.map((t) => ({
+              label: t.ticket,
+              title:
+                t.ticket !== UNASSIGNED_TICKET && !isOtherTicketLabel(t.ticket)
+                  ? ticketTitleByNumber.get(Number(t.ticket))
+                  : null,
+              entryCount: t.entryCount,
+              totalMinutes: t.totalMinutes,
+              ...styleByTicket.get(t.ticket)!,
+            }))}
+            formatDuration={formatDuration}
+            showEntryCounts={showEntryCounts}
+          />
         </div>
       )}
     </Card>
